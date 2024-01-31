@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { device } from '../../../config';
 import useMediaQuery from '../../../hooks/useMediaQuery';
-import { Section } from '../../reusables';
+import { Section, Spinner } from '../../reusables';
 import {
   IChatTheme,
   MODAL_BACKGROUND_TYPE,
@@ -11,6 +11,9 @@ import {
 } from '../exportedTypes';
 import { Button, Modal, ModalHeader, TextInput } from '../reusables';
 import { IUser } from '@pushprotocol/restapi';
+import useUserInfoUtilities from '../../../hooks/chat/useUserInfoUtilities';
+import { MdCheckCircle, MdError } from 'react-icons/md';
+import useToast from '../reusables/NewToast';
 
 type UpdateUserProfileModalProps = {
   theme: IChatTheme;
@@ -39,10 +42,38 @@ export const UpdateUserProfileModal = ({
       picture: userProfile ? userProfile?.profile?.picture ?? '' : '',
     }
   );
+  const { updateProfileLoading, updateUserProfile } = useUserInfoUtilities();
   const isMobile = useMediaQuery(device.mobileL);
-
+  const userUpdateToast = useToast();
   const onClose = (): void => {
     setModal(false);
+  };
+
+ 
+  const onUpdate = async () => {
+    console.log('in here')
+    const isSuccess = await updateUserProfile({ userProfileDetails });
+    if (typeof isSuccess != 'string') {
+      userUpdateToast.showMessageToast({
+        toastTitle: 'Success',
+        toastMessage: 'User profile updated successfully',
+        toastType: 'SUCCESS',
+        getToastIcon: (size: string | number | undefined) => (
+          <MdCheckCircle size={size} color="green" />
+        ),
+      });
+      onClose();
+    } else {
+      showError('User profile updation failed');
+    }
+  };
+  const showError = (errorMessage: string) => {
+    userUpdateToast.showMessageToast({
+      toastTitle: 'Error',
+      toastMessage: errorMessage,
+      toastType: 'ERROR',
+      getToastIcon: (size) => <MdError size={size} color="red" />,
+    });
   };
 
   return (
@@ -64,7 +95,7 @@ export const UpdateUserProfileModal = ({
         <Section gap="10px" flexDirection="column" alignItems="start">
           <TextInput
             labelName="Name"
-            charCount={30}
+            // charCount={30}
             inputValue={userProfileDetails.name}
             onInputChange={(e: any) =>
               setUserProfileDetails((prev) => ({
@@ -72,31 +103,25 @@ export const UpdateUserProfileModal = ({
                 name: e.target.value,
               }))
             }
-            //   error={!!validationErrors?.groupName}
           />
-          {/* {!!validationErrors?.groupName && (
-          <ErrorSpan>{validationErrors?.groupName}</ErrorSpan>
-        )} */}
         </Section>
         <Section gap="10px" flexDirection="column" alignItems="start">
           <TextInput
             labelName="Description"
-            charCount={30}
+            // charCount={30}
             inputValue={userProfileDetails.description}
-              onInputChange={(e: any) =>
-                setUserProfileDetails((prev) => ({
-                  ...prev,
-                  description: e.target.value,
-                }))
-              }
-            //   error={!!validationErrors?.groupName}
+            onInputChange={(e: any) =>
+              setUserProfileDetails((prev) => ({
+                ...prev,
+                description: e.target.value,
+              }))
+            }
           />
-          {/* {!!validationErrors?.groupName && (
-          <ErrorSpan>{validationErrors?.groupName}</ErrorSpan>
-        )} */}
         </Section>
 
-        <Button width="197px">Update</Button>
+        <Button width="197px" onClick={() => onUpdate()}>
+          {!updateProfileLoading ? 'Update' : <Spinner size="20" color="#fff" />}
+        </Button>
       </Section>
     </Modal>
   );

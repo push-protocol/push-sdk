@@ -16,6 +16,7 @@ import { IUser } from '@pushprotocol/restapi';
 import useChatProfile from '../../../hooks/chat/useChatProfile';
 import { useClickAway } from '../../../hooks';
 import { UpdateUserProfileModal } from './UpdateUserProfileModal';
+import { ToastContainer } from 'react-toastify';
 
 /**
  * @interface IThemeProps
@@ -53,15 +54,16 @@ export const UserProfile : React.FC<UserProfileProps> = ({
     setOptions(false);
   });
 
-  console.debug(userProfile)
+  console.log(userProfile)
   return (
+    <>
     <Conatiner
-      //   width="100%"
       height="inherit"
       justifyContent="space-between"
       overflow="hidden"
-      padding="14px 10px "
-      background="#fff"
+      padding="14px 10px"
+      borderRadius={theme?.borderRadius?.userProfile}
+      background={theme?.backgroundColor?.userProfileBackground}
       theme={theme}
     >
       <ProfileContainer
@@ -70,7 +72,9 @@ export const UserProfile : React.FC<UserProfileProps> = ({
           wallet: shortenText(account || '', 8, true) as string,
           image: userProfile?.profile?.picture || ProfilePicture,
         }}
-        customStyle={{ fontSize: '17px' }}
+        customStyle={{ fontSize: theme?.fontSize?.userProfileText,
+          fontWeight: theme?.fontWeight?.userProfileText,
+           textColor: theme?.textColor?.userProfileText}}
       />
       {user && (
         <Section>
@@ -78,6 +82,7 @@ export const UserProfile : React.FC<UserProfileProps> = ({
             src={VerticalEllipsisIcon}
             height="21px"
             maxHeight="21px"
+            color={theme?.iconColor?.userProfileSettings}
             width={'auto'}
             cursor="pointer"
             onClick={() => setOptions(true)}
@@ -109,13 +114,16 @@ export const UserProfile : React.FC<UserProfileProps> = ({
               updateUserProfileModalPositionType={updateUserProfileModalPositionType}
             />
           )}
+          
     </Conatiner>
+     <ToastContainer />
+     </>
   );
 };
 
 //styles
 const Conatiner = styled(Section)<IThemeProps>`
-  border-top: 1px solid rgb(244, 245, 250);
+  border: ${(props) => props.theme.border?.userProfile};
   box-sizing: border-box;
 `;
 

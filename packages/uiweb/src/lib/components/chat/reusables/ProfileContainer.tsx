@@ -11,6 +11,7 @@ type ProfileProps = {
     fontWeight?: string;
     imgHeight?: string;
     imgMaxHeight?: string;
+    textColor?: string;
   };
   export const ProfileContainer = ({ theme, member, customStyle }: ProfileProps) => {
    
@@ -36,7 +37,7 @@ type ProfileProps = {
         <Span
           fontSize={customStyle?.fontSize ?? '18px'}
           fontWeight={customStyle?.fontWeight ?? '400'}
-          color={theme.textColor?.modalSubHeadingText}
+          color={customStyle?.textColor ?? theme.textColor?.modalSubHeadingText}
           position="relative"
  
         >

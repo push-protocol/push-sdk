@@ -33,6 +33,7 @@ const useUserInfoUtilities = () => {
     async ({ userProfileDetails }: UpdateUserProfileParams): Promise<any> => {
       try {
         setUpdateProfileLoading(true);
+        console.log(user,userProfileDetails)
         const updatedProfile = await user?.profile.update({
           name: userProfileDetails.name,
           desc: userProfileDetails.description,
@@ -41,10 +42,10 @@ const useUserInfoUtilities = () => {
         setUpdateProfileLoading(false);
 
         return updatedProfile;
-      } catch (error) {
+      } catch (error: Error | any) {
         setUpdateProfileLoading(false);
         console.log(error);
-        return;
+        return error.message;
       }
     },
     []
