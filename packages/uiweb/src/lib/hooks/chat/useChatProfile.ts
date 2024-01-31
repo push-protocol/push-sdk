@@ -1,4 +1,4 @@
-import * as PushAPI from '@pushprotocol/restapi';
+import { PushAPI } from "@pushprotocol/restapi";
 import { useCallback, useContext } from 'react';
 import { useChatData } from './useChatData';
 import { Env } from '@pushprotocol/restapi';
@@ -6,22 +6,24 @@ import { Env } from '@pushprotocol/restapi';
 export interface FetchProfileParams {
   profileId?: string;
   env?: Env;
+  user?: PushAPI;
 }
 
 const useChatProfile = () => {
-  const { pushUser } = useChatData();
+  const { user:contextPushUser } = useChatData();
   const fetchChatProfile = useCallback(
     async ({
       profileId,
+      user = contextPushUser,
       //note: remove env when chat and notification component is shifted to class based
       env
     }: FetchProfileParams): Promise<any> => {
       try {
         let userReadOnly;
-        if(profileId)
-         userReadOnly = await pushUser!.info({ overrideAccount: profileId });
+        if(profileId && user)
+         userReadOnly = await user!.info({ overrideAccount: profileId });
         else
-         userReadOnly = await pushUser!.info();
+         userReadOnly = await user!.info();
         return userReadOnly;
       } catch (error) {
         console.log(error);

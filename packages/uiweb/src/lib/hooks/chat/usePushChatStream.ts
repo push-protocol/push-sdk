@@ -11,7 +11,7 @@ export const usePushChatStream = () => {
     setPushChatStream,
     setIsPushChatStreamConnected,
     env,
-    pushUser,
+    user,
   } = useChatData();
 
   const [chatStream, setChatStream] = useState<any>({}); // to track any new messages
@@ -22,9 +22,9 @@ export const usePushChatStream = () => {
   const [participantRemoveStream, setParticipantRemoveStream] = useState<any>({}); // to track if a participant is removed from group
   const [participantLeaveStream, setParticipantLeaveStream] = useState<any>({}); // to track if a participant leaves a group
   const [participantJoinStream, setParticipantJoinStream] = useState<any>({}); // to track if a participant joins a group
-  const [groupDetailsStream, setGroupDetailsStream] = useState<any>({}); // to track if details of group changes
+  const [groupCreateStream, setGroupCreateStream] = useState<any>({}); // to track if group is created
 
-  const [groupMetaStream, setGroupMetaStream] = useState<any>({}); //group info
+  const [groupUpdateStream, setGroupUpdateStream] = useState<any>({}); //group updation stream
 
   const attachListenersAndConnect = async (stream: any) => {
     stream?.on(CONSTANTS.STREAM.CONNECT, (err: Error) => {
@@ -56,9 +56,7 @@ export const usePushChatStream = () => {
       else if (message.event === 'chat.group.participant.join') {
         setParticipantJoinStream(message);
       }
-      else if (message.event === 'chat.group.update') {
-        setGroupDetailsStream(message);
-      }
+   
        else if (message.event === 'chat.message') {
         setChatStream(message);
       }
@@ -67,7 +65,12 @@ export const usePushChatStream = () => {
     // Listen for group info
     stream?.on(CONSTANTS.STREAM.CHAT_OPS, (chatops: any) => {
         console.debug(chatops)
-      setGroupMetaStream(chatops);
+         if (chatops.event === 'chat.group.update') {
+          setGroupUpdateStream(chatops);
+        }
+        else if (chatops.event === 'chat.group.update') {
+          setGroupCreateStream(chatops);
+        }
     });
 
     console.debug('stream listeners attached');
@@ -79,14 +82,14 @@ export const usePushChatStream = () => {
    *  - create a new connection object
    */
   useEffect(() => {
-    if (!pushUser) {
+    if (!user) {
       return;
     }
 
-    const initPushUser = async () => {
+    const initUser = async () => {
       // create a new connection object
-      if (!pushUser.stream) {
-        const stream = await pushUser?.initStream(
+      if (!user.stream) {
+        const stream = await user?.initStream(
           [
             CONSTANTS.STREAM.CHAT,
             CONSTANTS.STREAM.CHAT_OPS,
@@ -107,34 +110,33 @@ export const usePushChatStream = () => {
       }
 
       // establish a new connection
-      if (!pushUser.stream.connected()) {
-        await pushUser.stream?.connect();
-        console.debug('Connect stream: ', pushUser);
+      if (!user.stream.connected()) {
+        await user.stream?.connect();
+        console.debug('Connect stream: ', user);
       }
     };
 
-    initPushUser();
+    initUser();
 
     // Return a function to clean up the effect
     return () => {
-      if (pushUser && pushUser.stream) {
-
-        pushUser.stream?.disconnect();
-        console.debug('Disconnect stream: ', pushUser);
+      if (user && user.stream) {
+        user.stream?.disconnect();
+        console.debug('Disconnect stream: ', user);
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pushUser, env, account]);
+  }, [user, env, account]);
 
   return {
     chatStream,
     chatRequestStream,
     chatAcceptStream,
-    groupMetaStream,
+    groupUpdateStream,
     chatRejectStream,
     participantRemoveStream,
     participantLeaveStream,
     participantJoinStream,
-    groupDetailsStream
+    groupCreateStream
   };
 };

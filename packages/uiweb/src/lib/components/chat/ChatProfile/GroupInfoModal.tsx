@@ -517,7 +517,7 @@ export const GroupInfoModal = ({
     participantRemoveStream,
     participantLeaveStream,
     participantJoinStream,
-    groupDetailsStream,
+    groupUpdateStream,
   } = usePushChatStream();
 
 
@@ -565,11 +565,11 @@ export const GroupInfoModal = ({
 
   useEffect(() => {
     if (
-      Object.keys(groupDetailsStream).length > 0 &&
-      groupDetailsStream.constructor === Object
+      Object.keys(groupUpdateStream).length > 0 &&
+      groupUpdateStream.constructor === Object
     ) 
-    transformGroupDetails(groupDetailsStream);
-  }, [groupDetailsStream]);
+    transformGroupDetails(groupUpdateStream);
+  }, [groupUpdateStream]);
 
   useEffect(() => {
     (async () => {
@@ -765,14 +765,15 @@ export const GroupInfoModal = ({
   const transformGroupDetails = (item: any): void => {
     if ( groupInfo?.chatId === item?.chatId) {
       const updatedGroupInfo = groupInfo;
-      if(updatedGroupInfo){
-        updatedGroupInfo.groupName= item?.meta?.name;
-        updatedGroupInfo.groupDescription=item?.meta?.description;
-        updatedGroupInfo.groupImage=item?.meta?.image;
-        updatedGroupInfo.groupCreator=item?.meta?.owner;
-        updatedGroupInfo.isPublic=!item?.meta?.private;
-        setGroupInfo(updatedGroupInfo);
-      }
+      // console.debug(updatedGroupInfo)
+      // if(updatedGroupInfo){
+      //   updatedGroupInfo.groupName= item?.meta?.name;
+      //   updatedGroupInfo.groupDescription=item?.meta?.description;
+      //   updatedGroupInfo.groupImage=item?.meta?.image;
+      //   updatedGroupInfo.groupCreator=item?.meta?.owner;
+      //   updatedGroupInfo.isPublic=!item?.meta?.private;
+      //   setGroupInfo(updatedGroupInfo);
+      // }
      
     }
   };

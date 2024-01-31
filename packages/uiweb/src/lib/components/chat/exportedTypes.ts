@@ -18,7 +18,7 @@ export interface IChatPreviewPayload {
 export interface IChatPreviewProps {
   chatPreviewPayload: IChatPreviewPayload;
   selected?: boolean;
-  setSelected?: (chatId: string) => void;
+  setSelected?: (chatId: string,chatParticipant: string) => void;
   badge?: {
     count?: number;
   };
@@ -30,8 +30,11 @@ export interface IChatPreviewListProps {
   listType?: 'CHATS' | 'REQUESTS' | 'SEARCH';
   prefillChatPreviewList?: Array<IChatPreviewProps>;
   searchParamter?: string;
-  onChatSelected?: (chatId: string) => void;
+  onChatSelected?: (chatId: string,chatParticipant: string) => void;
   onUnreadCountChange?: (count: number) => void;
+  onPreload?: (chats: Array<IChatPreviewPayload>) => void;
+  onPaging?: (chats: Array<IChatPreviewPayload>) => void;
+  onLoading?: (loadingData:{loading:boolean,preload:boolean,paging:boolean,finished:boolean}) => void;
 }
 
 export interface IChatViewListProps {
@@ -45,7 +48,7 @@ export interface IChatViewComponentProps {
   chatViewList?: boolean;
   chatFilterList?: Array<string>;
   chatProfile?: boolean; //name needs to change
-  chatId: string; //need confirmation on this
+  chatId?: string; //need confirmation on this
   limit?: number;
   emoji?: boolean;
   gif?: boolean;
@@ -57,14 +60,15 @@ export interface IChatViewComponentProps {
   verificationFailModalBackground?: ModalBackgroundType;
   verificationFailModalPosition?: ModalPositionType;
   onVerificationFail?: () => void;
-  component?: React.ReactNode;
+  chatProfileHelperComponent?: React.ReactNode;
+  welcomeComponent?:React.ReactNode;
 }
 
 export interface IChatProfile {
   chatId: string;
   groupInfoModalBackground?: ModalBackgroundType;
   groupInfoModalPositionType?: ModalPositionType;
-  component?: React.ReactNode;
+  chatProfileHelperComponent?: React.ReactNode;
 }
 
 export interface TwitterFeedReturnType {

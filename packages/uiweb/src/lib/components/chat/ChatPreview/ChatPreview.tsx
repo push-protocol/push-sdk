@@ -57,7 +57,7 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
         onClick={() => {
           // set chatid as selected
           if (options?.setSelected)
-            options.setSelected(options?.chatPreviewPayload?.chatId || '');
+            options.setSelected(options?.chatPreviewPayload?.chatId || '',options?.chatPreviewPayload?.chatParticipant);
         }}
       >
         <Section

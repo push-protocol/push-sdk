@@ -25,7 +25,7 @@ type HandleOnChatIconClickProps = {
 type GetChatsType = {
   pgpPrivateKey?: string;
   supportAddress: string;
-  pushUser: PushAPI;
+  user: PushAPI;
   limit: number;
   threadHash?: string;
   env?: Env;
@@ -42,10 +42,10 @@ export const handleOnChatIconClick = ({
 export const createUserIfNecessary = async (
   options: AccountEnvOptionsType
 ): Promise<IConnectedUser | undefined> => {
-  const { pushUser } = options || {};
+  const { user } = options || {};
   let connectedUser:IUser;
-  if (Object.keys(pushUser || {}).length) {
-    connectedUser = await pushUser.info();
+  if(Object.keys(user || {}).length){
+    connectedUser = await user.info();
     return { ...connectedUser, 
       privateKey: connectedUser!.encryptedPrivateKey,
      };
@@ -68,16 +68,16 @@ export const getChats = async (
     account,
     pgpPrivateKey,
     supportAddress,
-    pushUser,
+    user,
     threadHash = null,
     limit = 40,
     env = Constants.ENV.PROD,
   } = options || {};
   
 
-  const chats = await pushUser?.chat.history(
-    supportAddress,
-    {limit}   );
+  const chats = await user?.chat.history(
+    supportAddress
+   );
 
     const lastThreadHash = chats[chats.length - 1]?.link;
     const lastListPresent = chats.length > 0 ? true : false;

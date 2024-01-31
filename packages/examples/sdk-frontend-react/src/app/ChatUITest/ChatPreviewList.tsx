@@ -36,12 +36,15 @@ const ChatPreviewListTest = () => {
       />
       <hr />
 
-      <div style={{background: "#ffeded", border: "1px solid rgb(226,8,128)", height: "50vh"}}>
+      <div style={{background: "#ffeded", border: "1px solid rgb(226,8,128)", height: "28.5vh"}}>
         <ChatPreviewList 
           listType={chatRequests ? "REQUESTS" : "CHATS"}
           overrideAccount={address ? address : undefined}
-          onChatSelected={()=>console.log('hello onChatSelected')}
-          onUnreadCountChange={()=>console.log('hello onUnreadCountChange')}
+         onChatSelected={(chatid,chatParticipant) => { console.log("Chat id: ", chatid,chatParticipant) }}
+            onUnreadCountChange={(count) => { console.log("Count is: ", count) }}
+            onLoading={(loadingData) => { console.log("loading data: ", loadingData) }}
+            onPaging={(chats) => { console.log("paging chats are: ", chats) }}
+            onPreload={(chats) => { console.log("preload chats are: ", chats) }}
           // listType='SEARCH'
           // searchParamter='fabio.eth'
         />

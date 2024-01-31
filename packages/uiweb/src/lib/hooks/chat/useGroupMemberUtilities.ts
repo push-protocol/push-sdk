@@ -25,14 +25,14 @@ interface fetchMembersCountParams {
 const useGroupMemberUtilities = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
-  const { account, env, pushUser } = useChatData();
+  const { account, env, user } = useChatData();
 
 
   const fetchMembers = useCallback(
     async ({ chatId ,page,limit=10,pending = false }: fetchMembersParams):Promise<FetchGroupMembersResponseType | undefined> => {
       setLoading(true);
       try {
-        const response = await pushUser?.chat.group.participants.list(chatId,{page,limit, filter: {
+        const response = await user?.chat.group.participants.list(chatId,{page,limit, filter: {
             pending,
           }});
           setLoading(false);
@@ -44,15 +44,15 @@ const useGroupMemberUtilities = () => {
         return error.message;
       }
     },
-    [pushUser, env, account]
+    [user, env, account]
   )
 
   const fetchMemberStatus = useCallback(
     async ({ chatId ,accountId }: fetchMemberStatusParams):Promise<ParticipantStatus | undefined>  => {
       setLoading(true);
       try {
-        console.log(chatId,accountId,pushUser)
-        const response = await pushUser?.chat.group.participants.status(chatId,accountId);
+        console.log(chatId,accountId,user)
+        const response = await user?.chat.group.participants.status(chatId,accountId);
           setLoading(false);
         return response;
       } catch(error: Error | any) {
@@ -69,7 +69,7 @@ const useGroupMemberUtilities = () => {
     async ({ chatId }:fetchMembersCountParams ):Promise<GroupParticipantCounts | undefined> => {
       setLoading(true);
       try {
-        const response = await pushUser?.chat.group.participants.count(chatId);
+        const response = await user?.chat.group.participants.count(chatId);
           setLoading(false);
         return response;
       } catch(error: Error | any) {
@@ -79,7 +79,7 @@ const useGroupMemberUtilities = () => {
         return error.message;
       }
     },
-    [pushUser, env]
+    [user, env]
   )
 
   return { error, loading, fetchMembers,fetchMemberStatus,fetchMembersCount };

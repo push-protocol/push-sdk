@@ -11,9 +11,10 @@ import { IChatTheme, lightChatTheme } from '../components/chat/theme';
 import { getAddressFromSigner, pCAIP10ToWallet } from '../helpers';
 import useCreateChatProfile from '../hooks/useCreateChatProfile';
 import useDecryptPGPKey from '../hooks/useDecryptPGPKey';
-import useInitializePushUser from '../hooks/chat/useInitializePushUser';
+import useInitializeUser from '../hooks/chat/useInitializeUser';
 import useChatProfile from '../hooks/chat/useChatProfile';
-import usePushUserInfoUtilities from '../hooks/chat/usePushUserInfoUtilities';
+
+import usePushUserInfoUtilities from '../hooks/chat/useUserInfoUtilities';
 
 export interface IChatUIProviderProps {
   children: ReactNode;
@@ -21,14 +22,14 @@ export interface IChatUIProviderProps {
   account?: string | null;
   signer?: SignerType | undefined;
   pgpPrivateKey?: string | null;
-  pushUser?: PushAPI | undefined;
+  user?: PushAPI | undefined;
   env?: ENV;
 }
 
 export const ChatUIProvider = ({
   children,
   account = undefined,
-  pushUser = undefined,
+  user = undefined,
   theme,
   pgpPrivateKey = null,
   signer = undefined,
@@ -40,7 +41,7 @@ export const ChatUIProvider = ({
   const [pushChatSocket, setPushChatSocket] = useState<any>(null);
   const [signerVal, setSignerVal] = useState<SignerType | undefined>(signer);
   const [pushChatStream, setPushChatStream] = useState<any>(null);
-  const [pushUserVal, setPushUserVal] = useState<PushAPI | undefined>(pushUser);
+  const [userVal, setUserVal] = useState<PushAPI | undefined>(user);
 
   const [pgpPrivateKeyVal, setPgpPrivateKeyVal] = useState<string | null>(
     pgpPrivateKey
@@ -53,7 +54,7 @@ export const ChatUIProvider = ({
   const [isPushChatSocketConnected, setIsPushChatSocketConnected] =
     useState<boolean>(false);
   const { fetchEncryptionInfo } = usePushUserInfoUtilities();
-  const { initializePushUser } = useInitializePushUser();
+  const { initializeUser } = useInitializeUser();
   const { fetchChatProfile } = useChatProfile();
 
   const [isPushChatStreamConnected, setIsPushChatStreamConnected] =
@@ -63,44 +64,43 @@ export const ChatUIProvider = ({
       resetStates();
       setEnvVal(env);
 
-      if (Object.keys(signer || {}).length && !pushUser) {
+      if (Object.keys(signer || {}).length && !user) {
         const address = await getAddressFromSigner(signer!);
         setAccountVal(address);
-      } else if (!signer && pushUser) {
-        const profile = await fetchChatProfile({});
+      } else if (!signer && user) {
+        const profile = await fetchChatProfile({user});
         setAccountVal(profile?.wallets);
       } else {
         setAccountVal(GUEST_MODE_ACCOUNT);
       }
       setSignerVal(signer);
-      setPushUserVal(pushUser);
+      setUserVal(user);
       setPgpPrivateKeyVal(pgpPrivateKey);
     })();
-  }, [env, account, signer, pgpPrivateKey,pushUser]);
+  }, [env, account, signer, pgpPrivateKey,user]);
 
   useEffect(() => {
     (async () => {
 
-      if (accountVal && envVal ) {
-        const pushUser = await initializePushUser({
+      if (accountVal && envVal && !userVal ) {
+        const pushUser = await initializeUser({
           signer: signerVal,
           account: accountVal!,
           env: envVal,
         });
-        setPushUserVal(pushUser);
+        setUserVal(pushUser);
       }
     })();
   }, [signerVal, accountVal, envVal]);
-
   useEffect(() => {
     (async () => {
-      if (pushUserVal && !pgpPrivateKeyVal) {
-        const encryptionInfo = await fetchEncryptionInfo({pushUser:pushUserVal});
+      if (userVal && !pgpPrivateKeyVal) {
+        const encryptionInfo = await fetchEncryptionInfo({user:userVal});
         if (encryptionInfo)
           setPgpPrivateKeyVal(encryptionInfo.decryptedPgpPrivateKey);
       }
     })();
-  }, [pushUserVal]);
+  }, [userVal]);
 
 
   const resetStates = () => {
@@ -114,7 +114,7 @@ export const ChatUIProvider = ({
     (async () => {
       let user;
       if (account) {
-        user = await fetchChatProfile({ profileId: account, env });
+        user = await fetchChatProfile({ profileId: account, env,user });
         if (user) setConnectedProfile(user);
       }
     })();
@@ -139,8 +139,8 @@ export const ChatUIProvider = ({
     setPushChatStream,
     isPushChatStreamConnected,
     setIsPushChatStreamConnected,
-    pushUser: pushUserVal,
-    setPushUser: setPushUserVal,
+    user: userVal,
+    setUser: setUserVal,
   };
 
   const PROVIDER_THEME = Object.assign({}, lightChatTheme, theme);

@@ -38,10 +38,10 @@ export const ChatProfile: React.FC<IChatProfile> = ({
   chatId,
   groupInfoModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
   groupInfoModalPositionType = MODAL_POSITION_TYPE.GLOBAL,
-  component=null,
+  chatProfileHelperComponent=null,
 }) => {
   const theme = useContext(ThemeContext);
-  const { account, env, pushUser } = useChatData();
+  const { account, env, user } = useChatData();
   const { getGroupByIDnew } = useGetGroupByIDnew();
   const { fetchChatProfile } = useChatProfile();
 
@@ -108,7 +108,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
   useEffect(() => {
     if (!chatId) return;
     fetchProfileData();
-  }, [chatId, account, pushUser]);
+  }, [chatId, account, user]);
 
 
   if (chatId ) {
@@ -126,9 +126,9 @@ export const ChatProfile: React.FC<IChatProfile> = ({
           margin="0 20px 0 auto"
           alignSelf="center"
         >
-          {(component && !groupInfo) && (
+          {(chatProfileHelperComponent && !groupInfo) && (
             <Section cursor='pointer' maxHeight='1.75rem' width='1.75rem' maxWidth='1.75rem' minWidth='1.75rem'>
-              {component}
+              {chatProfileHelperComponent}
             </Section>
           )}
         {!!(Object.keys(groupInfo?.rules||{}).length) && <TokenGatedSvg />}

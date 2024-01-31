@@ -15,14 +15,14 @@ const useUpdateGroup = () => {
   const [removeLoading, setRemoveLoading] = useState<boolean>(false);
   const [modifyLoading, setModifyLoading] = useState<boolean>(false);
 
-  const { account, env, pushUser } = useChatData();
+  const { account, env, user } = useChatData();
 
 
   const addMember = useCallback(
     async ({ role, memberList,chatId  }: updateGroupParams) => {
       setAddLoading(true);
       try {
-        const response = await pushUser?.chat.group.add(chatId, {
+        const response = await user?.chat.group.add(chatId, {
           role: role,
           accounts: memberList,
         });
@@ -36,13 +36,13 @@ const useUpdateGroup = () => {
         return error.message;
       }
     },
-    [pushUser, env, account]
+    [user, env, account]
   )
   const removeMember = useCallback(
     async ({ role, memberList,chatId  }: updateGroupParams) => {
       setRemoveLoading(true);
       try {
-        const response = await pushUser?.chat.group.remove(chatId, {
+        const response = await user?.chat.group.remove(chatId, {
           role: role,
           accounts: memberList,
         });
@@ -57,13 +57,13 @@ const useUpdateGroup = () => {
         return error.message;
       }
     },
-    [pushUser, env, account]
+    [user, env, account]
   )
   const modifyParticipant = useCallback(
     async ({ role, memberList,chatId  }: updateGroupParams) => {
       setModifyLoading(true);
       try {
-        const response = await pushUser?.chat.group.modify(chatId, {
+        const response = await user?.chat.group.modify(chatId, {
           role: role,
           accounts: memberList,
         });
@@ -78,7 +78,7 @@ const useUpdateGroup = () => {
         return error.message;
       }
     },
-    [pushUser, env, account]
+    [user, env, account]
   )
 
   return { error, addLoading,removeLoading,modifyLoading, addMember,removeMember,modifyParticipant };

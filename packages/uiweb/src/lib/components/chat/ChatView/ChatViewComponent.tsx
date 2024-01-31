@@ -1,5 +1,10 @@
 import React, { useContext } from 'react';
-import { IChatTheme, IChatViewComponentProps, MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../exportedTypes';
+import {
+  IChatTheme,
+  IChatViewComponentProps,
+  MODAL_BACKGROUND_TYPE,
+  MODAL_POSITION_TYPE,
+} from '../exportedTypes';
 
 import { chatLimit, device } from '../../../config';
 import { Section, Span } from '../../reusables';
@@ -24,7 +29,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
   options: IChatViewComponentProps
 ) => {
   const {
-    chatId,
+    chatId = null,
     chatFilterList = [],
     messageInput = true,
     chatViewList = true,
@@ -37,10 +42,11 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
     autoConnect = false,
     onVerificationFail,
     groupInfoModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
-    groupInfoModalPositionType =  MODAL_POSITION_TYPE.GLOBAL,
+    groupInfoModalPositionType = MODAL_POSITION_TYPE.GLOBAL,
     verificationFailModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
     verificationFailModalPosition = MODAL_POSITION_TYPE.GLOBAL,
-    component=null
+    chatProfileHelperComponent = null,
+    welcomeComponent = null,
   } = options || {};
 
   const { env, signer, account, pgpPrivateKey } = useChatData();
@@ -56,55 +62,70 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
       width="100%"
       height="inherit"
       flexDirection="column"
-      justifyContent="space-between"
+      justifyContent={chatId?"space-between":'center'}
       overflow="hidden"
       background={theme.backgroundColor?.chatViewComponentBackground}
       borderRadius={theme.borderRadius?.chatViewComponent}
       padding="13px"
       theme={theme}
     >
-      {chatProfile && <ChatProfile component={component} chatId={chatId}  groupInfoModalBackground={groupInfoModalBackground} groupInfoModalPositionType={groupInfoModalPositionType}/>}
-      <Section
-        flex="1 1 auto"
-        overflow="hidden"
-        padding={isMobile ? '0 10px' : '0 20px'}
-        margin="0 0px 10px 0px"
-        flexDirection="column"
-        justifyContent="start"
-      >
-        {chatId && chatViewList && (
-          <ChatViewList
-            chatFilterList={chatFilterList}
-            limit={limit}
+      {chatId ? (
+        <>
+          {chatProfile && 
+          <ChatProfile
+            chatProfileHelperComponent={chatProfileHelperComponent}
             chatId={chatId}
-          />
-        )}
-      </Section>
-      {/* )} */}
-      {(!signer && !(!!account && !!pgpPrivateKey) && !isConnected) && (
-        <Section flex="0 1 auto">
-          <Span>
-            You need to either pass signer or isConnected to send
-            messages{' '}
-          </Span>
+            groupInfoModalBackground={groupInfoModalBackground}
+            groupInfoModalPositionType={groupInfoModalPositionType}
+          />}
+          <Section
+            flex="1 1 auto"
+            overflow="hidden"
+            padding={isMobile ? '0 10px' : '0 20px'}
+            margin="0 0px 10px 0px"
+            flexDirection="column"
+            justifyContent="start"
+          >
+            { chatViewList && (
+              <ChatViewList
+                chatFilterList={chatFilterList}
+                limit={limit}
+                chatId={chatId}
+              />
+            )}
+          </Section>
+          {/* )} */}
+          {!signer && !(!!account && !!pgpPrivateKey) && !isConnected && (
+            <Section flex="0 1 auto">
+              <Span>
+                You need to either pass signer or isConnected to send messages{' '}
+              </Span>
+            </Section>
+          )}
+          {messageInput &&
+            (!!signer || (!!account && !!pgpPrivateKey) || isConnected) && (
+              <Section flex="0 1 auto" position="static">
+                <MessageInput
+                  onVerificationFail={onVerificationFail}
+                  chatId={chatId}
+                  file={file}
+                  emoji={emoji}
+                  gif={gif}
+                  isConnected={isConnected}
+                  verificationFailModalBackground={
+                    verificationFailModalBackground
+                  }
+                  verificationFailModalPosition={verificationFailModalPosition}
+                  autoConnect={autoConnect}
+                />
+              </Section>
+            )}
+        </>
+      ) : (
+        <Section overflow='auto'>
+        { welcomeComponent }
         </Section>
       )}
-      {(messageInput && (!!signer || (!!account && !!pgpPrivateKey) || isConnected )) && (
-        <Section flex="0 1 auto" position='static'>
-          <MessageInput
-            onVerificationFail={onVerificationFail}
-            chatId={chatId}
-            file={file}
-            emoji={emoji}
-            gif={gif}
-            isConnected={isConnected}
-            verificationFailModalBackground={verificationFailModalBackground}
-            verificationFailModalPosition={verificationFailModalPosition}
-            autoConnect = {autoConnect}
-          />
-        </Section>
-      )}
-      
     </Conatiner>
   );
 };

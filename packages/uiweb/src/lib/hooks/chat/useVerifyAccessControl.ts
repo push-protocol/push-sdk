@@ -15,14 +15,14 @@ const useVerifyAccessControl = () => {
     useState<boolean>(true);
   const [verified, setVerified] = useState<boolean>(false);
 
-  const { env, account, pushUser } = useChatData();
+  const { env, account, user } = useChatData();
 
   const verifyAccessControl = useCallback(
     async (options: VerifyAccessControlParams) => {
       const { chatId, did } = options || {};
       setLoading(true);
       try {
-        const response = await pushUser?.chat.group.permissions(chatId);
+        const response = await user?.chat.group.permissions(chatId);
         setLoading(false);
         if (response?.chat === false || response?.entry === false) {
           setVerificationSuccessfull(false);
@@ -42,7 +42,7 @@ const useVerifyAccessControl = () => {
         return;
       }
     },
-    [account, env, pushUser]
+    [account, env, user]
   );
 
   return {
