@@ -191,8 +191,8 @@ export class PushAPI {
         throw new Error('Account could not be derived.');
       }
 
-      let decryptedPGPPrivateKey;
-      let pgpPublicKey;
+      let decryptedPGPPrivateKey: string | undefined;
+      let pgpPublicKey: string | undefined;
 
       /**
        * Decrypt PGP private key
@@ -203,6 +203,10 @@ export class PushAPI {
         account: derivedAccount,
         env: settings.env,
       });
+
+      if (user && user.publicKey) {
+        pgpPublicKey = user.publicKey;
+      }
 
       if (!readMode) {
         if (user && user.encryptedPrivateKey) {
@@ -235,7 +239,6 @@ export class PushAPI {
             }
             readMode = true;
           }
-          pgpPublicKey = user.publicKey;
         } else {
           const newUser = await PUSH_USER.create({
             env: settings.env,
