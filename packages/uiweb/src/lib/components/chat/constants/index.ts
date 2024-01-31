@@ -57,4 +57,3 @@ export const ACCESS_TYPE_TITLE = {
 
 export * from './chainDetails';
 
-export const GUEST_MODE_ACCOUNT = '0x0000000000000000000000000000000000000000';

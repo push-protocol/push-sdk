@@ -11,9 +11,9 @@ import { IChatTheme, lightChatTheme } from '../components/chat/theme';
 import { getAddressFromSigner, pCAIP10ToWallet } from '../helpers';
 import useCreateChatProfile from '../hooks/useCreateChatProfile';
 import useDecryptPGPKey from '../hooks/useDecryptPGPKey';
-import useInitializePushUser from '../hooks/chat/useInitializePushUser';
+import useInitializePushUser from '../hooks/useInitializePushUser';
 import useChatProfile from '../hooks/chat/useChatProfile';
-import { GUEST_MODE_ACCOUNT } from '../components/chat/constants';
+import { GUEST_MODE_ACCOUNT } from '../config/constants';
 import usePushUserInfoUtilities from '../hooks/chat/usePushUserInfoUtilities';
 
 export interface IChatUIProviderProps {

@@ -1,7 +1,7 @@
 import { PushAPI, SignerType } from "@pushprotocol/restapi";
 import { useCallback, useContext } from "react";
-import { useChatData } from "./index";
-import { ENV } from "../../config";
+import { useChatData } from "./chat/index";
+import { ENV } from "../config";
 
 export interface InitializePushUserParams {
     signer?: SignerType;
