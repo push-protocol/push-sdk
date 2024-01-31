@@ -18,7 +18,7 @@ const ChatViewComponentTest = () => {
 
         <ChatView 
           onVerificationFail={() => console.log("Verification Failed")} 
-          // chatId='4ac5ab85c9c3d57adbdf2dba79357e56b2f9ef0256befe750d9f93af78d2ca68' 
+          chatId='0x99A08ac6254dcf7ccc37CeC662aeba8eFA666666' 
           chatProfileHelperComponent={<div style={{display: "flex"}}><a href="https://github.com" target="_blank" rel="noreferrer">Custom Comp</a></div>}
           limit={10}
           isConnected={true} 
@@ -26,13 +26,13 @@ const ChatViewComponentTest = () => {
           groupInfoModalPositionType={MODAL_POSITION_TYPE.RELATIVE}
           verificationFailModalPosition={MODAL_POSITION_TYPE.RELATIVE}
           welcomeComponent={<div style={{display: "flex",flexDirection:'column',border:'1px solid black'}}>
-            <p>Welcome</p>
+            {/* <p>Welcome</p>
             <p>new chat</p>
             <p>Welcome</p>
             <p>new chat</p>
             <p>Welcome</p>
             <p>new chat</p>
-            <p>Welcome</p>
+            <p>Welcome</p> */}
          
           </div>}
 
