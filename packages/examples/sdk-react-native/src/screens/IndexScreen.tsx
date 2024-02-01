@@ -10,6 +10,9 @@ export const Index = ({navigation}: IndexScreenProps) => {
   const navigateToLowLvlFnsScreen = () => {
     navigation.navigate('LowLevelFns');
   };
+  const navigateToHighLvlFnsScreen = () => {
+    navigation.navigate('HighLevelFns');
+  };
   const navigateToNotificationScreen = () => {
     navigation.navigate('Notification');
   };
@@ -19,6 +22,10 @@ export const Index = ({navigation}: IndexScreenProps) => {
       <CustomButton
         onPress={navigateToLowLvlFnsScreen}
         title="Low level functions"
+      />
+      <CustomButton
+        onPress={navigateToHighLvlFnsScreen}
+        title="High level functions"
       />
       <CustomButton
         onPress={navigateToNotificationScreen}

@@ -1,24 +1,5 @@
-import {
-  PGPHelper,
-  genRandomAddress,
-  createUser,
-  ENV,
-  latest,
-  createGroup,
-  updateGroup,
-  chats,
-  PushApi,
-  get,
-  profileUpdate,
-  decryptPGPKey,
-  profileUpgrade,
-  Constants,
-  requests,
-  send,
-  approve,
-} from '@pushprotocol/react-native-sdk/src';
+import * as PushAPI from '@pushprotocol/react-native-sdk';
 import {ethers} from 'ethers';
-import OpenPGP from 'react-native-fast-openpgp';
 
 export const generatePrivateKey = () => {
   // Define the set of characters for private key generation
@@ -38,25 +19,15 @@ export const generatePrivateKey = () => {
   return privateKey;
 };
 
-export const generateRandomString = () => {
+export const generateRandomString = (keyLen = 40) => {
   var characters = '0123456789abcdef';
-  var keyLength = 40;
+  var keyLength = keyLen;
   var randomString = '';
   for (var i = 0; i < keyLength; i++) {
     var randomIndex = Math.floor(Math.random() * characters.length);
     randomString += characters.charAt(randomIndex);
   }
   return randomString;
-};
-
-export const handlePgp = async () => {
-  let res = await PGPHelper.generateKeyPair();
-  console.log(res);
-};
-
-export const handleEthers = async () => {
-  let res = await genRandomAddress();
-  console.log(res);
 };
 
 export const handleUserCreate = async () => {
@@ -66,15 +37,15 @@ export const handleUserCreate = async () => {
   const walletAddress = signer.address;
   const account = `eip155:${walletAddress}`;
 
-  const options: PushApi.user.CreateUserProps = {
+  const options: PushAPI.user.CreateUserProps = {
     account: account,
     signer: signer,
-    env: Constants.ENV.DEV,
+    env: PushAPI.CONSTANTS.ENV.DEV,
   };
 
   console.log('create user', account);
 
-  const res = await createUser(options);
+  const res = await PushAPI.user.create(options);
   console.log('success', res.did);
 };
 
@@ -86,29 +57,29 @@ export const handleLatestMsg = async () => {
   const account = `eip155:${walletAddress}`;
   console.log(signer);
 
-  const res = await PushApi.chat.conversationHash({
+  const res = await PushAPI.chat.conversationHash({
     account: account,
     conversationId:
       'b353220b812bdb707bd93529aac6fac893438e5db791d7c9e6aab6773aaff90b',
-    env: ENV.DEV,
+    env: PushAPI.CONSTANTS.ENV.STAGING,
   });
 
-  const user = await PushApi.user.get({
+  const user = await PushAPI.user.get({
     account,
-    env: ENV.DEV,
+    env: PushAPI.CONSTANTS.ENV.STAGING,
   });
 
-  const pgpDecryptedPvtKey = await PushApi.chat.decryptPGPKey({
+  const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey({
     encryptedPGPPrivateKey: user.encryptedPrivateKey,
     signer: signer,
-    env: ENV.DEV,
+    env: PushAPI.CONSTANTS.ENV.STAGING,
   });
 
-  const msg = await latest({
+  const msg = await PushAPI.chat.latest({
     threadhash: res.threadHash,
     toDecrypt: true,
     account: account,
-    env: ENV.DEV,
+    env: PushAPI.CONSTANTS.ENV.STAGING,
     pgpPrivateKey: pgpDecryptedPvtKey,
   });
 
@@ -124,7 +95,7 @@ export const handleCreateGroup = async () => {
 
   const groupName = generateRandomString();
 
-  const res = await createGroup({
+  const res = await PushAPI.chat.createGroup({
     groupName: groupName,
     groupDescription: 'satyamstesing',
     groupImage: 'https://github.com',
@@ -136,7 +107,7 @@ export const handleCreateGroup = async () => {
     ],
     admins: [],
     isPublic: true,
-    env: ENV.DEV,
+    env: PushAPI.CONSTANTS.ENV.DEV,
   });
   console.log(res, 'res');
 
@@ -152,7 +123,7 @@ export const handleUpdateGroup = async () => {
   const walletAddress = signer.address;
   const account = `eip155:${walletAddress}`;
 
-  const res = await updateGroup({
+  const res = await PushAPI.chat.updateGroup({
     groupName,
     groupDescription: 'satyamstesing',
     groupImage: 'https://github.com',
@@ -165,18 +136,18 @@ export const handleUpdateGroup = async () => {
       '0x6d118b28ebd82635A30b142D11B9eEEa2c0bea26',
       '0x83d4c16b15F7BBA501Ca1057364a1F502d1c34D5',
     ],
-    env: ENV.DEV,
+    env: PushAPI.CONSTANTS.ENV.DEV,
   });
   console.log(res, 'ress');
 };
 
 export const handleGetUser = async () => {
-  const options: PushApi.AccountEnvOptionsType = {
+  const options: PushAPI.AccountEnvOptionsType = {
     account: '0xACEe0D180d0118FD4F3027Ab801cc862520570d1',
-    env: Constants.ENV.DEV,
+    env: PushAPI.CONSTANTS.ENV.DEV,
   };
 
-  const res = await get(options);
+  const res = await PushAPI.user.get(options);
   console.log('successfully got user', res);
 };
 
@@ -189,24 +160,24 @@ export const handleProfileUpdate = async () => {
   const account = `eip155:${walletAddress}`;
 
   console.log('creating user...');
-  const user = await createUser({
+  const user = await PushAPI.user.create({
     account: account,
     signer: signer,
-    env: Constants.ENV.DEV,
+    env: PushAPI.CONSTANTS.ENV.DEV,
   });
 
   console.log('decrypting pgp key...');
-  const pgpPK = await decryptPGPKey({
+  const pgpPK = await PushAPI.chat.decryptPGPKey({
     account: user.did,
     encryptedPGPPrivateKey: user.encryptedPrivateKey,
-    env: Constants.ENV.DEV,
+    env: PushAPI.CONSTANTS.ENV.DEV,
     signer: signer,
   });
 
   console.log('updating profile...');
-  await profileUpdate({
+  await PushAPI.user.profile.update({
     account: account,
-    env: Constants.ENV.DEV,
+    env: PushAPI.CONSTANTS.ENV.DEV,
     pgpPrivateKey: pgpPK,
     profile: {
       name: 'Updated Name',
@@ -223,28 +194,16 @@ export const handleProfileUpgrade = async () => {
   const walletAddress = signer.address;
   const account = `eip155:${walletAddress}`;
 
-  const user = await createUser({
-    account: account,
-    signer: signer,
-    env: Constants.ENV.DEV,
+  await PushAPI.user.create({
+    account,
+    env: PushAPI.CONSTANTS.ENV.DEV,
+    signer,
   });
 
-  const pgpPK = await decryptPGPKey({
-    account: user.did,
-    encryptedPGPPrivateKey: user.encryptedPrivateKey,
-    env: Constants.ENV.DEV,
+  const upgradedProfile = await PushAPI.user.upgrade({
     signer: signer,
-  });
-
-  const pgpPubKey = await OpenPGP.convertPrivateKeyToPublicKey(pgpPK);
-
-  const upgradedProfile = await profileUpgrade({
-    signer: signer,
-    pgpPrivateKey: pgpPK,
-    pgpPublicKey: pgpPubKey,
-    pgpEncryptionVersion: Constants.ENCRYPTION_TYPE.NFTPGP_V1,
     account: account,
-    env: Constants.ENV.DEV,
+    env: PushAPI.CONSTANTS.ENV.DEV,
     additionalMeta: {
       NFTPGP_V1: {
         password: '0x@1jdw89Amcedk', //new nft profile password
@@ -252,7 +211,7 @@ export const handleProfileUpgrade = async () => {
     },
   });
 
-  console.log('successfully upgraded profile');
+  console.log('successfully upgraded profile', upgradedProfile);
   return upgradedProfile;
 };
 
@@ -263,28 +222,28 @@ export const handleInbox = async () => {
   const walletAddress = signer.address;
   const account = `eip155:${walletAddress}`;
 
-  const user = await PushApi.user.get({
+  const user = await PushAPI.user.get({
     account: account,
-    env: ENV.DEV,
+    env: PushAPI.CONSTANTS.ENV.DEV,
   });
 
-  const pgpDecryptedPvtKey = await PushApi.chat.decryptPGPKey({
+  const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey({
     encryptedPGPPrivateKey: user.encryptedPrivateKey,
     signer: signer,
   });
 
-  const chatList = await chats({
+  const chatList = await PushAPI.chat.chats({
     account: account,
     pgpPrivateKey: pgpDecryptedPvtKey,
     toDecrypt: true,
-    env: ENV.DEV,
+    env: PushAPI.CONSTANTS.ENV.DEV,
   });
 
-  const requestList = await requests({
+  const requestList = await PushAPI.chat.requests({
     account: account,
     pgpPrivateKey: pgpDecryptedPvtKey,
     toDecrypt: true,
-    env: ENV.DEV,
+    env: PushAPI.CONSTANTS.ENV.DEV,
   });
 
   console.log('CHATS: ', chatList);
@@ -298,24 +257,24 @@ export const handleSend = async () => {
   );
   const account = `eip155:${signer.address}`;
 
-  const user = await PushApi.user.get({
+  const user = await PushAPI.user.get({
     account,
-    env: ENV.DEV,
+    env: PushAPI.CONSTANTS.ENV.DEV,
   });
 
-  const pgpDecryptedPvtKey = await PushApi.chat.decryptPGPKey({
+  const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey({
     encryptedPGPPrivateKey: user.encryptedPrivateKey,
     signer: signer,
-    env: ENV.DEV,
+    env: PushAPI.CONSTANTS.ENV.DEV,
   });
 
-  const MESSAGE_TYPE = PushApi.CONSTANTS.CHAT.MESSAGE_TYPE.MEDIA_EMBED;
+  const MESSAGE_TYPE = PushAPI.CONSTANTS.CHAT.MESSAGE_TYPE.MEDIA_EMBED;
   const MESSAGE =
     'ttps://media1.giphy.com/media/FtlUfrq3pVZXVNjoxf/giphy360p.mp4?cid=ecf05e47jk317254v9hbdjrknemduocie4pf54wtsir98xsx&ep=v1_videos_search&rid=giphy360p.mp4&ct=v';
 
-  const messageSent = await send({
+  const messageSent = await PushAPI.chat.send({
     account,
-    env: ENV.DEV,
+    env: PushAPI.CONSTANTS.ENV.DEV,
     messageContent: MESSAGE,
     messageType: MESSAGE_TYPE,
     to: '0xACEe0D180d0118FD4F3027Ab801cc862520570d1',
@@ -332,23 +291,23 @@ export const handleApproveRequest = async () => {
   const walletAddress = signer.address;
   const account = `eip155:${walletAddress}`;
 
-  const user = await PushApi.user.get({
+  const user = await PushAPI.user.get({
     account,
-    env: ENV.DEV,
+    env: PushAPI.CONSTANTS.ENV.DEV,
   });
 
-  const pgpDecryptedPvtKey = await PushApi.chat.decryptPGPKey({
+  const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey({
     encryptedPGPPrivateKey: user.encryptedPrivateKey,
     signer: signer,
-    env: ENV.DEV,
+    env: PushAPI.CONSTANTS.ENV.DEV,
   });
 
   const senderAddress = '0xACEe0D180d0118FD4F3027Ab801cc862520570d1';
 
-  const res = await approve({
+  const res = await PushAPI.chat.approve({
     senderAddress,
     account: account,
-    env: ENV.DEV,
+    env: PushAPI.CONSTANTS.ENV.DEV,
     pgpPrivateKey: pgpDecryptedPvtKey,
     status: 'Approved',
   });
@@ -362,11 +321,11 @@ export const handleConversationHash = async () => {
   );
   const account = `eip155:${signer.address}`;
 
-  const hash = await PushApi.chat.conversationHash({
+  const hash = await PushAPI.chat.conversationHash({
     account,
     conversationId:
       'b353220b812bdb707bd93529aac6fac893438e5db791d7c9e6aab6773aaff90b',
-    env: ENV.DEV,
+    env: PushAPI.CONSTANTS.ENV.STAGING,
   });
   console.log('conversation hash: ', hash);
 };

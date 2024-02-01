@@ -5,11 +5,9 @@ import {
   handleApproveRequest,
   handleConversationHash,
   handleCreateGroup,
-  handleEthers,
   handleGetUser,
   handleInbox,
   handleLatestMsg,
-  handlePgp,
   handleProfileUpdate,
   handleProfileUpgrade,
   handleSend,
@@ -22,8 +20,6 @@ export const LowLevelFnsScreen = () => {
     <ScrollView style={styles.container} overScrollMode="never">
       <CustomButton title="Inbox" onPress={handleInbox} />
       <CustomButton title="New User" onPress={handleUserCreate} />
-      <CustomButton title="Generate PGP Pair" onPress={handlePgp} />
-      <CustomButton title="Log Address" onPress={handleEthers} />
       <CustomButton title="Create Group" onPress={handleCreateGroup} />
       <CustomButton title="Update group" onPress={handleUpdateGroup} />
       <CustomButton title="ConversationHash" onPress={handleConversationHash} />

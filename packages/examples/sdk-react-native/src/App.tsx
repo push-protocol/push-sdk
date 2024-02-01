@@ -2,12 +2,18 @@ import React from 'react';
 import WebViewCrypto from 'react-native-webview-crypto';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {Index, LowLevelFnsScreen, NotificationScreen} from './screens';
+import {
+  HighLevelFnsScreen,
+  Index,
+  LowLevelFnsScreen,
+  NotificationScreen,
+} from './screens';
 
 export type RootStackParamList = {
   Index: undefined;
   LowLevelFns: undefined;
   Notification: undefined;
+  HighLevelFns: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -27,6 +33,11 @@ export default function App() {
             name="LowLevelFns"
             component={LowLevelFnsScreen}
             options={{title: 'Low Level Functions'}}
+          />
+          <Stack.Screen
+            name="HighLevelFns"
+            component={HighLevelFnsScreen}
+            options={{title: 'High Level Functions'}}
           />
           <Stack.Screen
             name="Notification"
