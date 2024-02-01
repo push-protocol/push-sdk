@@ -50,6 +50,7 @@ export enum GroupEventType {
   UpdateGroup = 'updateGroup',
   JoinGroup = 'joinGroup',
   LeaveGroup = 'leaveGroup',
+  RoleChange = 'roleChange',
   Remove = 'remove',
 }
 
