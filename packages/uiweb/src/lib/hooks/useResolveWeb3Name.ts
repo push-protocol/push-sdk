@@ -11,35 +11,10 @@ import type { ChatMainStateContextType } from '../context/chatAndNotification/ch
 
 
 // Internal Configs
-import { getUdResolver, pCAIP10ToWallet } from '../helpers';
+import { getEnsName, getUdResolver, getUnstoppableName, pCAIP10ToWallet } from '../helpers';
 import { Web3NameListType } from '../types';
 
-const getEnsName = async (provider: ethers.providers.BaseProvider | any, checksumWallet: string,setWeb3Name:(id:string,web3Name:string) => void) => {
-  let ensName: string | null= null;
-  provider.lookupAddress(checksumWallet).then(async (ens:string) => {
-    if (ens) {
-      ensName = ens;
-      setWeb3Name(checksumWallet.toLowerCase(),ensName)
-    } else {
-      ensName = null;
-    }
-  });
-  return ensName;
-};
 
-const getUnstoppableName = async (checksumWallet: string,setWeb3Name:(id:string,web3Name:string) => void,env:Env) => {
-  // Unstoppable Domains resolution library
-  const udResolver = getUdResolver(env);
-
-  // attempt reverse resolution on provided address
-  let udName = await udResolver.reverse(checksumWallet);
-  if (udName) {
-    setWeb3Name(checksumWallet.toLowerCase(),udName)
-  } else {
-    udName = null;
-  }
-  return udName;
-};
 
 export function useResolveWeb3Name(address: string,env:Env) {
 

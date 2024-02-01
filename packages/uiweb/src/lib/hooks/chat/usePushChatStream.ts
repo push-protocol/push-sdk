@@ -68,7 +68,7 @@ export const usePushChatStream = () => {
          if (chatops.event === 'chat.group.update') {
           setGroupUpdateStream(chatops);
         }
-        else if (chatops.event === 'chat.group.update') {
+        else if (chatops.event === 'chat.group.create') {
           setGroupCreateStream(chatops);
         }
     });

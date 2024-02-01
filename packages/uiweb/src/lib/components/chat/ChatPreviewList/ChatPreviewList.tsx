@@ -59,7 +59,7 @@ interface IChatPreviewListMeta {
 }
 
 // Define Constants
-const CHAT_PAGE_LIMIT = 20;
+const CHAT_PAGE_LIMIT = 10;
 const SCROLL_LIMIT = 25;
 
 export const ChatPreviewList: React.FC<IChatPreviewListProps> = (

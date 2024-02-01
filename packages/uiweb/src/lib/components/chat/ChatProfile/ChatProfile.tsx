@@ -49,7 +49,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
   const [options, setOptions] = useState(false);
   const [chatInfo, setChatInfo] = useState<IUser | null>();
   const [groupInfo, setGroupInfo] = useState<Group | null>();
-  const [ensName, setEnsName] = useState<string | undefined>('');
+  const [web3Name, setWeb3Name] = useState<string | null>(null);
   const isMobile = useMediaQuery(device.tablet);
   const l1ChainId = allowedNetworks[env].includes(1) ? 1 : 5;
   const provider = new ethers.providers.InfuraProvider(l1ChainId, InfuraAPIKey);
@@ -67,8 +67,8 @@ export const ChatProfile: React.FC<IChatProfile> = ({
   const fetchProfileData = async () => {
     if (isValidETHAddress(chatId)) {
       const ChatProfile = await fetchChatProfile({ profileId: chatId ,env});
-      const result = await resolveNewEns(chatId, provider);
-      setEnsName(result);
+      const result = await resolveNewEns(chatId, provider,env);
+      setWeb3Name(result);
       setChatInfo(ChatProfile);
       setGroupInfo(null);
       // setIsGroup(false);
@@ -94,15 +94,15 @@ export const ChatProfile: React.FC<IChatProfile> = ({
   const getProfileName = () => {
     return (Object.keys(groupInfo||{}).length)
       ? groupInfo?.groupName
-      : ensName
-      ? `${ensName} (${
+      : web3Name
+      ? `${web3Name} (${
           isMobile
-            ? shortenText(chatInfo?.did?.split(':')[1] ?? '', 4, true)
+            ? shortenText((chatInfo?.did)?.split(':')[1] ?? '', 4, true)
             : chatId
         })`
       : chatInfo
       ? shortenText(chatInfo.did?.split(':')[1] ?? '', 6, true)
-      : shortenText(chatId, 6, true);
+      : shortenText(chatId?.split(':')[1], 6, true);
   };
 
   useEffect(() => {
