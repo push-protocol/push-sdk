@@ -95,7 +95,7 @@ import { useSpaceComponents } from './SpaceUITest/useSpaceComponents';
 import GetGroupMemberCountTest from './ChatTest/GetGroupMemberCountTest';
 import GetGroupInfoTest from './ChatTest/GetGroupInfoTest';
 import GetGroupMembersTest from './ChatTest/GetGroupMembersTest';
-
+import VideoV2 from './Video';
 
 window.Buffer = window.Buffer || Buffer;
 
@@ -364,6 +364,9 @@ export function App() {
                             <Link to="/chatUI" className="nav-button">
                               CHAT UI
                             </Link>
+                            <Link to="/video" className="nav-button">
+                              VIDEO
+                            </Link>
                             <Link to="/space" className="nav-button">
                               SPACE
                             </Link>
@@ -390,6 +393,7 @@ export function App() {
                       <Route path="/chat" element={<ChatTest />} />
                       <Route path="/space" element={<SpaceTest />} />
                       <Route path="/chatUI" element={<ChatUITest />} />
+                      <Route path="/video" element={<VideoV2 />} />
                       <Route path="/spaceUI" element={<SpaceUITest />} />
                       {/* chat method  routes */}
                       <Route path="/get" element={<GetUserTest />} />
