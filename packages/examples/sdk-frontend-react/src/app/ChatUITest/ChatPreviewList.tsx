@@ -46,7 +46,7 @@ const ChatPreviewListTest = () => {
             onPaging={(chats) => { console.log("paging chats are: ", chats) }}
             onPreload={(chats) => { console.log("preload chats are: ", chats) }}
           // listType='SEARCH'
-          // searchParamter='fabio.eth'
+          // searchParamter='0x784546737C60d54946B3De932f2246187c7E1dD9'
         />
       </div>
     </>

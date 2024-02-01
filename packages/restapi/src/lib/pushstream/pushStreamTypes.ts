@@ -51,6 +51,7 @@ export enum GroupEventType {
   JoinGroup = 'joinGroup',
   LeaveGroup = 'leaveGroup',
   Remove = 'remove',
+  RoleChange = 'roleChange'
 }
 
 export enum VideoEventType {
