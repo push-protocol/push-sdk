@@ -2,6 +2,18 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.41](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.40...uiweb-0.0.1-alpha.41) (2024-02-01)
+
+
+### Bug Fixes
+
+* fixed length issue in test ([7be33d9](https://github.com/ethereum-push-notification-service/push-sdk/commit/7be33d910d7a42fa440de62685590b4c49ba9911))
+* fixed preview bugs ([#1078](https://github.com/ethereum-push-notification-service/push-sdk/issues/1078)) ([9961ab7](https://github.com/ethereum-push-notification-service/push-sdk/commit/9961ab74af9f5c75d866d44eb4dee3c971f13ea9))
+* Merge branch 'alpha' into alpha-deployment ([e3d08bb](https://github.com/ethereum-push-notification-service/push-sdk/commit/e3d08bbefa688107bfc7cdbc8d0e2e360ffedbab))
+* removed console ([78483d6](https://github.com/ethereum-push-notification-service/push-sdk/commit/78483d64e0fbaf4e46ee5f18b06c5575e14aa7c6))
+
+
+
 ## [0.0.1-alpha.40](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.39...uiweb-0.0.1-alpha.40) (2024-01-29)
 
 
