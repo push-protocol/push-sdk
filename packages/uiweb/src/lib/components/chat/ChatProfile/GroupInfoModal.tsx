@@ -270,7 +270,7 @@ const GroupInformation = ({
   setShowAddMoreWalletModal,
   membersCount,
 }: GroupSectionProps) => {
-  const { account } = useChatData();
+  const { account,user } = useChatData();
   const [accountStatus, setAccountStatus] = useState<ParticipantStatus | null>(
     null
   );
@@ -505,7 +505,7 @@ export const GroupInfoModal = ({
     loading: false,
   });
   const { fetchMembers, loading: membersLoading } = useGroupMemberUtilities();
-
+  const {user} = useChatData();
   const { addMember } = useUpdateGroup();
   const { fetchMembersCount } = useGroupMemberUtilities();
   const { fetchChatProfile } = useChatProfile();
@@ -631,7 +631,7 @@ export const GroupInfoModal = ({
       ...prevMembers,
       pending: [
         ...prevMembers!.pending,
-        ...(fetchedPendingMembers!.members as ChatMemberProfile[]),
+        ...(fetchedPendingMembers?.members || [] as ChatMemberProfile[]),
       ]
         .slice()
         .filter(
@@ -639,6 +639,8 @@ export const GroupInfoModal = ({
             index === self.findIndex((t) => t.address === item.address)
         ),
     }));
+    
+     
   };
   const fetchAcceptedMembers = async (page: number): Promise<void> => {
     const fetchedAcceptedMembers = await fetchMembers({
@@ -647,6 +649,7 @@ export const GroupInfoModal = ({
       limit: ACCEPTED_MEMBERS_LIMIT,
     });
     if (!fetchedAcceptedMembers?.members.length)
+    
       setAcceptedMemberPaginationData((prev: MemberPaginationData) => ({
         ...prev,
         finishedFetching: true,
@@ -655,7 +658,7 @@ export const GroupInfoModal = ({
       ...prevMembers,
       accepted: [
         ...prevMembers!.accepted,
-        ...(fetchedAcceptedMembers!.members as ChatMemberProfile[]),
+        ...(fetchedAcceptedMembers?.members || [] as ChatMemberProfile[]),
       ]
         .slice()
         .filter(
@@ -663,6 +666,7 @@ export const GroupInfoModal = ({
             index === self.findIndex((t) => t.address === item.address)
         ),
     }));
+    
   };
 
   const initialiseMemberPaginationData = async (
@@ -741,7 +745,7 @@ export const GroupInfoModal = ({
   };
   const transformParticipantJoin = async (item: any): Promise<void> => {
     if (groupInfo?.chatId === item?.chatId) {
-      const profile = await fetchChatProfile({ profileId: item?.from });
+      const profile = await fetchChatProfile({ profileId: item?.from,user });
       const transformedProfile = transformIUserToChatMemberProfile(profile,true);
       addAcceptedMember([transformedProfile]);
     }

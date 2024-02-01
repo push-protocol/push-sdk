@@ -14,3 +14,4 @@ export * from './OptionButtons';
 export * from './Checkbox';
 export * from './InfoContainer';
 export * from './AddWallets';
+export * from './AutoImageClipper';

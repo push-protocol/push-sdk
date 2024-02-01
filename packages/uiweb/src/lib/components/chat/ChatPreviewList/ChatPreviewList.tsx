@@ -593,6 +593,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
             //fetch  profile
             userProfile = await fetchChatProfile({
               profileId: formattedChatId,
+              user
             });
           } else {
             //fetch group info

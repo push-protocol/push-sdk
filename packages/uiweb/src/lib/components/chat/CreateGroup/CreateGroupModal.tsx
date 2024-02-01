@@ -21,7 +21,7 @@ import {
   useCriteriaStateManager,
 } from '../../../hooks/chat/useCriteriaState';
 import { AddGroupMembers } from './AddGroupMembers';
-import AutoImageClipper from './AutoImageClipper';
+import AutoImageClipper from '../reusables/AutoImageClipper';
 import { useCreateGatedGroup } from '../../../hooks/chat/useCreateGatedGroup';
 import useToast from '../reusables/NewToast';
 

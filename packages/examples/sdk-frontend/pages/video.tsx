@@ -113,7 +113,9 @@ const Home: NextPage = () => {
       rules: {
         access: {
           type: VIDEO_NOTIFICATION_ACCESS_TYPE.PUSH_CHAT,
-          data: data.meta.chatId
+          data: {
+            chatId: data.meta.chatId
+          }
         }
       }
     });
@@ -173,7 +175,9 @@ const Home: NextPage = () => {
           rules: {
             access: {
               type: VIDEO_NOTIFICATION_ACCESS_TYPE.PUSH_CHAT,
-              data: data.meta.chatId
+              data: {
+                chatId: data.meta.chatId
+              }
             }
           }
         });
@@ -231,7 +235,9 @@ const Home: NextPage = () => {
         rules: {
           access: {
             type: VIDEO_NOTIFICATION_ACCESS_TYPE.PUSH_CHAT,
-            data: data.meta.chatId
+            data: {
+              chatId: data.meta.chatId
+            }
           }
         },
         retry: true,
@@ -247,7 +253,9 @@ const Home: NextPage = () => {
         rules: {
           access: {
             type: VIDEO_NOTIFICATION_ACCESS_TYPE.PUSH_CHAT,
-            data: data.meta.chatId
+            data: {
+              chatId: data.meta.chatId
+            }
           }
         },
         retry: true,

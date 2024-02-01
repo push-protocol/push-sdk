@@ -69,7 +69,7 @@ export const ChatUIProvider = ({
         setAccountVal(address);
       } else if (!signer && user) {
         const profile = await fetchChatProfile({user});
-        setAccountVal(profile?.wallets);
+        setAccountVal(pCAIP10ToWallet(profile?.wallets));
       } else {
         setAccountVal(GUEST_MODE_ACCOUNT);
       }
@@ -82,7 +82,7 @@ export const ChatUIProvider = ({
   useEffect(() => {
     (async () => {
 
-      if (accountVal && envVal && !userVal ) {
+      if (accountVal && envVal && !userVal) {
         const pushUser = await initializeUser({
           signer: signerVal,
           account: accountVal!,
