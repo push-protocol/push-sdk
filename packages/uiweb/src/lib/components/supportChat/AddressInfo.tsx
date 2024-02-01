@@ -7,7 +7,7 @@ import { CopySvg } from '../../icons/CopySvg';
 import { ethers } from 'ethers';
 
 export const AddressInfo: React.FC = () => {
-  const { supportAddress, env, theme, pushUser } = useContext<any>(SupportChatPropsContext);
+  const { supportAddress, env, theme, user:pushUser } = useContext<any>(SupportChatPropsContext);
   const [ensName, setEnsName] = useState<string>('');
   const [user, setUser] = useState<any>({});
   const [isCopied, setIsCopied] = useState<boolean>(false);
@@ -17,11 +17,11 @@ export const AddressInfo: React.FC = () => {
 
   useEffect(() => {
     const getUser = async () => {
-if(pushUser){
-  const user = await pushUser.info();
+if(user){
+  const fetchedUser = await user.info();
 //  const ensNameResult = await resolveNewEns(supportAddress, provider) 
 //   setEnsName(ensNameResult!)
-      setUser(user);
+      setUser(fetchedUser);
 }
       
     };

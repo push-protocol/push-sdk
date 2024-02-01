@@ -1,4 +1,4 @@
-export * from './useFetchHistoryMessages';
+export * from './useFetchMessageUtilities';
 export * from './useChatData';
 
 export * from './useChatProfile';
@@ -8,6 +8,8 @@ export * from  './usePushSendMessage';
 export * from './useGetGroupByID';
 export * from './useAccount';
 export * from './useUpdateGroup';
-export * from './useInitializePushUser';
+export * from './useInitializeUser';
 export * from './usePushChatStream';
-export * from './usePushUserInfoUtilities';
+
+export * from './useGroupMemberUtilities';
+export * from './useUserInfoUtilities';

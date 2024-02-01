@@ -12,12 +12,12 @@ export type SDKSocketHookOptions = {
   env?: ENV,
   socketType?: 'chat' | 'notification',
   apiKey: string,
-  pushUser: PushAPI ,
+  user: PushAPI ,
   supportAddress: string | null,
     signer: SignerType | null
 };
 
-export const useSDKSocket =({ account, env = ENV.PROD, socketType = 'chat',apiKey, pushUser, supportAddress, signer }: SDKSocketHookOptions) => {
+export const useSDKSocket =({ account, env = ENV.PROD, socketType = 'chat',apiKey, user, supportAddress, signer }: SDKSocketHookOptions) => {
   
   // const [epnsSDKSocket, setEpnsSDKSocket] = useState<any>(null);
   const [messagesSinceLastConnection, setMessagesSinceLastConnection] = useState<any>('');
@@ -82,7 +82,7 @@ export const useSDKSocket =({ account, env = ENV.PROD, socketType = 'chat',apiKe
         stream?.disconnect();
       }
       const main = async () => {
-        const newstream = await pushUser.initStream(
+        const newstream = await user.initStream(
           [
             CONSTANTS.STREAM.CHAT,
           ],
@@ -99,7 +99,7 @@ export const useSDKSocket =({ account, env = ENV.PROD, socketType = 'chat',apiKe
     }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, env, pushUser, supportAddress, signer, isSDKSocketConnected]);
+  }, [account, env, user, supportAddress, signer, isSDKSocketConnected]);
 
   return {
       stream,

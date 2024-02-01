@@ -9,11 +9,7 @@ import {
 import moment from 'moment';
 import styled from 'styled-components';
 
-import { IChatViewListProps } from '../exportedTypes';
 import { chatLimit } from '../../../config';
-import useFetchHistoryMessages from '../../../hooks/chat/useFetchHistoryMessages';
-import { Section, Span, Spinner } from '../../reusables';
-import { ChatViewBubble } from '../ChatViewBubble';
 import {
   appendUniqueMessages,
   checkIfIntent,
@@ -25,15 +21,19 @@ import {
   walletToPCAIP10,
 } from '../../../helpers';
 import { useChatData, usePushChatSocket } from '../../../hooks';
+import useFetchMessageUtilities from '../../../hooks/chat/useFetchMessageUtilities';
+import { Section, Span, Spinner } from '../../reusables';
+import { ChatViewBubble } from '../ChatViewBubble';
+import { IChatViewListProps } from '../exportedTypes';
 import { IGroup, Messagetype } from '../../../types';
-import { ThemeContext } from '../theme/ThemeProvider';
 import { IChatTheme } from '../theme';
+import { ThemeContext } from '../theme/ThemeProvider';
 
-import { ENCRYPTION_KEYS, EncryptionMessage } from './MessageEncryption';
+import useFetchChat from '../../../hooks/chat/useFetchChat';
 import useGetGroup from '../../../hooks/chat/useGetGroup';
 import useGetChatProfile from '../../../hooks/useGetChatProfile';
-import useFetchChat from '../../../hooks/chat/useFetchChat';
 import { ApproveRequestBubble } from './ApproveRequestBubble';
+import { ENCRYPTION_KEYS, EncryptionMessage } from './MessageEncryption';
 
 /**
  * @interface IThemeProps
@@ -59,8 +59,8 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   const [messages, setMessages] = useState<Messagetype>();
   const [loading, setLoading] = useState<boolean>(true);
   const [conversationHash, setConversationHash] = useState<string>();
-  const { historyMessages, loading: messageLoading } =
-    useFetchHistoryMessages();
+  const { historyMessages, historyLoading: messageLoading } =
+  useFetchMessageUtilities();
   const listInnerRef = useRef<HTMLDivElement>(null);
   const [isMember, setIsMember] = useState<boolean>(false);
   const { fetchChat } = useFetchChat();
@@ -135,7 +135,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
 
   //moniters socket changes
   useEffect(() => {
-    if (checkIfSameChat(messagesSinceLastConnection, account!, chatId.includes(":") ? chatId.split(":")[1] : chatId)) {
+    if (checkIfSameChat(messagesSinceLastConnection, account!, chatId)) {
       const updatedChatFeed = chatFeed;
       updatedChatFeed.msg = messagesSinceLastConnection;
       if (!Object.keys(messages || {}).length) {

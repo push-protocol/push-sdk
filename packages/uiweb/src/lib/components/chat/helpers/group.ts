@@ -1,16 +1,5 @@
-import { pCAIP10ToWallet } from '../../../helpers';
-import { IGroup } from '../../../types';
-
-export const getAdminList = (groupInformation: IGroup): Array<string> => {
-  const adminsFromMembers = convertToWalletAddressList(
-    groupInformation?.members.filter((admin) => admin.isAdmin == true)
-  );
-  const adminsFromPendingMembers = convertToWalletAddressList(
-    groupInformation?.pendingMembers.filter((admin) => admin.isAdmin == true)
-  );
-  const adminList = [...adminsFromMembers, ...adminsFromPendingMembers];
-  return adminList;
-};
+import { ChatMemberProfile, IUser } from '@pushprotocol/restapi';
+import { GROUP_ROLES } from '../types';
 
 export const convertToWalletAddressList = (
   memberList: { wallet: string }[]
@@ -18,39 +7,37 @@ export const convertToWalletAddressList = (
   return memberList ? memberList.map((member) => member.wallet) : [];
 };
 
-export const getUpdatedMemberList = (
-  groupInfo: IGroup,
-  walletAddress: string
-): Array<string> => {
-  const members = groupInfo?.members?.filter(
-    (i) => i.wallet?.toLowerCase() !== walletAddress?.toLowerCase()
-  );
-  return convertToWalletAddressList([...members, ...groupInfo.pendingMembers]);
-};
+export const isAdmin = (member:ChatMemberProfile):boolean=>{
 
-export const getUpdatedAdminList = (
-  groupInfo: IGroup,
-  walletAddress: string | null,
-  toRemove: boolean
-): Array<string> => {
-  const groupAdminList: any = getAdminList(groupInfo);
-  if (!toRemove) {
-    return [...groupAdminList, walletAddress];
-  } else {
-    const newAdminList = groupAdminList.filter(
-      (wallet: any) => wallet.toLowerCase() !== walletAddress?.toLowerCase()
-    );
-    return newAdminList;
-  }
-};
-
-export const isAccountOwnerAdmin = (groupInfo: IGroup, account: string) => {
-  if (account && groupInfo) {
-    return groupInfo?.members?.some(
-      (member) =>
-        pCAIP10ToWallet(member?.wallet)?.toLowerCase() ===
-          account?.toLowerCase() && member?.isAdmin
-    );
+  if(member?.role === GROUP_ROLES.ADMIN.toLowerCase())
+  {
+    return true;
   }
   return false;
+}
+
+export   const transformIUserToChatMemberProfile = (
+  profile: IUser,
+  intent: boolean
+) => {
+  const transformedProfile: ChatMemberProfile = {
+    address: profile.wallets,
+    intent: intent,
+    role: GROUP_ROLES.MEMBER,
+    userInfo: {
+      msgSent: profile.msgSent,
+      maxMsgPersisted: profile.maxMsgPersisted,
+      did: profile.did,
+      wallets: profile.wallets,
+      profile: profile.profile,
+      encryptedPrivateKey: profile.encryptedPrivateKey,
+      publicKey: profile.publicKey,
+      verificationProof: profile.verificationProof,
+      origin: profile.origin,
+    },
+  };
+  return transformedProfile;
 };
+
+
+

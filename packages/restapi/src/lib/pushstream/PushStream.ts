@@ -1,21 +1,21 @@
 import { EventEmitter } from 'events';
-import { createSocketConnection } from './socketClient';
+import { ALPHA_FEATURE_CONFIG } from '../config';
 import { ENV, PACKAGE_BUILD } from '../constants';
+import { pCAIP10ToWallet, walletToPCAIP10 } from '../helpers';
+import { ADDITIONAL_META_TYPE } from '../payloads';
+import { Chat } from '../pushapi/chat';
+import { ProgressHookType, SignerType } from '../types';
+import { DataModifier } from './DataModifier';
 import {
+  EVENTS,
   GroupEventType,
   MessageEventType,
   MessageOrigin,
   NotificationEventType,
   PushStreamInitializeProps,
-  STREAM,
-  EVENTS
+  STREAM
 } from './pushStreamTypes';
-import { DataModifier } from './DataModifier';
-import { pCAIP10ToWallet, walletToPCAIP10 } from '../helpers';
-import { Chat } from '../pushapi/chat';
-import { ProgressHookType, SignerType } from '../types';
-import { ALPHA_FEATURE_CONFIG } from '../config';
-import { ADDITIONAL_META_TYPE } from '../payloads';
+import { createSocketConnection } from './socketClient';
 
 export class PushStream extends EventEmitter {
   private pushChatSocket: any;
@@ -26,6 +26,7 @@ export class PushStream extends EventEmitter {
   private options: PushStreamInitializeProps;
   private chatInstance: Chat;
   private listen: STREAM[];
+  private disconnected: boolean;
 
   constructor(
     account: string,
@@ -42,7 +43,7 @@ export class PushStream extends EventEmitter {
     this.raw = options.raw ?? false;
     this.options = options;
     this.listen = _listen;
-
+    this.disconnected = false;
     this.chatInstance = new Chat(
       this.account,
       this.options.env as ENV,
@@ -105,7 +106,7 @@ export class PushStream extends EventEmitter {
       !this.listen ||
       this.listen.length === 0 ||
       this.listen.includes(STREAM.NOTIF) ||
-      this.listen.includes(STREAM.NOTIF_OPS) || 
+      this.listen.includes(STREAM.NOTIF_OPS) ||
       this.listen.includes(STREAM.VIDEO);
 
     let isChatSocketConnected = false;
@@ -325,7 +326,9 @@ export class PushStream extends EventEmitter {
             // Video Notification
             const modifiedData = DataModifier.mapToVideoEvent(
               data,
-              this.account === data.sender ? MessageOrigin.Self : MessageOrigin.Other,
+              this.account === data.sender
+                ? MessageOrigin.Self
+                : MessageOrigin.Other,
               this.raw
             );
 
@@ -380,6 +383,15 @@ export class PushStream extends EventEmitter {
         }
       });
     }
+
+    this.disconnected = false;
+  }
+
+  public connected(): boolean {
+    return (
+      (this.pushNotificationSocket && this.pushNotificationSocket.connected) ||
+      (this.pushChatSocket && this.pushChatSocket.connected)
+    );
   }
 
   public async disconnect(): Promise<void> {
