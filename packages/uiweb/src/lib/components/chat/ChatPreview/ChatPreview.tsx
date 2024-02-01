@@ -9,6 +9,9 @@ import { IChatPreviewProps } from '../exportedTypes';
 import { IChatTheme } from '../theme';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { formatAddress, formatDate } from '../helpers';
+import { resolveNewEns, shortenText } from '../../../helpers';
+import { CoreContractChainId, InfuraAPIKey } from '../../../config';
+import { ethers } from 'ethers';
 
 /**
  * @interface IThemeProps
@@ -24,16 +27,32 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
 ) => {
   const theme = useContext(ThemeContext);
   const {env} = useChatData();
+  const provider = new ethers.providers.InfuraProvider(CoreContractChainId[env], InfuraAPIKey);
   const [formattedAddress,setFormattedAddress] = useState<string>('');
+  const [web3Name, setWeb3Name] = useState<string | null>(null);
 
   useEffect(()=>{
     (async()=>{
     const address = await formatAddress(options.chatPreviewPayload,env);
     setFormattedAddress(address);
+    if(!options.chatPreviewPayload?.chatGroup){
+      const result = await resolveNewEns(address, provider,env);
+      console.log(result)
+      setWeb3Name(result);
+    }
     })();
 
 
   },[])
+
+  const getProfileName = (formattedAddress:string) => {
+    return options.chatPreviewPayload?.chatGroup
+      ? formattedAddress
+      : web3Name
+      ? web3Name
+      : formattedAddress
+      
+  };
 
 
   return (
@@ -93,7 +112,7 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
             overflow="hidden"
             flex="1"
           >
-            <Account theme={theme}>{ formattedAddress}</Account>
+            <Account theme={theme}>{ shortenText(getProfileName(formattedAddress),8,true) ||  formattedAddress}</Account>
             <Dated theme={theme}>{formatDate(options.chatPreviewPayload)}</Dated>
           </Section>
           <Section
@@ -142,10 +161,11 @@ const Account = styled.div<IThemeProps>`
   flex: 1;
   align-self: stretch;
   text-align: start;
-  text-overflow: ellipsis;
+  // text-overflow: ellipsis ellipsis;
   white-space: nowrap;
   overflow: hidden;
   margin-right: 10px;
+
 `;
 
 const Dated = styled.div<IThemeProps>`
@@ -162,7 +182,7 @@ const Message = styled.div<IThemeProps>`
   flex: 1;
   align-self: stretch;
   text-align: start;
-  text-overflow: ellipsis;
+  // text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
   margin-right: 10px;
