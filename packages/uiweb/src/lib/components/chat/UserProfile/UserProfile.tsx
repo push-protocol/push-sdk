@@ -30,7 +30,7 @@ export const UserProfile : React.FC<UserProfileProps> = ({
   updateUserProfileModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
   updateUserProfileModalPositionType = MODAL_POSITION_TYPE.GLOBAL
 }) => {
-  const { env, signer, account, user } = useChatData();
+  const {  account, user } = useChatData();
   const [userProfile, setUserProfile] = useState<IUser>();
   const [options, setOptions] = useState<boolean>();
   const [showUpdateUserProfileModal,setShowUpdateUserProfileModal] = useState<boolean>(false);
@@ -43,9 +43,9 @@ export const UserProfile : React.FC<UserProfileProps> = ({
 
   useEffect(() => {
     (async () => {
-      const user = await fetchChatProfile({});
-      if (user) {
-        setUserProfile(user);
+      const fetchedUser = await fetchChatProfile({});
+      if (fetchedUser) {
+        setUserProfile(fetchedUser);
       }
     })();
   }, [account, user]);
@@ -54,7 +54,6 @@ export const UserProfile : React.FC<UserProfileProps> = ({
     setOptions(false);
   });
 
-  console.log(userProfile)
   return (
     <>
     <Conatiner
@@ -76,7 +75,7 @@ export const UserProfile : React.FC<UserProfileProps> = ({
           fontWeight: theme?.fontWeight?.userProfileText,
            textColor: theme?.textColor?.userProfileText}}
       />
-      {user && (
+      {userProfile && (
         <Section>
           <Image
             src={VerticalEllipsisIcon}
@@ -101,7 +100,7 @@ export const UserProfile : React.FC<UserProfileProps> = ({
                   cursor="pointer"
                 />
 
-                <TextItem cursor="pointer" >Update Profile</TextItem>
+                <TextItem cursor="pointer" >Edit Profile</TextItem>
               </DropDownItem>
             </DropDownBar>
           )}
@@ -110,6 +109,7 @@ export const UserProfile : React.FC<UserProfileProps> = ({
               theme={theme}
               setModal={setShowUpdateUserProfileModal}
               userProfile={userProfile!}
+              setUserProfile = {setUserProfile}
               updateUserProfileModalBackground={updateUserProfileModalBackground}
               updateUserProfileModalPositionType={updateUserProfileModalPositionType}
             />

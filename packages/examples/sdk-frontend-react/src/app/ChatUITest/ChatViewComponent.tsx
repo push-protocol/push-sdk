@@ -18,7 +18,7 @@ const ChatViewComponentTest = () => {
 
         <ChatView 
           onVerificationFail={() => console.log("Verification Failed")} 
-          chatId='4ac5ab85c9c3d57adbdf2dba79357e56b2f9ef0256befe750d9f93af78d2ca68' 
+          chatId='d9c2d6fa7132d49ea6d1b570f0ebd2bcc45c1ecac726eab993ad91c574fbe3c6' 
           chatProfileHelperComponent={<div style={{display: "flex"}}><a href="https://github.com" target="_blank" rel="noreferrer">Custom Comp</a></div>}
           limit={10}
           isConnected={true} 

@@ -10,50 +10,46 @@ import { ToastContainer } from 'react-toastify';
 import { Image, Section, Span } from '../../reusables';
 import { useChatData, useClickAway } from '../../../hooks';
 import { ThemeContext } from '../theme/ThemeProvider';
-import useGetGroupByID from '../../../hooks/chat/useGetGroupByID';
+import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
 import useChatProfile from '../../../hooks/chat/useChatProfile';
 import { GroupInfoModal } from './GroupInfoModal';
 import useMediaQuery from '../../../hooks/useMediaQuery';
 import { createBlockie } from '../../space/helpers/blockies';
 import { ProfileContainer } from '../reusables';
 import 'react-toastify/dist/ReactToastify.min.css';
-
-import { IGroup } from '../../../types';
-import { isValidETHAddress } from '../helpers/helper';
 import {
+  Group,
   IChatProfile,
   MODAL_BACKGROUND_TYPE,
   MODAL_POSITION_TYPE,
-
 } from '../exportedTypes';
+
 import { InfuraAPIKey, allowedNetworks, device } from '../../../config';
 import { resolveNewEns, shortenText } from '../../../helpers';
-
+import { isValidETHAddress } from '../helpers/helper';
 import PublicChatIcon from '../../../icons/Public-Chat.svg';
 import GreyImage from '../../../icons/greyImage.png';
 import InfoIcon from '../../../icons/infodark.svg';
 import VerticalEllipsisIcon from '../../../icons/VerticalEllipsis.svg';
 import { TokenGatedSvg } from '../../../icons/TokenGatedSvg';
-import useGetChatProfile from '../../../hooks/useGetChatProfile';
 
 
 export const ChatProfile: React.FC<IChatProfile> = ({
   chatId,
-  style,
   groupInfoModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
   groupInfoModalPositionType = MODAL_POSITION_TYPE.GLOBAL,
   chatProfileHelperComponent=null,
 }) => {
   const theme = useContext(ThemeContext);
-  const { account, env } = useChatData();
-  const { getGroupByID } = useGetGroupByID();
-  const { fetchChatProfile } = useGetChatProfile();
+  const { account, env, user } = useChatData();
+  const { getGroupByIDnew } = useGetGroupByIDnew();
+  const { fetchChatProfile } = useChatProfile();
 
-  const [isGroup, setIsGroup] = useState<boolean>(false);
+  // const [isGroup, setIsGroup] = useState<boolean>(false);
   const [options, setOptions] = useState(false);
   const [chatInfo, setChatInfo] = useState<IUser | null>();
-  const [groupInfo, setGroupInfo] = useState<IGroup | null>();
-  const [ensName, setEnsName] = useState<string | undefined>('');
+  const [groupInfo, setGroupInfo] = useState<Group | null>();
+  const [web3Name, setWeb3Name] = useState<string | null>(null);
   const isMobile = useMediaQuery(device.tablet);
   const l1ChainId = allowedNetworks[env].includes(1) ? 1 : 5;
   const provider = new ethers.providers.InfuraProvider(l1ChainId, InfuraAPIKey);
@@ -70,23 +66,23 @@ export const ChatProfile: React.FC<IChatProfile> = ({
 
   const fetchProfileData = async () => {
     if (isValidETHAddress(chatId)) {
-      const ChatProfile = await fetchChatProfile({ profileId: chatId,env });
-      const result = await resolveNewEns(chatId, provider);
-      setEnsName(result);
+      const ChatProfile = await fetchChatProfile({ profileId: chatId ,env});
+      const result = await resolveNewEns(chatId, provider,env);
+      setWeb3Name(result);
       setChatInfo(ChatProfile);
       setGroupInfo(null);
-      setIsGroup(false);
+      // setIsGroup(false);
     } else {
-      const GroupProfile = await getGroupByID({ groupId: chatId });
+      const GroupProfile = await getGroupByIDnew({ groupId: chatId });
       setGroupInfo(GroupProfile);
       setChatInfo(null);
-      setIsGroup(true);
+      // setIsGroup(true);
     }
   };
 
   const getImage = () => {
     if (chatInfo || groupInfo) {
-      return isGroup
+      return (Object.keys(groupInfo||{}).length)
         ? groupInfo?.groupImage ?? GreyImage
         : chatInfo?.profile?.picture ??
             createBlockie?.(chatId)?.toDataURL()?.toString();
@@ -96,25 +92,26 @@ export const ChatProfile: React.FC<IChatProfile> = ({
   };
 
   const getProfileName = () => {
-    return isGroup
+    return (Object.keys(groupInfo||{}).length)
       ? groupInfo?.groupName
-      : ensName
-      ? `${ensName} (${
+      : web3Name
+      ? `${web3Name} (${
           isMobile
-            ? shortenText(chatInfo?.did?.split(':')[1] ?? '', 4, true)
+            ? shortenText((chatInfo?.did)?.split(':')[1] ?? '', 4, true)
             : chatId
         })`
       : chatInfo
       ? shortenText(chatInfo.did?.split(':')[1] ?? '', 6, true)
-      : shortenText(chatId, 6, true);
+      : shortenText(chatId?.split(':')[1], 6, true);
   };
 
   useEffect(() => {
     if (!chatId) return;
     fetchProfileData();
-  }, [chatId, account, env]);
+  }, [chatId, account, user]);
 
-  if (chatId && style === 'Info') {
+
+  if (chatId ) {
     return (
       <Container theme={theme}>
         <ProfileContainer
@@ -134,8 +131,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
               {chatProfileHelperComponent}
             </Section>
           )}
-          {(groupInfo?.rules?.chat?.conditions ||
-            groupInfo?.rules?.entry?.conditions) && <TokenGatedSvg />}
+        {!!(Object.keys(groupInfo?.rules||{}).length) && <TokenGatedSvg />}
           {!!groupInfo?.isPublic && (
             <Image
               src={PublicChatIcon}
@@ -145,7 +141,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
             />
           )}
 
-          {!!groupInfo && isGroup && (
+          {!!(Object.keys(groupInfo||{}).length) && (
             <ImageItem onClick={() => setOptions(true)}>
               <Image
                 src={VerticalEllipsisIcon}

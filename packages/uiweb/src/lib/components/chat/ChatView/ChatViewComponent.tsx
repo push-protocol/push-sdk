@@ -75,7 +75,6 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
           <ChatProfile
             chatProfileHelperComponent={chatProfileHelperComponent}
             chatId={chatId}
-            style="Info"
             groupInfoModalBackground={groupInfoModalBackground}
             groupInfoModalPositionType={groupInfoModalPositionType}
           />}
