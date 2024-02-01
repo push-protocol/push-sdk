@@ -97,10 +97,10 @@ export const getAddress = async (searchText: string, env: Env) => {
       try {
         address = await provider.resolveName(searchText);
       } catch (err) {
-        console.log(err);
+        console.debug(err);
       }
    
-    console.log(err);
+    console.debug(err);
   }
 
     return address || null;

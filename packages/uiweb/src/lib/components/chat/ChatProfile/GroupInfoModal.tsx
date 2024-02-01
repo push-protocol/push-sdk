@@ -270,7 +270,7 @@ const GroupInformation = ({
   setShowAddMoreWalletModal,
   membersCount,
 }: GroupSectionProps) => {
-  const { account } = useChatData();
+  const { account,user } = useChatData();
   const [accountStatus, setAccountStatus] = useState<ParticipantStatus | null>(
     null
   );
@@ -505,7 +505,7 @@ export const GroupInfoModal = ({
     loading: false,
   });
   const { fetchMembers, loading: membersLoading } = useGroupMemberUtilities();
-
+  const {user} = useChatData();
   const { addMember } = useUpdateGroup();
   const { fetchMembersCount } = useGroupMemberUtilities();
   const { fetchChatProfile } = useChatProfile();
@@ -745,7 +745,7 @@ export const GroupInfoModal = ({
   };
   const transformParticipantJoin = async (item: any): Promise<void> => {
     if (groupInfo?.chatId === item?.chatId) {
-      const profile = await fetchChatProfile({ profileId: item?.from });
+      const profile = await fetchChatProfile({ profileId: item?.from,user });
       const transformedProfile = transformIUserToChatMemberProfile(profile,true);
       addAcceptedMember([transformedProfile]);
     }

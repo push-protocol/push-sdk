@@ -11,6 +11,7 @@ import useMediaQuery from '../../../hooks/useMediaQuery';
 import { shortenText } from '../../../helpers';
 
 import VerticalEllipsisIcon from '../../../icons/VerticalEllipsis.svg';
+import UserProfileIcon from '../../../icons/userCircleGear.svg';
 import { ProfileContainer } from '../reusables';
 import { IUser } from '@pushprotocol/restapi';
 import useChatProfile from '../../../hooks/chat/useChatProfile';
@@ -43,7 +44,7 @@ export const UserProfile : React.FC<UserProfileProps> = ({
 
   useEffect(() => {
     (async () => {
-      const fetchedUser = await fetchChatProfile({});
+      const fetchedUser = await fetchChatProfile({user});
       if (fetchedUser) {
         setUserProfile(fetchedUser);
       }
@@ -60,6 +61,7 @@ export const UserProfile : React.FC<UserProfileProps> = ({
       height="inherit"
       justifyContent="space-between"
       overflow="hidden"
+      width='100%'
       padding="14px 10px"
       borderRadius={theme?.borderRadius?.userProfile}
       background={theme?.backgroundColor?.userProfileBackground}
@@ -93,9 +95,9 @@ export const UserProfile : React.FC<UserProfileProps> = ({
             <DropDownBar theme={theme} ref={DropdownRef} onClick={()=>setShowUpdateUserProfileModal(true)}>
               <DropDownItem cursor="pointer" >
                 <Image
-                  src={''}
-                  height="21px"
-                  maxHeight="21px"
+                  src={UserProfileIcon}
+                  height="32px"
+                  maxHeight="32px"
                   width={'auto'}
                   cursor="pointer"
                 />
@@ -125,15 +127,16 @@ export const UserProfile : React.FC<UserProfileProps> = ({
 const Conatiner = styled(Section)<IThemeProps>`
   border: ${(props) => props.theme.border?.userProfile};
   box-sizing: border-box;
+
 `;
 
 const DropDownBar = styled.div`
   position: absolute;
-  bottom: 50px;
+  bottom: 40px;
   right:20px;
   cursor: pointer;
   display: block;
-  min-width: 140px;
+  min-width: 170px;
   color: rgb(101, 119, 149);
   background: ${(props) => props.theme.backgroundColor.modalBackground};
   border: ${(props) => props.theme.border.modalInnerComponents};
@@ -145,7 +148,7 @@ const DropDownItem = styled(Span)`
   flex-direction: row;
   align-items: center;
   gap: 8px;
-  padding: 10px 16px;
+  padding: 8px;
   border-radius: 16px;
   z-index: 3000000;
   width: 100%;

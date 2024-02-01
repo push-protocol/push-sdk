@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 
-import { ChatView, CreateGroupModal, MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from "@pushprotocol/uiweb";
+import { ChatView, CreateGroupModal, MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, UserProfile } from "@pushprotocol/uiweb";
 import { Section } from '../components/StyledComponents';
+import Img from '../../assets/epnsLogo.png';
 
 const ChatViewComponentTest = () => {
   const chatFilterList = [
@@ -12,14 +13,15 @@ const ChatViewComponentTest = () => {
   return (
     <div>
       <h2>Chat View Test page</h2>
+    
       {/* <CreateGroupModal onClose={()=>{console.log('in close')}} /> */}
       <ChatViewComponentCard>
       {/* <CreateGroupModal onClose={()=>{console.log('in close')}}  modalBackground={MODAL_BACKGROUND_TYPE.OVERLAY} modalPositionType={MODAL_POSITION_TYPE.RELATIVE}/> */}
-
         <ChatView 
           onVerificationFail={() => console.log("Verification Failed")} 
-          chatId='d9c2d6fa7132d49ea6d1b570f0ebd2bcc45c1ecac726eab993ad91c574fbe3c6' 
-          chatProfileHelperComponent={<div style={{display: "flex"}}><a href="https://github.com" target="_blank" rel="noreferrer">Custom Comp</a></div>}
+          chatId='0xc64444D6a076D6a8252390709A1270bfBBa32e2d' 
+          chatProfileLeftHelperComponent={<img src={Img} onClick={()=>console.debug('clicked')}/>}
+          chatProfileRightHelperComponent={<div>right component</div>}
           limit={10}
           isConnected={true} 
           groupInfoModalBackground={MODAL_BACKGROUND_TYPE.OVERLAY}

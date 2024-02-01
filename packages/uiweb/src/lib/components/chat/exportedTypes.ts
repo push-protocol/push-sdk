@@ -61,7 +61,8 @@ export interface IChatViewComponentProps {
   verificationFailModalBackground?: ModalBackgroundType;
   verificationFailModalPosition?: ModalPositionType;
   onVerificationFail?: () => void;
-  chatProfileHelperComponent?: React.ReactNode;
+  chatProfileRightHelperComponent?: React.ReactNode;
+  chatProfileLeftHelperComponent?: React.ReactNode;
   welcomeComponent?:React.ReactNode;
 }
 
@@ -69,7 +70,8 @@ export interface IChatProfile {
   chatId: string;
   groupInfoModalBackground?: ModalBackgroundType;
   groupInfoModalPositionType?: ModalPositionType;
-  chatProfileHelperComponent?: React.ReactNode;
+  chatProfileRightHelperComponent?: React.ReactNode;
+  chatProfileLeftHelperComponent?: React.ReactNode;
 }
 
 export interface TwitterFeedReturnType {
