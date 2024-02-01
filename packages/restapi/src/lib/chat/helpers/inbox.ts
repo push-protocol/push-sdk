@@ -78,7 +78,13 @@ export const getInboxLists = async (
   }
 
   if (toDecrypt)
-    return decryptFeeds({ feeds, connectedUser, pgpPrivateKey, pgpHelper,  env });
+    return decryptFeeds({
+      feeds,
+      connectedUser,
+      pgpPrivateKey,
+      pgpHelper,
+      env,
+    });
   return feeds;
 };
 
@@ -123,7 +129,13 @@ export const getSpaceInboxLists = async (
   }
 
   if (toDecrypt)
-    return decryptFeeds({ feeds, connectedUser, pgpPrivateKey, pgpHelper: PGP.PGPHelper,  env });
+    return decryptFeeds({
+      feeds,
+      connectedUser,
+      pgpPrivateKey,
+      pgpHelper: PGP.PGPHelper,
+      env,
+    });
   return feeds;
 };
 
@@ -200,7 +212,7 @@ export const decryptConversation = async (options: DecryptConverationType) => {
           signatureValidationPubliKey,
           pgpPrivateKey,
           env,
-          pgpHelper,
+          pgpHelper
         );
       }
     }
