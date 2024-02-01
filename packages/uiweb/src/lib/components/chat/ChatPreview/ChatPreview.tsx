@@ -111,7 +111,7 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
             overflow="hidden"
             flex="1"
           >
-            <Account theme={theme}>{ shortenText(getProfileName(formattedAddress),8,true) ||  formattedAddress}</Account>
+            <Account theme={theme}>{ shortenText(getProfileName(formattedAddress),8,true) ||  shortenText(formattedAddress,8,true)}</Account>
             <Dated theme={theme}>{formatDate(options.chatPreviewPayload)}</Dated>
           </Section>
           <Section
