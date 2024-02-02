@@ -106,6 +106,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
   const addChatItems: (items: IChatPreviewPayload[]) => void = (
     items: IChatPreviewPayload[]
   ) => {
+    console.debug(items)
     const combinedItems: IChatPreviewPayload[] = [
       ...items,
       ...chatPreviewList.items,
@@ -113,10 +114,11 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       (item, index, self) =>
         index === self.findIndex((t) => t.chatId === item.chatId)
     );
+    console.debug(combinedItems)
 
     setChatPreviewList((prev) => ({
       ...prev,
-      items: combinedItems,
+      items: [...combinedItems],
     }));
 
     // increment badge for each item
@@ -536,14 +538,16 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       }
     }
   }, [chatStream]);
-
+  console.debug(chatRequestStream)
   useEffect(() => {
+    console.debug(chatRequestStream)
     if (
       Object.keys(chatRequestStream).length > 0 &&
       chatRequestStream.constructor === Object
     ) {
       console.debug('Chat request stream', chatRequestStream);
       if (options.listType === CONSTANTS.CHAT.LIST_TYPE.REQUESTS) {
+        console.debug('to transform stream')
         transformStreamMessage(chatRequestStream);
       }
     }
@@ -739,6 +743,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       {chatPreviewList.items.map((item: IChatPreviewPayload) => {
         return (
           <ChatPreview
+            key={item.chatId}
             chatPreviewPayload={item}
             badge={
               chatPreviewListMeta.badges
