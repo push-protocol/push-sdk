@@ -207,7 +207,7 @@ export const generateRandomNonce: () => string = () => {
       chatPic: null, // for now, we don't have a way to get pfp from stream
       chatParticipant: item.meta.group
         ? null // we take from fetching info
-        : item.to[0],
+        : (item?.event === 'chat.request')? item.from: item.to[0],
       chatGroup: item.meta.group,
       chatTimestamp: Number(item.timestamp),
       chatMsg: {
