@@ -324,7 +324,10 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
 
         setChatPreviewList((prev) => ({
           nonce: generateRandomNonce(),
-          items: [...prev.items, ...transformedChats],
+          items: [...prev.items, ...transformedChats].filter(
+            (item, index, self) =>
+              index === self.findIndex((t) => t.chatId === item.chatId)
+          ),
           page: newpage,
           preloading: false,
           loading: false,
