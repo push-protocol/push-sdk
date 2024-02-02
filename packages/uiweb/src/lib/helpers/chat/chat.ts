@@ -10,6 +10,7 @@ import type {
 import { ChatFeedsType } from '../../types';
 import type { Env, IConnectedUser, IFeeds, IUser } from '@pushprotocol/restapi';
 import { isPCAIP, pCAIP10ToWallet, walletToPCAIP10 } from '../address';
+import { Group } from '../../components';
 import { getData } from './localStorage';
 import { ethers } from 'ethers';
 import { PushAPI } from '@pushprotocol/restapi';
@@ -43,7 +44,7 @@ export const createUserIfNecessary = async (
 ): Promise<IConnectedUser | undefined> => {
   const { user } = options || {};
   let connectedUser:IUser;
-  if(user){
+  if(Object.keys(user || {}).length){
     connectedUser = await user.info();
     return { ...connectedUser, 
       privateKey: connectedUser!.encryptedPrivateKey,
@@ -109,8 +110,7 @@ export const getDefaultFeedObject = ({
   groupInformation,
 }: {
   user?: IUser;
-  groupInformation?: IGroup;
-}): IFeeds => {
+  groupInformation?: IGroup;}): IFeeds => {
   const feed = {
     msg: {
       messageContent: '',
@@ -192,10 +192,10 @@ export const getChatId = ({
   msg: IMessageIPFS;
   account: string;
 }) => {
-  if (pCAIP10ToWallet(msg.fromDID).toLowerCase() === account.toLowerCase()) {
-    return msg.toDID;
+  if (pCAIP10ToWallet(msg.fromCAIP10).toLowerCase() === account.toLowerCase()) {
+    return msg.toCAIP10;
   }
-  return !isPCAIP(msg.toDID) ? msg.toDID : msg.fromDID;
+  return !isPCAIP(msg.toCAIP10) ? msg.toCAIP10 : msg.fromCAIP10;
 };
 
 export const appendUniqueMessages = (
@@ -227,10 +227,10 @@ export const checkIfSameChat = (
     chatId = walletToPCAIP10(chatId);
     if (
       Object.keys(msg || {}).length &&
-      (((chatId.toLowerCase() === msg.fromCAIP10?.toLowerCase()) &&
+      (((chatId.toLowerCase() === (msg.fromCAIP10?.toLowerCase())) &&
        ( walletToPCAIP10(account!).toLowerCase() ===
           msg.toCAIP10?.toLowerCase())) ||
-        ((chatId.toLowerCase() === msg.toCAIP10?.toLowerCase()) &&
+        ((chatId.toLowerCase() === (msg.toCAIP10?.toLowerCase())) &&
           (walletToPCAIP10(account!).toLowerCase() ===
             msg.fromCAIP10?.toLowerCase())))
     ) {

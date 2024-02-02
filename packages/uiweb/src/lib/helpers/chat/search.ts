@@ -93,16 +93,15 @@ export const getAddress = async (searchText: string, env: Env) => {
   if (searchText.includes('.')) {
     try {
       address = await udResolver.owner(searchText);
-    } catch (err) {
-      console.log(err);
-    }
-    if (!address) {
+  } catch (err) {
       try {
         address = await provider.resolveName(searchText);
       } catch (err) {
-        console.log(err);
+        console.debug(err);
       }
-    }
+   
+    console.debug(err);
+  }
 
     return address || null;
   } else if (await ethers.utils.isAddress(pCAIP10ToWallet(searchText))) {
