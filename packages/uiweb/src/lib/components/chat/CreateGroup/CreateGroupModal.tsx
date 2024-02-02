@@ -29,6 +29,7 @@ import { ProfilePicture, device } from '../../../config';
 import { CriteriaValidationErrorType } from '../types';
 import AutoImageClipper from './AutoImageClipper';
 import AddWalletsInCreateGroup from './AddWallets';
+import { Hyperlink } from '../../widget/reusables';
 
 export const CREATE_GROUP_STEP_KEYS = {
   INPUT_DETAILS: 1,
@@ -300,7 +301,7 @@ const CreateGroupDetail = ({
       width={!isMobile ? '400px' : '300px'}
     >
       <ModalHeader title="Create Group" handleClose={onClose} />
-
+<Hyperlink text='Explore Options' icon={true} link='https://push.org/docs/chat/build/stream-chat/'/>
       <UploadContainer onClick={handleUpload}>
         {isImageUploaded ? (
           groupImage ? (
