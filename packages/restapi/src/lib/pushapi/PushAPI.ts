@@ -19,7 +19,7 @@ import { ALPHA_FEATURE_CONFIG } from '../config';
 import { Video } from './video';
 import { isValidCAIP10NFTAddress } from '../helpers';
 import { LRUCache } from 'lru-cache';
-import { cache } from './cache'; 
+import { cache } from '../helpers/cache';
 
 export class PushAPI {
   private signer?: SignerType;
@@ -307,6 +307,7 @@ export class PushAPI {
     this.profile = new Profile(
       this.account,
       this.env,
+      this.cache,
       this.decryptedPgpPvtKey,
       this.progressHook
     );
