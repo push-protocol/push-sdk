@@ -13,4 +13,4 @@ export * from './useCreateChatProfile';
 export * from './useDecryptPGPKey';
 export * from './useInitializePushUser';
 export * from './useTokenSymbolLoader';
-export * from './notificationWidget';
+export * from './widget';

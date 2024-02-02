@@ -1,9 +1,9 @@
 import { useState, ReactNode, useEffect } from 'react';
 import { Constants, ENV } from '../config';
 import {
-  NotificationWidgetDataContext,
-  INotificationWidgetDataContextValues,
-} from '../context/notificationWidgetContext';
+  WidgetDataContext,
+  IWidgetDataContextValues,
+} from '../context/widgetContext';
 // import { ThemeContext } from '../components/chat/theme/ThemeProvider';
 import { IUser, PushAPI, SignerType } from '@pushprotocol/restapi';
 // import { IChatTheme, lightChatTheme } from '../components/chat/theme';
@@ -13,7 +13,7 @@ import useInitializePushUser from '../hooks/useInitializePushUser';
 import { GUEST_MODE_ACCOUNT } from '../config/constants';
 import usePushUserInfoUtilities from '../hooks/chat/usePushUserInfoUtilities';
 
-export interface INotificationWidgetUIProviderProps {
+export interface IWidgetUIProviderProps {
   children: ReactNode;
 //   theme?: IChatTheme;
   account?: string | null;
@@ -22,14 +22,14 @@ export interface INotificationWidgetUIProviderProps {
   env?: ENV;
 }
 
-export const NotificationWidgetUIProvider = ({
+export const WidgetUIProvider = ({
   children,
   account = undefined,
   user = undefined,
 //   theme,
   signer = undefined,
   env = Constants.ENV.PROD,
-}: INotificationWidgetUIProviderProps) => {
+}: IWidgetUIProviderProps) => {
   const [accountVal, setAccountVal] = useState<string | null>(
     pCAIP10ToWallet(account!)
   );
@@ -87,7 +87,7 @@ export const NotificationWidgetUIProvider = ({
 
 
 
-  const value: INotificationWidgetDataContextValues = {
+  const value: IWidgetDataContextValues = {
     account: accountVal,
     signer: signerVal,
     setSigner: setSignerVal,
@@ -101,9 +101,9 @@ export const NotificationWidgetUIProvider = ({
 //   const PROVIDER_THEME = Object.assign({}, lightChatTheme, theme);
   return (
     // <ThemeContext.Provider value={PROVIDER_THEME}>
-      <NotificationWidgetDataContext.Provider value={value}>
+      <WidgetDataContext.Provider value={value}>
         {children}
-      </NotificationWidgetDataContext.Provider>
+      </WidgetDataContext.Provider>
     // </ThemeContext.Provider>
   );
 };

@@ -1,12 +1,12 @@
 import { useCallback, useState } from 'react';
-import { useNotificationWidgetData } from './useNotificationWidgetData';
-import { NotificationWidgetErrorCodes } from '../../components/notificationWidget';
+import { useWidgetData } from './useWidgetData';
+import { WidgetErrorCodes } from '../../components/widget';
 
 export const useManageChannelUtilities = () => {
 
   const [channelInfoLoading, setChannelInfoLoading] = useState<boolean>(false);
   const [channelInfoError, setChannelInfoError] = useState<string>();
-  const { user, env, account } = useNotificationWidgetData();
+  const { user, env, account } = useWidgetData();
 
   interface channelInfoParams {
     channelAddress: string;
@@ -26,7 +26,7 @@ export const useManageChannelUtilities = () => {
       } catch (error: Error | any) {
         setChannelInfoLoading(false);
         setChannelInfoError(
-          NotificationWidgetErrorCodes.NOTIFICATION_WIDGET_CHANNEL_INFO_ERROR
+          WidgetErrorCodes.NOTIFICATION_WIDGET_CHANNEL_INFO_ERROR
         );
         return error.message;
       }

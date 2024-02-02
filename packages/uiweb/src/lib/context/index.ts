@@ -1,7 +1,7 @@
 
 import { SpaceDataContext } from "./spacesContext";
 import { ChatDataContext } from "./chatContext";
-import { NotificationWidgetDataContext } from './notificationWidgetContext';
+import { WidgetDataContext } from './widgetContext';
 import SupportChatPropsContext from "./supportChat/supportChatPropsContext";
 import SupportChatMainStateContext from "./supportChat/supportChatMainStateContext";
 import ChatMainStateContextProvider, { ChatMainStateContext } from "./chatAndNotification/chat/chatMainStateContext";
@@ -13,7 +13,7 @@ export {
   SupportChatPropsContext,
   SpaceDataContext,
   ChatDataContext,
-  NotificationWidgetDataContext,
+  WidgetDataContext,
   SupportChatMainStateContext,
   ChatMainStateContextProvider,
   ChatAndNotificationPropsContext,

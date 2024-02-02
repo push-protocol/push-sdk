@@ -1,14 +1,14 @@
 import { useCallback, useState } from 'react';
-import { useNotificationWidgetData } from './useNotificationWidgetData';
+import { useWidgetData } from './useWidgetData';
 import * as PushAPI from '@pushprotocol/restapi';
-import { NotificationWidgetErrorCodes } from '../../components/notificationWidget';
+import { WidgetErrorCodes } from '../../components/widget';
 
 export const useManageSubscriptionsUtilities = () => {
   const [subscribeLoading, setSubscribeLoading] = useState<boolean>(false);
   const [subscribeError, setSubscribeError] = useState<string>();
   const [unsubscribeLoading, setUnsubscribeLoading] = useState<boolean>(false);
   const [unsubscribeError, setUnsubscribeError] = useState<string>();
-  const { user, env, account } = useNotificationWidgetData();
+  const { user, env, account } = useWidgetData();
 
   interface subscribeunsubscribeParams {
     channelAddress: string;
@@ -30,7 +30,7 @@ export const useManageSubscriptionsUtilities = () => {
             onError: () => {
               setSubscribeLoading(false);
               setSubscribeError(
-                NotificationWidgetErrorCodes.NOTIFICATION_WIDGET_SUBSCRIBE_ERROR
+                WidgetErrorCodes.NOTIFICATION_WIDGET_SUBSCRIBE_ERROR
               );
             },
           });
@@ -41,7 +41,7 @@ export const useManageSubscriptionsUtilities = () => {
       } catch (error: Error | any) {
         setSubscribeLoading(false);
         setSubscribeError(
-          NotificationWidgetErrorCodes.NOTIFICATION_WIDGET_SUBSCRIBE_ERROR
+          WidgetErrorCodes.NOTIFICATION_WIDGET_SUBSCRIBE_ERROR
         );
         return error.message;
       }
@@ -64,7 +64,7 @@ export const useManageSubscriptionsUtilities = () => {
             onError: () => {
               setUnsubscribeLoading(false);
               setUnsubscribeError(
-                NotificationWidgetErrorCodes.NOTIFICATION_WIDGET_UNSUBSCRIBE_ERROR
+                WidgetErrorCodes.NOTIFICATION_WIDGET_UNSUBSCRIBE_ERROR
               );
             },
           });
@@ -75,7 +75,7 @@ export const useManageSubscriptionsUtilities = () => {
       } catch (error: Error | any) {
         setUnsubscribeLoading(false);
         setUnsubscribeError(
-          NotificationWidgetErrorCodes.NOTIFICATION_WIDGET_UNSUBSCRIBE_ERROR
+          WidgetErrorCodes.NOTIFICATION_WIDGET_UNSUBSCRIBE_ERROR
         );
         return error.message;
       }

@@ -3,7 +3,7 @@ import { Constants } from "../config";
 import { createContext } from "react";
 
 
-export interface INotificationWidgetDataContextValues {
+export interface IWidgetDataContextValues {
     account: string | null;
     setAccount: React.Dispatch<React.SetStateAction<string| null>>;
     signer: SignerType | undefined;
@@ -14,7 +14,7 @@ export interface INotificationWidgetDataContextValues {
     setUser: React.Dispatch<React.SetStateAction<PushAPI | undefined>>;
 }
 
-export const initialNotificationWidgetDataContextValues: INotificationWidgetDataContextValues = {
+export const initialWidgetDataContextValues: IWidgetDataContextValues = {
     account: null,
     setAccount: () => {
       /**/
@@ -37,6 +37,6 @@ export const initialNotificationWidgetDataContextValues: INotificationWidgetData
 }
 
 
-export const NotificationWidgetDataContext = createContext<INotificationWidgetDataContextValues>(
-    initialNotificationWidgetDataContextValues
+export const WidgetDataContext = createContext<IWidgetDataContextValues>(
+    initialWidgetDataContextValues
   );
