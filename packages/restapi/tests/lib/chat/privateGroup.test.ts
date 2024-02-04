@@ -10,7 +10,7 @@ import {
   uniqueNamesGenerator,
 } from 'unique-names-generator';
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI'; // Ensure correct import path
-import { GroupDTO, GroupInfoDTO, MessageWithCID } from '../../../src/lib/types';
+import { CHAT, GroupDTO, GroupInfoDTO, MessageWithCID } from '../../../src/lib/types';
 
 const _env = Constants.ENV.DEV;
 let groupName: string;
@@ -442,6 +442,16 @@ describe('Private Groups', () => {
       const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
       expectMsg(msg2, Content, account1, group.chatId, 'pgp', false);
     });
+
+    it.only('Send the reply to send messages', async () => {     ;
+      const res = await userBob.chat.send(group.chatId,{
+        type:'Reaction',
+        content:CHAT.REACTION.CLAP,
+        reference:'bafyreia22girudospfbs3q7t6eelb453rmwsi7shkejwxtwpp57xww6vae'
+      });
+      console.log("res: ",res);
+    });
+
     it('Send Message should have pgpv1:group encryption on new member joining Group', async () => {
       await userAlice.chat.group.add(group.chatId, {
         role: 'MEMBER',
