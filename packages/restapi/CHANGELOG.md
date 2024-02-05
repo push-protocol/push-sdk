@@ -2,6 +2,19 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.6.5](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.6.4...restapi-1.6.5) (2024-02-05)
+
+
+### Bug Fixes
+
+* caching implementation on user profile API ([#1053](https://github.com/ethereum-push-notification-service/push-sdk/issues/1053)) ([5dc0dee](https://github.com/ethereum-push-notification-service/push-sdk/commit/5dc0dee987335e5fd97df3c4914ebd305098f59a))
+* fix encV1 key decryption ([#1088](https://github.com/ethereum-push-notification-service/push-sdk/issues/1088)) ([fb4db88](https://github.com/ethereum-push-notification-service/push-sdk/commit/fb4db882f4fa88184e6193155c017fb3fccab750))
+* fix public key in read mode ([#1074](https://github.com/ethereum-push-notification-service/push-sdk/issues/1074)) ([32e6cea](https://github.com/ethereum-push-notification-service/push-sdk/commit/32e6cea2d904495e42eb7e14d2bb4527439b69c4))
+* Merge branch 'main' into deployment ([9286ce8](https://github.com/ethereum-push-notification-service/push-sdk/commit/9286ce87e634240c0c0c211d2e4c866ab6991179))
+* send intent in history and latest. ([#1069](https://github.com/ethereum-push-notification-service/push-sdk/issues/1069)) ([a4747ed](https://github.com/ethereum-push-notification-service/push-sdk/commit/a4747ed8e66ae04f0aea008362c7747da9d98a52))
+
+
+
 ## [1.6.4](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.6.3...restapi-1.6.4) (2024-01-29)
 
 
