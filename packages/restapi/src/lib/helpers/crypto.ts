@@ -155,9 +155,8 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
             chain: mainnet,
             transport: viem.custom((window as any).ethereum),
           });
-          const web3Provider: any =
-            signer?.provider?.provider || metamaskProvider;
-          privateKey = await web3Provider.provider.request({
+          const web3Provider = signer?.provider?.provider || metamaskProvider;
+          privateKey = await web3Provider.request({
             method: 'eth_decrypt',
             params: [encryptedPGPPrivateKey, address],
           });

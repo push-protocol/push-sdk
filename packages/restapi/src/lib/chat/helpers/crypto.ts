@@ -26,6 +26,7 @@ import { IPGPHelper } from './pgp';
 import { aesDecrypt } from './aes';
 import { getEncryptedSecret } from './getEncryptedSecret';
 import { getGroup } from '../getGroup';
+import { cache } from '../../helpers/cache';
 
 const SIG_TYPE_V2 = 'eip712v2';
 
@@ -161,32 +162,50 @@ export const decryptFeeds = async ({
   pgpHelper: PGP.IPGPHelper;
   env: ENV;
 }): Promise<IFeeds[]> => {
-  let otherPeer: IUser;
-  let signatureValidationPubliKey: string; // To do signature verification it depends on who has sent the message
-  for (const feed of feeds) {
-    let gotOtherPeer = false;
+  const validateAndDecryptFeed = async (feed: IFeeds) => {
+    if (!pgpPrivateKey) {
+      throw new Error('Decrypted private key is necessary');
+    }
+
     if (feed.msg.encType !== 'PlainText') {
-      if (!pgpPrivateKey) {
-        throw Error('Decrypted private key is necessary');
-      }
-      if (feed.msg.fromCAIP10 !== connectedUser.wallets.split(',')[0]) {
-        if (!gotOtherPeer) {
-          otherPeer = await getUser({ account: feed.msg.fromCAIP10, env });
-          gotOtherPeer = true;
+      const senderCAIP10 = feed.msg.fromCAIP10;
+      const isSenderConnectedUser =
+        senderCAIP10 === connectedUser.wallets.split(',')[0];
+      let publicKey: string;
+
+      if (!isSenderConnectedUser) {
+        /**
+         * CACHE
+         */
+        const cacheKey = `pgpPubKey-${senderCAIP10}`;
+        // Check if the pubkey is already in the cache
+        if (cache.has(cacheKey)) {
+          publicKey = cache.get(cacheKey);
+        } else {
+          // If not in cache, fetch from API
+          const otherPeer = await getUser({ account: senderCAIP10, env });
+          // Cache the pubkey data
+          cache.set(cacheKey, otherPeer.publicKey);
+          publicKey = otherPeer.publicKey;
         }
-        signatureValidationPubliKey = otherPeer!.publicKey!;
       } else {
-        signatureValidationPubliKey = connectedUser.publicKey!;
+        publicKey = connectedUser.publicKey;
       }
+
       feed.msg = await decryptAndVerifyMessage(
         feed.msg,
-        signatureValidationPubliKey,
+        publicKey,
         pgpPrivateKey,
         env,
         pgpHelper
       );
     }
+  };
+
+  for (const feed of feeds) {
+    await validateAndDecryptFeed(feed);
   }
+
   return feeds;
 };
 

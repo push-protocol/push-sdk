@@ -89,5 +89,23 @@ describe('PushAPI.chat.group', () => {
       );
       expect(updatedGroup.meta).to.equal('Updated Meta');
     });
+
+    it('get chat info', async () => {
+      const group = await userAlice.chat.group.create(groupName, {
+        description: groupDescription,
+        image: groupImage,
+        members: [],
+        admins: [],
+        private: true,
+      });
+
+      const chatInfo = await userBob.chat.info(group.chatId, account1);
+
+      expect(chatInfo).to.be.an('object');
+      expect(chatInfo).to.have.property('meta');
+      expect(chatInfo.meta).to.have.property('group');
+      expect(chatInfo).to.have.property('list');
+      expect(chatInfo.list).to.be.oneOf(['CHATS', 'REQUESTS', 'UNINITIALIZED']);
+    });
   });
 });

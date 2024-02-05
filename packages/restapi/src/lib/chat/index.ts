@@ -28,3 +28,4 @@ export * from './getGroupInfo';
 export * from './getGroupMemberCount';
 export * from './getGroupMembersPublicKeys';
 export * from './modifyRole';
+export * from './getChatInfo';
