@@ -27,6 +27,7 @@ import { aesDecrypt } from './aes';
 import { getEncryptedSecret } from './getEncryptedSecret';
 import { getGroup } from '../getGroup';
 import { cache } from '../../helpers/cache';
+import { getCID } from '../ipfs';
 
 const SIG_TYPE_V2 = 'eip712v2';
 
@@ -573,6 +574,18 @@ export const decryptAndVerifyMessage = async (
         decryptedMessage.messageObj = JSON.parse(decryptedMessageObj);
       } catch (err) {
         decryptedMessage.messageObj = decryptedMessageObj;
+      }
+
+      try {
+        if ((decryptedMessage.messageObj as any).reference) {
+          const reference = (decryptedMessage.messageObj as any).reference;
+          if (reference && reference.split(':').length === 1) {
+            const message: any = await getCID(reference, { env });
+            (decryptedMessage.messageObj as any).reference = message.cid;
+          }
+        }
+      } catch (err) {
+        // Ignore Dangling Reference
       }
     }
   } catch (err) {
