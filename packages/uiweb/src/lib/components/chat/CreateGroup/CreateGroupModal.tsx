@@ -13,7 +13,7 @@ import { Section, Span } from '../../reusables';
 import { Button } from '../reusables';
 import { CreateGroupType, GROUP_TYPE_OPTIONS } from './CreateGroupType';
 import useToast from '../reusables/NewToast';
-import { CreateGroupModalProps, IChatTheme, MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../exportedTypes';
+import { CreateGroupModalProps, IChatTheme } from '../exportedTypes';
 import useMediaQuery from '../../../hooks/useMediaQuery';
 import { DefineCondtion } from './DefineCondition';
 import AddCriteria from './AddCriteria';
@@ -30,6 +30,7 @@ import { CriteriaValidationErrorType } from '../types';
 import AutoImageClipper from './AutoImageClipper';
 import AddWalletsInCreateGroup from './AddWallets';
 import { Hyperlink } from '../../widget/reusables';
+import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../../../types';
 
 export const CREATE_GROUP_STEP_KEYS = {
   INPUT_DETAILS: 1,
@@ -301,7 +302,6 @@ const CreateGroupDetail = ({
       width={!isMobile ? '400px' : '300px'}
     >
       <ModalHeader title="Create Group" handleClose={onClose} />
-<Hyperlink text='Explore Options' icon={true} link='https://push.org/docs/chat/build/stream-chat/'/>
       <UploadContainer onClick={handleUpload}>
         {isImageUploaded ? (
           groupImage ? (

@@ -1,6 +1,6 @@
 import React, {  useContext } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
-import { Section } from '../../reusables';
+import { Section, Span } from '../../reusables';
 import { Button } from '../../../config';
 
 // import { ThemeContext } from '../../chat/theme/ThemeProvider';

@@ -35,7 +35,7 @@ import { copyToClipboard, shortenText } from '../../../helpers';
 import ConditionsComponent from '../CreateGroup/ConditionsComponent';
 import { ACCESS_TYPE_TITLE, OPERATOR_OPTIONS_INFO } from '../constants';
 import { getRuleInfo } from '../helpers/getRulesToCondtionArray';
-import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, ModalBackgroundType, ModalPositionType } from '../exportedTypes';
+import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, ModalBackgroundType, ModalPositionType } from '../../../types';
 import { TokenGatedSvg } from '../../../icons/TokenGatedSvg';
 
 const UPDATE_KEYS = {

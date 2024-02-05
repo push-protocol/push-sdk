@@ -1,6 +1,6 @@
 import type { IMessageIPFS } from '@pushprotocol/restapi';
 import { IChatTheme } from "./theme";
-import { IGroup } from '../../types'
+import { IGroup, ModalBackgroundType, ModalPositionType } from '../../types'
 
 export interface IChatViewListProps {
   chatId: string;
@@ -123,21 +123,6 @@ export interface User {
   isAdmin?:boolean;
 }
 
-export const MODAL_BACKGROUND_TYPE = {
-  OVERLAY:'OVERLAY',
-  BLUR: 'BLUR',
-  TRANSPARENT: 'TRANSPARENT',
-
-  } as const;
-  
-  export type ModalBackgroundType = keyof typeof MODAL_BACKGROUND_TYPE;
-
-  export const MODAL_POSITION_TYPE = {
-    RELATIVE:'RELATIVE',
-    GLOBAL: 'GLOBAL',
-    } as const;
-    
-  export type ModalPositionType = keyof typeof MODAL_POSITION_TYPE;
 export interface CreateGroupModalProps {
   onClose: ()=>void;
   modalBackground?: ModalBackgroundType;

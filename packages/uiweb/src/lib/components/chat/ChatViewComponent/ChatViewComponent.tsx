@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { IChatTheme, IChatViewComponentProps, MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../exportedTypes';
+import { IChatTheme, IChatViewComponentProps } from '../exportedTypes';
 
 import { Section, Span } from '../../reusables';
 import { ChatViewList } from '../ChatViewList';
@@ -11,6 +11,7 @@ import { MessageInput } from '../MessageInput';
 import { ChatProfile } from '../ChatProfile';
 import styled from 'styled-components';
 import useMediaQuery from '../../../hooks/useMediaQuery';
+import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../../../types';
 
 /**
  * @interface IThemeProps

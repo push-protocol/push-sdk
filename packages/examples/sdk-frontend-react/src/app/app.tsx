@@ -94,6 +94,7 @@ import GetGroupMemberCountTest from './ChatTest/GetGroupMemberCountTest';
 import GetGroupInfoTest from './ChatTest/GetGroupInfoTest';
 import GetGroupMembersTest from './ChatTest/GetGroupMembersTest';
 import VideoV2 from './Video';
+// import { SubscriptionManagerTest } from './widget/SubscriptionManagerTest';
 
 
 window.Buffer = window.Buffer || Buffer;
@@ -598,6 +599,12 @@ export function App() {
                       />
                       <Route path="ChatProfile" element={<ChatProfileTest />} />{' '}
                       <Route path="ChatSupport" element={<ChatSupportTest />} />
+
+                      {/* Widget */}
+                      {/* <Route
+                        path="/subscriptionManager"
+                        element={<SubscriptionManagerTest />}
+                      /> */}
                     </Routes>
                     {/* <ChatWidgetTest/> */}
                     {/* <ChatWidgetTest /> */}

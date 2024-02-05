@@ -21,11 +21,11 @@ import 'react-toastify/dist/ReactToastify.min.css';
 import { IGroup } from '../../../types';
 import { isValidETHAddress } from '../helpers/helper';
 import {
-  IChatProfile,
   MODAL_BACKGROUND_TYPE,
   MODAL_POSITION_TYPE,
 
-} from '../exportedTypes';
+} from '../../../types';
+import {  IChatProfile} from '../exportedTypes';
 import { InfuraAPIKey, allowedNetworks, device } from '../../../config';
 import { resolveNewEns, shortenText } from '../../../helpers';
 

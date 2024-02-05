@@ -1,1 +1,1 @@
-export * from './exportedTypes';
+export * from './subscriptionManager';
