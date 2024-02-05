@@ -5,6 +5,7 @@ import { IFeeds, IMessageIPFS, IUser, SpaceIFeeds } from '../../types';
 import { get as getUser } from '../../user';
 import { getCID } from '../ipfs';
 import { decryptFeeds, decryptAndVerifyMessage } from './crypto';
+import { cache } from '../../helpers/cache';
 
 type InboxListsType = {
   lists: IFeeds[];
@@ -78,7 +79,13 @@ export const getInboxLists = async (
   }
 
   if (toDecrypt)
-    return decryptFeeds({ feeds, connectedUser, pgpPrivateKey, pgpHelper,  env });
+    return decryptFeeds({
+      feeds,
+      connectedUser,
+      pgpPrivateKey,
+      pgpHelper,
+      env,
+    });
   return feeds;
 };
 
@@ -123,7 +130,13 @@ export const getSpaceInboxLists = async (
   }
 
   if (toDecrypt)
-    return decryptFeeds({ feeds, connectedUser, pgpPrivateKey, pgpHelper: PGP.PGPHelper,  env });
+    return decryptFeeds({
+      feeds,
+      connectedUser,
+      pgpPrivateKey,
+      pgpHelper: PGP.PGPHelper,
+      env,
+    });
   return feeds;
 };
 
@@ -170,11 +183,9 @@ export const decryptConversation = async (options: DecryptConverationType) => {
     pgpHelper = PGP.PGPHelper,
     env = Constants.ENV.PROD,
   } = options || {};
-  let otherPeer: IUser;
   let signatureValidationPubliKey: string; // To do signature verification it depends on who has sent the message
   for (let i = 0; i < messages.length; i++) {
     const message = messages[i];
-    let gotOtherPeer = false;
     if (message.encType !== 'PlainText') {
       // check if message is already decrypted
       if (
@@ -187,11 +198,23 @@ export const decryptConversation = async (options: DecryptConverationType) => {
           throw Error('Decrypted private key is necessary');
         }
         if (message.fromCAIP10 !== connectedUser.wallets.split(',')[0]) {
-          if (!gotOtherPeer) {
-            otherPeer = await getUser({ account: message.fromCAIP10, env });
-            gotOtherPeer = true;
+          /**
+           * CACHE
+           */
+          const cacheKey = `pgpPubKey-${message.fromCAIP10}`;
+          // Check if the pubkey is already in the cache
+          if (cache.has(cacheKey)) {
+            signatureValidationPubliKey = cache.get(cacheKey);
+          } else {
+            // If not in cache, fetch from API
+            const otherPeer = await getUser({
+              account: message.fromCAIP10,
+              env,
+            });
+            // Cache the pubkey data
+            cache.set(cacheKey, otherPeer.publicKey);
+            signatureValidationPubliKey = otherPeer.publicKey;
           }
-          signatureValidationPubliKey = otherPeer!.publicKey;
         } else {
           signatureValidationPubliKey = connectedUser.publicKey;
         }
@@ -200,7 +223,7 @@ export const decryptConversation = async (options: DecryptConverationType) => {
           signatureValidationPubliKey,
           pgpPrivateKey,
           env,
-          pgpHelper,
+          pgpHelper
         );
       }
     }
