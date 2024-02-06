@@ -53,6 +53,9 @@ const ChatTest = () => {
           <Link to="/requests" className="nav-button">
             CHAT.REQUESTS
           </Link>
+          <Link to="/info" className="nav-button">
+            CHAT.INFO
+          </Link>
           <Link to="/hash" className="nav-button">
             CHAT.CONVERSATIONHASH
           </Link>
@@ -71,6 +74,9 @@ const ChatTest = () => {
           <Link to="/getGroupAccess" className="nav-button">
             CHAT.GETGROUPACCESS
           </Link>
+          <Link to="/modifyroles" className="nav-button">
+            CHAT.MODIFYROLES
+          </Link>
           <Link to="/getGroupMemberStatus" className="nav-button">
             CHAT.GETGROUPMEMBERSTATUS
           </Link>
@@ -80,7 +86,7 @@ const ChatTest = () => {
           <Link to="/getGroupInfoTest" className="nav-button">
             CHAT.GetGroupInfoTest
           </Link>
-                <Link to="/getGroupMembersTest" className="nav-button">
+          <Link to="/getGroupMembersTest" className="nav-button">
             CHAT.GetGroupMembersTest
           </Link>
           <Link to="/searchGroups" className="nav-button">

@@ -2,7 +2,7 @@ import { useContext, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { Route, Routes, Link } from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';
-import { PushAPI } from "@pushprotocol/restapi";
+import { PushAPI } from '@pushprotocol/restapi';
 import ConnectButtonComp from './components/Connect';
 import { Checkbox } from './components/Checkbox';
 import Dropdown from './components/Dropdown';
@@ -94,7 +94,8 @@ import GetGroupMemberCountTest from './ChatTest/GetGroupMemberCountTest';
 import GetGroupInfoTest from './ChatTest/GetGroupInfoTest';
 import GetGroupMembersTest from './ChatTest/GetGroupMembersTest';
 import VideoV2 from './Video';
-
+import GetChatInfoTest from './ChatTest/GetChatInfo';
+import ModifyRolesTest from './ChatTest/ModifyRoles';
 
 window.Buffer = window.Buffer || Buffer;
 
@@ -260,8 +261,8 @@ export function App() {
         env: env,
         account: account,
         alpha: { feature: ['SCALABILITY_V2'] },
-    })
-    setPushUser(pushUser);
+      });
+      setPushUser(pushUser);
       setSigner(librarySigner);
       if (user?.encryptedPrivateKey) {
         pgpPrivateKey = await PushApi.chat.decryptPGPKey({
@@ -422,6 +423,7 @@ export function App() {
                       <Route path="/hash" element={<ConversationHashTest />} />
                       <Route path="/history" element={<HistoryTest />} />
                       <Route path="/requests" element={<GetRequestsTest />} />
+                      <Route path="/info" element={<GetChatInfoTest />} />
                       <Route
                         path="/createGroup"
                         element={<CreateGroupTest />}
@@ -446,6 +448,10 @@ export function App() {
                       <Route
                         path="/updateGroup"
                         element={<UpdateGroupTest />}
+                      />
+                      <Route
+                        path="/modifyroles"
+                        element={<ModifyRolesTest />}
                       />
                       {/* chat method  routes */}
                       <Route path="/get" element={<GetUserTest />} />
