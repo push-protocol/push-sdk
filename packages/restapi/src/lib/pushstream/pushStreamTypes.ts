@@ -189,11 +189,11 @@ export interface SpaceMemberEventBase {
 }
 
 export interface JoinSpaceEvent extends SpaceMemberEventBase {
-  event: SpaceEventType.JoinSpace;
+  event: SpaceEventType.Join;
 }
 
 export interface LeaveSpaceEvent extends SpaceMemberEventBase {
-  event: SpaceEventType.LeaveSpace;
+  event: SpaceEventType.Leave;
 }
 
 export interface SpaceRequestEvent extends SpaceMemberEventBase {
