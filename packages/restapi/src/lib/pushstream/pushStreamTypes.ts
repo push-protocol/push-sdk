@@ -5,6 +5,7 @@ export type PushStreamInitializeProps = {
   filter?: {
     channels?: string[];
     chats?: string[];
+    spaces?: string[];
     video?: string[];
   };
   connection?: {
@@ -23,6 +24,8 @@ export enum STREAM {
   NOTIF_OPS = 'STREAM.NOTIF_OPS',
   CHAT = 'STREAM.CHAT',
   CHAT_OPS = 'STREAM.CHAT_OPS',
+  SPACE = 'STREAM.SPACE',
+  SPACE_OPS = 'STREAM.SPACE_OPS',
   VIDEO = 'STREAM.VIDEO',
   CONNECT = 'STREAM.CONNECT',
   DISCONNECT = 'STREAM.DISCONNECT',
@@ -54,6 +57,16 @@ export enum GroupEventType {
   RoleChange = 'roleChange'
 }
 
+export enum SpaceEventType {
+  CreateSpace = 'createSpace',
+  UpdateSpace = 'updateSpace',
+  Join = 'joinSpace',
+  Leave = 'leaveSpace',
+  Remove = 'remove',
+  Stop = 'stop',
+  Start = 'start' 
+}
+
 export enum VideoEventType {
   REQUEST = 'video.request',
   APPROVE = 'video.approve',
@@ -75,6 +88,17 @@ export enum ProposedEventNames {
   CreateGroup = 'chat.group.create',
   UpdateGroup = 'chat.group.update',
   Remove = 'chat.group.participant.remove',
+
+  CreateSpace = 'space.create',
+  UpdateSpace = 'space.update',
+  SpaceRequest = 'space.request',
+  SpaceAccept = 'space.accept',
+  SpaceReject = 'space.reject',
+  LeaveSpace = 'space.participant.leave',
+  JoinSpace = 'space.participant.join',
+  SpaceRemove = 'space.participant.remove',
+  StartSpace = 'space.start',
+  StopSpace = 'space.stop'
 }
 
 export interface Profile {
@@ -150,6 +174,34 @@ export interface RequestEvent extends GroupMemberEventBase {
 
 export interface RemoveEvent extends GroupMemberEventBase {
   event: GroupEventType.Remove;
+}
+
+
+
+export interface SpaceMemberEventBase {
+  event: SpaceEventType | MessageEventType;
+  origin: MessageOrigin;
+  timestamp: string;
+  spaceId: string;
+  from: string;
+  to: string[];
+  raw?: GroupEventRawData;
+}
+
+export interface JoinSpaceEvent extends SpaceMemberEventBase {
+  event: SpaceEventType.JoinSpace;
+}
+
+export interface LeaveSpaceEvent extends SpaceMemberEventBase {
+  event: SpaceEventType.LeaveSpace;
+}
+
+export interface SpaceRequestEvent extends SpaceMemberEventBase {
+  event: MessageEventType.Request;
+}
+
+export interface SpaceRemoveEvent extends SpaceMemberEventBase {
+  event: SpaceEventType.Remove;
 }
 
 export interface MessageEvent {

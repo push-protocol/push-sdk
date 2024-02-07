@@ -188,9 +188,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     }
   }, [conversationHash, pgpPrivateKey, account, env,chatFeed, chatId]);
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [conversationHash, account, env, chatId, pgpPrivateKey, chatFeed]);
+
 
   useEffect(() => {
     if (
@@ -240,7 +238,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
         await getMessagesCall();
 
         const newScroll = content.scrollHeight - content.clientHeight;
-        content.scrollTop = curScrollPos + (newScroll - oldScroll);
+        content.scrollTop = newScroll - oldScroll;
       }
     }
   };
@@ -368,7 +366,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
           )}
           {messageLoading ? <Spinner color={theme.spinnerColor} /> : ''}
 
-          {!messageLoading && (
+          {
             <>
               <Section
                 flexDirection="column"
@@ -413,7 +411,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
                   />
                 )}
             </>
-          )}
+          }
         </>
       )}
     </ChatViewListCard>
