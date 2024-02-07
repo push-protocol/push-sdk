@@ -13,12 +13,14 @@ import { BackIcon } from '../../../icons/Back';
 import CloseIcon from '../../../icons/close.svg';
 import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, ModalBackgroundType, ModalPositionType } from '../../../types';
 import { device } from '../../../config';
+import { IWidgetTheme } from '../theme';
+import { ThemeContext } from '../theme/ThemeProvider';
 
 interface IModalProps {
   width?: string;
   clickawayClose?: () => void;
   children: any;
-  // theme?: IChatTheme;
+  theme?: IWidgetTheme;
   modalBackground?: ModalBackgroundType;
   modalPositionType?: ModalPositionType;
 }
@@ -27,6 +29,8 @@ interface IModalHeader {
   handlePrevious?: () => void;
   handleClose?: () => void;
   title: string;
+  fontSize?: string;
+  fontWeight?:string;
 }
 
 const ClickawayCloseModal = ({
@@ -35,7 +39,7 @@ const ClickawayCloseModal = ({
   width,
 }: IModalProps) => {
   const modalRef = useRef(null);
-  // const theme = useContext(ThemeContext);
+  const theme = useContext(ThemeContext);
 
   useClickAway(modalRef, () => {
     if (clickawayClose) {
@@ -51,7 +55,7 @@ const ClickawayCloseModal = ({
 };
 
 export const Modal = ({ clickawayClose, children, width,modalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,modalPositionType = MODAL_POSITION_TYPE.GLOBAL }: IModalProps) => {
-  // const theme = useContext(ThemeContext);
+  const theme = useContext(ThemeContext);
   return (
     <ModalOverlay modalBackground={modalBackground} modalPositionType={modalPositionType}>
       {clickawayClose ? (
@@ -71,8 +75,10 @@ export const ModalHeader = ({
   handlePrevious,
   handleClose,
   title,
+  fontSize,
+  fontWeight
 }: IModalHeader) => {
-  // const theme = useContext(ThemeContext);
+  const theme = useContext(ThemeContext);
   return (
     <Section justifyContent="center" alignItems="center" width='100%'>
       {handlePrevious && (
@@ -81,9 +87,9 @@ export const ModalHeader = ({
         </Span>
       )}
       <Span
-        fontWeight="500"
-        fontSize="24px"
-        color={'#000'}
+        fontWeight={fontWeight??"500"}
+        fontSize={fontSize??"24px"}
+        color={theme.textColor?.modalHeaderText}
         flex="1"
       >
         {title}
@@ -112,7 +118,7 @@ const ModalOverlay = styled.div<IModalProps>`
   backdrop-filter:${(props) =>  props.modalBackground === MODAL_BACKGROUND_TYPE.BLUR? 'blur(3px)':'none'};
   background-color: ${(props) => props.modalBackground === MODAL_BACKGROUND_TYPE.OVERLAY? 'rgba(0, 0, 0, 0.5)':' transparent'}; /* Black with 40% opacity */
   display: flex;
-  color: ${(props) => props.theme.textColor!.modalHeadingText ?? '#000'};
+  color: ${(props) => props.theme.textColor?.modalTitleText ?? '#000'};
   justify-content: center;
   align-items: center;
   z-index: 2000;

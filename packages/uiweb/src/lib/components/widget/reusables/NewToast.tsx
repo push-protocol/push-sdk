@@ -77,9 +77,10 @@ const useToast = (
         <LoaderToast
           msg={loaderMessage}
           loaderColor={theme.spinnerColor!}
-          textColor={theme.textColor!.modalHeadingText!}
+          textColor={theme.textColor!.modalTitleText!}
         />
-      </ThemeProvider>,
+       </ThemeProvider>
+      ,
       {
         position,
         autoClose: false,
@@ -106,14 +107,14 @@ const useToast = (
         <ToastContent>
           <ToastTitle
             style={{
-              color: theme.textColor?.modalHeadingText,
+              color: theme.textColor?.modalTitleText,
             }}
           >
             {toastTitle}
           </ToastTitle>
           <ToastMessage
             style={{
-              color: theme.textColor?.modalSubHeadingText,
+              color: theme.textColor?.modalSubTitleText,
             }}
           >
             {toastMessage}

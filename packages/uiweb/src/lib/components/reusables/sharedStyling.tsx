@@ -77,7 +77,7 @@ type AnchorStyleProps = {
   cursor?: string;
 };
 
-export const Anchor = styled.span<AnchorStyleProps>`
+export const Anchor = styled.a<AnchorStyleProps>`
   align-self: ${(props) => props.alignSelf || 'auto'};
   background: ${(props) => props.background || 'transparent'};
   border-radius: ${(props) => props.borderRadius || 'initial'};
@@ -90,7 +90,7 @@ export const Anchor = styled.span<AnchorStyleProps>`
   left: ${(props) => props.left || 'auto'};
   letter-spacing: ${(props) => props.letterSpacing || 'inherit'};
   line-height: ${(props) => props.lineHeight || 'initial'};
-  cursor: ${(props) => props.cursor || 'default'};
+  cursor: ${(props) => props.cursor || 'pointer'};
   margin: ${(props) => props.margin || '0px'};
   padding: ${(props) => props.padding || '0px'};
   position: ${(props) => props.position || 'relative'};

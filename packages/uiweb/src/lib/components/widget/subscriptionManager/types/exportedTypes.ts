@@ -7,7 +7,29 @@ export enum WidgetErrorCodes {
     NOTIFICATION_WIDGET_CHANNEL_INFO_ERROR = 'NW-004',
   }
 
+  export const WidgetErrorMessages = {
+    'NW-001' : {
+        title:'',
+        subTitle:''
+    },
+    'NW-002' : {
+        title:'',
+        subTitle:''
+    },
+    'NW-003' : {
+        title:'',
+        subTitle:''
+    },
+    'NW-004' : {
+        title:'Error in fetching details',
+        subTitle:'We encountered an error while fetching channel details. Please try again.'
+    },
+  }
+
+
+
 export interface  ISubscriptionManagerProps {
+    autoconnect?:boolean;
     channelAddress: string,
     modalBackground?: ModalBackgroundType;
     modalPositionType?: ModalPositionType;

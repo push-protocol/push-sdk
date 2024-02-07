@@ -4,18 +4,17 @@ import {
   WidgetDataContext,
   IWidgetDataContextValues,
 } from '../context/widgetContext';
-// import { ThemeContext } from '../components/chat/theme/ThemeProvider';
-import { IUser, PushAPI, SignerType } from '@pushprotocol/restapi';
-// import { IChatTheme, lightChatTheme } from '../components/chat/theme';
+import { PushAPI, SignerType } from '@pushprotocol/restapi';
 import { getAddressFromSigner, pCAIP10ToWallet } from '../helpers';
 import useInitializePushUser from '../hooks/useInitializePushUser';
-// import useChatProfile from '../hooks/chat/useChatProfile';
 import { GUEST_MODE_ACCOUNT } from '../config/constants';
-import usePushUserInfoUtilities from '../hooks/chat/usePushUserInfoUtilities';
+import { IWidgetTheme, lightWidgetTheme } from '../components/widget/theme';
+import { ThemeContext } from '../components/widget/theme/ThemeProvider';
+import useUserProfile from '../hooks/useUserProfile';
 
 export interface IWidgetUIProviderProps {
   children: ReactNode;
-//   theme?: IChatTheme;
+  theme?: IWidgetTheme;
   account?: string | null;
   signer?: SignerType | undefined;
   user?: PushAPI | undefined;
@@ -26,7 +25,7 @@ export const WidgetUIProvider = ({
   children,
   account = undefined,
   user = undefined,
-//   theme,
+  theme,
   signer = undefined,
   env = Constants.ENV.PROD,
 }: IWidgetUIProviderProps) => {
@@ -38,7 +37,7 @@ export const WidgetUIProvider = ({
   const [envVal, setEnvVal] = useState<ENV>(env);
 
   const { initializePushUser } = useInitializePushUser();
-//   const { fetchChatProfile } = useChatProfile();
+  const { fetchUserProfile } = useUserProfile();
 
   const [isPushChatStreamConnected, setIsPushChatStreamConnected] =
     useState<boolean>(false);
@@ -51,9 +50,9 @@ export const WidgetUIProvider = ({
         const address = await getAddressFromSigner(signer!);
         setAccountVal(address);
       } else if (!signer && user) {
-        // const profile = await fetchChatProfile({user});
+        const profile = await fetchUserProfile({user});
   
-        // setAccountVal(profile?.wallets);
+        setAccountVal(pCAIP10ToWallet(profile?.wallets));
       } else {
         setAccountVal(GUEST_MODE_ACCOUNT);
       }
@@ -98,12 +97,12 @@ export const WidgetUIProvider = ({
     setUser: setUserVal,
   };
 
-//   const PROVIDER_THEME = Object.assign({}, lightChatTheme, theme);
+  const PROVIDER_THEME = Object.assign({}, lightWidgetTheme, theme);
   return (
-    // <ThemeContext.Provider value={PROVIDER_THEME}>
+    <ThemeContext.Provider value={PROVIDER_THEME}>
       <WidgetDataContext.Provider value={value}>
         {children}
       </WidgetDataContext.Provider>
-    // </ThemeContext.Provider>
+     </ThemeContext.Provider>
   );
 };

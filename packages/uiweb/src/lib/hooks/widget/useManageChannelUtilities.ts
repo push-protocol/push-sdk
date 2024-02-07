@@ -1,25 +1,27 @@
 import { useCallback, useState } from 'react';
 import { useWidgetData } from './useWidgetData';
-import { WidgetErrorCodes } from '../../components/widget';
+import { WidgetErrorCodes } from '../../components';
 
+
+interface channelInfoParams {
+    channelAddress: string;
+  }
 export const useManageChannelUtilities = () => {
 
   const [channelInfoLoading, setChannelInfoLoading] = useState<boolean>(false);
   const [channelInfoError, setChannelInfoError] = useState<string>();
   const { user, env, account } = useWidgetData();
 
-  interface channelInfoParams {
-    channelAddress: string;
-  }
   const fetchChannelInfo = useCallback(
     async ({
       channelAddress,
     }: channelInfoParams) => {
       setChannelInfoLoading(true);
       try {
+        console.log(user)
         if (user) {
           const response = await user.channel.info(channelAddress);
-
+          setChannelInfoLoading(false);
           return response;
         }
         return;

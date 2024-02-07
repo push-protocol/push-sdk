@@ -1,0 +1,113 @@
+import React, { useContext, useState } from 'react';
+import { Button, PoweredByPush } from '../reusables';
+import { Section, Span, Spinner } from '../../reusables';
+import styled from 'styled-components';
+import CloseIcon from '../../../icons/close.svg';
+import { useManageSubscriptionsUtilities, useWidgetData } from '../../../hooks';
+import useToast from '../reusables/NewToast';
+import { MdCheckCircle, MdError } from 'react-icons/md';
+import { ThemeContext } from '../theme/ThemeProvider';
+import { ConnectButtonComp } from '../ConnectButton';
+
+// /**
+//  * @interface IThemeProps
+//  * this interface is used for defining the props for styled components
+//  */
+// interface IThemeProps {
+// }
+
+const SubHeadingText = {
+  withSettings:
+    'Select which setting list you would like to receive notifications from.',
+  withoutSettings:
+    'Subscribe and receive notifications from your favorite protocol.',
+};
+interface ISubscribeComponentProps {
+  autoconnect?: boolean;
+  channelInfo: any;
+  channelAddress: string;
+  handleNext: () => void;
+}
+export const SubscribeComponent: React.FC<ISubscribeComponentProps> = (
+  options: ISubscribeComponentProps
+) => {
+  const {
+    channelInfo,
+    handleNext,
+    channelAddress,
+    autoconnect = false,
+  } = options || {};
+  const { subscribeToChannel, subscribeError, subscribeLoading } =
+    useManageSubscriptionsUtilities();
+  const theme = useContext(ThemeContext);
+  const { signer, setAccount, setSigner } = useWidgetData();
+
+  const subscribeToast = useToast();
+
+  const handleSubscribe = async () => {
+    try {
+      const response = await subscribeToChannel({
+        channelAddress: channelAddress,
+      });
+      console.debug(response);
+      if (response && response?.status === 204) {
+        //show toast
+        subscribeToast.showMessageToast({
+          toastTitle: 'Notifications Enabled',
+          toastMessage: `You have successfully enabled notifications from ${channelInfo?.name}`,
+          toastType: 'SUCCESS',
+          getToastIcon: (size) => <MdCheckCircle size={size} color="green" />,
+        });
+        handleNext();
+      }
+    } catch (e) {
+      console.debug(e);
+    }
+    if (subscribeError) {
+      subscribeToast.showMessageToast({
+        toastTitle: 'Error while Enabling Notifications',
+        toastMessage:
+          'We encountered an error while enabling notifications. Please try again.',
+        toastType: 'ERROR',
+        getToastIcon: (size) => <MdError size={size} color="red" />,
+      });
+    }
+  };
+  return (
+    <Section flexDirection="column" gap="10px" margin="12px 12px 0px 12px">
+      <Section flexDirection="column" gap="10px" alignItems="start">
+        <Section
+          flexDirection="column"
+          alignItems="start"
+          gap="5px"
+          margin="0 0 10px 0"
+        >
+          <Span fontSize="21px" fontWeight="700">
+            Subscribe to get Notified
+          </Span>
+          <Span
+            fontSize="12px"
+            textAlign="left"
+            fontWeight="400"
+            width="90%"
+            color={theme?.textColor?.modalSubTitleText}
+          >
+            {SubHeadingText.withoutSettings}
+          </Span>
+        </Section>
+      </Section>
+      {!signer && (
+        <ConnectButtonComp
+          autoconnect={autoconnect}
+          setAccount={setAccount}
+          setSigner={setSigner}
+          signer={signer}
+        />
+      )}
+      {signer &&<Button onClick={handleSubscribe}>
+        {subscribeLoading ? <Spinner color="#fff" size="24" /> : 'Subscribe'}
+      </Button>}
+      <PoweredByPush />
+    </Section>
+  );
+};

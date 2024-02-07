@@ -2,7 +2,7 @@ import { useContext, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { Route, Routes, Link } from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';
-import { PushAPI } from "@pushprotocol/restapi";
+import { PushAPI } from '@pushprotocol/restapi';
 import ConnectButtonComp from './components/Connect';
 import { Checkbox } from './components/Checkbox';
 import Dropdown from './components/Dropdown';
@@ -77,6 +77,7 @@ import {
   ChatUIProvider,
   SpacesUI,
   SpacesUIProvider,
+  WidgetUIProvider,
   darkChatTheme,
 } from '@pushprotocol/uiweb';
 import ChatUITest from './ChatUITest/ChatUITest';
@@ -94,8 +95,9 @@ import GetGroupMemberCountTest from './ChatTest/GetGroupMemberCountTest';
 import GetGroupInfoTest from './ChatTest/GetGroupInfoTest';
 import GetGroupMembersTest from './ChatTest/GetGroupMembersTest';
 import VideoV2 from './Video';
+import Widget from './widget/Widget';
+import { SubscriptionManagerTest } from './widget/SubscriptionManagerTest';
 // import { SubscriptionManagerTest } from './widget/SubscriptionManagerTest';
-
 
 window.Buffer = window.Buffer || Buffer;
 
@@ -261,8 +263,8 @@ export function App() {
         env: env,
         account: account,
         alpha: { feature: ['SCALABILITY_V2'] },
-    })
-    setPushUser(pushUser);
+      });
+      setPushUser(pushUser);
       setSigner(librarySigner);
       if (user?.encryptedPrivateKey) {
         pgpPrivateKey = await PushApi.chat.decryptPGPKey({
@@ -327,290 +329,319 @@ export function App() {
           <Web3Context.Provider value={{ account, active, library, chainId }}>
             <SocketContext.Provider value={socketData}>
               <AccountContext.Provider value={{ pgpPrivateKey, setSpaceId }}>
-                <ChatUIProvider
-                  env={env}
-                  theme={lightChatTheme}
-                  // pushUser={pushUser}
-                  // account={account}
-                  // pgpPrivateKey={pgpPrivateKey}
-                  signer={signer}
-                >
-                  <SpacesUIProvider spaceUI={spaceUI} theme={customDarkTheme}>
-                    <Routes>
-                      <Route
-                        path="/"
-                        element={
-                          <NavMenu>
-                            <Link to="/notifications" className="nav-button">
-                              NOTIFICATIONS
-                            </Link>
-                            <Link to="/secret" className="nav-button">
-                              SECRET NOTIFICATION
-                            </Link>
-                            <Link to="/channels" className="nav-button">
-                              CHANNELS
-                            </Link>
-                            <Link to="/alias" className="nav-button">
-                              ALIAS
-                            </Link>
-                            <Link to="/delegations" className="nav-button">
-                              DELEGATIONS
-                            </Link>
-                            <Link to="/payloads" className="nav-button">
-                              PAYLOADS
-                            </Link>
-                            <Link to="/socket" className="nav-button">
-                              SOCKET
-                            </Link>
-                            <Link to="/embed" className="nav-button">
-                              EMBED
-                            </Link>
-                            <Link to="/chat" className="nav-button">
-                              CHAT
-                            </Link>
-                            <Link to="/chatUI" className="nav-button">
-                              CHAT UI
-                            </Link>
-                            <Link to="/video" className="nav-button">
-                              VIDEO
-                            </Link>
-                            <Link to="/space" className="nav-button">
-                              SPACE
-                            </Link>
-                            <Link to="/spaceUI" className="nav-button">
-                              SPACE UI
-                            </Link>
-                          </NavMenu>
-                        }
-                      />
-                      <Route
-                        path="/notifications"
-                        element={<NotificationsTest />}
-                      />
-                      <Route
-                        path="/secret"
-                        element={<SecretNotificationsTest />}
-                      />
-                      <Route path="/channels" element={<ChannelsTest />} />
-                      <Route path="/alias" element={<AliasTest />} />
-                      <Route path="/delegations" element={<DelegationTest />} />
-                      <Route path="/payloads" element={<PayloadsTest />} />
-                      <Route path="/socket" element={<SocketTest />} />
-                      <Route path="/embed" element={<EmbedTest />} />
-                      <Route path="/chat" element={<ChatTest />} />
-                      <Route path="/space" element={<SpaceTest />} />
-                      <Route path="/chatUI" element={<ChatUITest />} />
-                      <Route path="/video" element={<VideoV2 />} />
-                      <Route path="/spaceUI" element={<SpaceUITest />} />
-                      {/* chat method  routes */}
-                      <Route path="/get" element={<GetUserTest />} />
-                      <Route
-                        path="/getUsersBatch"
-                        element={<GetUsersBatchTest />}
-                      />
-                      <Route path="/create" element={<CreateUserTest />} />
-                      <Route
-                        path="/updateUserprofile"
-                        element={<UpdateUserProfile />}
-                      />
-                      <Route
-                        path="/authUpdate"
-                        element={<AuthUpdateUserTest />}
-                      />
-                      <Route path="/send" element={<SendMessageTest />} />
-                      <Route path="/approve" element={<ApproveRequestTest />} />
-                      <Route path="/chats" element={<GetChatsTest />} />
-                      <Route path="/hash" element={<ConversationHashTest />} />
-                      <Route path="/history" element={<HistoryTest />} />
-                      <Route path="/requests" element={<GetRequestsTest />} />
-                      <Route
-                        path="/createGroup"
-                        element={<CreateGroupTest />}
-                      />
-                      <Route path="/getGroup" element={<GetGroupTest />} />
-                      <Route
-                        path="/addMembersToGroup"
-                        element={<AddMembersToGroupTest />}
-                      />
-                      <Route
-                        path="/addAdminsToGroup"
-                        element={<AddAdminsToGroupTest />}
-                      />
-                      <Route
-                        path="/removeMembersFromGroup"
-                        element={<RemoveMembersFromGroupTest />}
-                      />
-                      <Route
-                        path="/removeAdminsFromGroup"
-                        element={<RemoveAdminsFromGroupTest />}
-                      />
-                      <Route
-                        path="/updateGroup"
-                        element={<UpdateGroupTest />}
-                      />
-                      {/* chat method  routes */}
-                      <Route path="/get" element={<GetUserTest />} />
-                      <Route
-                        path="/getUsersBatch"
-                        element={<GetUsersBatchTest />}
-                      />
-                      <Route path="/create" element={<CreateUserTest />} />
-                      <Route
-                        path="/updateUserprofile"
-                        element={<UpdateUserProfile />}
-                      />
-                      <Route
-                        path="/authUpdate"
-                        element={<AuthUpdateUserTest />}
-                      />
-                      <Route path="/send" element={<SendMessageTest />} />
-                      <Route path="/approve" element={<ApproveRequestTest />} />
-                      <Route path="/reject" element={<RejectRequestTest />} />
-                      <Route path="/chats" element={<GetChatsTest />} />
-                      <Route path="/hash" element={<ConversationHashTest />} />
-                      <Route path="/history" element={<HistoryTest />} />
-                      <Route path="/requests" element={<GetRequestsTest />} />
-                      <Route
-                        path="/createGroup"
-                        element={<CreateGroupTest />}
-                      />
-                      <Route path="/getGroup" element={<GetGroupTest />} />
-                      <Route
-                        path="/getGroupAccess"
-                        element={<GetGroupAccessTest />}
-                      />
-                      <Route
-                        path="/getGroupMemberStatus"
-                        element={<GetGroupMemberStatusTest />}
-                      />
-                      <Route
-                        path="/getGroupMemberCountTest"
-                        element={<GetGroupMemberCountTest />}
-                      />
-                      <Route
-                        path="/getGroupInfoTest"
-                        element={<GetGroupInfoTest />}
-                      />
-                      <Route
-                        path="/getGroupMembersTest"
-                        element={<GetGroupMembersTest />}
-                      />
-                      <Route
-                        path="/addMembersToGroup"
-                        element={<AddMembersToGroupTest />}
-                      />
-                      <Route
-                        path="/addAdminsToGroup"
-                        element={<AddAdminsToGroupTest />}
-                      />
-                      <Route
-                        path="/removeMembersFromGroup"
-                        element={<RemoveMembersFromGroupTest />}
-                      />
-                      <Route
-                        path="/removeAdminsFromGroup"
-                        element={<RemoveAdminsFromGroupTest />}
-                      />
-                      <Route
-                        path="/updateGroup"
-                        element={<UpdateGroupTest />}
-                      />
-                      <Route
-                        path="/searchGroups"
-                        element={<SearchGroupTest />}
-                      />
-                      {/* spaces method  routes */}
-                      <Route
-                        path="/createSpace"
-                        element={<CreateSpaceTest />}
-                      />
-                      <Route
-                        path="/updateSpace"
-                        element={<UpdateSpaceTest />}
-                      />
-                      <Route path="/getSpace" element={<GetSpaceTest />} />
-                      <Route
-                        path="/getSpaceInfo"
-                        element={<GetSpaceInfoTest />}
-                      />
-                      <Route
-                        path="/approveSpace"
-                        element={<ApproveSpaceRequestTest />}
-                      />
-                      <Route path="/startSpace" element={<StartSpaceTest />} />
-                      <Route path="/stopSpace" element={<StopSpaceTest />} />
-                      <Route
-                        path="/addSpeakersToSpace"
-                        element={<AddSpeakersToSpaceTest />}
-                      />
-                      <Route
-                        path="/addListenersToSpace"
-                        element={<AddListenersToSpaceTest />}
-                      />
-                      <Route
-                        path="/removeListenersFromSpace"
-                        element={<RemoveListenersFromSpaceTest />}
-                      />
-                      <Route
-                        path="/removeSpeakersFromSpace"
-                        element={<RemoveSpeakersFromSpaceTest />}
-                      />
-                      <Route path="/getSpaces" element={<GetSpacesTest />} />
-                      <Route
-                        path="/getSpacesRequests"
-                        element={<GetSpacesRequestsTest />}
-                      />
-                      <Route
-                        path="/getSpacesTrending"
-                        element={<GetSpacesTrendingTest />}
-                      />
-                      <Route
-                        path="/getSpaceAccess"
-                        element={<GetSpaceAccessTest />}
-                      />
-                      <Route
-                        path="/searchSpaces"
-                        element={<SearchSpaceTest />}
-                      />
-                      {/* spaces ui components routes */}
-                      <Route path="spaceWidget" element={<SpaceWidget />} />
-                      <Route path="spaceFeed" element={<SpaceFeed />} />
-                      <Route path="spaceBanner" element={<SpaceBanner />} />
-                      <Route
-                        path="spaceInvites"
-                        element={<SpaceInvitesComponent />}
-                      />
-                      <Route
-                        path="createSpaceUI"
-                        element={<CreateSpaceComponent />}
-                      />
-                      {/* chat ui components routes */}
-                      <Route
-                        path="messageBubble"
-                        element={<ChatViewBubbles />}
-                      />
-                      <Route
-                        path="messageList"
-                        element={<ChatViewListTest />}
-                      />
-                      <Route
-                        path="messageContainer"
-                        element={<ChatViewComponentTest />}
-                      />
-                      <Route path="ChatProfile" element={<ChatProfileTest />} />{' '}
-                      <Route path="ChatSupport" element={<ChatSupportTest />} />
-
-                      {/* Widget */}
-                      {/* <Route
-                        path="/subscriptionManager"
-                        element={<SubscriptionManagerTest />}
-                      /> */}
-                    </Routes>
-                    {/* <ChatWidgetTest/> */}
-                    {/* <ChatWidgetTest /> */}
-                    <SpaceWidgetComponent spaceId={spaceId} />
-                  </SpacesUIProvider>
-                </ChatUIProvider>
+                <WidgetUIProvider user={pushUser} env={env}>
+                  <ChatUIProvider
+                    env={env}
+                    theme={lightChatTheme}
+                    // pushUser={pushUser}
+                    // account={account}
+                    // pgpPrivateKey={pgpPrivateKey}
+                    signer={signer}
+                  >
+                    <SpacesUIProvider spaceUI={spaceUI} theme={customDarkTheme}>
+                      <Routes>
+                        <Route
+                          path="/"
+                          element={
+                            <NavMenu>
+                              <Link to="/notifications" className="nav-button">
+                                NOTIFICATIONS
+                              </Link>
+                              <Link to="/secret" className="nav-button">
+                                SECRET NOTIFICATION
+                              </Link>
+                              <Link to="/channels" className="nav-button">
+                                CHANNELS
+                              </Link>
+                              <Link to="/alias" className="nav-button">
+                                ALIAS
+                              </Link>
+                              <Link to="/delegations" className="nav-button">
+                                DELEGATIONS
+                              </Link>
+                              <Link to="/payloads" className="nav-button">
+                                PAYLOADS
+                              </Link>
+                              <Link to="/socket" className="nav-button">
+                                SOCKET
+                              </Link>
+                              <Link to="/embed" className="nav-button">
+                                EMBED
+                              </Link>
+                              <Link to="/chat" className="nav-button">
+                                CHAT
+                              </Link>
+                              <Link to="/chatUI" className="nav-button">
+                                CHAT UI
+                              </Link>
+                              <Link to="/video" className="nav-button">
+                                VIDEO
+                              </Link>
+                              <Link to="/space" className="nav-button">
+                                SPACE
+                              </Link>
+                              <Link to="/spaceUI" className="nav-button">
+                                SPACE UI
+                              </Link>
+                              <Link to="/widgets" className="nav-button">
+                                WIDGETS
+                              </Link>
+                            </NavMenu>
+                          }
+                        />
+                        <Route
+                          path="/notifications"
+                          element={<NotificationsTest />}
+                        />
+                        <Route
+                          path="/secret"
+                          element={<SecretNotificationsTest />}
+                        />
+                        <Route path="/channels" element={<ChannelsTest />} />
+                        <Route path="/alias" element={<AliasTest />} />
+                        <Route
+                          path="/delegations"
+                          element={<DelegationTest />}
+                        />
+                        <Route path="/payloads" element={<PayloadsTest />} />
+                        <Route path="/socket" element={<SocketTest />} />
+                        <Route path="/embed" element={<EmbedTest />} />
+                        <Route path="/chat" element={<ChatTest />} />
+                        <Route path="/space" element={<SpaceTest />} />
+                        <Route path="/chatUI" element={<ChatUITest />} />
+                        <Route path="/video" element={<VideoV2 />} />
+                        <Route path="/spaceUI" element={<SpaceUITest />} />
+                        <Route path="/widgets" element={<Widget />} />
+                        {/* chat method  routes */}
+                        <Route path="/get" element={<GetUserTest />} />
+                        <Route
+                          path="/getUsersBatch"
+                          element={<GetUsersBatchTest />}
+                        />
+                        <Route path="/create" element={<CreateUserTest />} />
+                        <Route
+                          path="/updateUserprofile"
+                          element={<UpdateUserProfile />}
+                        />
+                        <Route
+                          path="/authUpdate"
+                          element={<AuthUpdateUserTest />}
+                        />
+                        <Route path="/send" element={<SendMessageTest />} />
+                        <Route
+                          path="/approve"
+                          element={<ApproveRequestTest />}
+                        />
+                        <Route path="/chats" element={<GetChatsTest />} />
+                        <Route
+                          path="/hash"
+                          element={<ConversationHashTest />}
+                        />
+                        <Route path="/history" element={<HistoryTest />} />
+                        <Route path="/requests" element={<GetRequestsTest />} />
+                        <Route
+                          path="/createGroup"
+                          element={<CreateGroupTest />}
+                        />
+                        <Route path="/getGroup" element={<GetGroupTest />} />
+                        <Route
+                          path="/addMembersToGroup"
+                          element={<AddMembersToGroupTest />}
+                        />
+                        <Route
+                          path="/addAdminsToGroup"
+                          element={<AddAdminsToGroupTest />}
+                        />
+                        <Route
+                          path="/removeMembersFromGroup"
+                          element={<RemoveMembersFromGroupTest />}
+                        />
+                        <Route
+                          path="/removeAdminsFromGroup"
+                          element={<RemoveAdminsFromGroupTest />}
+                        />
+                        <Route
+                          path="/updateGroup"
+                          element={<UpdateGroupTest />}
+                        />
+                        {/* chat method  routes */}
+                        <Route path="/get" element={<GetUserTest />} />
+                        <Route
+                          path="/getUsersBatch"
+                          element={<GetUsersBatchTest />}
+                        />
+                        <Route path="/create" element={<CreateUserTest />} />
+                        <Route
+                          path="/updateUserprofile"
+                          element={<UpdateUserProfile />}
+                        />
+                        <Route
+                          path="/authUpdate"
+                          element={<AuthUpdateUserTest />}
+                        />
+                        <Route path="/send" element={<SendMessageTest />} />
+                        <Route
+                          path="/approve"
+                          element={<ApproveRequestTest />}
+                        />
+                        <Route path="/reject" element={<RejectRequestTest />} />
+                        <Route path="/chats" element={<GetChatsTest />} />
+                        <Route
+                          path="/hash"
+                          element={<ConversationHashTest />}
+                        />
+                        <Route path="/history" element={<HistoryTest />} />
+                        <Route path="/requests" element={<GetRequestsTest />} />
+                        <Route
+                          path="/createGroup"
+                          element={<CreateGroupTest />}
+                        />
+                        <Route path="/getGroup" element={<GetGroupTest />} />
+                        <Route
+                          path="/getGroupAccess"
+                          element={<GetGroupAccessTest />}
+                        />
+                        <Route
+                          path="/getGroupMemberStatus"
+                          element={<GetGroupMemberStatusTest />}
+                        />
+                        <Route
+                          path="/getGroupMemberCountTest"
+                          element={<GetGroupMemberCountTest />}
+                        />
+                        <Route
+                          path="/getGroupInfoTest"
+                          element={<GetGroupInfoTest />}
+                        />
+                        <Route
+                          path="/getGroupMembersTest"
+                          element={<GetGroupMembersTest />}
+                        />
+                        <Route
+                          path="/addMembersToGroup"
+                          element={<AddMembersToGroupTest />}
+                        />
+                        <Route
+                          path="/addAdminsToGroup"
+                          element={<AddAdminsToGroupTest />}
+                        />
+                        <Route
+                          path="/removeMembersFromGroup"
+                          element={<RemoveMembersFromGroupTest />}
+                        />
+                        <Route
+                          path="/removeAdminsFromGroup"
+                          element={<RemoveAdminsFromGroupTest />}
+                        />
+                        <Route
+                          path="/updateGroup"
+                          element={<UpdateGroupTest />}
+                        />
+                        <Route
+                          path="/searchGroups"
+                          element={<SearchGroupTest />}
+                        />
+                        {/* spaces method  routes */}
+                        <Route
+                          path="/createSpace"
+                          element={<CreateSpaceTest />}
+                        />
+                        <Route
+                          path="/updateSpace"
+                          element={<UpdateSpaceTest />}
+                        />
+                        <Route path="/getSpace" element={<GetSpaceTest />} />
+                        <Route
+                          path="/getSpaceInfo"
+                          element={<GetSpaceInfoTest />}
+                        />
+                        <Route
+                          path="/approveSpace"
+                          element={<ApproveSpaceRequestTest />}
+                        />
+                        <Route
+                          path="/startSpace"
+                          element={<StartSpaceTest />}
+                        />
+                        <Route path="/stopSpace" element={<StopSpaceTest />} />
+                        <Route
+                          path="/addSpeakersToSpace"
+                          element={<AddSpeakersToSpaceTest />}
+                        />
+                        <Route
+                          path="/addListenersToSpace"
+                          element={<AddListenersToSpaceTest />}
+                        />
+                        <Route
+                          path="/removeListenersFromSpace"
+                          element={<RemoveListenersFromSpaceTest />}
+                        />
+                        <Route
+                          path="/removeSpeakersFromSpace"
+                          element={<RemoveSpeakersFromSpaceTest />}
+                        />
+                        <Route path="/getSpaces" element={<GetSpacesTest />} />
+                        <Route
+                          path="/getSpacesRequests"
+                          element={<GetSpacesRequestsTest />}
+                        />
+                        <Route
+                          path="/getSpacesTrending"
+                          element={<GetSpacesTrendingTest />}
+                        />
+                        <Route
+                          path="/getSpaceAccess"
+                          element={<GetSpaceAccessTest />}
+                        />
+                        <Route
+                          path="/searchSpaces"
+                          element={<SearchSpaceTest />}
+                        />
+                        {/* spaces ui components routes */}
+                        <Route path="spaceWidget" element={<SpaceWidget />} />
+                        <Route path="spaceFeed" element={<SpaceFeed />} />
+                        <Route path="spaceBanner" element={<SpaceBanner />} />
+                        <Route
+                          path="spaceInvites"
+                          element={<SpaceInvitesComponent />}
+                        />
+                        <Route
+                          path="createSpaceUI"
+                          element={<CreateSpaceComponent />}
+                        />
+                        {/* chat ui components routes */}
+                        <Route
+                          path="messageBubble"
+                          element={<ChatViewBubbles />}
+                        />
+                        <Route
+                          path="messageList"
+                          element={<ChatViewListTest />}
+                        />
+                        <Route
+                          path="messageContainer"
+                          element={<ChatViewComponentTest />}
+                        />
+                        <Route
+                          path="ChatProfile"
+                          element={<ChatProfileTest />}
+                        />{' '}
+                        <Route
+                          path="ChatSupport"
+                          element={<ChatSupportTest />}
+                        />
+                        {/* Widget */}
+                        <Route
+                          path="/subscriptionManager"
+                          element={<SubscriptionManagerTest />}
+                        />
+                      </Routes>
+                      {/* <ChatWidgetTest/> */}
+                      {/* <ChatWidgetTest /> */}
+                      <SpaceWidgetComponent spaceId={spaceId} />
+                    </SpacesUIProvider>
+                  </ChatUIProvider>
+                </WidgetUIProvider>
               </AccountContext.Provider>
             </SocketContext.Provider>
           </Web3Context.Provider>

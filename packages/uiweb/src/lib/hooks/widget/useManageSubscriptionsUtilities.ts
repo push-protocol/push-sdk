@@ -3,6 +3,11 @@ import { useWidgetData } from './useWidgetData';
 import * as PushAPI from '@pushprotocol/restapi';
 import { WidgetErrorCodes } from '../../components/widget';
 
+
+interface subscribeunsubscribeParams {
+    channelAddress: string;
+    channelSettings?: PushAPI.UserSetting[];
+  }
 export const useManageSubscriptionsUtilities = () => {
   const [subscribeLoading, setSubscribeLoading] = useState<boolean>(false);
   const [subscribeError, setSubscribeError] = useState<string>();
@@ -10,10 +15,6 @@ export const useManageSubscriptionsUtilities = () => {
   const [unsubscribeError, setUnsubscribeError] = useState<string>();
   const { user, env, account } = useWidgetData();
 
-  interface subscribeunsubscribeParams {
-    channelAddress: string;
-    channelSettings?: PushAPI.UserSetting[];
-  }
   const subscribeToChannel = useCallback(
     async ({
       channelAddress,
@@ -22,6 +23,7 @@ export const useManageSubscriptionsUtilities = () => {
       setSubscribeLoading(true);
       try {
         if (user) {
+            console.log(channelAddress)
           const response = await user.notification.subscribe(channelAddress, {
             settings: channelSettings,
             onSuccess: () => {
