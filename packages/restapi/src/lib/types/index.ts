@@ -88,6 +88,32 @@ export type ParsedResponseType = {
   };
 };
 
+export type ApiSubscriptionType = {
+  channel: string,
+  user_settings: string | null
+}
+
+export type NotificationSettingType = {
+  type: number;
+  // default: number | { upper: number; lower: number };
+  description: string;
+  data?: {
+    upper: number;
+    lower: number;
+    ticker?: number;
+  };
+  userPreferance: {
+    value: number | { upper: number; lower: number },
+    enabled: boolean
+  }
+};
+
+export type ApiSubscribersType = {
+  itemcount: number,
+  subscribers: {
+    subscriber: string, settings: string | null
+  }[]
+}
 export interface VideoNotificationRules {
   access: {
     type: VIDEO_NOTIFICATION_ACCESS_TYPE;
