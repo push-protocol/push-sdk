@@ -29,7 +29,7 @@ import { Alias } from './alias';
 export class Channel extends PushNotificationBaseClass {
   public delegate!: Delegate;
   public alias!: Alias;
-  constructor(signer?: SignerType, env?: ENV, account?: string) {
+  constructor(signer?: SignerType, env?: ENV, account?: string, pgpPrivateKey?: string) {
     super(signer, env, account);
     this.delegate = new Delegate(signer, env, account);
     this.alias = new Alias(env!);
@@ -136,6 +136,7 @@ export class Channel extends PushNotificationBaseClass {
         options: options,
         channel: options.channel ?? this.account,
         settings: settings,
+        secret: options.secret
       });
       return await PUSH_PAYLOAD.sendNotification(lowLevelPayload);
     } catch (error) {

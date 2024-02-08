@@ -36,9 +36,13 @@ export const aesDecryption = (payload: {
   encryptedMessage: string;
   secret: string;
 }) => {
-  const { encryptedMessage, secret } = payload;
-  const bytes = CryptoJS.AES.decrypt(encryptedMessage, secret);
-  return bytes.toString(CryptoJS.enc.Utf8);
+  try {
+    const { encryptedMessage, secret } = payload;
+    const bytes = CryptoJS.AES.decrypt(encryptedMessage, secret);
+    return bytes.toString(CryptoJS.enc.Utf8);
+  } catch (error) {
+    return '';
+  }
 };
 
 /**
@@ -89,27 +93,39 @@ export const decryptViaPGP = async ({
   return decrypted as string;
 };
 
-export const  encryptViaPK = async(options: {publicKey: string, message: string}) => {
-  try{
-    const {publicKey, message} = options || {};
-    let publickKeyWithout0x
-    if(publicKey.startsWith('0x')){
-      publickKeyWithout0x = publicKey.split('0x')[1]
+export const encryptViaPK = async (options: {
+  publicKey: string;
+  message: string;
+}) => {
+  try {
+    const { publicKey, message } = options || {};
+    let publickKeyWithout0x;
+    if (publicKey.startsWith('0x')) {
+      publickKeyWithout0x = publicKey.split('0x')[1];
     } else {
-      publickKeyWithout0x = publicKey
+      publickKeyWithout0x = publicKey;
     }
-    const encyptedData = await EthCrypto.encryptWithPublicKey(publickKeyWithout0x, message)
-    return EthCrypto.cipher.stringify(encyptedData)
-  }catch(error){
-      return null
+    const encyptedData = await EthCrypto.encryptWithPublicKey(
+      publickKeyWithout0x,
+      message
+    );
+    return EthCrypto.cipher.stringify(encyptedData);
+  } catch (error) {
+    return null;
   }
-}
+};
 
-export const decryptViaPK = async(options: {privateKey: string, encMessage: string}) => {
-  try{
-    const {privateKey, encMessage} = options || {};
-    return await EthCrypto.decryptWithPrivateKey(privateKey,EthCrypto.cipher.parse(encMessage))
-    }catch(error){
-      return null
-    }
-}
+export const decryptViaPK = async (options: {
+  privateKey: string;
+  encMessage: string;
+}) => {
+  try {
+    const { privateKey, encMessage } = options || {};
+    return await EthCrypto.decryptWithPrivateKey(
+      privateKey,
+      EthCrypto.cipher.parse(encMessage)
+    );
+  } catch (error) {
+    return null;
+  }
+};

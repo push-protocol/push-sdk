@@ -1,49 +1,132 @@
-import { ParsedResponseType } from "../types";
-import { decryptViaPGP, aesDecryption } from "../payloads/encHelpers";
-import { SUPPORTED_ENC_TYPE } from "../payloads/constants";
+import { ApiNotificationType } from '../types';
+import { decryptViaPGP, aesDecryption } from '../payloads/encHelpers';
+import { SUPPORTED_ENC_TYPE } from '../payloads/constants';
+import { Lit } from '../payloads/litHelper';
 
-export async function decryptFeed(options:{feed:ParsedResponseType, decryptionKey: string}): Promise<ParsedResponseType| null> {
-    // do case wise decryption
-    const {feed, decryptionKey} = options || {};
-    const secretComponents = feed.secret.split(":")
-    if(secretComponents[0] == SUPPORTED_ENC_TYPE.PGPV1){
-         return await decryptFeedViaPGP({encryptedFeed: feed, pgpPrivateKey: decryptionKey, encryptedSecret: secretComponents[1]})
-    }
-    return null;
+export async function decryptFeed(options: {
+  feed: ApiNotificationType;
+  pgpPrivateKey?: string;
+  lit?: any;
+}): Promise<ApiNotificationType> {
+  // do case wise decryption
+  const { feed, pgpPrivateKey, lit } = options || {};
+  const [prefix, ...secret] = feed.payload.data.secret.toString().split(':');
+  if (prefix == SUPPORTED_ENC_TYPE.PGPV1) {
+    return await decryptFeedViaPGP({
+      encryptedFeed: feed,
+      pgpPrivateKey: pgpPrivateKey as string,
+      encryptedSecret: secret.join()
+    });
+  }
+  if (prefix == SUPPORTED_ENC_TYPE.LITV1) {
+    return await decryptFeedViaLIT({
+      encryptedFeed: feed,
+      lit: lit,
+      encryptedSecret: secret.join(':')
+    });
+  }
+  return feed;
 }
 
 export async function decryptFeedViaPGP(options: {
-    encryptedFeed: ParsedResponseType,
-    pgpPrivateKey: string,
-    encryptedSecret: string
+  encryptedFeed: ApiNotificationType;
+  pgpPrivateKey: string;
+  encryptedSecret: string;
 }) {
-    const {encryptedFeed, pgpPrivateKey, encryptedSecret} = options|| {};
-    const secret = await decryptViaPGP({cipherText: encryptedSecret, pgpPrivateKey: pgpPrivateKey})
-    const decryptedFeed = decryptFeedViaAES({ encryptedFeed, secret})
+  const { encryptedFeed, pgpPrivateKey, encryptedSecret } = options || {};
+  if (!pgpPrivateKey) {
+    return encryptedFeed;
+  }
+  const secret = await decryptViaPGP({
+    cipherText: encryptedSecret,
+    pgpPrivateKey: pgpPrivateKey
+  });
+  const decryptedFeed = decryptFeedViaAES({ encryptedFeed, secret });
+  return decryptedFeed;
+}
+
+export async function decryptFeedViaLIT(options: {
+  encryptedFeed: ApiNotificationType;
+  lit: Lit;
+  encryptedSecret: string;
+}) {
+  try {
+    const { encryptedFeed, lit, encryptedSecret } = options || {};
+    if (!lit) {
+      return encryptedFeed;
+    }
+    const encryptedSecretObject: {
+      ciphertext: string;
+      dataToEncryptHash: string;
+    } = JSON.parse(encryptedSecret);
+    const secret = await lit.decrypt({ ...encryptedSecretObject });
+    const decryptedFeed = decryptFeedViaAES({
+      encryptedFeed,
+      secret: secret as string
+    });
     return decryptedFeed;
+  } catch (error) {
+    return options.encryptedFeed;
+  }
 }
 
 export function decryptFeedViaAES(options: {
-    encryptedFeed: ParsedResponseType,
-    secret: string
+  encryptedFeed: ApiNotificationType;
+  secret: string;
 }) {
-    const {encryptedFeed, secret} = options || {}
-    const decryptedFeed: ParsedResponseType = {
+  const { encryptedFeed, secret } = options || {};
+  if (!secret) {
+    return encryptedFeed;
+  }
+  try {
+    const decryptedFeed: ApiNotificationType = {
+      ...encryptedFeed,
+      payload: {
+        ...encryptedFeed.payload,
         notification: {
-          title: aesDecryption({encryptedMessage: encryptedFeed.notification.title, secret}),
-          body: aesDecryption({encryptedMessage: encryptedFeed.notification.body, secret})
+          title: encryptedFeed.payload.notification.title
+          ,
+          body: aesDecryption({
+            encryptedMessage: encryptedFeed.payload.notification.body,
+            secret
+          })
         },
-        cta: encryptedFeed.cta? aesDecryption({encryptedMessage: encryptedFeed.cta, secret}) : '',
-        title: encryptedFeed.title? aesDecryption({encryptedMessage: encryptedFeed.cta, secret}): '',
-        icon: encryptedFeed.icon,
-        url: encryptedFeed.url,
-        sid: encryptedFeed.sid,
-        app: encryptedFeed.app,
-        blockchain: encryptedFeed.blockchain,
-        message: encryptedFeed.message? aesDecryption({encryptedMessage: encryptedFeed.message, secret}) : '',
-        image: encryptedFeed.image? aesDecryption({encryptedMessage: encryptedFeed.image, secret}): '',
-        secret: ''
+        data: {
+          ...encryptedFeed.payload.data,
+          acta: encryptedFeed.payload.data.acta
+            ? aesDecryption({
+                encryptedMessage: encryptedFeed.payload.data.acta,
+                secret
+              })
+            : '',
+          asub: encryptedFeed.payload.data.asub
+            ? aesDecryption({
+                encryptedMessage: encryptedFeed.payload.data.asub,
+                secret
+              })
+            : '',
+          icon: encryptedFeed.payload.data.icon,
+          url: encryptedFeed.payload.data.url,
+          sid: encryptedFeed.payload.data.sid,
+          app: encryptedFeed.payload.data.app,
+          amsg: encryptedFeed.payload.data.amsg
+            ? aesDecryption({
+                encryptedMessage: encryptedFeed.payload.data.amsg,
+                secret
+              })
+            : '',
+          aimg: encryptedFeed.payload.data.aimg
+            ? aesDecryption({
+                encryptedMessage: encryptedFeed.payload.data.aimg,
+                secret
+              })
+            : '',
+          secret: ''
+        }
       }
-  
-      return decryptedFeed
+    };
+    return decryptedFeed;
+  } catch (error) {
+    return encryptedFeed;
+  }
 }

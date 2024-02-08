@@ -28,6 +28,7 @@ import {
 import { ENV } from '../constants';
 import { getChannel } from '../channels/getChannel';
 import { axiosPost } from '../utils/axiosUtil';
+import { Lit } from './litHelper';
 /**
  * Validate options for some scenarios
  */
@@ -131,6 +132,12 @@ async function checkSimulateNotification(payloadOptions: {
   }
 }
 
+ function initialiseLIT(secType: "PGPV1" | "LITV1" | null, signer: any): Lit | null {
+  if(secType == "LITV1")
+    return new Lit(signer)
+  return null;
+}
+
 export async function sendNotification(options: ISendNotificationInputOptions) {
   try {
     const {
@@ -150,7 +157,7 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       env = ENV.PROD,
       chatId,
       rules,
-      pgpPrivateKey
+      pgpPrivateKey,
     } = options || {};
 
     validateOptions(options);
@@ -177,12 +184,15 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       COMMUNICATOR_CONTRACT = EPNS_COMMUNICATOR_CONTRACT;
     }
 
+    let lit = initialiseLIT(payload?.sectype?? null, signer);
+
     const {_recipients, secret} = await getRecipients({
       env,
       notificationType: type,
       channel: _channelAddress,
       recipients,
-      secretType: payload?.sectype
+      secretType: payload?.sectype?? null,
+      signer
     });
 
     const notificationPayload = getPayloadForAPIInput(options, _recipients, secret);

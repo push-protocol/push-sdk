@@ -171,7 +171,7 @@ describe("payload helpers", ()=>{
 
         })
 
-        it.only("Should return the payload with encrypted data for broadcast type", async() => {
+        it("Should return the payload with encrypted data for broadcast type", async() => {
             const recipients = await helpers.getRecipients({
                 env: ENV.DEV,
                 notificationType: NOTIFICATION_TYPE.BROADCAST,

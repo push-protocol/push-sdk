@@ -139,6 +139,7 @@ export class PushNotificationBaseClass {
     options,
     channel,
     settings,
+    secret,
   }: {
     signer: SignerType;
     env: ENV;
@@ -146,6 +147,7 @@ export class PushNotificationBaseClass {
     options: NotificationOptions;
     channel?: string;
     settings: any | null;
+    secret?: 'PGPV1' | 'LITV1'
   }): ISendNotificationInputOptions {
     if (!channel) {
       channel = `${this.account}`;
@@ -191,6 +193,7 @@ export class PushNotificationBaseClass {
         silent: options.config?.silent,
         additionalMeta: options.payload?.meta,
         index: options.payload?.category ? index : '',
+        sectype: secret?? null
       },
       recipients: notificationType.recipient,
       graph: options.advanced?.graph,

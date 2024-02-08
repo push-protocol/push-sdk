@@ -7,6 +7,7 @@ import {
 import Constants, {ENV} from '../constants';
 import { parseApiResponse } from '../utils';
 import { axiosGet } from '../utils/axiosUtil';
+import { decryptFeed } from '../utils/decryptFeed';
 
 export type FeedsOptionsType = {
   user: string;
@@ -15,6 +16,8 @@ export type FeedsOptionsType = {
   limit?: number;
   spam?: boolean;
   raw?: boolean;
+  lit?: any;
+  pgpPrivateKey?: any;
 }
 
 export const getFeeds = async (
@@ -27,8 +30,10 @@ export const getFeeds = async (
     limit = Constants.PAGINATION.LIMIT,
     spam = false,
     raw = false,
+    lit = null,
+    pgpPrivateKey = null
   } = options || {};
-
+  console.log(lit)
   const _user = await getCAIPAddress(env, user, 'User');
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/users/${_user}/feeds`;
@@ -43,9 +48,15 @@ export const getFeeds = async (
   return axiosGet(requestUrl)
     .then((response) => {
       if (raw) {
-        return response?.data?.feeds || [];
+        return response?.data?.feeds.map((feed: any)=> {
+          if(feed.payload.data.secret != null || feed.payload.data.secret != '')
+            return feed;
+          else {
+            return decryptFeed({feed, pgpPrivateKey: pgpPrivateKey, lit: lit})
+          }
+        }) || [];
       }
-      return parseApiResponse(response?.data?.feeds) || [];
+      return parseApiResponse(response?.data?.feeds, pgpPrivateKey, lit) || [];
     })
     .catch((err) => {
       console.error(`[Push SDK] - API ${requestUrl}: `, err);

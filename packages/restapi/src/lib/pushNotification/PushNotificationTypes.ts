@@ -89,6 +89,7 @@ export type NotificationOptions = {
   config?: IConfig;
   advanced?: IAdvance;
   channel?: string;
+  secret?: 'PGPV1' | 'LITV1'
 };
 
 export type CreateChannelOptions = {
