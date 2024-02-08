@@ -184,7 +184,7 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       COMMUNICATOR_CONTRACT = EPNS_COMMUNICATOR_CONTRACT;
     }
 
-    let lit = initialiseLIT(payload?.sectype?? null, signer);
+    const lit = initialiseLIT(payload?.sectype?? null, signer);
 
     const {_recipients, secret} = await getRecipients({
       env,

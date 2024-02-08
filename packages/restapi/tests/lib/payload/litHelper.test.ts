@@ -7,7 +7,7 @@ describe('Lit helpers', () => {
   let signer1: any;
   let account1: any;
   let decrypterSigner: any;
-  let recipientSigner = new ethers.Wallet(
+  const recipientSigner = new ethers.Wallet(
     `0x${process.env['WALLET_RECIPIENT_PK']}`
   );
   let recipientAccount : any;

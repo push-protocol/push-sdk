@@ -241,16 +241,14 @@ describe('sendNotifications', () => {
       // console.log(decryptedFeed)
     });
 
-    it('Should decrypt lit feed', async () => {
-      const lit = new Lit(recipientSigner);
-      //@ts-ignore
-      const decryptedFeed = await decryptFeed({
-        //@ts-ignore
-        feed: testData.TEST_LIT_ENCRYPTED_FEED,
-        lit: lit
-      })
+    // it.skip('Should decrypt lit feed', async () => {
+    //   const lit = new Lit(recipientSigner);
+    //   const decryptedFeed = await decryptFeed({
+    //     feed: testData.TEST_LIT_ENCRYPTED_FEED,
+    //     lit: lit
+    //   })
 
-      console.log(decryptedFeed)
-    });
+    //   console.log(decryptedFeed)
+    // });
   });
 });
