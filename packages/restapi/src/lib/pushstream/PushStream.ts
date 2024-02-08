@@ -14,8 +14,7 @@ import {
   NotificationEventType,
   PushStreamInitializeProps,
   SpaceEventType,
-  STREAM,
-  EVENTS
+  STREAM
 } from './pushStreamTypes';
 import { createSocketConnection } from './socketClient';
 
