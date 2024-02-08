@@ -124,7 +124,7 @@ describe('PushAPI.channel functionality', () => {
       const res = await userBob.channel.subscribers({
         channel: 'eip155:11155111:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
       });
-      // console.log(res)
+      console.log(res)
       expect(res).not.null;
     });
 
@@ -171,7 +171,7 @@ describe('PushAPI.channel functionality', () => {
         limit: 10,
         setting: true,
       });
-      // console.log(res)
+      console.log(res)
       expect(res).not.null;
     });
 
@@ -183,6 +183,17 @@ describe('PushAPI.channel functionality', () => {
         category: 1,
       });
       // console.log(res)
+      expect(res).not.null;
+    });
+
+    it('With signer and account : Should return response with settings', async () => {
+      const res = await userKate.channel.subscribers({
+        page: 1,
+        limit: 10,
+        setting: true,
+        raw: false,
+      });
+      // console.log(JSON.stringify(res))
       expect(res).not.null;
     });
 

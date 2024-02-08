@@ -100,6 +100,7 @@ export class Channel extends PushNotificationBaseClass {
           limit: options.limit ?? 10,
           setting: options.setting ?? false,
           category: options.category,
+          raw: options.raw
         });
       } else {
         /** @dev - Fallback to deprecated method when page is not provided ( to ensure backward compatibility ) */
