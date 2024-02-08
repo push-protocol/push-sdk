@@ -539,7 +539,7 @@ export class Space {
   }
 
   async initialize(options: SpaceInitializeOptions): Promise<SpaceV2> {
-    const { setSpaceData, spaceId } = options;
+    const { onChange, spaceId } = options;
 
     if (!this.signer) {
       throw new Error('Signer is required for push space');
@@ -562,7 +562,7 @@ export class Space {
       signer: this.signer!,
       chainId,
       pgpPrivateKey: this.decryptedPgpPvtKey!,
-      setSpaceData: setSpaceData,
+      setSpaceData: onChange,
       address: this.account,
       env: this.env,
     });

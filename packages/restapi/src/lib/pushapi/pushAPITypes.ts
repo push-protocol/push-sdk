@@ -128,7 +128,7 @@ export interface SpaceParticipantStatus {
 
 export interface SpaceInitializeOptions {
   spaceId: string;
-  setSpaceData: (fn: (data: SpaceData) => SpaceData) => void;
+  onChange: (fn: (data: SpaceData) => SpaceData) => void;
 }
 
 export interface VideoInitializeOptions {

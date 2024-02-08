@@ -91,7 +91,7 @@ export class SpaceV2 {
     });
   }
 
-  media({ video, audio }: { video?: boolean; audio?: boolean }) {
+  config({ video, audio }: { video?: boolean; audio?: boolean }) {
     if (typeof video === 'boolean') {
       this.spaceV1Instance.enableVideo({ state: video });
     }
