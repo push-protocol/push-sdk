@@ -22,13 +22,13 @@ export const useSupportChatStream =({ account, env , user, supportAddress, signe
   const attachListenersAndConnect = async (stream: PushStream) => {
     console.warn('\n--> addChatSocketEvents');
     stream.on(CONSTANTS.STREAM.CONNECT, (err:Error) => {
-      console.log('CONNECTED: ', err);
+      console.log('CONNECTED to the stream');
       setIsSupportChatStreamConnected(true);
     });
 
 
     stream.on(CONSTANTS.STREAM.DISCONNECT, (err:Error) => {
-      console.log('DIS-CONNECTED: ',err);
+      console.log('DIS-CONNECTED to the stream ');
       setIsSupportChatStreamConnected(false);
     });
 
