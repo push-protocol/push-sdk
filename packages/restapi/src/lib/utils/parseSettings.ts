@@ -7,9 +7,9 @@ export const parseSettings = (settings: string): NotificationSettingType[] => {
   } catch (error) {
     settingsObj = settings;
   }
-  let parsedSettings: NotificationSettingType[] = []
+  const parsedSettings: NotificationSettingType[] = []
   for(let i = 0; i< settingsObj.length; i++){
-    let setting = settingsObj[i];
+    const setting = settingsObj[i];
     if(setting.type == 1){
         parsedSettings.push({
             type: setting.type,
