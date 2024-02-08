@@ -100,7 +100,7 @@ interface IConnectButtonCompProps {
 export const ConnectButtonComp: React.FC<IConnectButtonCompProps> = ({ autoconnect,setAccount,setSigner,signer }) => {
   return (
     <Web3OnboardProvider web3Onboard={web3OnBoard}>
-      <ConnectButtonSub autoconnect setAccount={setAccount} setSigner={setSigner} signer={signer} />
+      <ConnectButtonSub autoconnect={autoconnect} setAccount={setAccount} setSigner={setSigner} signer={signer} />
     </Web3OnboardProvider>
   );
 };

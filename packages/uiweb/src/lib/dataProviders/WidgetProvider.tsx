@@ -39,13 +39,10 @@ export const WidgetUIProvider = ({
   const { initializePushUser } = useInitializePushUser();
   const { fetchUserProfile } = useUserProfile();
 
-  const [isPushChatStreamConnected, setIsPushChatStreamConnected] =
-    useState<boolean>(false);
   useEffect(() => {
     (async () => {
     //   resetStates();
       setEnvVal(env);
-
       if (Object.keys(signer || {}).length && !user) {
         const address = await getAddressFromSigner(signer!);
         setAccountVal(address);
@@ -62,9 +59,13 @@ export const WidgetUIProvider = ({
   }, [env, account, signer,user]);
 
   useEffect(() => {
-    (async () => {
+  console.debug(env,account,signer,user)
+  }, [env, account, signer,user]);
 
-      if (accountVal && envVal && !userVal ) {
+  useEffect(() => {
+    (async () => {
+console.debug(accountVal,envVal,signerVal)
+      if (accountVal && envVal  && signerVal ) {
         const pushUser = await initializePushUser({
           signer: signerVal,
           account: accountVal!,
@@ -73,7 +74,8 @@ export const WidgetUIProvider = ({
         setUserVal(pushUser);
       }
     })();
-  }, [signerVal, accountVal, envVal]);
+  }, [ accountVal, envVal,signerVal]);
+
 
 
 

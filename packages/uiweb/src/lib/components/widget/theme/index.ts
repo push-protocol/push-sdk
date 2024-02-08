@@ -6,6 +6,8 @@
 interface IBorder {
   modal?: string;
   modalInnerComponents?: string;
+  sliderThumb?:string;
+  divider?:string;
 }
 interface IBorderRadius {
   modal?: string;
@@ -18,6 +20,9 @@ interface IBackgroundColor {
   toastSuccessBackground?: string;
   toastErrorBackground?: string;
   toastShadowBackground?: string;
+  sliderThumbBackground?:string;
+  sliderActiveBackground?:string;
+  sliderInActiveBackground?:string;
 }
 
 interface ITextColor {
@@ -54,7 +59,6 @@ export interface IWidgetTheme {
 
   border?: IBorder;
   textColor?: ITextColor;
-  backdropFilter?: string;
   scrollbarColor?: string;
 
   spinnerColor?: string;
@@ -76,6 +80,9 @@ export const lightWidgetTheme: IWidgetTheme = {
     toastErrorBackground:
       'linear-gradient(90.15deg, #FF2070 -125.65%, #FF2D79 -125.63%, #FFF9FB 42.81%)',
     toastShadowBackground: '#ccc',
+    sliderActiveBackground:'#CE4DE4',
+    sliderInActiveBackground:'#BAC4D6',
+    sliderThumbBackground:'#fff'
   },
 
   //   fontSize: {
@@ -91,6 +98,8 @@ export const lightWidgetTheme: IWidgetTheme = {
   border: {
     modal: '1px solid rgba(0, 0, 0, 0.1)',
     modalInnerComponents: '1px solid rgb(194, 203, 219)',
+    sliderThumb:'1px solid #D4DCEA',
+    divider:'1px solid #D4DCEA'
   },
 
   textColor: {
@@ -121,6 +130,9 @@ export const darkWidgetTheme: IWidgetTheme = {
     toastErrorBackground:
       'linear-gradient(89.96deg, #FF2070 -101.85%, #2F3137 51.33%)',
     toastShadowBackground: '#00000010',
+    sliderActiveBackground:'#CE4DE4',
+    sliderInActiveBackground:'#4A4F67',
+    sliderThumbBackground:'#fff'
   },
 
   //   fontSize: {
@@ -136,6 +148,8 @@ export const darkWidgetTheme: IWidgetTheme = {
   border: {
     modal: 'none',
     modalInnerComponents: '1px solid rgb(74, 79, 103)',
+    sliderThumb:'rgba(0, 0, 0, 0.10)',
+    divider:'1px solid #4A4F67'
   },
 
   textColor: {

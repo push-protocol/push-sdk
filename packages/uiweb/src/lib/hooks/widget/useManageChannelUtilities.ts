@@ -39,6 +39,7 @@ export const useManageChannelUtilities = () => {
   return {
   channelInfoError,
   channelInfoLoading,
-  fetchChannelInfo
+  fetchChannelInfo,
+  setChannelInfoError
   };
 };

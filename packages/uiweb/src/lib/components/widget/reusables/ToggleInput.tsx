@@ -1,5 +1,6 @@
 import React, {  useContext } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
+import { ThemeContext } from '../theme/ThemeProvider';
 
 // import { ThemeContext } from '../../chat/theme/ThemeProvider';
 
@@ -17,17 +18,17 @@ interface ILabelProps {
 }
 export const ToggleInput = (props: IToggleInputProps) => {
 
-  // const theme = useContext(ThemeContext);
+  const theme = useContext(ThemeContext);
 
   return (
-    // <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme}>
       <ToggleContainer>
         <LabelContainer>
-          <Label textColor='#000'>
+          <Label textColor={theme?.textColor?.modalTitleText}>
             {props.labelHeading}
           </Label>
           <Label
-            textColor='rgb(101, 119, 149)'
+            textColor={theme?.textColor?.modalSubTitleText}
             fontSize='12px'
             fontWeight='400'
           >
@@ -41,7 +42,7 @@ export const ToggleInput = (props: IToggleInputProps) => {
         {/* <input type="checkbox" id="checkbox" />
     <div class="slider round"></div> */}
       </ToggleContainer>
-    // </ThemeProvider>
+     </ThemeProvider>
   );
 };
 
@@ -69,15 +70,15 @@ const Label = styled.label<ILabelProps>`
 
 const ToggleLabel = styled.label`
   display: inline-block;
-  height: 24px;
+  height: 16px;
   position: relative;
-  width: 44px;
+  width: 32px;
   padding:2px;
   input {
     display: none;
   }
   .slider {
-    background-color: #ccc;
+    background-color: #A0A3B1;
     bottom: 0;
     cursor: pointer;
     left: 0;
@@ -88,20 +89,20 @@ const ToggleLabel = styled.label`
   }
   .slider:before {
     background-color: #fff;
-    bottom: 4px;
+    bottom: 3px;
     content: '';
-    height: 20px;
-    left: 4px;
+    height: 15px;
+    left: 2px;
     position: absolute;
     transition: 0.4s;
-    width: 20px;
+    width: 15px;
   }
   input:checked + .slider {
-    background-color: rgb(202, 89, 155);
+    background-color: ${(props) =>props.theme.backgroundColor.buttonBackground};
   }
 
   input:checked + .slider:before {
-    transform: translateX(20px);
+    transform: translateX(17px);
   }
   .slider.round {
     border-radius: 34px;

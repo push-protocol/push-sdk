@@ -1,7 +1,7 @@
 import React, {  useContext } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 import { Image, Section, Span } from '../../reusables';
-import PoweredByPushLogo from '../../../icons/poweredByPush.svg';
+import {PoweredByPushSvg} from '../../../icons/PoweredByPushSvg';
 import { ThemeContext } from '../theme/ThemeProvider';
 
 // import { ThemeContext } from '../../chat/theme/ThemeProvider';
@@ -15,7 +15,7 @@ export const PoweredByPush = () => {
   return (
     <ThemeProvider theme={theme}>
       <Container alignSelf='end'>
-       <Image src={PoweredByPushLogo}/>
+     <PoweredByPushSvg fill={theme.textColor?.modalTitleText}/>
       </Container>
      </ThemeProvider>
   );

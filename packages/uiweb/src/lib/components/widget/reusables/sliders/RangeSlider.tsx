@@ -1,5 +1,15 @@
-import React, { ComponentPropsWithoutRef, useEffect, useRef } from 'react';
-import styled from 'styled-components';
+import React, { ComponentPropsWithoutRef, useContext, useEffect, useRef } from 'react';
+import styled, { ThemeProvider } from 'styled-components';
+import { ThemeContext } from '../../theme/ThemeProvider';
+import { IWidgetTheme } from '../../theme';
+
+/**
+ * @interface IThemeProps
+ * this interface is used for defining the props for styled components
+ */
+interface IThemeProps {
+  theme:IWidgetTheme
+}
 
 interface RangeSliderProps extends Omit<ComponentPropsWithoutRef<'div'>, 'children' | 'onChange'> {
   disabled?: boolean;
@@ -40,6 +50,9 @@ const RangeSlider = ({
   const inactiveLeftRef = useRef<HTMLDivElement>(null);
   const inactiveRightRef = useRef<HTMLDivElement>(null);
 
+  const theme = useContext(ThemeContext);
+
+  
   const handleMouseDownLeftThumb = (e: any) => {
     if (disabled) return;
     if (onDragStart) onDragStart(e);
@@ -159,6 +172,7 @@ const RangeSlider = ({
   }, [thumbStartRef, thumbEndRef, activeRef, inactiveLeftRef, inactiveRightRef, startVal, endVal, min, max]);
 
   return (
+    <ThemeProvider theme={theme}>
     <Container
       ref={containerRef}
       onMouseEnter={showPreview}
@@ -168,34 +182,37 @@ const RangeSlider = ({
       {...props}
       {...props}
     >
-        <Inactive ref={inactiveLeftRef} />
+        <Inactive ref={inactiveLeftRef}   theme={theme}/>
         <Thumb
             ref={thumbStartRef}
             onTouchStart={handleMouseDownLeftThumb}
             onMouseDown={handleMouseDownLeftThumb}
             onTouchEnd={handleMouseUpLeftThumb}
             onMouseUp={handleMouseUpLeftThumb}
+            theme={theme}
         />
-        <Active ref={activeRef} />
+        <Active ref={activeRef}  theme={theme}/>
         <Thumb
             ref={thumbEndRef}
             onTouchStart={handleMouseDownRightThumb}
             onMouseDown={handleMouseDownRightThumb}
             onTouchEnd={handleMouseUpRightThumb}
             onMouseUp={handleMouseUpRightThumb}
+            theme={theme}
         />
-        <Inactive ref={inactiveRightRef} />
-        {preview && !Number.isNaN(Number(startVal)) && <PreviewContainer ref={previewSliderStartRef}>{startVal}</PreviewContainer>}
-        {preview && !Number.isNaN(Number(endVal)) && <PreviewContainer ref={previewSliderEndRef}>{endVal}</PreviewContainer>}
+        <Inactive ref={inactiveRightRef}   theme={theme}/>
+        {preview && !Number.isNaN(Number(startVal)) && <PreviewContainer theme={theme} ref={previewSliderStartRef}>{startVal}</PreviewContainer>}
+        {preview && !Number.isNaN(Number(endVal)) && <PreviewContainer theme={theme} ref={previewSliderEndRef}>{endVal}</PreviewContainer>}
     </Container>
+    </ThemeProvider>
   );
 };
 
-const Thumb = styled.div`
+const Thumb = styled.div<IThemeProps>`
   width: 16px;
   height: 16px;
-  background-color: ${(props) => props.theme.default.bg};
-  border: 1px solid ${(props) => props.theme.default.border};
+  background-color: ${(props) => props.theme.backgroundColor?.sliderThumbBackground};
+  border:  ${(props) => props.theme.border?.sliderThumb};
   border-radius: 50%;
   user-select: none;
   cursor: pointer;
@@ -203,18 +220,18 @@ const Thumb = styled.div`
   position: absolute;
 `;
 
-const Active = styled.div`
+const Active = styled.div<IThemeProps>`
   width: 100%;
   height: 4px;
-  background-color: ${(props) => props.theme.default.primaryPushThemeTextColor};
+  background-color: ${(props) => props.theme.backgroundColor?.sliderActiveBackground};
   border-top-left-radius: 8px;
   border-bottom-left-radius: 8px;
 `;
 
-const Inactive = styled.div`
+const Inactive = styled.div<IThemeProps>`
   width: 100%;
   height: 4px;
-  background-color: ${(props) => props.theme.snfBorder};
+  background-color: ${(props) => props.theme.backgroundColor?.sliderInActiveBackground};
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
 `;
@@ -230,14 +247,14 @@ const Container = styled.div`
   width: 100%;
 `;
 
-const PreviewContainer = styled.div`
+const PreviewContainer = styled.div<IThemeProps>`
   display: none;
   position: absolute;
   bottom: -48px;
   border-radius: 4px;
-  border: 1px solid ${(props) => props.theme.default.border};
-  background: ${(props) => props.theme.default.bg};
-  color: ${(props) => props.theme.default.color};
+  background-color: ${(props) => props.theme.backgroundColor?.sliderThumbBackground};
+  border:  ${(props) => props.theme.border?.sliderThumb};
+  color: ${(props) => props.theme.textColor?.modalTitleText};
   width: max-content;
   padding: 8px;
   justify-content: center;

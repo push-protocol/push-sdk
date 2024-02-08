@@ -33,7 +33,7 @@ export const ConnectButtonSub: React.FC<IConnectButtonSubProps> = ({autoconnect 
   const {wallet, connecting , connect, disconnect} = useAccount();
 
   const theme = useContext(ThemeContext);
-
+console.debug('in *****************')
 
   const setUserData = () => {
     if (wallet) {
@@ -41,6 +41,7 @@ export const ConnectButtonSub: React.FC<IConnectButtonSubProps> = ({autoconnect 
         const ethersProvider = new ethers.providers.Web3Provider(wallet.provider, 'any')
         const signer = ethersProvider.getSigner()
         const newAdd = await getAddressFromSigner(signer)
+        console.debug('in *****************',newAdd,signer)
         setSigner(signer)
         setAccount(newAdd);
       })()
@@ -50,9 +51,13 @@ export const ConnectButtonSub: React.FC<IConnectButtonSubProps> = ({autoconnect 
     }
   }
   useEffect(() => {
-    if(wallet && !autoconnect)
-    disconnect(wallet);
-    setUserData()
+    if(wallet && !autoconnect){
+      disconnect(wallet);
+    }
+    setUserData();
+  
+    
+  
   }, [wallet])
 
   return !signer ? (
@@ -66,7 +71,7 @@ export const ConnectButtonSub: React.FC<IConnectButtonSubProps> = ({autoconnect 
 
 //styles
 const ConnectButtonDiv = styled.div<IThemeProps>`
-  width: fit-content;
+  width: 100%;
  
   button{
     background: ${(props) => `${props.theme.backgroundColor?.buttonBackground}!important`};
@@ -79,6 +84,7 @@ const ConnectButtonDiv = styled.div<IThemeProps>`
     outline: none;
     border: none;
     cursor: pointer;
+    width:100%;
     font-weight: 600;
    
   }
@@ -91,5 +97,9 @@ const ConnectButtonDiv = styled.div<IThemeProps>`
   }
   body.modal-open {
     overflow-y: hidden;
+  
+  }
+  body.svelte-baitaa {
+    z-index:99999;
   }
 `;

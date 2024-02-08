@@ -8,6 +8,9 @@ import useToast from '../reusables/NewToast';
 import { MdCheckCircle, MdError } from 'react-icons/md';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { ConnectButtonComp } from '../ConnectButton';
+import RangeSlider from '../reusables/sliders/RangeSlider';
+import { WidgetErrorCodes } from './types';
+import { SettingsComponent } from './SettingsComponents';
 
 // /**
 //  * @interface IThemeProps
@@ -37,10 +40,10 @@ export const SubscribeComponent: React.FC<ISubscribeComponentProps> = (
     channelAddress,
     autoconnect = false,
   } = options || {};
-  const { subscribeToChannel, subscribeError, subscribeLoading } =
+  const { subscribeToChannel, subscribeError, subscribeLoading,setSubscribeError } =
     useManageSubscriptionsUtilities();
   const theme = useContext(ThemeContext);
-  const { signer, setAccount, setSigner } = useWidgetData();
+  const { signer, setAccount, setSigner,user,account } = useWidgetData();
 
   const subscribeToast = useToast();
 
@@ -49,7 +52,6 @@ export const SubscribeComponent: React.FC<ISubscribeComponentProps> = (
       const response = await subscribeToChannel({
         channelAddress: channelAddress,
       });
-      console.debug(response);
       if (response && response?.status === 204) {
         //show toast
         subscribeToast.showMessageToast({
@@ -62,6 +64,9 @@ export const SubscribeComponent: React.FC<ISubscribeComponentProps> = (
       }
     } catch (e) {
       console.debug(e);
+      setSubscribeError(
+        WidgetErrorCodes.NOTIFICATION_WIDGET_SUBSCRIBE_ERROR
+      );
     }
     if (subscribeError) {
       subscribeToast.showMessageToast({
@@ -75,14 +80,14 @@ export const SubscribeComponent: React.FC<ISubscribeComponentProps> = (
   };
   return (
     <Section flexDirection="column" gap="10px" margin="12px 12px 0px 12px">
-      <Section flexDirection="column" gap="10px" alignItems="start">
+      {/* <Section flexDirection="column" gap="10px" alignItems="start"> */}
         <Section
           flexDirection="column"
           alignItems="start"
           gap="5px"
           margin="0 0 10px 0"
         >
-          <Span fontSize="21px" fontWeight="700">
+          <Span fontSize="21px" fontWeight="700" color={theme?.textColor?.modalHeaderText}>
             Subscribe to get Notified
           </Span>
           <Span
@@ -95,18 +100,24 @@ export const SubscribeComponent: React.FC<ISubscribeComponentProps> = (
             {SubHeadingText.withoutSettings}
           </Span>
         </Section>
+      {/* </Section> */}
+      <Section margin='20px 0' width='100%'>
+      <SettingsComponent/>
       </Section>
-      {!signer && (
+   
+      {/* {!(signer) && (
         <ConnectButtonComp
           autoconnect={autoconnect}
           setAccount={setAccount}
           setSigner={setSigner}
           signer={signer}
         />
-      )}
-      {signer &&<Button onClick={handleSubscribe}>
+      )}  */}
+      {/* {signer &&  */}
+      <Button onClick={handleSubscribe}>
         {subscribeLoading ? <Spinner color="#fff" size="24" /> : 'Subscribe'}
-      </Button>}
+      </Button> 
+ 
       <PoweredByPush />
     </Section>
   );

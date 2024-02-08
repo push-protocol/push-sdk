@@ -79,6 +79,7 @@ import {
   SpacesUIProvider,
   WidgetUIProvider,
   darkChatTheme,
+  darkWidgetTheme,
 } from '@pushprotocol/uiweb';
 import ChatUITest from './ChatUITest/ChatUITest';
 import { ChatProfileTest } from './ChatUITest/ChatProfile';
@@ -278,6 +279,7 @@ export function App() {
       setPgpPrivateKey(pgpPrivateKey);
     })();
   }, [account, env, library]);
+  console.debug(signer)
   const spaceUI = useMemo(
     () =>
       new SpacesUI({
@@ -329,14 +331,14 @@ export function App() {
           <Web3Context.Provider value={{ account, active, library, chainId }}>
             <SocketContext.Provider value={socketData}>
               <AccountContext.Provider value={{ pgpPrivateKey, setSpaceId }}>
-                <WidgetUIProvider user={pushUser} env={env}>
+                <WidgetUIProvider env={env} theme={darkWidgetTheme}>
                   <ChatUIProvider
                     env={env}
                     theme={lightChatTheme}
                     // pushUser={pushUser}
                     // account={account}
                     // pgpPrivateKey={pgpPrivateKey}
-                    signer={signer}
+                    // signer={signer}
                   >
                     <SpacesUIProvider spaceUI={spaceUI} theme={customDarkTheme}>
                       <Routes>

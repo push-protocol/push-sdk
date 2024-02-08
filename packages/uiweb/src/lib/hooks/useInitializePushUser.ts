@@ -13,6 +13,7 @@ const useInitializePushUser = () => {
 
     const initializePushUser = useCallback(async({signer, account,env}: InitializePushUserParams): Promise<any> => {
         try {
+            console.debug('In hook',signer,account)
             const pushUser = await PushAPI.initialize(signer?? undefined, {
                 env: env,
                 account: account,

@@ -4,6 +4,7 @@
 import { createContext } from 'react';
 
 import { IWidgetTheme, lightWidgetTheme,darkWidgetTheme } from './index';
+export {lightWidgetTheme,darkWidgetTheme } from './index';
 /**
  * @param theme optional: light or dark theme. defaults to light
  * @param customTheme optional: custom colors/theme

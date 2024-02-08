@@ -92,5 +92,6 @@ export const useManageSubscriptionsUtilities = () => {
     unsubscribeError,
     unsubscribeLoading,
     unsubscribeToChannel,
+    setSubscribeError,
   };
 };
