@@ -546,7 +546,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       chatRequestStream.constructor === Object
     ) {
       console.debug('Chat request stream', chatRequestStream);
-      if (options.listType === CONSTANTS.CHAT.LIST_TYPE.REQUESTS) {
+      if (options.listType === CONSTANTS.CHAT.LIST_TYPE.CHATS) {
         console.debug('to transform stream')
         transformStreamMessage(chatRequestStream);
       }
