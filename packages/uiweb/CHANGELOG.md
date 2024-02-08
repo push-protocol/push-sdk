@@ -2,6 +2,18 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.42](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.41...uiweb-0.0.1-alpha.42) (2024-02-08)
+
+
+### Bug Fixes
+
+* fixed chat preview stream issues ([#1085](https://github.com/ethereum-push-notification-service/push-sdk/issues/1085)) ([abbc6ad](https://github.com/ethereum-push-notification-service/push-sdk/commit/abbc6adfb18a66a6761f3411d2bb7fd5f004f7c1))
+* fixed pagination bug ([fdf8e13](https://github.com/ethereum-push-notification-service/push-sdk/commit/fdf8e134c1cc7262f66f5c284aa978e623f96f5a))
+* Merge branch 'alpha' into alpha-deployment ([e80f2f8](https://github.com/ethereum-push-notification-service/push-sdk/commit/e80f2f85f0d8b9e747a0566c64edcee8a9bb4375))
+* the messages disappearing on scroll ([#1077](https://github.com/ethereum-push-notification-service/push-sdk/issues/1077)) ([a8332fc](https://github.com/ethereum-push-notification-service/push-sdk/commit/a8332fcbce6f6613c61e1b501126a1bcfe41a1cc))
+
+
+
 ## [0.0.1-alpha.41](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.40...uiweb-0.0.1-alpha.41) (2024-02-01)
 
 
