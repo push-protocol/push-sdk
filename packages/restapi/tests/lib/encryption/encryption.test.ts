@@ -8,7 +8,7 @@ import { ethers } from 'ethers';
 import CONSTANTS from '../../../src/lib/constantsV2';
 
 const env = CONSTANTS.ENV.DEV;
-describe.only('PushAPI.encryption functionality', () => {
+describe('PushAPI.encryption functionality', () => {
   let signer1: any;
   let account1: string;
 
