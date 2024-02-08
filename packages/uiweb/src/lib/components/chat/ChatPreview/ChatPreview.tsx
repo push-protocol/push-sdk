@@ -12,7 +12,8 @@ import { formatAddress, formatDate } from '../helpers';
 import { resolveNewEns, shortenText } from '../../../helpers';
 import { CoreContractChainId, InfuraAPIKey } from '../../../config';
 import { ethers } from 'ethers';
-
+import { FaFile } from "react-icons/fa";
+import { CiImageOn } from "react-icons/ci";
 /**
  * @interface IThemeProps
  * this interface is used for defining the props for styled components
@@ -123,7 +124,39 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
             flex="1"
           >
             <Message theme={theme}>
-              {options?.chatPreviewPayload?.chatMsg?.messageContent}
+            {
+                (options?.chatPreviewPayload?.chatMsg?.messageType === "Image" || options?.chatPreviewPayload?.chatMsg?.messageType === "GIF" || options?.chatPreviewPayload?.chatMsg?.messageType === "MediaEmbed" )
+                ? 
+               ( 
+                <Section
+                justifyContent="flex-start"
+                flexDirection="row"
+                alignItems="center"
+                alignSelf="stretch"
+                overflow="hidden"
+                flex="1"
+                gap="4px"
+                >
+                  <CiImageOn />
+                  Media
+                </Section>
+              ) : (options?.chatPreviewPayload?.chatMsg?.messageType === "File" ?
+                <Section
+                  justifyContent="flex-start"
+                  flexDirection="row"
+                  alignItems="center"
+                  alignSelf="stretch"
+                  overflow="hidden"
+                  flex="1"
+                  gap="4px"
+                  >
+                    <FaFile/>
+                    File
+                </Section>
+               
+               : options?.chatPreviewPayload?.chatMsg?.messageContent )
+
+              }
             </Message>
             {!!options?.badge?.count && <Badge theme={theme}>{options.badge.count}</Badge>}
           </Section>
