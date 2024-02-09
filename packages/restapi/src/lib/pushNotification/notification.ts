@@ -96,6 +96,8 @@ export class Notification extends PushNotificationBaseClass {
         // TODO: to be used once pagination is implemeted at API level
         page = Constants.PAGINATION.INITIAL_PAGE,
         limit = Constants.PAGINATION.LIMIT,
+        channel = null,
+        raw
       } = options || {};
       const account = options?.account
         ? options.account
@@ -106,6 +108,8 @@ export class Notification extends PushNotificationBaseClass {
       return await PUSH_USER.getSubscriptions({
         user: account!,
         env: this.env,
+        channel: channel,
+        raw
       });
     } catch (error) {
       throw new Error(
