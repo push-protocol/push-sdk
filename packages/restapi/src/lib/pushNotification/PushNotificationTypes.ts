@@ -116,3 +116,17 @@ export type NotificationSetting = {
 };
 
 export type NotificationSettings = NotificationSetting[];
+
+export enum NotifictaionType  {
+  BROADCAT = 1,
+  TARGETTED = 3,
+  SUBSET = 4
+}
+
+export type ChannelFeedsOptions = {
+  account?: string;
+  page?: number;
+  limit?: number;
+  raw?: boolean;
+  filter?: NotifictaionType
+};
