@@ -1,6 +1,7 @@
 import { getCAIPAddress, getAPIBaseUrls } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { axiosGet } from '../utils/axiosUtil';
+import { parseSettings } from '../utils/parseSettings';
 
 /**
  *  GET /v1/channels/{addressinCAIP}
@@ -9,10 +10,11 @@ import { axiosGet } from '../utils/axiosUtil';
 export type GetChannelOptionsType = {
   channel: string;
   env?: ENV;
+  raw?: boolean
 };
 
 export const getChannel = async (options: GetChannelOptionsType) => {
-  const { channel, env = Constants.ENV.PROD } = options || {};
+  const { channel, env = Constants.ENV.PROD, raw = true } = options || {};
 
   const _channel = await getCAIPAddress(env, channel, 'Channel');
   const API_BASE_URL = getAPIBaseUrls(env);
@@ -20,7 +22,15 @@ export const getChannel = async (options: GetChannelOptionsType) => {
   const requestUrl = `${apiEndpoint}/${_channel}`;
 
   return await axiosGet(requestUrl)
-    .then((response) => response.data)
+    .then((response) => {
+      if(raw)
+        return response.data
+      else 
+      {
+        response.data.channel_settings = response.data.channel_settings? parseSettings(response.data.channel_settings): null;
+        return response.data
+      }
+    })
     .catch((err) => {
       console.error(`[Push SDK] - API ${requestUrl}: `, err);
     });
