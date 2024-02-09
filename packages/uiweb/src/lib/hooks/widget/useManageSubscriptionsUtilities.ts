@@ -10,10 +10,36 @@ interface subscribeunsubscribeParams {
   }
 export const useManageSubscriptionsUtilities = () => {
   const [subscribeLoading, setSubscribeLoading] = useState<boolean>(false);
+  const [userSubscriptionLoading, setUserSubscriptionLoading] = useState<boolean>(false);
   const [subscribeError, setSubscribeError] = useState<string>();
   const [unsubscribeLoading, setUnsubscribeLoading] = useState<boolean>(false);
   const [unsubscribeError, setUnsubscribeError] = useState<string>();
   const { user, env, account } = useWidgetData();
+
+
+  const fetchUserSubscriptions = useCallback(
+    async ({
+      channelAddress
+    }:  Omit<subscribeunsubscribeParams,'channelSettings'>) => {
+      setUserSubscriptionLoading(true);
+      try {
+        if (user && account) {
+            const response = await user.notification.subscriptions({
+              raw: false,
+              channel: channelAddress
+            });
+
+          return response;
+        }
+        return;
+      } catch (error: Error | any) {
+        setUserSubscriptionLoading(false);
+      
+        return error.message;
+      }
+    },
+    [account, env]
+  );
 
   const subscribeToChannel = useCallback(
     async ({
@@ -93,5 +119,8 @@ export const useManageSubscriptionsUtilities = () => {
     unsubscribeLoading,
     unsubscribeToChannel,
     setSubscribeError,
+    setUnsubscribeError,
+    fetchUserSubscriptions,
+    userSubscriptionLoading
   };
 };

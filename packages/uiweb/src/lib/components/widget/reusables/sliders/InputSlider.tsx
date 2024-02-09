@@ -2,6 +2,7 @@ import React, { ComponentPropsWithoutRef, useContext, useEffect, useRef } from '
 import styled, { ThemeProvider } from 'styled-components';
 import { ThemeContext } from '../../theme/ThemeProvider';
 import { IWidgetTheme } from '../../theme';
+import { Section } from '../../../reusables';
 
 /**
  * @interface IThemeProps
@@ -102,14 +103,17 @@ const InputSlider = ({
 
   return (
     <ThemeProvider theme={theme}>
-    <Container
+      <Section flexDirection='column' alignItems='start'>
+      {preview && !Number.isNaN(Number(val)) && <PreviewContainer theme={theme}  ref={previewSliderRef}>{val}</PreviewContainer>}
+      <Container
       ref={containerRef}
-      onMouseEnter={showPreview}
-      onMouseLeave={hidePreview}
-      onTouchStart={showPreview}
-      onTouchEnd={hidePreview}
+      // onMouseEnter={showPreview}
+      // onMouseLeave={hidePreview}
+      // onTouchStart={showPreview}
+      // onTouchEnd={hidePreview}
       {...props}
     >
+
       <Active ref={activeRef}  theme={theme}/>
       <Thumb
         ref={sliderRef}
@@ -120,8 +124,9 @@ const InputSlider = ({
         theme={theme}
       />
       <Inactive ref={inactiveRef}  theme={theme}/>
-      {preview && !Number.isNaN(Number(val)) && <PreviewContainer theme={theme}  ref={previewSliderRef}>{val}</PreviewContainer>}
     </Container>
+      </Section>
+ 
     </ThemeProvider>
   );
 };
@@ -166,18 +171,17 @@ const Container = styled.div`
 `;
 
 const PreviewContainer = styled.div`
-  display: none;
-  position: absolute;
-  bottom: -48px;
+  display:flex;
   border-radius: 4px;
-  background-color: ${(props) => props.theme.backgroundColor?.sliderThumbBackground};
-  border: ${(props) => props.theme.border?.sliderThumb};
+  background-color: ${(props) => props.theme.backgroundColor?.modalBackground};
   color: ${(props) => props.theme.textColor?.modalTitleText};
   width: max-content;
   padding: 8px;
   justify-content: center;
   align-items: center;
   gap: 10px;
+  font-size:14px;
+  font-weight:500;
 `;
 
 export default InputSlider;

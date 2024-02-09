@@ -1,15 +1,9 @@
 import React, { useContext, useState } from 'react';
-import { Button, PoweredByPush, ToggleInput } from '../reusables';
-import { Section, Span, Spinner } from '../../reusables';
-import styled from 'styled-components';
-import { useManageSubscriptionsUtilities, useWidgetData } from '../../../hooks';
-import useToast from '../reusables/NewToast';
-import { MdCheckCircle, MdError } from 'react-icons/md';
-import { ThemeContext } from '../theme/ThemeProvider';
+import {  ToggleInput } from '../reusables';
+import { Section,  } from '../../reusables';
 
-import RangeSlider from '../reusables/sliders/RangeSlider';
-import { WidgetErrorCodes } from './types';
 import * as PushAPI from '@pushprotocol/restapi';
+import InputSlider from '../reusables/sliders/InputSlider';
 
 // /**
 //  * @interface IThemeProps
@@ -20,34 +14,63 @@ import * as PushAPI from '@pushprotocol/restapi';
 
 interface ISettingsComponentProps {
   //remove optional here
-  channelSettings?: PushAPI.UserSetting[];
+  settings: PushAPI.NotificationSettingType[];
+  setSettings: React.Dispatch<
+    React.SetStateAction<PushAPI.NotificationSettingType[]>
+  >;
 }
 export const SettingsComponent: React.FC<ISettingsComponentProps> = (
   options: ISettingsComponentProps
 ) => {
-  const {
-    channelSettings = [
-      {
-        type: 1, // Boolean type
-        default: 1,
-        description: 'Receive marketing notifications',
-      },
-      {
-        type: 2, // Slider type
-        default: 10,
-        description: 'Notify when loan health breaches',
-        data: { upper: 100, lower: 5, ticker: 1 },
-      },
-    ],
-  } = options || {};
+  const { settings = [], setSettings } = options || {};
+  const handleSliderChange = (
+    index: number,
+    value: number | { lower: number; upper: number }
+  ) => {
+    const updatedSettings = [...settings];
+    updatedSettings[index].userPreferance.value = value;
+    setSettings(updatedSettings);
+  };
 
+  const handleToggleChange = (index: number, setting: any) => {
+    const updatedSettings = [...settings];
+    console.log(updatedSettings[index], index, setting);
+    updatedSettings[index].userPreferance.enabled =
+      !updatedSettings[index].userPreferance.enabled;
+
+    setSettings(updatedSettings);
+  };
+  console.log(settings);
   return (
-    <Section flexDirection="column" gap="20px" width='100%'>
-      {channelSettings.map((setting) => (
-        <>
-          <ToggleInput labelHeading='Boolean Setting' checked={true} onToggle={undefined} />
-        </>
-      ))}
+    <Section flexDirection="column" gap="20px" width="100%">
+      {settings.map(
+        (setting: PushAPI.NotificationSettingType, index: number) => (
+          <Section flexDirection="column" key={index}>
+      
+            <ToggleInput
+              labelHeading={`${
+                setting.type == 1 ? 'Boolean' : 'Range'
+              } Setting`}
+              checked={setting?.userPreferance?.enabled || false}
+              onToggle={() => handleToggleChange(index, setting)}
+            />
+    
+            {setting.type == 2 && setting?.userPreferance?.enabled && (
+              <InputSlider
+                val={setting?.userPreferance?.value as number}
+                max={setting?.data?.upper || 0}
+                min={setting?.data?.lower || 0}
+                step={setting?.data?.ticker || 1}
+                preview={true}
+                //what is default val
+                defaultVal={setting?.userPreferance?.value as number}
+                onChange={({ x }) => handleSliderChange(index, x)}
+              />
+            )}
+            
+          </Section>
+        )
+      )}
     </Section>
   );
 };

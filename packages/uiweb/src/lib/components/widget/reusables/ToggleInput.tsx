@@ -63,7 +63,7 @@ const LabelContainer = styled.div`
   width:73%;
 `;
 const Label = styled.label<ILabelProps>`
-    font-size: ${(props) => props.fontSize ?? '16px'};
+    font-size: ${(props) => props.fontSize ?? '13px'};
     font-weight: ${(props) => props.fontWeight ?? '500'};
     color: ${(props) => props.textColor ?? '#000'};
 `;

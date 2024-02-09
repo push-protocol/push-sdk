@@ -6,6 +6,8 @@ export type SubscriptionOptions = {
   account?: string;
   page?: number;
   limit?: number;
+  channel?: string;
+  raw?: boolean
 };
 export type ChannelInfoOptions = {
   channel?: string;
@@ -13,6 +15,7 @@ export type ChannelInfoOptions = {
   limit?: number;
   category?: number;
   setting?: boolean;
+  raw?: boolean
 };
 
 export type SubscribeUnsubscribeOptions = {

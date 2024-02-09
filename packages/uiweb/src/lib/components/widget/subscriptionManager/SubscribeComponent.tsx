@@ -101,9 +101,9 @@ export const SubscribeComponent: React.FC<ISubscribeComponentProps> = (
           </Span>
         </Section>
       {/* </Section> */}
-      <Section margin='20px 0' width='100%'>
+     {/* {channelInfo && channelInfo?.channel_settings && <Section margin='20px 0' width='100%'>
       <SettingsComponent/>
-      </Section>
+      </Section>} */}
    
       {/* {!(signer) && (
         <ConnectButtonComp

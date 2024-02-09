@@ -4,27 +4,30 @@ import {
   WidgetErrorCodes,
   WidgetErrorMessages,
 } from './types';
-import {
-  Modal,
-} from '../reusables';
+import { Modal } from '../reusables';
 import { Section, Span, Image, Spinner } from '../../reusables';
 import styled from 'styled-components';
 import CloseIcon from '../../../icons/close.svg';
 import { ToastContainer } from 'react-toastify';
 import { SubscribeComponent } from './SubscribeComponent';
 import { InstallSnapComponent } from './InstallSnapComponent';
-import { useManageChannelUtilities, useWidgetData } from '../../../hooks';
+import {
+  useManageChannelUtilities,
+  useManageSubscriptionsUtilities,
+  useWidgetData,
+} from '../../../hooks';
 import { getCAIPAddress } from '../helpers';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { IWidgetTheme } from '../theme';
 import { ManageNotficationsComponent } from './ManageNotificationComponent';
+import * as PushAPI from '@pushprotocol/restapi';
 
 /**
  * @interface IThemeProps
  * this interface is used for defining the props for styled components
  */
 interface IThemeProps {
-    theme:IWidgetTheme
+  theme: IWidgetTheme;
 }
 export const SUBSCRIPTION_MANAGER_STEP_KEYS = {
   SUBSCRIBE: 1,
@@ -38,26 +41,39 @@ export type SubscriptionManagerStepKeys =
 export const SubscriptionManager: React.FC<ISubscriptionManagerProps> = (
   options: ISubscriptionManagerProps
 ) => {
-  const { env,user } = useWidgetData();
+  const { env, user } = useWidgetData();
   const theme = useContext(ThemeContext);
 
-  const { channelAddress, modalBackground, modalPositionType, onClose,autoconnect = false } =
-    options || {};
+  const {
+    channelAddress,
+    modalBackground,
+    modalPositionType,
+    onClose,
+    autoconnect = false,
+  } = options || {};
   //format channel address
   const formattedChannelAddress = getCAIPAddress(env, channelAddress);
   const [channelInfo, setChannelInfo] = useState();
+  const [userSubscription, setUserSubscription] = useState<{channel:string,user_settings:PushAPI.NotificationSettingType}[]>([]);
   const [activeComponent, setActiveComponent] =
     useState<SubscriptionManagerStepKeys>(
       SUBSCRIPTION_MANAGER_STEP_KEYS.SUBSCRIBE
     );
-  const { fetchChannelInfo, channelInfoError, channelInfoLoading,setChannelInfoError } =
-    useManageChannelUtilities();
+  const {
+    fetchChannelInfo,
+    channelInfoError,
+    channelInfoLoading,
+    setChannelInfoError,
+  } = useManageChannelUtilities();
+
+  const { fetchUserSubscriptions, userSubscriptionLoading } =
+    useManageSubscriptionsUtilities();
 
   const handleNext = () => {
     setActiveComponent((activeComponent + 1) as SubscriptionManagerStepKeys);
   };
 
-  console.log(formattedChannelAddress)
+  console.log(formattedChannelAddress);
 
   useEffect(() => {
     (async () => {
@@ -65,24 +81,39 @@ export const SubscriptionManager: React.FC<ISubscriptionManagerProps> = (
         const info = await fetchChannelInfo({
           channelAddress: formattedChannelAddress,
         });
+        const userSubscriptionResponse = await fetchUserSubscriptions({
+          channelAddress: formattedChannelAddress,
+        });
+        console.log(userSubscriptionResponse);
         console.log(info);
+        if (userSubscription) {
+          setUserSubscription(userSubscriptionResponse);
+        } else {
+          //show error
+        }
         if (info) {
           setChannelInfo(info);
-        }
-        else{
-            setChannelInfoError(
-                WidgetErrorCodes.NOTIFICATION_WIDGET_CHANNEL_INFO_ERROR
-              );  
+        } else {
+          setChannelInfoError(
+            WidgetErrorCodes.NOTIFICATION_WIDGET_CHANNEL_INFO_ERROR
+          );
         }
       } catch (e) {
         console.debug(e);
         setChannelInfoError(
-            WidgetErrorCodes.NOTIFICATION_WIDGET_CHANNEL_INFO_ERROR
-          );  
+          WidgetErrorCodes.NOTIFICATION_WIDGET_CHANNEL_INFO_ERROR
+        );
       }
     })();
   }, [channelAddress]);
-  console.log(channelInfoError);
+
+  useEffect(() => {
+    if (userSubscription && userSubscription.length) {
+      setActiveComponent(SUBSCRIPTION_MANAGER_STEP_KEYS.MANAGE_NOTIFICATIONS);
+    } else {
+      setActiveComponent(SUBSCRIPTION_MANAGER_STEP_KEYS.SUBSCRIBE);
+    }
+  }, [userSubscription]);
 
   const renderComponent = () => {
     switch (activeComponent) {
@@ -92,24 +123,20 @@ export const SubscriptionManager: React.FC<ISubscriptionManagerProps> = (
             handleNext={handleNext}
             autoconnect={autoconnect}
             channelAddress={formattedChannelAddress}
-
             channelInfo={channelInfo}
           />
         );
       case SUBSCRIPTION_MANAGER_STEP_KEYS.INSTALL_SNAP:
+        return <InstallSnapComponent handleNext={handleNext} />;
+      case SUBSCRIPTION_MANAGER_STEP_KEYS.MANAGE_NOTIFICATIONS:
         return (
-          <InstallSnapComponent handleNext={handleNext}  />
+          <ManageNotficationsComponent
+            autoconnect={autoconnect}
+            channelInfo={channelInfo}
+            channelAddress={formattedChannelAddress}
+            userSettings={userSubscription[0].user_settings}
+          />
         );
-     case SUBSCRIPTION_MANAGER_STEP_KEYS.MANAGE_NOTIFICATIONS:
-            return (
-              <ManageNotficationsComponent
-           
-                autoconnect={autoconnect}
-                channelAddress={formattedChannelAddress}
-    
-                channelInfo={channelInfo}
-              />
-            );
       default:
         return (
           <SubscribeComponent
@@ -132,7 +159,7 @@ export const SubscriptionManager: React.FC<ISubscriptionManagerProps> = (
         alignItems="center"
         gap="10px"
         minHeight="178px"
-        // width="374px"
+        minWidthwidth="400px"
         overflow="hidden auto"
         justifyContent="center"
         background={theme.backgroundColor?.modalBackground}
@@ -149,7 +176,7 @@ export const SubscriptionManager: React.FC<ISubscriptionManagerProps> = (
             cursor="pointer"
           />
         </Section>
-        {/* {channelInfoError ? (
+        {channelInfoError ? (
           <Span margin="20px" color={theme.textColor?.modalTitleText}>
             {
               WidgetErrorMessages[
@@ -161,9 +188,9 @@ export const SubscriptionManager: React.FC<ISubscriptionManagerProps> = (
           <Span margin="20px">
             <Spinner color={theme?.spinnerColor} size="35" />
           </Span>
-        ) : channelInfo ? ( */}
-         { renderComponent()}
-        {/* ) : null} */}
+        ) : channelInfo ? (
+          renderComponent()
+        ) : null}
       </Container>
 
       <ToastContainer />
