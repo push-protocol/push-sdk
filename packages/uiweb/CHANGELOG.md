@@ -2,6 +2,18 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.43](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.42...uiweb-0.0.1-alpha.43) (2024-02-09)
+
+
+### Bug Fixes
+
+* for requests for receivers ([49d6bfc](https://github.com/ethereum-push-notification-service/push-sdk/commit/49d6bfce5f121250816cb5c107761aaa782b3c28))
+* media emoji added ([a193560](https://github.com/ethereum-push-notification-service/push-sdk/commit/a193560504697450a5fab523087f1f2502c09715))
+* Merge branch 'alpha' into alpha-deployment ([2c0a4b9](https://github.com/ethereum-push-notification-service/push-sdk/commit/2c0a4b914155b663a738870434085677446e3a9d))
+* sending first message now shows in the inbox ([1d4622c](https://github.com/ethereum-push-notification-service/push-sdk/commit/1d4622c2561f8c794234941971b8c2131f5b46e8))
+
+
+
 ## [0.0.1-alpha.42](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.41...uiweb-0.0.1-alpha.42) (2024-02-08)
 
 
