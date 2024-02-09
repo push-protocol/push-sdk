@@ -65,7 +65,7 @@ describe('PushAPI.channel functionality', () => {
     userAlice = await PushAPI.initialize(signer2);
     // TODO: remove signer1 after chat makes signer as optional
     //initialisation without signer
-    userBob = await PushAPI.initialize(signer1);
+    userBob = await PushAPI.initialize(signer1, { env: ENV.DEV });
     // initialisation with a signer that has no channel
     userNoChannel = await PushAPI.initialize(noChannelSigner);
     // viem signer
@@ -88,9 +88,12 @@ describe('PushAPI.channel functionality', () => {
 
     it('Without signer and with valid caip account: Should return response', async () => {
       const res = await userBob.channel.info(
-        'eip155:11155111:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5'
+        'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
+        {
+          raw: false
+        }
       );
-      // console.log(res);
+      console.log(res.channel_settings);
       expect(res).not.null;
     });
   });

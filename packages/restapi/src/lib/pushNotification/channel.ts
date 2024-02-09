@@ -10,6 +10,7 @@ import {
   NotificationOptions,
   CreateChannelOptions,
   NotificationSettings,
+  ChannelOptions
 } from './PushNotificationTypes';
 import * as config from '../config';
 import * as PUSH_PAYLOAD from '../payloads';
@@ -40,13 +41,15 @@ export class Channel extends PushNotificationBaseClass {
    * @param {string} [options.channel] - channel address in caip, defaults to eth caip address
    * @returns information about the channel if it exists
    */
-  info = async (channel?: string) => {
+  info = async (channel?: string, options?:ChannelOptions ) => {
     try {
+      const {raw = true} = options || {};
       this.checkUserAddressExists(channel);
       channel = channel ?? getFallbackETHCAIPAddress(this.env!, this.account!);
       return await PUSH_CHANNEL.getChannel({
         channel: channel as string,
         env: this.env,
+        raw: raw
       });
     } catch (error) {
       throw new Error(`Push SDK Error: API : channel::info : ${error}`);
