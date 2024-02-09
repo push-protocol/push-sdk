@@ -100,11 +100,10 @@ const InputSlider = ({
       );
     }
   }, [sliderRef, activeRef, inactiveRef, val, min, max]);
-
   return (
     <ThemeProvider theme={theme}>
       <Section flexDirection='column' alignItems='start'>
-      {preview && !Number.isNaN(Number(val)) && <PreviewContainer theme={theme}  ref={previewSliderRef}>{val}</PreviewContainer>}
+      {preview && !Number.isNaN(Number(val)) && <PreviewContainer theme={theme}  ref={previewSliderRef}>{`<`+' '+val}</PreviewContainer>}
       <Container
       ref={containerRef}
       // onMouseEnter={showPreview}
@@ -176,7 +175,7 @@ const PreviewContainer = styled.div`
   background-color: ${(props) => props.theme.backgroundColor?.modalBackground};
   color: ${(props) => props.theme.textColor?.modalTitleText};
   width: max-content;
-  padding: 8px;
+  padding: 8px 8px 10px 8px;
   justify-content: center;
   align-items: center;
   gap: 10px;

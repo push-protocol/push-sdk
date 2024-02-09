@@ -79,7 +79,7 @@ export const SubscribeComponent: React.FC<ISubscribeComponentProps> = (
     }
   };
   return (
-    <Section flexDirection="column" gap="10px" margin="12px 12px 0px 12px">
+    <Section flexDirection="column" gap="15px" margin="14px 10px 0px 10px">
       {/* <Section flexDirection="column" gap="10px" alignItems="start"> */}
         <Section
           flexDirection="column"

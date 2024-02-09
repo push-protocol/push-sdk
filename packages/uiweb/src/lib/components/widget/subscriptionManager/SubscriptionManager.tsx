@@ -70,6 +70,11 @@ export const SubscriptionManager: React.FC<ISubscriptionManagerProps> = (
     useManageSubscriptionsUtilities();
 
   const handleNext = () => {
+    if(activeComponent === SUBSCRIPTION_MANAGER_STEP_KEYS.MANAGE_NOTIFICATIONS)
+    {
+        setActiveComponent(SUBSCRIPTION_MANAGER_STEP_KEYS.SUBSCRIBE);
+ 
+    }
     setActiveComponent((activeComponent + 1) as SubscriptionManagerStepKeys);
   };
 
@@ -134,7 +139,8 @@ export const SubscriptionManager: React.FC<ISubscriptionManagerProps> = (
             autoconnect={autoconnect}
             channelInfo={channelInfo}
             channelAddress={formattedChannelAddress}
-            userSettings={userSubscription[0].user_settings}
+            userSettings={userSubscription[0]?.user_settings || []}
+            handleNext={handleNext}
           />
         );
       default:
@@ -158,13 +164,13 @@ export const SubscriptionManager: React.FC<ISubscriptionManagerProps> = (
         flexDirection="column"
         alignItems="center"
         gap="10px"
-        minHeight="178px"
-        minWidthwidth="400px"
+        minHeight="154px"
+        minWidth="374px"
         overflow="hidden auto"
-        justifyContent="center"
+        justifyContent={(channelInfoLoading || userSubscriptionLoading)?'center':'start'}
         background={theme.backgroundColor?.modalBackground}
         borderRadius={theme.borderRadius?.modal}
-        padding="12px"
+        padding="15px 20px"
       >
         <Section position="absolute" top="10px" right="10px">
           <Image
@@ -184,7 +190,7 @@ export const SubscriptionManager: React.FC<ISubscriptionManagerProps> = (
               ].title
             }
           </Span>
-        ) : channelInfoLoading ? (
+        ) : (channelInfoLoading || userSubscriptionLoading) ? (
           <Span margin="20px">
             <Spinner color={theme?.spinnerColor} size="35" />
           </Span>

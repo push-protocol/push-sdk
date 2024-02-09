@@ -28,7 +28,7 @@ export const useManageSubscriptionsUtilities = () => {
               raw: false,
               channel: channelAddress
             });
-
+            setUserSubscriptionLoading(false);
           return response;
         }
         return;

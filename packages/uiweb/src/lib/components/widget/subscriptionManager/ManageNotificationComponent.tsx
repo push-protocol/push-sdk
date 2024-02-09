@@ -16,6 +16,7 @@ import { IWidgetTheme } from '../theme';
 import useMediaQuery from '../../../hooks/useMediaQuery';
 import { device } from '../../../config';
 import * as PushAPI from '@pushprotocol/restapi';
+import { notifUserSettingFormatString } from '../helpers';
 
 /**
  * @interface IThemeProps
@@ -30,6 +31,7 @@ interface IManageNotificationComponentProps {
   channelAddress: string;
   channelInfo: any;
   userSettings: any;
+  handleNext: () => void;
 }
 export const ManageNotficationsComponent: React.FC<
   IManageNotificationComponentProps
@@ -38,6 +40,7 @@ export const ManageNotficationsComponent: React.FC<
     userSettings,
     channelAddress,
     channelInfo,
+    handleNext,
     autoconnect = false,
   } = options || {};
   const [modifiedSettings, setModifiedSettings] = useState([...userSettings]);
@@ -55,25 +58,23 @@ export const ManageNotficationsComponent: React.FC<
   const isMobile = useMediaQuery(device.tablet);
   const unsubscribeToast = useToast();
 
-
-  const showError  = (title:string,subTitle:string) =>{
+  const showError = (title: string, subTitle: string) => {
     unsubscribeToast.showMessageToast({
       toastTitle: title,
-      toastMessage:
-        subTitle,
+      toastMessage: subTitle,
       toastType: 'ERROR',
       getToastIcon: (size) => <MdError size={size} color="red" />,
     });
-  }
+  };
 
-  const showSuccess  = (title:string,subTitle:string) =>{
+  const showSuccess = (title: string, subTitle: string) => {
     unsubscribeToast.showMessageToast({
       toastTitle: title,
       toastMessage: subTitle,
       toastType: 'SUCCESS',
       getToastIcon: (size) => <MdCheckCircle size={size} color="green" />,
     });
-  }
+  };
   const handleUnsubscribe = async () => {
     try {
       const response = await unsubscribeToChannel({
@@ -81,43 +82,58 @@ export const ManageNotficationsComponent: React.FC<
       });
       if (response && response?.status === 204) {
         //show toast
-        showSuccess('Notification Disabled',`You have successfully disabled notifications from ${channelInfo?.name}`);
-        
+        showSuccess(
+          'Notification Disabled',
+          `You have successfully disabled notifications from ${channelInfo?.name}`
+        );
+        handleNext();
       }
     } catch (e) {
       console.debug(e);
       setUnsubscribeError(WidgetErrorCodes.NOTIFICATION_WIDGET_SUBSCRIBE_ERROR);
     }
     if (unsubscribeError) {
-      showError('Error while Enabling Notifications', 'We encountered an error while disabling notifications. Please try again.');
-    
+      showError(
+        'Error while Enabling Notifications',
+        'We encountered an error while disabling notifications. Please try again.'
+      );
     }
   };
 
+  const getFlexDirection = () => {
+    if (userSettings && userSettings.length) {
+      if (isMobile) return 'column';
+    } else return 'column-reverse';
+    return 'row';
+  };
   const handleSubscribe = async () => {
     try {
       const response = await subscribeToChannel({
         channelAddress: channelAddress,
-        channelSettings:modifiedSettings
+        channelSettings: notifUserSettingFormatString({
+          settings: modifiedSettings,
+        }),
       });
       if (response && response?.status === 204) {
         //show toast
-        showSuccess('Notification Preferences Updated','Your notification settings were updated successfully.');
-        
+        showSuccess(
+          'Notification Preferences Updated',
+          'Your notification settings were updated successfully.'
+        );
       }
     } catch (e) {
       console.debug(e);
-      setSubscribeError(
-        WidgetErrorCodes.NOTIFICATION_WIDGET_SUBSCRIBE_ERROR
-      );
+      setSubscribeError(WidgetErrorCodes.NOTIFICATION_WIDGET_SUBSCRIBE_ERROR);
     }
     if (subscribeError) {
-      showError('Preferences were not updated','We encountered an error while updating your notification settings. Please try again.');
-     
+      showError(
+        'Preferences were not updated',
+        'We encountered an error while updating your notification settings. Please try again.'
+      );
     }
   };
   return (
-    <Section flexDirection="column" gap="20px" margin="12px 12px 0px 12px">
+    <Section flexDirection="column" gap="15px" margin="14px 10px 0px 10px">
       <Section
         flexDirection="column"
         alignItems="start"
@@ -141,23 +157,22 @@ export const ManageNotficationsComponent: React.FC<
           Update your notification preferences below
         </Span>
       </Section>
-      <Section gap="20px" flexDirection={isMobile ? 'column' : 'row'}>
-        {userSettings && userSettings.length && (
-          <RightSection
-            theme={theme}
-            isMobile={isMobile}
-            flexDirection="column"
-            width="100%"
-            justifyContent="start"
-            gap="30px"
-            flex="1"
-          >
-            <SettingsComponent
-              settings={userSettings}
-              setSettings={setModifiedSettings}
-            />
-
-            {/* {!(signer) && (
+      <Section gap="25px" flexDirection={getFlexDirection()}>
+        <Section
+          flexDirection="column"
+          width="100%"
+          justifyContent="start"
+          gap="20px"
+          flex="1"
+        >
+          {!!userSettings && !!userSettings.length && (
+            <>
+              {' '}
+              <SettingsComponent
+                settings={userSettings}
+                setSettings={setModifiedSettings}
+              />
+              {/* {!(signer) && (
         <ConnectButtonComp
           autoconnect={autoconnect}
           setAccount={setAccount}
@@ -165,45 +180,48 @@ export const ManageNotficationsComponent: React.FC<
           signer={signer}
         />
       )}  */}
-            {/* {signer &&  */}
-            <Button height="auto" width="100%" onClick={handleSubscribe}>
-              Update Preferences
-            </Button>
-            <UnsubscribeSpan
-              color={theme.textColor?.modalSubTitleText}
-              fontSize="12px"
-              fontWeight="400"
-            >
-              <Anchor onClick={handleUnsubscribe} textDecoration="underline">
-                {' '}
-                {unsubscribeLoading ? (
-                  <Spinner color="#fff" size="20" />
-                ) : (
-                  'Unsubscribe'
-                )}{' '}
-              </Anchor>
-              to stop receiving notifications
-            </UnsubscribeSpan>
-          </RightSection>
-        )}
-        <GettingStarted />
+              {/* {signer &&  */}
+              <Button height="auto" width="100%" onClick={handleSubscribe}>
+                Update Preferences
+              </Button>
+            </>
+          )}
+          <UnsubscribeSpan
+            color={theme.textColor?.modalSubTitleText}
+            fontSize="12px"
+            fontWeight="400"
+          >
+            <Anchor onClick={handleUnsubscribe} textDecoration="underline">
+              {' '}
+              {unsubscribeLoading ? (
+                <Spinner color="#fff" size="20" />
+              ) : (
+                'Unsubscribe'
+              )}{' '}
+            </Anchor>
+            to stop receiving notifications
+          </UnsubscribeSpan>
+        </Section>
+        <GettingStarted divider={getFlexDirection()} />
       </Section>
       <PoweredByPush />
     </Section>
   );
 };
 
-const GettingStarted = () => {
+const GettingStarted = ({ divider }: { divider: string }) => {
   const theme = useContext(ThemeContext);
 
   return (
-    <Section
+    <RightSection
       gap="20px"
       width="100%"
       flex="1"
       justifyContent="start"
       alignItems="start"
       flexDirection="column"
+      theme={theme}
+      divider={divider}
     >
       <Section flexDirection="column" gap="5px" alignItems="start">
         <Span
@@ -236,21 +254,28 @@ const GettingStarted = () => {
         linkText="Explore Options"
         icon={PushLogo}
       />
-    </Section>
+    </RightSection>
   );
 };
 
 //style
-const RightSection = styled(Section)<IThemeProps & { isMobile: boolean }>`
-  ${({ isMobile, theme }) =>
-    isMobile
+const RightSection = styled(Section)<IThemeProps & { divider: string }>`
+  ${({ divider, theme }) =>
+    divider == 'column'
       ? `
-  border-bottom: ${theme.border?.divider};
-  padding:0 0 20px 0;
+  border-top: ${theme.border?.divider};
+  padding:25px 0 0 0;
+
 
 `
-      : `border-right: ${theme.border?.divider};
-      padding:0  20px 0 0;
+      : divider == 'column-reverse'
+      ? `
+border-bottom: ${theme.border?.divider};
+padding:0 0 25px 0;
+
+`
+      : `border-left: ${theme.border?.divider};
+      padding:0  0  0 20px;
 `}
 `;
 
