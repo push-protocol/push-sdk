@@ -3,7 +3,7 @@ import { NotificationSettingType, UserSetting } from "@pushprotocol/restapi";
 const isSettingType1 = (setting: NotificationSettingType) => setting.type === 1;
 
 export const notifUserSettingFormatString = ({ settings }: { settings: NotificationSettingType[] }) => {
-    let _notifSettings:UserSetting[] = [];
+    const _notifSettings:UserSetting[] = [];
     settings && settings.forEach((setting) => 
         isSettingType1(setting) 
             ? _notifSettings.push({ enabled: setting?.userPreferance?.enabled }) 

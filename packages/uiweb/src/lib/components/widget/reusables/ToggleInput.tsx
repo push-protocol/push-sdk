@@ -19,7 +19,6 @@ interface ILabelProps {
 export const ToggleInput = (props: IToggleInputProps) => {
 
   const theme = useContext(ThemeContext);
-
   return (
     <ThemeProvider theme={theme}>
       <ToggleContainer>

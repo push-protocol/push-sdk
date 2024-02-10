@@ -39,9 +39,9 @@ export const SettingsComponent: React.FC<ISettingsComponentProps> = (
     setSettings(updatedSettings);
   };
 
-  const handleToggleChange = (index: number, setting: any) => {
+  const handleToggleChange = (index: number) => {
     const updatedSettings = [...settings];
-    console.log(updatedSettings[index], index, setting);
+    console.log(updatedSettings[index], index);
     updatedSettings[index].userPreferance.enabled =
       !updatedSettings[index].userPreferance.enabled;
 
@@ -61,22 +61,23 @@ export const SettingsComponent: React.FC<ISettingsComponentProps> = (
           >
             {(setting.type == 2 || setting.type == 1) && (
               <ToggleInput
+                key={`toggle${setting.type}${index}`}
                 labelHeading={`${
                   setting.type == 1 ? 'Boolean' : 'Range'
                 } Setting`}
                 checked={setting?.userPreferance?.enabled || false}
-                onToggle={() => handleToggleChange(index, setting)}
+                onToggle={() =>{console.debug(index); handleToggleChange(index)}}
               />
             )}
 
             {setting.type == 2 && setting?.userPreferance?.enabled && (
+                
               <InputSlider
                 val={setting?.userPreferance?.value as number}
                 max={setting?.data?.upper || 0}
                 min={setting?.data?.lower || 0}
                 step={setting?.data?.ticker || 1}
                 preview={true}
-                //what is default val
                 defaultVal={setting?.userPreferance?.value as number}
                 onChange={({ x }) => handleSliderChange(index, x)}
               />
