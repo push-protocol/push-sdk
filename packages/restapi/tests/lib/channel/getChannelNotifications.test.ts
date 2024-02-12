@@ -5,7 +5,7 @@ import * as PUSH_CHANNELS from '../../../src/lib/channels';
 import { expect } from 'chai';
 import { ethers } from 'ethers';
 
-describe.only('PUSH_CHANNELS.sendNotification functionality', () => {
+describe('PUSH_CHANNELS.sendNotification functionality', () => {
   let signer1: any;
   let account1: string;
   let signer2: any;

@@ -53,11 +53,10 @@ export const getChannelNotifications = async (
 
   return await axiosGet(requestUrl)
     .then((response) => {
-      if (raw) return response.data?.feeds ?? [];
+      if (raw) return {feeds: response.data?.feeds ?? [], itemcount:response.data?.itemcount} ;
       else
-        return response.data?.feeds
-          ? parseApiResponse(response.data?.feeds)
-          : [];
+        return  { feeds: parseApiResponse(response.data?.feeds?? []), itemcount: response.data?.itemcount}
+          ;
     })
     .catch((err) => {
       console.error(`[Push SDK] - API ${requestUrl}: `, err);

@@ -1,4 +1,4 @@
-import { ProgressHookType } from '../types';
+import { NotifictaionType, ProgressHookType } from '../types';
 import { GetAliasInfoOptionsType } from '../alias';
 import { ADDITIONAL_META_TYPE } from '../../lib/payloads/constants';
 
@@ -117,11 +117,7 @@ export type NotificationSetting = {
 
 export type NotificationSettings = NotificationSetting[];
 
-export enum NotifictaionType  {
-  BROADCAT = 1,
-  TARGETTED = 3,
-  SUBSET = 4
-}
+
 
 export type ChannelFeedsOptions = {
   account?: string;

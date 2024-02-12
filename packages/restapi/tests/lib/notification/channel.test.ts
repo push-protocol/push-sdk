@@ -14,6 +14,12 @@ import {
 } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 
+export enum NotifictaionType  {
+  BROADCAT = 1,
+  TARGETTED = 3,
+  SUBSET = 4
+}
+
 describe('PushAPI.channel functionality', () => {
   let userAlice: PushAPI;
   let userBob: PushAPI;
@@ -561,6 +567,22 @@ describe('PushAPI.channel functionality', () => {
   });
 
   describe("notifications", async()=>{
-    
+    it("Should fetch channel specific feeds", async()=>{
+      const res = await userAlice.channel.notifications({raw: false})
+      console.log(res)
+      expect(res).not.null
+    })
+
+    it("Should fetch channel specific feeds in raw fomrta", async()=>{
+      const res = await userAlice.channel.notifications({raw: true})
+      console.log(res)
+      expect(res).not.null
+    })
+
+    it("Should fetch channel specific feeds broadcast type", async()=>{
+      const res = await userAlice.channel.notifications({raw: true, filter: NotifictaionType.BROADCAT})
+      console.log(res)
+      expect(res).not.null
+    })
   })
 });
