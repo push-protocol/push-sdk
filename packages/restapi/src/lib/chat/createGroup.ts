@@ -14,6 +14,7 @@ import {
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
 import { axiosPost } from '../utils/axiosUtil';
+import { handleError } from '../errors/ValidationError';
 
 export interface ChatCreateGroupType extends EnvOptionsType {
   account?: string | null;
@@ -149,21 +150,9 @@ export const createGroupCore = async (
       rules
     );
 
-    return axiosPost(apiEndpoint, body)
-      .then((response) => {
-        return response.data;
-      })
-      .catch((err) => {
-        if (err?.response?.data) throw new Error(err?.response?.data);
-        throw new Error(err);
-      });
+    const response = await axiosPost(apiEndpoint, body);
+    return response.data;
   } catch (err) {
-    console.error(
-      `[Push SDK] - API  - Error - API ${createGroup.name} -:  `,
-      err
-    );
-    throw Error(
-      `[Push SDK] - API  - Error - API ${createGroup.name} -: ${err}`
-    );
+      throw handleError(err, createGroup.name);
   }
 };

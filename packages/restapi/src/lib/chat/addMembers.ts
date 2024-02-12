@@ -1,5 +1,6 @@
 import { ALPHA_FEATURE_CONFIG } from '../config';
 import Constants, { PACKAGE_BUILD } from '../constants';
+import { handleError } from '../errors/ValidationError';
 import { EnvOptionsType, SignerType, GroupInfoDTO } from '../types';
 import { updateGroupMembers } from './updateGroupMembers';
 import { GroupMemberUpdateOptions } from './updateGroupMembers';
@@ -55,10 +56,6 @@ export const addMembers = async (
     };
     return await updateGroupMembers(groupMemberUpdateOptions);
   } catch (err) {
-    console.error(
-      `[Push SDK] - API  - Error - API ${addMembers.name} -:  `,
-      err
-    );
-    throw Error(`[Push SDK] - API  - Error - API ${addMembers.name} -: ${err}`);
+        throw handleError(err, addMembers.name);
   }
 };
