@@ -95,14 +95,14 @@ export type ApiSubscriptionType = {
 
 export type NotificationSettingType = {
   type: number;
-  // default: number | { upper: number; lower: number };
+  default?: number | { upper: number; lower: number };
   description: string;
   data?: {
     upper: number;
     lower: number;
     ticker?: number;
   };
-  userPreferance: {
+  userPreferance?: {
     value: number | { upper: number; lower: number },
     enabled: boolean
   }

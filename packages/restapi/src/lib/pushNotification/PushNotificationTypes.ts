@@ -117,8 +117,6 @@ export type NotificationSetting = {
 
 export type NotificationSettings = NotificationSetting[];
 
-
-
 export type ChannelFeedsOptions = {
   account?: string;
   page?: number;
@@ -126,3 +124,6 @@ export type ChannelFeedsOptions = {
   raw?: boolean;
   filter?: NotifictaionType
 };
+export type ChannelOptions = {
+  raw: boolean
+}
