@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 import { Button, PoweredByPush } from '../reusables';
 import { Section, Span, Spinner } from '../../reusables';
 import styled from 'styled-components';
@@ -8,9 +8,11 @@ import useToast from '../reusables/NewToast';
 import { MdCheckCircle, MdError } from 'react-icons/md';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { ConnectButtonComp } from '../ConnectButton';
-import RangeSlider from '../reusables/sliders/RangeSlider';
 import { WidgetErrorCodes } from './types';
 import { SettingsComponent } from './SettingsComponents';
+import { notifUserSettingFormatString, notifUserSettingFromChannelSetting } from '../helpers';
+import { NotificationSettingType } from '@pushprotocol/restapi';
+import { ChannelDetailsComponent } from './ChannelDetailsComponent';
 
 // /**
 //  * @interface IThemeProps
@@ -44,23 +46,34 @@ export const SubscribeComponent: React.FC<ISubscribeComponentProps> = (
     useManageSubscriptionsUtilities();
   const theme = useContext(ThemeContext);
   const { signer, setAccount, setSigner,user,account } = useWidgetData();
-
   const subscribeToast = useToast();
+  const [modifiedSettings, setModifiedSettings] = useState<NotificationSettingType[]|null>(useMemo(() => {
+    if (channelInfo && channelInfo?.channel_settings) {
+      return notifUserSettingFromChannelSetting({settings:( JSON.parse(channelInfo?.channel_settings))});
+    }
+    return null;
+  }, [channelInfo]));
+
+
 
   const handleSubscribe = async () => {
     try {
       const response = await subscribeToChannel({
         channelAddress: channelAddress,
+        channelSettings:notifUserSettingFormatString({
+            settings: modifiedSettings!,
+          }),
       });
       if (response && response?.status === 204) {
         //show toast
+        handleNext();
         subscribeToast.showMessageToast({
           toastTitle: 'Notifications Enabled',
           toastMessage: `You have successfully enabled notifications from ${channelInfo?.name}`,
           toastType: 'SUCCESS',
           getToastIcon: (size) => <MdCheckCircle size={size} color="green" />,
         });
-        handleNext();
+    
       }
     } catch (e) {
       console.debug(e);
@@ -79,8 +92,7 @@ export const SubscribeComponent: React.FC<ISubscribeComponentProps> = (
     }
   };
   return (
-    <Section flexDirection="column" gap="15px" margin="14px 10px 0px 10px">
-      {/* <Section flexDirection="column" gap="10px" alignItems="start"> */}
+    <Section flexDirection="column" gap="10px" margin="14px 10px 0px 10px">
         <Section
           flexDirection="column"
           alignItems="start"
@@ -100,10 +112,10 @@ export const SubscribeComponent: React.FC<ISubscribeComponentProps> = (
             {SubHeadingText.withoutSettings}
           </Span>
         </Section>
-      {/* </Section> */}
-     {/* {channelInfo && channelInfo?.channel_settings && <Section margin='20px 0' width='100%'>
-      <SettingsComponent/>
-      </Section>} */}
+        <ChannelDetailsComponent channelInfo={channelInfo}/>
+     {channelInfo && channelInfo?.channel_settings && <Section margin=' 0' width='100%'>
+      <SettingsComponent settings={modifiedSettings!} setSettings={setModifiedSettings}/>
+      </Section>}
    
       {/* {!(signer) && (
         <ConnectButtonComp

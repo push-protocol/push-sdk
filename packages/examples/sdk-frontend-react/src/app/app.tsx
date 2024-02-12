@@ -80,6 +80,7 @@ import {
   WidgetUIProvider,
   darkChatTheme,
   darkWidgetTheme,
+  lightWidgetTheme,
 } from '@pushprotocol/uiweb';
 import ChatUITest from './ChatUITest/ChatUITest';
 import { ChatProfileTest } from './ChatUITest/ChatProfile';
@@ -331,7 +332,7 @@ export function App() {
           <Web3Context.Provider value={{ account, active, library, chainId }}>
             <SocketContext.Provider value={socketData}>
               <AccountContext.Provider value={{ pgpPrivateKey, setSpaceId }}>
-                <WidgetUIProvider env={env} theme={darkWidgetTheme} user={pushUser}>
+                <WidgetUIProvider env={env} theme={lightWidgetTheme} user={pushUser}>
                   <ChatUIProvider
                     env={env}
                     theme={lightChatTheme}

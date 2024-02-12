@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import {
   ISubscriptionManagerProps,
   WidgetErrorCodes,
-  WidgetErrorMessages,
+
 } from './types';
 import { Modal } from '../reusables';
 import { Section, Span, Image, Spinner } from '../../reusables';
@@ -51,7 +51,6 @@ export const SubscriptionManager: React.FC<ISubscriptionManagerProps> = (
     onClose,
     autoconnect = false,
   } = options || {};
-  //format channel address
   const formattedChannelAddress = getCAIPAddress(env, channelAddress);
   const [channelInfo, setChannelInfo] = useState();
   const [userSubscription, setUserSubscription] = useState<{channel:string,user_settings:PushAPI.NotificationSettingType}[]>([]);
@@ -75,10 +74,9 @@ export const SubscriptionManager: React.FC<ISubscriptionManagerProps> = (
         setActiveComponent(SUBSCRIPTION_MANAGER_STEP_KEYS.SUBSCRIBE);
  
     }
-    setActiveComponent((activeComponent + 1) as SubscriptionManagerStepKeys);
+    else
+      setActiveComponent(SUBSCRIPTION_MANAGER_STEP_KEYS.INSTALL_SNAP);
   };
-
-  console.log(formattedChannelAddress);
 
   useEffect(() => {
     (async () => {
@@ -89,12 +87,13 @@ export const SubscriptionManager: React.FC<ISubscriptionManagerProps> = (
         const userSubscriptionResponse = await fetchUserSubscriptions({
           channelAddress: formattedChannelAddress,
         });
-        console.log(userSubscriptionResponse);
-        console.log(info);
+      
         if (userSubscription) {
           setUserSubscription(userSubscriptionResponse);
         } else {
-          //show error
+            setChannelInfoError(
+                WidgetErrorCodes.NOTIFICATION_WIDGET_CHANNEL_INFO_ERROR
+              );
         }
         if (info) {
           setChannelInfo(info);
@@ -184,11 +183,7 @@ export const SubscriptionManager: React.FC<ISubscriptionManagerProps> = (
         </Section>
         {channelInfoError ? (
           <Span margin="20px" color={theme.textColor?.modalTitleText}>
-            {
-              WidgetErrorMessages[
-                channelInfoError as keyof typeof WidgetErrorMessages
-              ].title
-            }
+           Error in fetching details
           </Span>
         ) : (channelInfoLoading || userSubscriptionLoading) ? (
           <Span margin="20px">

@@ -8,10 +8,12 @@ interface IBorder {
   modalInnerComponents?: string;
   sliderThumb?:string;
   divider?:string;
+  image?:string;
 }
 interface IBorderRadius {
   modal?: string;
   modalInnerComponents?: string;
+ 
 }
 interface IBackgroundColor {
   buttonBackground?: string;
@@ -23,6 +25,7 @@ interface IBackgroundColor {
   sliderThumbBackground?:string;
   sliderActiveBackground?:string;
   sliderInActiveBackground?:string;
+  imageBackgroundColor?:string;
 }
 
 interface ITextColor {
@@ -74,7 +77,7 @@ export const lightWidgetTheme: IWidgetTheme = {
   backgroundColor: {
     buttonBackground: '#CE4DE4',
     modalBackground: '#fff',
-    buttonDisableBackground: '#DFDEE9',
+    buttonDisableBackground: '#C6C7CC',
     toastSuccessBackground:
       'linear-gradient(90.15deg, #30CC8B -125.65%, #30CC8B -125.63%, #F3FFF9 42.81%)',
     toastErrorBackground:
@@ -82,7 +85,8 @@ export const lightWidgetTheme: IWidgetTheme = {
     toastShadowBackground: '#ccc',
     sliderActiveBackground:'#CE4DE4',
     sliderInActiveBackground:'#BAC4D6',
-    sliderThumbBackground:'#fff'
+    sliderThumbBackground:'#fff',
+    imageBackgroundColor:'#fff'
   },
 
   //   fontSize: {
@@ -99,12 +103,13 @@ export const lightWidgetTheme: IWidgetTheme = {
     modal: '1px solid rgba(0, 0, 0, 0.1)',
     modalInnerComponents: '1px solid rgb(194, 203, 219)',
     sliderThumb:'1px solid #D4DCEA',
-    divider:'1px solid #D4DCEA'
+    divider:'1px solid #D4DCEA',
+    image:'1px solid #BAC4D6'
   },
 
   textColor: {
     buttonText: '#fff',
-    buttonDisableText: '#AFB3BF',
+    buttonDisableText: 'rgba(0, 0, 0, 0.20)',
     modalHeaderText: '#000',
     modalHighlightedText: '#CE4DE4',
     modalTitleText: '#000',
@@ -124,7 +129,7 @@ export const darkWidgetTheme: IWidgetTheme = {
     buttonBackground: '#CE4DE4',
     modalBackground: 'rgb(47, 49, 55)',
 
-    buttonDisableBackground: '#787E99',
+    buttonDisableBackground: '#414556',
     toastSuccessBackground:
       'linear-gradient(90.15deg, #30CC8B -125.65%, #30CC8B -125.63%, #2F3137 42.81%)',
     toastErrorBackground:
@@ -132,7 +137,8 @@ export const darkWidgetTheme: IWidgetTheme = {
     toastShadowBackground: '#00000010',
     sliderActiveBackground:'#CE4DE4',
     sliderInActiveBackground:'#4A4F67',
-    sliderThumbBackground:'#fff'
+    sliderThumbBackground:'#fff',
+    imageBackgroundColor:'#40434A'
   },
 
   //   fontSize: {
@@ -149,7 +155,8 @@ export const darkWidgetTheme: IWidgetTheme = {
     modal: 'none',
     modalInnerComponents: '1px solid rgb(74, 79, 103)',
     sliderThumb:'rgba(0, 0, 0, 0.10)',
-    divider:'1px solid #4A4F67'
+    divider:'1px solid #4A4F67',
+    image:'1px solid #4A4F67'
   },
 
   textColor: {
@@ -160,7 +167,7 @@ export const darkWidgetTheme: IWidgetTheme = {
     modalHighlightedText: '#CE4DE4',
     modalTitleText: '#fff',
     modalSubTitleText: '#B6BCD6',
-    buttonDisableText: '#B6BCD6',
+    buttonDisableText: 'rgba(255, 255, 255, 0.20)',
   },
   spinnerColor: '#CE4DE4',
   scrollbarColor: '#CE4DE4',

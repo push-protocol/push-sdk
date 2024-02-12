@@ -17,6 +17,7 @@ import useMediaQuery from '../../../hooks/useMediaQuery';
 import { device } from '../../../config';
 import * as PushAPI from '@pushprotocol/restapi';
 import { notifUserSettingFormatString } from '../helpers';
+import { ChannelDetailsComponent } from './ChannelDetailsComponent';
 
 /**
  * @interface IThemeProps
@@ -43,7 +44,9 @@ export const ManageNotficationsComponent: React.FC<
     handleNext,
     autoconnect = false,
   } = options || {};
-  const [modifiedSettings, setModifiedSettings] = useState([...userSettings]);
+  const [modifiedSettings, setModifiedSettings] = useState<
+    PushAPI.NotificationSettingType[] | null
+  >([...userSettings]);
   const {
     unsubscribeError,
     unsubscribeLoading,
@@ -111,7 +114,7 @@ export const ManageNotficationsComponent: React.FC<
       const response = await subscribeToChannel({
         channelAddress: channelAddress,
         channelSettings: notifUserSettingFormatString({
-          settings: modifiedSettings,
+          settings: modifiedSettings!,
         }),
       });
       if (response && response?.status === 204) {
@@ -133,7 +136,7 @@ export const ManageNotficationsComponent: React.FC<
     }
   };
   return (
-    <Section flexDirection="column" gap="15px" margin="14px 10px 0px 10px">
+    <Section flexDirection="column" margin="14px 10px 0px 10px">
       <Section
         flexDirection="column"
         alignItems="start"
@@ -157,7 +160,11 @@ export const ManageNotficationsComponent: React.FC<
           Update your notification preferences below
         </Span>
       </Section>
-      <Section gap="25px" flexDirection={getFlexDirection()}>
+      <Section
+        gap="25px"
+        margin="15px 0 0 0"
+        flexDirection={getFlexDirection()}
+      >
         <Section
           flexDirection="column"
           width="100%"
@@ -165,6 +172,7 @@ export const ManageNotficationsComponent: React.FC<
           gap="20px"
           flex="1"
         >
+          <ChannelDetailsComponent channelInfo={channelInfo}/>
           {!!userSettings && !!userSettings.length && (
             <>
               {' '}

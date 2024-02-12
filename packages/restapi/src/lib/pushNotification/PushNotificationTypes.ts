@@ -116,3 +116,7 @@ export type NotificationSetting = {
 };
 
 export type NotificationSettings = NotificationSetting[];
+
+export type ChannelOptions = {
+  raw: boolean
+}

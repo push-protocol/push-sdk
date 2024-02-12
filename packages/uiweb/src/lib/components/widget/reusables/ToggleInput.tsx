@@ -2,13 +2,13 @@ import React, {  useContext } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 import { ThemeContext } from '../theme/ThemeProvider';
 
-// import { ThemeContext } from '../../chat/theme/ThemeProvider';
 
 export interface IToggleInputProps {
   labelHeading?: string;
   labelSubHeading?: string;
   checked: boolean;
   onToggle: any;
+  id: string; 
 }
 
 interface ILabelProps {
@@ -21,7 +21,7 @@ export const ToggleInput = (props: IToggleInputProps) => {
   const theme = useContext(ThemeContext);
   return (
     <ThemeProvider theme={theme}>
-      <ToggleContainer>
+      <ToggleContainer >
         <LabelContainer>
           <Label textColor={theme?.textColor?.modalTitleText}>
             {props.labelHeading}
@@ -34,8 +34,8 @@ export const ToggleInput = (props: IToggleInputProps) => {
             {props.labelSubHeading}
           </Label>
         </LabelContainer>
-        <ToggleLabel htmlFor="checkbox">
-          <input type="checkbox" id="checkbox" checked={props.checked} onChange={()=>props.onToggle()} />
+        <ToggleLabel htmlFor={`checkbox-${props.id}`}>
+          <input type="checkbox"  id={`checkbox-${props.id}`} checked={props.checked} onChange={()=>props.onToggle()} />
           <div className="slider round"></div>
         </ToggleLabel>
         {/* <input type="checkbox" id="checkbox" />
