@@ -60,6 +60,7 @@ export async function decryptFeedViaLIT(options: {
       dataToEncryptHash: string;
     } = JSON.parse(encryptedSecret);
     const secret = await lit.decrypt({ ...encryptedSecretObject });
+    console.log(secret)
     const decryptedFeed = decryptFeedViaAES({
       encryptedFeed,
       secret: secret as string

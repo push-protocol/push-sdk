@@ -33,7 +33,7 @@ export const getFeeds = async (
     lit = null,
     pgpPrivateKey = null
   } = options || {};
-  console.log(lit)
+
   const _user = await getCAIPAddress(env, user, 'User');
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/users/${_user}/feeds`;

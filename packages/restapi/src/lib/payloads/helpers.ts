@@ -224,7 +224,6 @@ export async function getRecipients({
     if (secretType == SUPPORTED_ENC_TYPE.PGPV1) {
       if (notificationType === NOTIFICATION_TYPE.TARGETTED) {
         if (typeof recipients === 'string') {
-          if(!pgpPrivateKey)
           addressInCAIP = await getCAIPAddress(env, recipients, 'Recipient');
           const pgpKeys = await get({
             env,
@@ -306,7 +305,9 @@ export async function getRecipients({
         throw new Error('Push SDK: Unsupported notification type');
       }
     } else if (secretType == SUPPORTED_ENC_TYPE.LITV1) {
-      const lit = new Lit(signer);
+      if(!lit){
+        lit = new Lit(signer)
+      }
       await lit.connect();
       if (notificationType === NOTIFICATION_TYPE.TARGETTED) {
         if (typeof recipients === 'string') {

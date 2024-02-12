@@ -158,8 +158,8 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       chatId,
       rules,
       pgpPrivateKey,
+      lit
     } = options || {};
-
     validateOptions(options);
     if (
       payload &&
@@ -184,15 +184,15 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       COMMUNICATOR_CONTRACT = EPNS_COMMUNICATOR_CONTRACT;
     }
 
-    const lit = initialiseLIT(payload?.sectype?? null, signer);
-
     const {_recipients, secret} = await getRecipients({
       env,
       notificationType: type,
       channel: _channelAddress,
       recipients,
       secretType: payload?.sectype?? null,
-      signer
+      signer,
+      pgpPrivateKey,
+      lit
     });
 
     const notificationPayload = getPayloadForAPIInput(options, _recipients, secret);

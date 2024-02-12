@@ -51,7 +51,7 @@ describe('sendNotifications', () => {
       console.log(feeds);
     });
 
-    it.only('Should send lit encrypted notification for targetted recipient', async () => {
+    it('Should send lit encrypted notification for targetted recipient', async () => {
       const res = await sendNotification({
         ...testData.TEST_ENC_LIT_RAW_PAYLOAD,
         recipients: testData.TARGETED_RECIPIENT,
@@ -112,7 +112,7 @@ describe('sendNotifications', () => {
       console.log(userfeeds1);
     });
 
-    it.only('Should send lit encrypted notification for subset recipients', async () => {
+    it('Should send lit encrypted notification for subset recipients', async () => {
       const res = await sendNotification({
         ...testData.TEST_LIT_ENC_SUBSET_RAW_PAYLOAD,
         recipients: testData.SUBSET_RECIPIENT,
@@ -139,7 +139,6 @@ describe('sendNotifications', () => {
         lit,
         pgpPrivateKey: decryptedPGPPrivateKey
       });
-      console.log(testData.SUBSET_RECIPIENT[1]);
       console.log(userfeeds1);
     });
 

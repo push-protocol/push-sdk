@@ -12,7 +12,7 @@ describe("payload helpers", ()=>{
                 env: ENV.DEV,
                 notificationType: NOTIFICATION_TYPE.TARGETTED,
                 channel: testData.CHANNEL,
-                secretType: 'PGP',
+                secretType: 'PGPV1',
                 recipients: testData.TARGETED_RECIPIENT
 
             })
@@ -26,7 +26,7 @@ describe("payload helpers", ()=>{
                 env: ENV.DEV,
                 notificationType: NOTIFICATION_TYPE.SUBSET,
                 channel: testData.CHANNEL,
-                secretType: 'PGP',
+                secretType: 'PGPV1',
                 recipients: testData.SUBSET_RECIPIENT
 
             })
@@ -39,7 +39,6 @@ describe("payload helpers", ()=>{
                 env: ENV.DEV,
                 notificationType: NOTIFICATION_TYPE.TARGETTED,
                 channel: testData.CHANNEL,
-                secretType: '',
                 recipients: testData.TARGETED_RECIPIENT
 
             })
@@ -52,7 +51,6 @@ describe("payload helpers", ()=>{
                 env: ENV.DEV,
                 notificationType: NOTIFICATION_TYPE.SUBSET,
                 channel: testData.CHANNEL,
-                secretType: '',
                 recipients: testData.SUBSET_RECIPIENT
 
             })
@@ -64,7 +62,6 @@ describe("payload helpers", ()=>{
                 env: ENV.DEV,
                 notificationType: NOTIFICATION_TYPE.BROADCAST,
                 channel: testData.CHANNEL,
-                secretType: '',
 
             })
            expect(recipients).not.null;
@@ -78,7 +75,7 @@ describe("payload helpers", ()=>{
                 env: ENV.DEV,
                 notificationType: NOTIFICATION_TYPE.TARGETTED,
                 channel: testData.CHANNEL,
-                secretType: 'PGP',
+                secretType: 'PGPV1',
                 recipients: testData.TARGETED_RECIPIENT
             })
 
@@ -97,7 +94,7 @@ describe("payload helpers", ()=>{
                 env: ENV.DEV,
                 notificationType: NOTIFICATION_TYPE.SUBSET,
                 channel: testData.CHANNEL,
-                secretType: 'PGP',
+                secretType: 'PGPV1',
                 recipients: testData.SUBSET_RECIPIENT
             })
 
@@ -118,7 +115,6 @@ describe("payload helpers", ()=>{
                 env: ENV.DEV,
                 notificationType: NOTIFICATION_TYPE.SUBSET,
                 channel: testData.CHANNEL,
-                secretType: '',
                 recipients: testData.SUBSET_RECIPIENT
             })
             console.log(recipients)
@@ -138,7 +134,6 @@ describe("payload helpers", ()=>{
                 env: ENV.DEV,
                 notificationType: NOTIFICATION_TYPE.TARGETTED,
                 channel: testData.CHANNEL,
-                secretType: '',
                 recipients: testData.TARGETED_RECIPIENT
             })
             console.log(recipients)
@@ -158,7 +153,6 @@ describe("payload helpers", ()=>{
                 env: ENV.DEV,
                 notificationType: NOTIFICATION_TYPE.BROADCAST,
                 channel: testData.CHANNEL,
-                secretType: '',
             })
 
             const payload = helpers.getPayloadForAPIInput(

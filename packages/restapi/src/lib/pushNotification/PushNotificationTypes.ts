@@ -1,6 +1,7 @@
 import { ProgressHookType } from '../types';
 import { GetAliasInfoOptionsType } from '../alias';
 import { ADDITIONAL_META_TYPE } from '../../lib/payloads/constants';
+import { Lit } from '../payloads/litHelper';
 
 export type SubscriptionOptions = {
   account?: string;

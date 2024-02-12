@@ -53,9 +53,9 @@ export enum NOTIFICATION_TYPE {
   ENCRYPTED = 5
 }
 
-export const SUPPORTED_ENC_TYPE = {
-  "PGPV1": "PGPV1",
-  "LITV1" : "LITV1" 
+export enum SUPPORTED_ENC_TYPE {
+  PGPV1 = "PGPV1",
+  LITV1 = "LITV1" 
 }
 
 export enum ADDITIONAL_META_TYPE {

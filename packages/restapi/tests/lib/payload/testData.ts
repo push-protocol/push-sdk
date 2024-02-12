@@ -74,13 +74,13 @@ export const TEST_ENC_SUBSET_RAW_PAYLOAD: ISendNotificationInputOptions = {
   signer: '',
   type: NOTIFICATION_TYPE.SUBSET,
   notification: {
-    title: 'hey',
-    body: 'hey'
+    title: 'hey subset users',
+    body: 'hey subset users'
   },
   payload: {
     sectype: 'PGPV1',
-    title: 'hey',
-    body: 'hey',
+    title: 'hey subset users',
+    body: 'hey subset users',
     cta: 'https://google.com',
     img: 'test-image.png',
     hidden: false,
@@ -163,7 +163,7 @@ export const TEST_RAW_PAYLOAD: ISendNotificationInputOptions = {
     body: 'hey'
   },
   payload: {
-    sectype: '',
+    sectype: null,
     title: 'hey',
     body: 'hey',
     cta: 'https://google.com',
