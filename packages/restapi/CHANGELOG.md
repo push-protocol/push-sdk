@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.67](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.66...restapi-0.0.1-alpha.67) (2024-02-13)
+
+
+### Bug Fixes
+
+* added notification widget layout ([#1076](https://github.com/ethereum-push-notification-service/push-sdk/issues/1076)) ([c695c18](https://github.com/ethereum-push-notification-service/push-sdk/commit/c695c185c14ef23669c2d0836a6aa9c597ce525c)), closes [#1051](https://github.com/ethereum-push-notification-service/push-sdk/issues/1051) [#1062](https://github.com/ethereum-push-notification-service/push-sdk/issues/1062) [#1070](https://github.com/ethereum-push-notification-service/push-sdk/issues/1070) [#1073](https://github.com/ethereum-push-notification-service/push-sdk/issues/1073) [#1069](https://github.com/ethereum-push-notification-service/push-sdk/issues/1069) [#1053](https://github.com/ethereum-push-notification-service/push-sdk/issues/1053) [#1074](https://github.com/ethereum-push-notification-service/push-sdk/issues/1074) [#1081](https://github.com/ethereum-push-notification-service/push-sdk/issues/1081) [#1088](https://github.com/ethereum-push-notification-service/push-sdk/issues/1088) [#1089](https://github.com/ethereum-push-notification-service/push-sdk/issues/1089) [#1099](https://github.com/ethereum-push-notification-service/push-sdk/issues/1099) [#1102](https://github.com/ethereum-push-notification-service/push-sdk/issues/1102) [#1107](https://github.com/ethereum-push-notification-service/push-sdk/issues/1107)
+* Merge alpha ([be6cac0](https://github.com/ethereum-push-notification-service/push-sdk/commit/be6cac001715da4f51e3a1d061c0d2c274d82def))
+
+
+
 ## [0.0.1-alpha.66](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.65...restapi-0.0.1-alpha.66) (2024-02-08)
 
 
