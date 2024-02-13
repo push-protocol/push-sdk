@@ -86,7 +86,10 @@ const web3OnBoard = init({
   },
   connect: {
     autoConnectLastWallet: true,
-  }
+  },
+  containerElements: {
+    connectModal: "#onboard-container"
+  },
 })
 
 interface IConnectButtonCompProps {

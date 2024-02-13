@@ -59,10 +59,39 @@ export const ConnectButtonSub: React.FC<IConnectButtonSubProps> = ({autoconnect 
   }, [wallet])
 
   const handleConnect = () =>{
+ 
+    const onboardModal = document.getElementById("onboard-container");
+    if(onboardModal){
+
+    
+    onboardModal.style.display = 'block';
+    // Open the onboard modal
     connect();
-    const sectionElement = document.querySelector<HTMLElement>('.svelte-baitaa');
-    if(sectionElement && sectionElement?.style)
-    sectionElement.style.zIndex = '999999';
+
+    // Create a resize observer to detect when the onboard modal is rendered
+    const observer = new ResizeObserver(() => {
+        const sectionElement = document.querySelector('onboard-v2')?.shadowRoot?.querySelector('.svelte-baitaa');
+        const divElement = sectionElement?.querySelector('div');
+        if (divElement) {
+            // Disconnect the observer once the divElement is found
+            observer.unobserve(onboardModal);
+            observer.disconnect();
+
+            // Apply custom styles
+            divElement.style.position = 'fixed';
+            divElement.style.top = '0px';
+            divElement.style.right = '0px';
+            divElement.style.height = '100vh';
+            divElement.style.left = '0px';
+            divElement.style.zIndex = '999999';
+            divElement.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
+            divElement.style.backdropFilter = 'blur(5px)';
+        }
+    });
+
+    // Start observing the DOM for changes
+    observer.observe(onboardModal);
+  }
   }
 
   return !signer ? (
