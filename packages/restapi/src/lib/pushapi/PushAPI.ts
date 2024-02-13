@@ -359,6 +359,10 @@ export class PushAPI {
     });
   }
 
+  readmode(): boolean {
+    return this.readMode;
+  }
+
   static ensureSignerMessage(): string {
     return 'Operation not allowed in read-only mode. Signer is required.';
   }
