@@ -2,6 +2,7 @@ import { getCAIPAddress, getAPIBaseUrls } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { Subscribers } from '../types';
 import { axiosGet } from '../utils/axiosUtil';
+import { parseSubscrbersApiResponse } from '../utils/parseSubscribersAPI';
 
 /**
  *  GET /v1/channels/:channelId/:subscribers
@@ -13,7 +14,8 @@ export type GetChannelSubscribersOptionsType = {
     limit?: number,
     category?: number,
     setting?: boolean,
-    env?: ENV
+    env?: ENV,
+    raw?: boolean
 }
 
 export const getSubscribers = async (
@@ -29,6 +31,7 @@ export const getSubscribers = async (
         category = null,
         setting = false,
         env = Constants.ENV.PROD,
+        raw = true
     } = options || {};
 
     try {
@@ -54,7 +57,12 @@ export const getSubscribers = async (
             apiEndpoint = apiEndpoint+`&category=${category}`
         }
         return await axiosGet(apiEndpoint)
-          .then((response) => response.data)
+          .then((response) => {
+            if(raw)
+              return response.data
+            else
+              return parseSubscrbersApiResponse(response.data)
+          })
           .catch((err) => {
             console.error(`[Push SDK] - API ${apiEndpoint}: `, err);
           });

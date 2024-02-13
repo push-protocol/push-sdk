@@ -20,9 +20,10 @@ import 'react-toastify/dist/ReactToastify.min.css';
 import {
   Group,
   IChatProfile,
-  MODAL_BACKGROUND_TYPE,
-  MODAL_POSITION_TYPE,
+
 } from '../exportedTypes';
+import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../../../types';
+
 
 import { InfuraAPIKey, allowedNetworks, device } from '../../../config';
 import { resolveNewEns, shortenText } from '../../../helpers';

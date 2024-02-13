@@ -97,6 +97,16 @@ export class PushStream extends EventEmitter {
     return stream;
   }
 
+  public async reinit(
+    listen: STREAM[],
+    newOptions: PushStreamInitializeProps
+  ): Promise<void> {
+    this.listen = listen;
+    this.options = { ...this.options, ...newOptions };
+    await this.disconnect();
+    await this.connect();
+  }
+
   public async connect(): Promise<void> {
     const shouldInitializeChatSocket =
       !this.listen ||
@@ -459,6 +469,13 @@ export class PushStream extends EventEmitter {
       this.pushNotificationSocket.disconnect();
       //console.log('Push notification socket disconnected.');
     }
+  }
+
+  public info() {
+    return {
+      options: this.options,
+      listen: this.listen,
+    };
   }
 
   private shouldEmitChat(dataChatId: string): boolean {

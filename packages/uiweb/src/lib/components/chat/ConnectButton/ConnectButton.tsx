@@ -21,7 +21,8 @@ interface IThemeProps {
 
 
 export const ConnectButtonSub = ({autoConnect = false})  => {
-  const {wallet, connecting , connect, disconnect} = useAccount();
+  const {env} = useChatData()
+  const {wallet, connecting , connect, disconnect} = useAccount({env});
 
   const {
     signer,

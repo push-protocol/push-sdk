@@ -16,6 +16,7 @@
     "immer": "^10.0.2",
     "joi": "^17.9.2",
     "livepeer": "^2.5.8",
+    "lru-cache": "^10.1.0",
     "openpgp": "^5.5.0",
     "simple-peer": "^9.11.1",
     "socket.io-client": "^4.7.2",

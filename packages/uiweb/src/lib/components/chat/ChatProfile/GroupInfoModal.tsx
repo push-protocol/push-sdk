@@ -35,11 +35,10 @@ import {
 import { getRuleInfo } from '../helpers/getRulesToCondtionArray';
 import {
   Group,
-  MODAL_BACKGROUND_TYPE,
-  MODAL_POSITION_TYPE,
-  ModalBackgroundType,
-  ModalPositionType,
+
 } from '../exportedTypes';
+import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE,ModalBackgroundType,ModalPositionType } from '../../../types';
+
 import { TokenGatedSvg } from '../../../icons/TokenGatedSvg';
 import { GROUP_ROLES } from '../types';
 import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities';

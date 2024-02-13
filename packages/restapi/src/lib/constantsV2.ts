@@ -7,7 +7,9 @@ import {
   GROUP_RULES_CATEGORY,
   GROUP_RULES_PERMISSION,
   GROUP_RULES_SUB_CATEGORY,
+  VideoCallStatus,
 } from './types';
+import { initVideoCallData } from './video';
 
 // TODO: Change this do . type
 // TODO: Add Notif type.
@@ -30,7 +32,9 @@ const CONSTANTS = {
     },
   },
   VIDEO: {
-    EVENT: VideoEventType
+    EVENT: VideoEventType,
+    STATUS: VideoCallStatus,
+    INITIAL_DATA: initVideoCallData
   },
   ALPHA_FEATURES: ALPHA_FEATURES,
   USER: { ENCRYPTION_TYPE: ENCRYPTION_TYPE },
