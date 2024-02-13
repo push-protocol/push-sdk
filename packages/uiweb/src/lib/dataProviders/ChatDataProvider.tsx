@@ -11,7 +11,8 @@ import { IChatTheme, lightChatTheme } from '../components/chat/theme';
 import { getAddressFromSigner, pCAIP10ToWallet } from '../helpers';
 import useCreateChatProfile from '../hooks/useCreateChatProfile';
 import useDecryptPGPKey from '../hooks/useDecryptPGPKey';
-import useInitializeUser from '../hooks/chat/useInitializeUser';
+import useInitializePushUser from '../hooks/useInitializeUser';
+import useInitializeUser from '../hooks/useInitializeUser';
 import useChatProfile from '../hooks/chat/useChatProfile';
 
 import usePushUserInfoUtilities from '../hooks/chat/useUserInfoUtilities';

@@ -1,7 +1,13 @@
+import { Env } from '@pushprotocol/restapi';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
+import { useMemo } from 'react';
+import { CoreContractChainId, CoreRPC } from '../config';
 
-export const useAccount = () => {
+interface useAccountParams {
+  env:Env;
+}
+export const useAccount = ({env}:useAccountParams) => {
   const [{ wallet, connecting }, connect, disconnect, updateBalances, setWalletModules, setPrimaryWallet] =
     useConnectWallet();
 
@@ -14,6 +20,9 @@ export const useAccount = () => {
   const switchChain = async (desiredChain: number) => {
     setChain({ chainId: ethers.utils.hexValue(desiredChain) });
   };
+  const provider = useMemo(() => {
+    return wallet ? new ethers.providers.Web3Provider(wallet.provider, 'any') : new ethers.providers.JsonRpcProvider(CoreRPC[env]);
+  }, [wallet]);
 
   return {
     wallet,
@@ -23,9 +32,9 @@ export const useAccount = () => {
     updateBalances,
     setWalletModules,
     setPrimaryWallet,
-    provider: wallet ? new ethers.providers.Web3Provider(wallet.provider, 'any') : undefined,
+    provider,
     account: wallet && wallet.accounts.length > 0 ? ethers.utils.getAddress(wallet.accounts[0].address) : undefined,
-    chainId: connectedChain ? Number(connectedChain.id) : undefined,
+    chainId: connectedChain ? Number(connectedChain.id) : CoreContractChainId[env],
     isActive,
     setChain,
     switchChain,

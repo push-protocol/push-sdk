@@ -1,7 +1,7 @@
 import { ENV } from '../constants';
 import CONSTANTS from '../constantsV2';
-import { SignerType, VideoCallData, VideoCallStatus } from '../types';
-import { Signer as PushSigner } from '../helpers';
+import { SignerType, VideoCallData, VideoCallStatus, VideoPeerInfo } from '../types';
+import { Signer as PushSigner, walletToPCAIP10 } from '../helpers';
 
 import { Video as VideoV1, initVideoCallData } from '../video/Video';
 import { VideoV2 } from '../video/VideoV2';
@@ -11,6 +11,9 @@ import { produce } from 'immer';
 import { endStream } from '../video/helpers/mediaToggle';
 
 export class Video {
+  // peerInfo objects from the incoming video call requests
+  private peerInfos: {[key: string]: VideoPeerInfo} = {};
+
   constructor(
     private account: string,
     private env: ENV,
@@ -74,6 +77,8 @@ export class Video {
 
       // If the event is RequestVideo, update the video call 'data' state with the incoming call data
       if (data.event === CONSTANTS.VIDEO.EVENT.REQUEST) {
+        this.peerInfos[walletToPCAIP10(data.peerInfo.address)] = data.peerInfo;
+
         videoV1Instance.setData((oldData) => {
           return produce(oldData, (draft) => {
             draft.local.address = this.account;
@@ -141,6 +146,7 @@ export class Video {
       account: this.account,
       decryptedPgpPvtKey: this.decryptedPgpPvtKey!,
       env: this.env,
+      peerInfos: this.peerInfos
     });
   }
 }

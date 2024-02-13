@@ -19,6 +19,8 @@ import { ALPHA_FEATURE_CONFIG } from '../config';
 import { Space } from './space';
 import { Video } from './video';
 import { isValidCAIP10NFTAddress } from '../helpers';
+import { LRUCache } from 'lru-cache';
+import { cache } from '../helpers/cache';
 
 export class PushAPI {
   private signer?: SignerType;
@@ -29,6 +31,7 @@ export class PushAPI {
   private pgpPublicKey?: string;
   private env: ENV;
   private progressHook?: (progress: ProgressHookType) => void;
+  private cache: LRUCache<string, any>;
 
   public chat: Chat; // Public instances to be accessed from outside the class
   public space: Space;
@@ -67,6 +70,9 @@ export class PushAPI {
     // Instantiate the notification classes
     this.channel = new Channel(this.signer, this.env, this.account);
     this.notification = new Notification(this.signer, this.env, this.account);
+
+    this.cache = cache;
+
     // Initialize the instances of the four classes
     this.chat = new Chat(
       this.account,
@@ -86,6 +92,7 @@ export class PushAPI {
     this.profile = new Profile(
       this.account,
       this.env,
+      this.cache,
       this.decryptedPgpPvtKey,
       this.progressHook
     );
@@ -99,12 +106,13 @@ export class PushAPI {
     );
     this.user = new User(this.account, this.env);
 
-    this.video = new Video(this.account,
+    this.video = new Video(
+      this.account,
       this.env,
       this.decryptedPgpPvtKey,
       this.signer
     );
-    
+
     this.errors = initializationErrors || [];
   }
   // Overloaded initialize method signatures
@@ -192,8 +200,8 @@ export class PushAPI {
         throw new Error('Account could not be derived.');
       }
 
-      let decryptedPGPPrivateKey;
-      let pgpPublicKey;
+      let decryptedPGPPrivateKey: string | undefined;
+      let pgpPublicKey: string | undefined;
 
       /**
        * Decrypt PGP private key
@@ -204,6 +212,10 @@ export class PushAPI {
         account: derivedAccount,
         env: settings.env,
       });
+
+      if (user && user.publicKey) {
+        pgpPublicKey = user.publicKey;
+      }
 
       if (!readMode) {
         if (user && user.encryptedPrivateKey) {
@@ -236,7 +248,6 @@ export class PushAPI {
             }
             readMode = true;
           }
-          pgpPublicKey = user.publicKey;
         } else {
           const newUser = await PUSH_USER.create({
             env: settings.env,
@@ -305,6 +316,7 @@ export class PushAPI {
     this.profile = new Profile(
       this.account,
       this.env,
+      this.cache,
       this.decryptedPgpPvtKey,
       this.progressHook
     );
@@ -345,6 +357,10 @@ export class PushAPI {
       account: accountToUse,
       env: this.env,
     });
+  }
+
+  readmode(): boolean {
+    return this.readMode;
   }
 
   static ensureSignerMessage(): string {

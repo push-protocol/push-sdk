@@ -21,19 +21,20 @@ import {
   useCriteriaStateManager,
 } from '../../../hooks/chat/useCriteriaState';
 import { AddGroupMembers } from './AddGroupMembers';
-import AutoImageClipper from '../reusables/AutoImageClipper';
 import { useCreateGatedGroup } from '../../../hooks/chat/useCreateGatedGroup';
 import useToast from '../reusables/NewToast';
 
 import { Image } from '../../../config/styles';
 import { ProfilePicture, device } from '../../../config';
 import { CriteriaValidationErrorType } from '../types';
+
+import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../../../types';
 import {
   CreateGroupModalProps,
   IChatTheme,
-  MODAL_BACKGROUND_TYPE,
-  MODAL_POSITION_TYPE,
+
 } from '../exportedTypes';
+import AutoImageClipper from '../reusables/AutoImageClipper';
 
 
 
@@ -362,7 +363,6 @@ const CreateGroupDetail = ({
       width={!isMobile ? '400px' : '300px'}
     >
       <ModalHeader title="Create Group" handleClose={onClose} />
-
       <UploadContainer onClick={handleUpload}>
         {isImageUploaded ? (
           groupImage ? (

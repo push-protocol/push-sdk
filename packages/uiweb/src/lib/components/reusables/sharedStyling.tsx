@@ -51,6 +51,59 @@ export const Span = styled.span<SpanStyleProps>`
   max-width: ${(props) => props.maxWidth || 'initial'};
 `;
 
+type AnchorStyleProps = {
+  alignSelf?: string;
+  background?: string;
+  borderRadius?: string;
+  border?: string;
+  bottom?: string;
+  flex?: string;
+  fontSize?: string;
+  fontWeight?: string;
+  left?: string;
+  letterSpacing?: string;
+  lineHeight?: string;
+  margin?: string;
+  padding?: string;
+  position?: string;
+  textAlign?: string;
+  textDecoration?: string;
+  right?: string;
+  textTransform?: string;
+  zIndex?: string;
+  top?: string;
+  maxWidth?: string;
+  width?: string;
+  cursor?: string;
+};
+
+export const Anchor = styled.a<AnchorStyleProps>`
+  align-self: ${(props) => props.alignSelf || 'auto'};
+  background: ${(props) => props.background || 'transparent'};
+  border-radius: ${(props) => props.borderRadius || 'initial'};
+  border: ${(props) => props.border || 'initial'};
+  bottom: ${(props) => props.bottom || 'auto'};
+  color: ${(props) => props.color || 'inherit'};
+  flex: ${(props) => props.flex || 'initial'};
+  font-size: ${(props) => props.fontSize || 'inherit'};
+  font-weight: ${(props) => props.fontWeight || '300'};
+  left: ${(props) => props.left || 'auto'};
+  letter-spacing: ${(props) => props.letterSpacing || 'inherit'};
+  line-height: ${(props) => props.lineHeight || 'initial'};
+  cursor: ${(props) => props.cursor || 'pointer'};
+  margin: ${(props) => props.margin || '0px'};
+  padding: ${(props) => props.padding || '0px'};
+  position: ${(props) => props.position || 'relative'};
+  right: ${(props) => props.right || 'auto'};
+  text-align: ${(props) => props.textAlign || 'center'};
+  text-decoration: ${(props) => props.textDecoration || 'center'};
+  text-transform: ${(props) => props.textTransform || 'inherit'};
+  top: ${(props) => props.top || 'auto'};
+  width: ${(props) => props.width || 'auto'};
+  z-index: ${(props) => props.zIndex || 'auto'};
+  max-width: ${(props) => props.maxWidth || 'initial'};
+`;
+
 type SectionStyleProps = {
   flexDirection?: string;
   gap?: string;

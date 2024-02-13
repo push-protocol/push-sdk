@@ -33,7 +33,6 @@ export async function getCID(
     const message: Message = response.data;
     return message;
   } catch (err) {
-    console.error(`[Push SDK] - API ${getCID.name}: `, err);
     throw Error(`[Push SDK] - API ${getCID.name}: ${err}`);
   }
 }
