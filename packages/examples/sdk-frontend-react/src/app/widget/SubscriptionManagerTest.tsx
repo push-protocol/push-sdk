@@ -5,7 +5,7 @@ export const SubscriptionManagerTest = () => {
     return (
         <div>
             <SubscriptionManager 
-               channelAddress="eip155:11155111:0x778D3206374f8AC265728E18E3fE2Ae6b93E4ce4"
+               channelAddress="eip155:1:0xB88460Bb2696CAb9D66013A05dFF29a28330689D"
                onClose={()=>console.debug('on close modal')}
                autoconnect={false}
             />
