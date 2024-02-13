@@ -6,11 +6,10 @@ import { IUser } from '@pushprotocol/restapi';
 
 import {
   IChatTheme,
-  MODAL_BACKGROUND_TYPE,
-  MODAL_POSITION_TYPE,
-  ModalBackgroundType,
-  ModalPositionType,
+ 
 } from '../exportedTypes';
+import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE,ModalBackgroundType,ModalPositionType } from '../../../types';
+
 import { Button, Modal, ModalHeader, TextArea, TextInput } from '../reusables';
 import useUserInfoUtilities from '../../../hooks/chat/useUserInfoUtilities';
 import { MdCheckCircle, MdError } from 'react-icons/md';

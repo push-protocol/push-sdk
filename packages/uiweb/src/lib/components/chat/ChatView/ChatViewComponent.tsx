@@ -2,9 +2,9 @@ import React, { useContext } from 'react';
 import {
   IChatTheme,
   IChatViewComponentProps,
-  MODAL_BACKGROUND_TYPE,
-  MODAL_POSITION_TYPE,
+
 } from '../exportedTypes';
+import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../../../types';
 
 import { chatLimit, device } from '../../../config';
 import { Section, Span } from '../../reusables';

@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { IChatTheme, MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, UserProfileProps } from '../exportedTypes';
+import { IChatTheme, UserProfileProps } from '../exportedTypes';
+import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../../../types';
 
 import { Section, Span, Image } from '../../reusables';
 import { ProfilePicture, device } from '../../../config';

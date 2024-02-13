@@ -2,6 +2,29 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.66](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.65...restapi-0.0.1-alpha.66) (2024-02-08)
+
+
+### Bug Fixes
+
+* Merge branch 'alpha' into alpha-deployment ([feb77a9](https://github.com/ethereum-push-notification-service/push-sdk/commit/feb77a91bb74e14005ab3613b3813a3c1342e633))
+
+
+### Features
+
+* **spaces v2:** update space.initialize() param name, rename media() in SpacesV2 ([#1101](https://github.com/ethereum-push-notification-service/push-sdk/issues/1101)) ([d832ae3](https://github.com/ethereum-push-notification-service/push-sdk/commit/d832ae37389935eeebf8e481d148fd393fa20141))
+
+
+
+## [0.0.1-alpha.65](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.64...restapi-0.0.1-alpha.65) (2024-02-08)
+
+
+### Bug Fixes
+
+* **restapi:** build errors from spaces ([#1098](https://github.com/ethereum-push-notification-service/push-sdk/issues/1098)) ([638b5d7](https://github.com/ethereum-push-notification-service/push-sdk/commit/638b5d76101d5f8b250e5c5f4af22e9cafa413de))
+
+
+
 ## [0.0.1-alpha.64](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.63...restapi-0.0.1-alpha.64) (2024-01-18)
 
 
