@@ -6,11 +6,12 @@ import {
 } from '../context/widgetContext';
 import { PushAPI, SignerType } from '@pushprotocol/restapi';
 import { getAddressFromSigner, pCAIP10ToWallet } from '../helpers';
-import useInitializePushUser from '../hooks/useInitializePushUser';
+import useInitializePushUser from '../hooks/useInitializeUser';
 import { GUEST_MODE_ACCOUNT } from '../config/constants';
 import { IWidgetTheme, lightWidgetTheme } from '../components/widget/theme';
 import { ThemeContext } from '../components/widget/theme/ThemeProvider';
 import useUserProfile from '../hooks/useUserProfile';
+import useInitializeUser from '../hooks/useInitializeUser';
 
 export interface IWidgetUIProviderProps {
   children: ReactNode;
@@ -36,7 +37,7 @@ export const WidgetUIProvider = ({
   const [userVal, setUserVal] = useState<PushAPI | undefined>(user);
   const [envVal, setEnvVal] = useState<ENV>(env);
 
-  const { initializePushUser } = useInitializePushUser();
+  const { initializeUser } = useInitializeUser();
   const { fetchUserProfile } = useUserProfile();
 
   useEffect(() => {
@@ -64,7 +65,7 @@ export const WidgetUIProvider = ({
     (async () => {
       if (accountVal && envVal  ) {
 
-        const pushUser = await initializePushUser({
+        const pushUser = await initializeUser({
           signer: signerVal,
           account: accountVal!,
           env: envVal,

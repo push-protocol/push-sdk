@@ -11,6 +11,6 @@ export * from './useGetChatProfile';
 export * from './useMediaQuery';
 export * from './useCreateChatProfile';
 export * from './useDecryptPGPKey';
-export * from './useInitializePushUser';
+export * from './useInitializeUser';
 export * from './useTokenSymbolLoader';
 export * from './widget';

@@ -3,17 +3,16 @@ import { useCallback, useContext } from "react";
 import { useChatData } from "./chat/index";
 import { ENV } from "../config";
 
-export interface InitializePushUserParams {
+export interface InitializeUserParams {
     signer?: SignerType;
     account: string;
     env: ENV;
 }
 
-const useInitializePushUser = () => {
+const useInitializeUser = () => {
 
-    const initializePushUser = useCallback(async({signer, account,env}: InitializePushUserParams): Promise<any> => {
+    const initializeUser = useCallback(async({signer, account,env}: InitializeUserParams): Promise<any> => {
         try {
-            console.debug('In hook',signer,account)
             const pushUser = await PushAPI.initialize(signer?? undefined, {
                 env: env,
                 account: account,
@@ -26,7 +25,7 @@ const useInitializePushUser = () => {
         }
     },
     [])
-    return {initializePushUser};
+    return {initializeUser};
 };
 
-export default useInitializePushUser;
+export default useInitializeUser;

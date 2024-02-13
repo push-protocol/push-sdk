@@ -37,7 +37,7 @@ export interface AccountEnvOptionsType {
   env?: ENV;
   account: string;
   signer: SignerType;
-  pushUser: PushAPI;
+  user: PushAPI;
 }
 
 export interface ITheme {

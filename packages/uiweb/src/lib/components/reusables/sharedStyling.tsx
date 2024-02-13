@@ -202,19 +202,127 @@ export const Image = styled.img<ImageStyleProps>`
   object-fit: ${(props) => props.objectFit || 'fill'};
 `;
 
+
+type ButtonStyleProps = {
+  display?: string;
+  lineHeight?: string;
+  height?: string;
+  minHeight?: string;
+  flex?: string;
+  flexDirection?: string;
+  alignSelf?: string;
+  alignItems?: string;
+  justifyContent?: string;
+  fontWeight?: string;
+  fontSize?: string;
+  color?: string;
+  background?: string;
+  margin?: string;
+  padding?: string;
+  border?: string;
+  borderRadius?: string;
+  position?: string;
+  textDecoration?: string;
+  width?: string;
+  overflow?: string;
+  zIndex?: string;
+  cursor?: string;
+  fontFamily?: string;
+  hover?: string;
+  hoverBackground?: string;
+  hoverBorder?: string;
+  hoverSVGPathStroke?: string;
+};
+
+export const Button = styled.button<ButtonStyleProps>`
+  display: ${(props) => props.display || "initial"};
+  line-height: ${(props) => props.lineHeight || "26px"};
+  flex: ${(props) => props.flex || "initial"};
+  flex-direction: ${(props) => props.flexDirection || "row"};
+  align-self: ${(props) => props.alignSelf || "auto"};
+  align-items: ${(props) => props.alignItems || "center"};
+  justify-content: ${(props) => props.justifyContent || "center"};
+  font-weight: ${(props) => props.fontWeight || 400};
+  font-size: ${(props) => props.fontSize || "inherit"};
+  color: ${(props) => props.color || "inherit"};
+  background: ${(props) => props.background || "inherit"};
+  margin: ${(props) => props.margin || "initial"};
+
+  height: ${(props) => props.height || "initial"};
+  min-height: ${(props) => props.minHeight || 'auto'};
+  padding: ${(props) => props.padding || "initial"};
+  border: ${(props) => props.border || "none"};
+  border-radius: ${(props) => props.borderRadius || "inherit"};
+  position: ${(props) => props.position || "relative"};
+  text-decoration: ${(props) => props.textDecoration || "none"};
+  width: ${(props) => props.width || "initial"};
+  overflow: ${(props) => props.overflow || "hidden"};
+  z-index: ${(props) => props.zIndex || "3"};
+  cursor: ${(props) => props.cursor || "pointer"};
+  font-family: ${(props) => props.fontFamily || "inherit"};
+
+  &:before {
+    background: ${(props) => props.hover || (props.background ? props.background : "transparent")};
+    bottom: 0;
+    content: "";
+    display: none;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: -1;
+  }
+
+  &:after {
+    background: ${(props) => props.hoverBackground || "#000"};
+    bottom: 0;
+    content: "";
+    left: 0;
+    opacity: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: -1;
+  }
+
+  &:hover {
+    border: ${(props) => props.hoverBorder || "inherit"};
+
+    & svg > path {
+      stroke: ${(props) => props.hoverSVGPathStroke || "auto"};
+    }
+  }
+
+  &:hover:before {
+    display: block;
+  }
+
+  &:hover:after {
+    opacity: 0.08;
+  }
+  &:active:after {
+    opacity: 0.15;
+  }
+
+  & > div {
+    display: flex;
+  }
+`;
+
 type DivStyleProps = {
   height?: string;
   width?: string;
   cursor?: string;
-  alignSelf?:string;
-  margin?:string;
+  alignSelf?: string;
+  margin?: string;
   textAlign?:string;
 };
 export const Div = styled.div<DivStyleProps>`
   height: ${(props) => props.height || 'auto'};
   width: ${(props) => props.width || '100%'};
-   margin: ${(props) => props.margin || '0px'};
+  margin: ${(props) => props.margin || '0px'};
   cursor: ${(props) => props.cursor || 'default'};
   align-self: ${(props) => props.alignSelf || 'center'};
   text-align: ${(props) => props.textAlign || 'default'};
 `;
+

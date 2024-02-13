@@ -54,7 +54,6 @@ interface IThemeProps {
 
 const ConnectButtonSection = ({ autoConnect }: { autoConnect: boolean }) => {
   const { pgpPrivateKey,account } = useChatData();
-
   return (
     <Section
       width="100%"
@@ -62,7 +61,7 @@ const ConnectButtonSection = ({ autoConnect }: { autoConnect: boolean }) => {
       alignItems="center"
       padding="8px"
     >
-      {!(pgpPrivateKey && account) && (
+     {!(pgpPrivateKey && account) && (
         <Span
           padding="8px 8px 8px 16px"
           color="#B6BCD6"

@@ -117,10 +117,10 @@ const Home: NextPage = () => {
         access: {
           type: VIDEO_NOTIFICATION_ACCESS_TYPE.PUSH_CHAT,
           data: {
-            chatId: data.meta.chatId,
-          },
-        },
-      },
+            chatId: data.meta.chatId
+          }
+        }
+      }
     });
   };
 
@@ -179,10 +179,10 @@ const Home: NextPage = () => {
             access: {
               type: VIDEO_NOTIFICATION_ACCESS_TYPE.PUSH_CHAT,
               data: {
-                chatId: data.meta.chatId,
-              },
-            },
-          },
+                chatId: data.meta.chatId
+              }
+            }
+          }
         });
       }
     })();
@@ -239,9 +239,9 @@ const Home: NextPage = () => {
           access: {
             type: VIDEO_NOTIFICATION_ACCESS_TYPE.PUSH_CHAT,
             data: {
-              chatId: data.meta.chatId,
-            },
-          },
+              chatId: data.meta.chatId
+            }
+          }
         },
         retry: true,
       });
@@ -257,9 +257,9 @@ const Home: NextPage = () => {
           access: {
             type: VIDEO_NOTIFICATION_ACCESS_TYPE.PUSH_CHAT,
             data: {
-              chatId: data.meta.chatId,
-            },
-          },
+              chatId: data.meta.chatId
+            }
+          }
         },
         retry: true,
       });

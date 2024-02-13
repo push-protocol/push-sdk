@@ -16,6 +16,7 @@ import {
   STREAM,
 } from '../pushstream/pushStreamTypes';
 import { ALPHA_FEATURE_CONFIG } from '../config';
+import { Space } from './space';
 import { Video } from './video';
 import { isValidCAIP10NFTAddress } from '../helpers';
 import { LRUCache } from 'lru-cache';
@@ -33,6 +34,7 @@ export class PushAPI {
   private cache: LRUCache<string, any>;
 
   public chat: Chat; // Public instances to be accessed from outside the class
+  public space: Space;
   public video: Video;
 
   public profile: Profile;
@@ -76,6 +78,13 @@ export class PushAPI {
       this.account,
       this.env,
       this.alpha,
+      this.decryptedPgpPvtKey,
+      this.signer,
+      this.progressHook
+    );
+    this.space = new Space(
+      this.account,
+      this.env,
       this.decryptedPgpPvtKey,
       this.signer,
       this.progressHook

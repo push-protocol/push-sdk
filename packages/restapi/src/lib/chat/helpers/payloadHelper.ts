@@ -11,6 +11,7 @@ import {
   SpaceAccess,
   GroupInfoDTO,
   ChatMemberProfile,
+  SpaceInfoDTO,
 } from '../../types';
 import { ENV } from '../../constants';
 import { IPGPHelper, PGPHelper, pgpDecrypt } from './pgp';
@@ -19,6 +20,7 @@ import { MessageObj } from '../../types/messageTypes';
 
 import * as CryptoJS from 'crypto-js';
 import { getAllGroupMembers } from '../getAllGroupMembers';
+import { ChatListType, SpaceListType } from '../../pushapi/pushAPITypes';
 export interface ISendMessagePayload {
   fromDID: string;
   toDID: string;
@@ -331,6 +333,57 @@ export const groupDtoToSpaceDtoV2 = async (
 
   return spaceDto;
 };
+
+export const groupInfoDtoToSpaceInfoDto = (
+  groupInfoDto: GroupInfoDTO
+): SpaceInfoDTO => {
+  const spaceInfoDto: SpaceInfoDTO = {
+    spaceName: groupInfoDto.groupName,
+    spaceImage: groupInfoDto.groupImage,
+    spaceDescription: groupInfoDto.groupDescription,
+    isPublic: groupInfoDto.isPublic,
+    spaceCreator: groupInfoDto.groupCreator,
+    spaceId: groupInfoDto.chatId,
+    scheduleAt: groupInfoDto.scheduleAt,
+    scheduleEnd: groupInfoDto.scheduleEnd,
+    status: groupInfoDto.status ?? null,
+    rules: groupInfoDto.rules ?? null,
+    meta: groupInfoDto.meta ?? null,
+    sessionKey: groupInfoDto.sessionKey ?? null,
+    encryptedSecret: groupInfoDto.encryptedSecret ?? null,
+  };
+  return spaceInfoDto;
+};
+
+export const spaceDtoToSpaceInfoDto = (spaceDto: SpaceDTO): SpaceInfoDTO => {
+  return {
+    spaceName: spaceDto.spaceName,
+    spaceImage: spaceDto.spaceImage,
+    spaceDescription: spaceDto.spaceDescription,
+    isPublic: spaceDto.isPublic,
+    spaceCreator: spaceDto.spaceCreator,
+    spaceId: spaceDto.spaceId,
+    scheduleAt: spaceDto.scheduleAt,
+    scheduleEnd: spaceDto.scheduleEnd,
+    status: spaceDto.status,
+    rules: spaceDto.rules,
+    meta: spaceDto.meta,
+    sessionKey: null,
+    encryptedSecret: null,
+    inviteeDetails: spaceDto.inviteeDetails,
+  };
+};
+
+export const mapSpaceListTypeToChatListType = (type: SpaceListType): ChatListType => {
+  switch (type) {
+    case SpaceListType.SPACES:
+      return ChatListType.CHATS;
+    case SpaceListType.REQUESTS:
+      return ChatListType.REQUESTS;
+    default:
+      throw new Error(`Unsupported SpaceListType: ${type}`);
+  }
+}
 
 export const convertSpaceRulesToRules = (spaceRules: SpaceRules): Rules => {
   return {

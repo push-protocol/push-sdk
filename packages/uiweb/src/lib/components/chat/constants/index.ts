@@ -57,3 +57,6 @@ export const ACCESS_TYPE_TITLE = {
 
 export * from './chainDetails';
 
+export const PENDING_MEMBERS_LIMIT = 5;
+export const ACCEPTED_MEMBERS_LIMIT = 5;
+export const GUEST_MODE_ADDRESS = '0x0000000000000000000000000000000000000000';
