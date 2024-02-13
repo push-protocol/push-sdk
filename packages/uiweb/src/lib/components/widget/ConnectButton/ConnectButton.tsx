@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { ethers } from 'ethers';
 
-import { useAccount } from '../../../hooks';
+import { useAccount, useWidgetData } from '../../../hooks';
 import { ThemeContext } from '../theme/ThemeProvider';
 
 
@@ -30,20 +30,18 @@ interface IConnectButtonSubProps {
 }
 
 export const ConnectButtonSub: React.FC<IConnectButtonSubProps> = ({autoconnect = false,setAccount,setSigner,signer })  => {
-  const {wallet, connecting , connect, disconnect} = useAccount();
+  const {env} = useWidgetData();
+    const {wallet, connecting , connect, disconnect,provider,account} = useAccount({env});
 
   const theme = useContext(ThemeContext);
-console.debug('in *****************')
 
   const setUserData = () => {
     if (wallet) {
       (async () => {
-        const ethersProvider = new ethers.providers.Web3Provider(wallet.provider, 'any')
-        const signer = ethersProvider.getSigner()
-        const newAdd = await getAddressFromSigner(signer)
-        console.debug('in *****************',newAdd,signer)
-        setSigner(signer)
-        setAccount(newAdd);
+    
+        const librarySigner = provider?.getSigner(account);
+        setSigner(librarySigner)
+        setAccount(account!);
       })()
     } else if (!wallet) {
       setAccount('')
@@ -60,9 +58,16 @@ console.debug('in *****************')
   
   }, [wallet])
 
+  const handleConnect = () =>{
+    connect();
+    const sectionElement = document.querySelector<HTMLElement>('.svelte-baitaa');
+    if(sectionElement && sectionElement?.style)
+    sectionElement.style.zIndex = '999999';
+  }
+
   return !signer ? (
     <ConnectButtonDiv theme={theme}>
-      <button onClick={() => (wallet ? disconnect(wallet) : connect())}>{connecting ? 'connecting' : wallet ? 'disconnect' : 'Connect Wallet'}</button>
+      <button onClick={() => (wallet ? disconnect(wallet) : handleConnect())}>{connecting ? 'connecting' : wallet ? 'disconnect' : 'Connect Wallet'}</button>
     </ConnectButtonDiv>
   ) : (
     <></>

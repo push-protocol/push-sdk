@@ -41,7 +41,7 @@ export type SubscriptionManagerStepKeys =
 export const SubscriptionManager: React.FC<ISubscriptionManagerProps> = (
   options: ISubscriptionManagerProps
 ) => {
-  const { env, user } = useWidgetData();
+  const { env, user,account } = useWidgetData();
   const theme = useContext(ThemeContext);
 
   const {
@@ -65,7 +65,7 @@ export const SubscriptionManager: React.FC<ISubscriptionManagerProps> = (
     setChannelInfoError,
   } = useManageChannelUtilities();
 
-  const { fetchUserSubscriptions, userSubscriptionLoading } =
+  const { fetchUserSubscriptions, userSubscriptionLoading,setUserSubscriptionLoading } =
     useManageSubscriptionsUtilities();
 
   const handleNext = () => {
@@ -87,13 +87,12 @@ export const SubscriptionManager: React.FC<ISubscriptionManagerProps> = (
         const userSubscriptionResponse = await fetchUserSubscriptions({
           channelAddress: formattedChannelAddress,
         });
-      
-        if (userSubscription) {
+
+        if (userSubscriptionResponse) {
           setUserSubscription(userSubscriptionResponse);
-        } else {
-            setChannelInfoError(
-                WidgetErrorCodes.NOTIFICATION_WIDGET_CHANNEL_INFO_ERROR
-              );
+        } 
+        else{
+            setUserSubscriptionLoading(false)
         }
         if (info) {
           setChannelInfo(info);
@@ -109,7 +108,7 @@ export const SubscriptionManager: React.FC<ISubscriptionManagerProps> = (
         );
       }
     })();
-  }, [channelAddress]);
+  }, [channelAddress,user,account,env]);
 
   useEffect(() => {
     if (userSubscription && userSubscription.length) {

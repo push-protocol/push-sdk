@@ -2,7 +2,10 @@ import React, { useContext, useState } from 'react';
 import { Button, PoweredByPush } from '../reusables';
 import { Anchor, Section, Span, Spinner } from '../../reusables';
 import styled from 'styled-components';
-import { useManageSubscriptionsUtilities, useWidgetData } from '../../../hooks';
+import {
+  useManageSubscriptionsUtilities,
+  useWidgetData,
+} from '../../../hooks';
 import useToast from '../reusables/NewToast';
 import { MdCheckCircle, MdError } from 'react-icons/md';
 import { ThemeContext } from '../theme/ThemeProvider';
@@ -18,6 +21,7 @@ import { device } from '../../../config';
 import * as PushAPI from '@pushprotocol/restapi';
 import { notifUserSettingFormatString } from '../helpers';
 import { ChannelDetailsComponent } from './ChannelDetailsComponent';
+import { ConnectButtonComp } from '../ConnectButton';
 
 /**
  * @interface IThemeProps
@@ -60,6 +64,7 @@ export const ManageNotficationsComponent: React.FC<
   const theme = useContext(ThemeContext);
   const isMobile = useMediaQuery(device.tablet);
   const unsubscribeToast = useToast();
+  const { signer, setAccount, setSigner, user, account } = useWidgetData();
 
   const showError = (title: string, subTitle: string) => {
     unsubscribeToast.showMessageToast({
@@ -172,7 +177,7 @@ export const ManageNotficationsComponent: React.FC<
           gap="20px"
           flex="1"
         >
-          <ChannelDetailsComponent channelInfo={channelInfo}/>
+          <ChannelDetailsComponent channelInfo={channelInfo} />
           {!!userSettings && !!userSettings.length && (
             <>
               {' '}
@@ -180,18 +185,19 @@ export const ManageNotficationsComponent: React.FC<
                 settings={userSettings}
                 setSettings={setModifiedSettings}
               />
-              {/* {!(signer) && (
-        <ConnectButtonComp
-          autoconnect={autoconnect}
-          setAccount={setAccount}
-          setSigner={setSigner}
-          signer={signer}
-        />
-      )}  */}
-              {/* {signer &&  */}
-              <Button height="auto" width="100%" onClick={handleSubscribe}>
-                Update Preferences
-              </Button>
+              {!signer && (
+                <ConnectButtonComp
+                  autoconnect={autoconnect}
+                  setAccount={setAccount}
+                  setSigner={setSigner}
+                  signer={signer}
+                />
+              )}
+              {signer && (
+                <Button height="auto" width="100%" onClick={handleSubscribe}>
+                  Update Preferences
+                </Button>
+              )}
             </>
           )}
           <UnsubscribeSpan

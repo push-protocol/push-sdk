@@ -27,7 +27,6 @@ export const notifUserSettingFromChannelSetting = ({
 }: {
   settings: any[];
 }) => {
-    console.debug(settings)
   const _userSettings: NotificationSettingType[] = [];
   settings &&
     settings.forEach((setting) =>

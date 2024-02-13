@@ -58,14 +58,12 @@ export const WidgetUIProvider = ({
     })();
   }, [env, account, signer,user]);
 
-  useEffect(() => {
-  console.debug(env,account,signer,user)
-  }, [env, account, signer,user]);
+  
 
   useEffect(() => {
     (async () => {
-console.debug(accountVal,envVal,signerVal)
-      if (accountVal && envVal  && signerVal ) {
+      if (accountVal && envVal  ) {
+
         const pushUser = await initializePushUser({
           signer: signerVal,
           account: accountVal!,
@@ -75,7 +73,6 @@ console.debug(accountVal,envVal,signerVal)
       }
     })();
   }, [ accountVal, envVal,signerVal]);
-
 
 
 

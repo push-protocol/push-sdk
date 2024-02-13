@@ -22,7 +22,6 @@ export const ChannelDetailsComponent: React.FC<
 > = (options: IChannelDetailsComponentProps) => {
   const theme = useContext(ThemeContext);
   const { channelInfo } = options || {};
-  console.debug(channelInfo);
   return (
     <Section justifyContent="start" gap="7px" width='100%' margin=' 0 0 10px 0'>
       <Image

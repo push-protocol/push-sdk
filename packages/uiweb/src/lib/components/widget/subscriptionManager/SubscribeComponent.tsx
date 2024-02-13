@@ -77,6 +77,7 @@ export const SubscribeComponent: React.FC<ISubscribeComponentProps> = (
       }
     } catch (e) {
       console.debug(e);
+      console.debug('subscribe error')
       setSubscribeError(
         WidgetErrorCodes.NOTIFICATION_WIDGET_SUBSCRIBE_ERROR
       );
@@ -117,18 +118,18 @@ export const SubscribeComponent: React.FC<ISubscribeComponentProps> = (
       <SettingsComponent settings={modifiedSettings!} setSettings={setModifiedSettings}/>
       </Section>}
    
-      {/* {!(signer) && (
+     {!(signer) && (
         <ConnectButtonComp
           autoconnect={autoconnect}
           setAccount={setAccount}
           setSigner={setSigner}
           signer={signer}
         />
-      )}  */}
-      {/* {signer &&  */}
+      )}  
+      {signer &&  
       <Button onClick={handleSubscribe}>
         {subscribeLoading ? <Spinner color="#fff" size="24" /> : 'Subscribe'}
-      </Button> 
+      </Button> }
  
       <PoweredByPush />
     </Section>

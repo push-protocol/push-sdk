@@ -18,7 +18,6 @@ export const useManageChannelUtilities = () => {
     }: channelInfoParams) => {
       setChannelInfoLoading(true);
       try {
-        console.log(user)
         if (user) {
           const response = await user.channel.info(channelAddress);
           setChannelInfoLoading(false);
@@ -33,7 +32,7 @@ export const useManageChannelUtilities = () => {
         return error.message;
       }
     },
-    [account, env]
+    [account, env,user]
   );
 
   return {

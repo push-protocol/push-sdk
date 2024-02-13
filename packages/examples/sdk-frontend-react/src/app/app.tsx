@@ -268,16 +268,16 @@ export function App() {
       });
       setPushUser(pushUser);
       setSigner(librarySigner);
-      if (user?.encryptedPrivateKey) {
-        pgpPrivateKey = await PushApi.chat.decryptPGPKey({
-          encryptedPGPPrivateKey: user.encryptedPrivateKey,
-          account: account,
-          signer: librarySigner,
-          env,
-        });
-      }
+      // if (user?.encryptedPrivateKey) {
+      //   pgpPrivateKey = await PushApi.chat.decryptPGPKey({
+      //     encryptedPGPPrivateKey: user.encryptedPrivateKey,
+      //     account: account,
+      //     signer: librarySigner,
+      //     env,
+      //   });
+      // }
 
-      setPgpPrivateKey(pgpPrivateKey);
+      // setPgpPrivateKey(pgpPrivateKey);
     })();
   }, [account, env, library]);
   console.debug(signer)
@@ -332,11 +332,11 @@ export function App() {
           <Web3Context.Provider value={{ account, active, library, chainId }}>
             <SocketContext.Provider value={socketData}>
               <AccountContext.Provider value={{ pgpPrivateKey, setSpaceId }}>
-                <WidgetUIProvider env={env} theme={lightWidgetTheme} user={pushUser}>
+                <WidgetUIProvider env={env} theme={lightWidgetTheme} user={pushUser} >
                   <ChatUIProvider
                     env={env}
                     theme={lightChatTheme}
-                    // pushUser={pushUser}
+                    pushUser={pushUser}
                     // account={account}
                     // pgpPrivateKey={pgpPrivateKey}
                     // signer={signer}

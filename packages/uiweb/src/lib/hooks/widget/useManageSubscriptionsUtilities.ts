@@ -38,7 +38,7 @@ export const useManageSubscriptionsUtilities = () => {
         return error.message;
       }
     },
-    [account, env]
+    [account, env,user]
   );
 
   const subscribeToChannel = useCallback(
@@ -49,7 +49,6 @@ export const useManageSubscriptionsUtilities = () => {
       setSubscribeLoading(true);
       try {
         if (user) {
-            console.log(channelAddress)
           const response = await user.notification.subscribe(channelAddress, {
             settings: channelSettings,
             onSuccess: () => {
@@ -74,7 +73,7 @@ export const useManageSubscriptionsUtilities = () => {
         return error.message;
       }
     },
-    [account, env]
+    [account, env,user]
   );
   const unsubscribeToChannel = useCallback(
     async ({
@@ -108,7 +107,7 @@ export const useManageSubscriptionsUtilities = () => {
         return error.message;
       }
     },
-    [account, env]
+    [account, env,user]
   );
 
   return {
@@ -121,6 +120,7 @@ export const useManageSubscriptionsUtilities = () => {
     setSubscribeError,
     setUnsubscribeError,
     fetchUserSubscriptions,
-    userSubscriptionLoading
+    userSubscriptionLoading,
+    setUserSubscriptionLoading
   };
 };
