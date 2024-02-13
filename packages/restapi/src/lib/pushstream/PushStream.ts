@@ -7,14 +7,14 @@ import { Chat } from '../pushapi/chat';
 import { ProgressHookType, SignerType } from '../types';
 import { DataModifier } from './DataModifier';
 import {
-  EVENTS,
   GroupEventType,
   MessageEventType,
   MessageOrigin,
   NotificationEventType,
   PushStreamInitializeProps,
   SpaceEventType,
-  STREAM
+  STREAM,
+  EVENTS,
 } from './pushStreamTypes';
 import { createSocketConnection } from './socketClient';
 
