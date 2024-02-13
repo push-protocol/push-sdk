@@ -118,7 +118,7 @@ export const SubscribeComponent: React.FC<ISubscribeComponentProps> = (
       <SettingsComponent settings={modifiedSettings!} setSettings={setModifiedSettings}/>
       </Section>}
    
-     {!(signer) && (
+     {(user?.readmode()) && (
         <ConnectButtonComp
           autoconnect={autoconnect}
           setAccount={setAccount}
@@ -126,7 +126,7 @@ export const SubscribeComponent: React.FC<ISubscribeComponentProps> = (
           signer={signer}
         />
       )}  
-      {signer &&  
+      {!(user?.readmode()) &&  
       <Button onClick={handleSubscribe}>
         {subscribeLoading ? <Spinner color="#fff" size="24" /> : 'Subscribe'}
       </Button> }

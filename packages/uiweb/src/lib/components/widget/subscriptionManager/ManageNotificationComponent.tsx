@@ -185,7 +185,7 @@ export const ManageNotficationsComponent: React.FC<
                 settings={userSettings}
                 setSettings={setModifiedSettings}
               />
-              {!signer && (
+              {(user?.readmode()) && (
                 <ConnectButtonComp
                   autoconnect={autoconnect}
                   setAccount={setAccount}
@@ -193,7 +193,7 @@ export const ManageNotficationsComponent: React.FC<
                   signer={signer}
                 />
               )}
-              {signer && (
+              {!(user?.readmode()) && (
                 <Button height="auto" width="100%" onClick={handleSubscribe}>
                   Update Preferences
                 </Button>
