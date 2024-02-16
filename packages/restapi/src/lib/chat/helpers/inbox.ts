@@ -41,44 +41,18 @@ export const getInboxLists = async (
   pgpHelper = PGP.PGPHelper
 ): Promise<IFeeds[]> => {
   const {
-    lists,
+    lists: feeds,
     user,
     toDecrypt,
     pgpPrivateKey,
     env = Constants.ENV.PROD,
   } = options || {};
 
-  const connectedUser = await getUser({ account: pCAIP10ToWallet(user), env });
-  const feeds: IFeeds[] = [];
-  for (const list of lists) {
-    let message;
-    if (list.threadhash !== null) {
-      message = await getCID(list.threadhash, { env });
-    }
-    // This is for groups that are created without any message
-    else {
-      message = {
-        encType: 'PlainText',
-        encryptedSecret: '',
-        fromCAIP10: '',
-        fromDID: '',
-        link: '',
-        messageContent: '',
-        messageType: '',
-        sigType: '',
-        signature: '',
-        toCAIP10: '',
-        toDID: '',
-      };
-    }
-    feeds.push({
-      ...list,
-      msg: message,
-      groupInformation: list.groupInformation,
+  if (toDecrypt) {
+    const connectedUser = await getUser({
+      account: pCAIP10ToWallet(user),
+      env,
     });
-  }
-
-  if (toDecrypt)
     return decryptFeeds({
       feeds,
       connectedUser,
@@ -86,6 +60,7 @@ export const getInboxLists = async (
       pgpHelper,
       env,
     });
+  }
   return feeds;
 };
 
