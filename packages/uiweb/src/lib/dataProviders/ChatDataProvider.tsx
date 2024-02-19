@@ -16,6 +16,7 @@ import useInitializeUser from '../hooks/useInitializeUser';
 import useChatProfile from '../hooks/chat/useChatProfile';
 
 import usePushUserInfoUtilities from '../hooks/chat/useUserInfoUtilities';
+import useUserProfile from '../hooks/useUserProfile';
 
 export interface IChatUIProviderProps {
   children: ReactNode;
@@ -56,7 +57,7 @@ export const ChatUIProvider = ({
     useState<boolean>(false);
   const { fetchEncryptionInfo } = usePushUserInfoUtilities();
   const { initializeUser } = useInitializeUser();
-  const { fetchChatProfile } = useChatProfile();
+  const { fetchUserProfile } = useUserProfile();
 
   const [isPushChatStreamConnected, setIsPushChatStreamConnected] =
     useState<boolean>(false);
@@ -69,7 +70,7 @@ export const ChatUIProvider = ({
         const address = await getAddressFromSigner(signer!);
         setAccountVal(address);
       } else if (!signer && user) {
-        const profile = await fetchChatProfile({user});
+        const profile = await fetchUserProfile({user});
         setAccountVal(pCAIP10ToWallet(profile?.wallets));
       } else {
         setAccountVal(GUEST_MODE_ACCOUNT);
@@ -83,7 +84,7 @@ export const ChatUIProvider = ({
   useEffect(() => {
     (async () => {
 
-      if (accountVal && envVal && !userVal) {
+      if ((accountVal && envVal && signerVal) ||(accountVal == GUEST_MODE_ACCOUNT && envVal && !userVal) ) {
         const pushUser = await initializeUser({
           signer: signerVal,
           account: accountVal!,
@@ -103,7 +104,6 @@ export const ChatUIProvider = ({
     })();
   }, [userVal]);
 
-
   const resetStates = () => {
     setPushChatSocket(null);
     setIsPushChatSocketConnected(false);
@@ -115,7 +115,7 @@ export const ChatUIProvider = ({
     (async () => {
       let user;
       if (account) {
-        user = await fetchChatProfile({ profileId: account, env,user });
+        user = await fetchUserProfile({ profileId: account, env,user });
         if (user) setConnectedProfile(user);
       }
     })();

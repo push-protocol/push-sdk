@@ -197,7 +197,6 @@ export const SubscriptionManager: React.FC<ISubscriptionManagerProps> = (
 
       <ToastContainer />
     </Modal>
-    <OnboardDiv id="onboard-container"></OnboardDiv>
     </>
   );
 };
@@ -207,17 +206,3 @@ const Container = styled(Section)<IThemeProps>`
   border: ${(props) => props.theme.border?.modal};
 `;
 
-const OnboardDiv = styled.div`
-position: absolute; 
-top: 14rem;
-margin: auto;
-background-color: transparent; 
-left: 20px;
-right: 20px; 
-margin-left: auto; 
-margin-right: auto;
-border-radius: var(--w3o-border-radius);
-overflow: auto;
-z-index: 99999;
-
-`

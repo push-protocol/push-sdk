@@ -57,7 +57,7 @@ const ClickawayCloseModal = ({
 export const Modal = ({ clickawayClose, children, width,modalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,modalPositionType = MODAL_POSITION_TYPE.GLOBAL }: IModalProps) => {
   const theme = useContext(ThemeContext);
   return (
-    <ModalOverlay modalBackground={modalBackground} modalPositionType={modalPositionType}>
+    <ModalOverlay id='widget-modal-overlay' modalBackground={modalBackground} modalPositionType={modalPositionType}>
       {clickawayClose ? (
         <ClickawayCloseModal clickawayClose={clickawayClose} width={width}>
           {children}

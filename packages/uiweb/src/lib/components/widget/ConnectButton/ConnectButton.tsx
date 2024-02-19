@@ -1,13 +1,10 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect,  } from 'react';
 
 import styled from 'styled-components';
-import { ethers } from 'ethers';
 
 import { useAccount, useWidgetData } from '../../../hooks';
 import { ThemeContext } from '../theme/ThemeProvider';
 
-
-import { getAddressFromSigner } from '../../../helpers';
 import { IWidgetTheme } from '../theme';
 import { device } from '../../../config';
 import { SignerType } from '@pushprotocol/restapi';
@@ -20,83 +17,62 @@ interface IThemeProps {
   theme?: IWidgetTheme;
 }
 
-
 interface IConnectButtonSubProps {
   autoconnect?: boolean;
-  setAccount: React.Dispatch<React.SetStateAction<string| null>>;
+  setAccount: React.Dispatch<React.SetStateAction<string | null>>;
   signer: SignerType | undefined;
   setSigner: React.Dispatch<React.SetStateAction<SignerType | undefined>>;
-
 }
 
-export const ConnectButtonSub: React.FC<IConnectButtonSubProps> = ({autoconnect = false,setAccount,setSigner,signer })  => {
-  const {env} = useWidgetData();
-    const {wallet, connecting , connect, disconnect,provider,account} = useAccount({env});
+export const ConnectButtonSub: React.FC<IConnectButtonSubProps> = ({
+  autoconnect = false,
+  setAccount,
+  setSigner,
+  signer,
+}) => {
+  const { env } = useWidgetData();
+  const { wallet, connecting, connect, disconnect, provider, account } =
+    useAccount({ env });
 
   const theme = useContext(ThemeContext);
 
   const setUserData = () => {
     if (wallet) {
       (async () => {
-    
         const librarySigner = provider?.getSigner(account);
-        setSigner(librarySigner)
+        setSigner(librarySigner);
         setAccount(account!);
-      })()
+      })();
     } else if (!wallet) {
-      setAccount('')
-      setSigner(undefined)
+      setAccount('');
+      setSigner(undefined);
     }
-  }
+    changeModalStyle('zIndex', '2000');
+  };
   useEffect(() => {
-    if(wallet && !autoconnect){
+    if (wallet && !autoconnect) {
       disconnect(wallet);
     }
     setUserData();
-  
-    
-  
-  }, [wallet])
+  }, [wallet]);
 
-  const handleConnect = () =>{
- 
-    const onboardModal = document.getElementById("onboard-container");
-    if(onboardModal){
+  const changeModalStyle = (property: any, value: string) => {
+    const widgetmodal = document.getElementById('widget-modal-overlay');
+    if (widgetmodal) {
+      widgetmodal.style[property] = value;
+    }
+  };
 
-    
-    onboardModal.style.display = 'block';
-    // Open the onboard modal
+  const handleConnect = () => {
+    changeModalStyle('zIndex', 'unset');
     connect();
-
-    // Create a resize observer to detect when the onboard modal is rendered
-    const observer = new ResizeObserver(() => {
-        const sectionElement = document.querySelector('onboard-v2')?.shadowRoot?.querySelector('.svelte-baitaa');
-        const divElement = sectionElement?.querySelector('div');
-        if (divElement) {
-            // Disconnect the observer once the divElement is found
-            observer.unobserve(onboardModal);
-            observer.disconnect();
-
-            // Apply custom styles
-            divElement.style.position = 'fixed';
-            divElement.style.top = '0px';
-            divElement.style.right = '0px';
-            divElement.style.height = '100vh';
-            divElement.style.left = '0px';
-            divElement.style.zIndex = '999999';
-            divElement.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
-            divElement.style.backdropFilter = 'blur(5px)';
-        }
-    });
-
-    // Start observing the DOM for changes
-    observer.observe(onboardModal);
-  }
-  }
+  };
 
   return !signer ? (
     <ConnectButtonDiv theme={theme}>
-      <button onClick={() => (wallet ? disconnect(wallet) : handleConnect())}>{connecting ? 'connecting' : wallet ? 'disconnect' : 'Connect Wallet'}</button>
+      <button onClick={() => (wallet ? disconnect(wallet) : handleConnect())}>
+        {connecting ? 'connecting' : wallet ? 'disconnect' : 'Connect Wallet'}
+      </button>
     </ConnectButtonDiv>
   ) : (
     <></>
@@ -106,23 +82,23 @@ export const ConnectButtonSub: React.FC<IConnectButtonSubProps> = ({autoconnect 
 //styles
 const ConnectButtonDiv = styled.div<IThemeProps>`
   width: 100%;
- 
-  button{
-    background: ${(props) => `${props.theme.backgroundColor?.buttonBackground}!important`};
+
+  button {
+    background: ${(props) =>
+      `${props.theme.backgroundColor?.buttonBackground}!important`};
     color: ${(props) => `${props.theme.textColor?.buttonText}!important`};
-    text-align:center;
+    text-align: center;
     font-size: 1em;
-    cursor:pointer;
+    cursor: pointer;
     border-radius: 10px;
     padding: 10px 20px;
     outline: none;
     border: none;
     cursor: pointer;
-    width:100%;
+    width: 100%;
     font-weight: 600;
-   
   }
-  button:hover{
+  button:hover {
     scale: 1.05;
     transition: 0.3s;
   }
@@ -131,9 +107,8 @@ const ConnectButtonDiv = styled.div<IThemeProps>`
   }
   body.modal-open {
     overflow-y: hidden;
-  
   }
   body.svelte-baitaa {
-    z-index:99999;
+    z-index: 99999;
   }
 `;

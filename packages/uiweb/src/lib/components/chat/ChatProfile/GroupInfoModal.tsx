@@ -44,6 +44,7 @@ import { GROUP_ROLES } from '../types';
 import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities';
 import useChatProfile from '../../../hooks/chat/useChatProfile';
 import { resolvePromisesSeq, transformIUserToChatMemberProfile } from '../helpers';
+import useUserProfile from '../../../hooks/useUserProfile';
 
 export interface MemberPaginationData {
   page: number;
@@ -507,7 +508,7 @@ export const GroupInfoModal = ({
   const {user} = useChatData();
   const { addMember } = useUpdateGroup();
   const { fetchMembersCount } = useGroupMemberUtilities();
-  const { fetchChatProfile } = useChatProfile();
+  const { fetchUserProfile } = useUserProfile();
 
   const {
     chatAcceptStream,
@@ -744,7 +745,7 @@ export const GroupInfoModal = ({
   };
   const transformParticipantJoin = async (item: any): Promise<void> => {
     if (groupInfo?.chatId === item?.chatId) {
-      const profile = await fetchChatProfile({ profileId: item?.from,user });
+      const profile = await fetchUserProfile({ profileId: item?.from,user });
       const transformedProfile = transformIUserToChatMemberProfile(profile,true);
       addAcceptedMember([transformedProfile]);
     }

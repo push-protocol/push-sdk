@@ -23,6 +23,7 @@ import {
   ModalHeader,
 } from '../reusables';
 import useChatProfile from '../../../hooks/chat/useChatProfile';
+import useUserProfile from '../../../hooks/useUserProfile';
 
 type AddWalletProps = {
   onSubmit: () => void;
@@ -55,7 +56,7 @@ export const AddWallets = ({
   const [filteredUserData, setFilteredUserData] = useState<any>(null);
   const { env } = useChatData();
   const isMobile = useMediaQuery(device.mobileL);
-  const { fetchChatProfile } = useChatProfile();
+  const { fetchUserProfile } = useUserProfile();
   const groupInfoToast = useToast();
   const customSearchStyle: CustomStyleParamsType = {
     background: theme.backgroundColor?.modalInputBackground,
@@ -73,7 +74,7 @@ export const AddWallets = ({
     //fix ens search
     const newChatUser = await getNewChatUser({
       searchText: searchedText,
-      fetchChatProfile,
+      fetchChatProfile:fetchUserProfile,
       env,
     });
     if (newChatUser) {
