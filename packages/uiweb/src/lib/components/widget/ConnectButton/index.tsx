@@ -3,7 +3,7 @@ import coinbaseWalletModule from '@web3-onboard/coinbase'
 import { ConnectButtonSub } from './ConnectButton';
 import { BLOCKNATIVE_PROJECT_ID, InfuraAPIKey } from '../../../config';
 import { Web3OnboardProvider } from '@web3-onboard/react';
-import injectedModule, { ProviderLabel } from '@web3-onboard/injected-wallets';
+import injectedModule from '@web3-onboard/injected-wallets';
 import walletConnectModule from '@web3-onboard/walletconnect'
 import init from '@web3-onboard/core';
 import PushIcon from "../../../icons/Bell.svg"
@@ -87,9 +87,7 @@ const web3OnBoard = init({
   connect: {
     autoConnectLastWallet: true,
   },
-  containerElements: {
-    connectModal: "#onboard-container"
-  },
+
 })
 
 interface IConnectButtonCompProps {

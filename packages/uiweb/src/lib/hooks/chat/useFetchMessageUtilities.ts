@@ -31,19 +31,20 @@ const useFetchMessageUtilities
   const [historyLoading, setHistoryLoading] = useState<boolean>(false);
   const [latestLoading, setLatestLoading] = useState<boolean>(false);
   const [chatListLoading, setChatListLoading] = useState<boolean>(false);
-
-
-  const { account, env,pgpPrivateKey ,user} = useChatData();
+  const { account, env,pgpPrivateKey ,user,signer} = useChatData();
   const fetchChatList = useCallback(async ({type,page,limit,overrideAccount = undefined}:FetchChatListParams) => {
+
 
     setChatListLoading(true);
     try {
+      console.debug(user)
         const chats = await user?.chat
         .list(type, {
           overrideAccount: overrideAccount,
           page: page,
           limit: limit,
         })
+        console.debug(chats,'chats from hook')
        return chats;
     } catch (error: Error | any) {
       setChatListLoading(false);
@@ -53,7 +54,7 @@ const useFetchMessageUtilities
     } finally {
       setChatListLoading(false);
     }
-  }, [user,account,env]);
+  }, [user,account,env,signer]);
   const fetchLatestMessage = useCallback(async ({chatId}:FetchLatestMessageParams) => {
 
     setLatestLoading(true);

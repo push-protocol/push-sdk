@@ -33,6 +33,7 @@ import GreyImage from '../../../icons/greyImage.png';
 import InfoIcon from '../../../icons/infodark.svg';
 import VerticalEllipsisIcon from '../../../icons/VerticalEllipsis.svg';
 import { TokenGatedSvg } from '../../../icons/TokenGatedSvg';
+import useUserProfile from '../../../hooks/useUserProfile';
 
 export const ChatProfile: React.FC<IChatProfile> = ({
   chatId,
@@ -44,7 +45,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
   const theme = useContext(ThemeContext);
   const { account, env, user } = useChatData();
   const { getGroupByIDnew } = useGetGroupByIDnew();
-  const { fetchChatProfile } = useChatProfile();
+  const { fetchUserProfile } = useUserProfile();
 
   // const [isGroup, setIsGroup] = useState<boolean>(false);
   const [options, setOptions] = useState(false);
@@ -67,7 +68,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
 
   const fetchProfileData = async () => {
     if (isValidETHAddress(chatId)) {
-      const ChatProfile = await fetchChatProfile({ profileId: chatId, env,user });
+      const ChatProfile = await fetchUserProfile({ profileId: chatId, env,user });
       const result = await resolveNewEns(chatId, provider, env);
       setWeb3Name(result);
       setChatInfo(ChatProfile);

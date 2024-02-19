@@ -6,7 +6,6 @@ import {
 } from '../context/widgetContext';
 import { PushAPI, SignerType } from '@pushprotocol/restapi';
 import { getAddressFromSigner, pCAIP10ToWallet } from '../helpers';
-import useInitializePushUser from '../hooks/useInitializeUser';
 import { GUEST_MODE_ACCOUNT } from '../config/constants';
 import { IWidgetTheme, lightWidgetTheme } from '../components/widget/theme';
 import { ThemeContext } from '../components/widget/theme/ThemeProvider';
@@ -36,20 +35,19 @@ export const WidgetUIProvider = ({
   const [signerVal, setSignerVal] = useState<SignerType | undefined>(signer);
   const [userVal, setUserVal] = useState<PushAPI | undefined>(user);
   const [envVal, setEnvVal] = useState<ENV>(env);
-
   const { initializeUser } = useInitializeUser();
   const { fetchUserProfile } = useUserProfile();
 
   useEffect(() => {
     (async () => {
-    //   resetStates();
+      //   resetStates();
       setEnvVal(env);
       if (Object.keys(signer || {}).length && !user) {
         const address = await getAddressFromSigner(signer!);
         setAccountVal(address);
       } else if (!signer && user) {
-        const profile = await fetchUserProfile({user});
-  
+        const profile = await fetchUserProfile({ user });
+
         setAccountVal(pCAIP10ToWallet(profile?.wallets));
       } else {
         setAccountVal(GUEST_MODE_ACCOUNT);
@@ -57,14 +55,11 @@ export const WidgetUIProvider = ({
       setSignerVal(signer);
       setUserVal(user);
     })();
-  }, [env, account, signer,user]);
-
-  
+  }, [env, account, signer, user]);
 
   useEffect(() => {
     (async () => {
-      if (accountVal && envVal  ) {
-
+      if (accountVal && envVal) {
         const pushUser = await initializeUser({
           signer: signerVal,
           account: accountVal!,
@@ -73,17 +68,14 @@ export const WidgetUIProvider = ({
         setUserVal(pushUser);
       }
     })();
-  }, [ accountVal, envVal,signerVal]);
+  }, [accountVal, envVal, signerVal]);
 
-
-
-//   const resetStates = () => {
-//     setPushChatSocket(null);
-//     setIsPushChatSocketConnected(false);
-//     setPushChatStream(null);
-//     setIsPushChatStreamConnected(false);
-//   };
-
+  //   const resetStates = () => {
+  //     setPushChatSocket(null);
+  //     setIsPushChatSocketConnected(false);
+  //     setPushChatStream(null);
+  //     setIsPushChatStreamConnected(false);
+  //   };
 
 
   const value: IWidgetDataContextValues = {
@@ -103,6 +95,8 @@ export const WidgetUIProvider = ({
       <WidgetDataContext.Provider value={value}>
         {children}
       </WidgetDataContext.Provider>
-     </ThemeContext.Provider>
+    </ThemeContext.Provider>
   );
 };
+
+

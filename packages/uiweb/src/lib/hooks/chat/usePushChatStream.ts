@@ -25,7 +25,7 @@ export const usePushChatStream = () => {
   const [groupCreateStream, setGroupCreateStream] = useState<any>({}); // to track if group is created
 
   const [groupUpdateStream, setGroupUpdateStream] = useState<any>({}); //group updation stream
-
+console.debug('in stream')
   const attachListenersAndConnect = async (stream: any) => {
     stream?.on(CONSTANTS.STREAM.CONNECT, (err: Error) => {
         console.debug(' stream connected .........',err)
@@ -82,6 +82,8 @@ export const usePushChatStream = () => {
    *  - create a new connection object
    */
   useEffect(() => {
+    console.debug('in stream',user)
+
     if (!user) {
       return;
     }

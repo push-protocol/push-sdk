@@ -27,6 +27,7 @@ import {
 } from '../helpers';
 import { IChatTheme } from '../theme';
 import { ThemeContext } from '../theme/ThemeProvider';
+import useUserProfile from '../../../hooks/useUserProfile';
 
 // Define Interfaces
 /**
@@ -67,7 +68,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
 ) => {
   // get hooks
   const { env, signer, account, user } = useChatData();
-  const { fetchChatProfile } = useChatProfile();
+  const { fetchUserProfile } = useUserProfile();
   const { getGroupByIDnew } = useGetGroupByIDnew();
   const { fetchLatestMessage, fetchChatList } = useFetchMessageUtilities();
 
@@ -99,14 +100,12 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
 
   const { chatStream, chatRequestStream, chatAcceptStream } =
     usePushChatStream();
-
   // Helper Functions
 
   // Add to chat items
   const addChatItems: (items: IChatPreviewPayload[]) => void = (
     items: IChatPreviewPayload[]
   ) => {
-    console.debug(items)
     const combinedItems: IChatPreviewPayload[] = [
       ...items,
       ...chatPreviewList.items,
@@ -114,7 +113,6 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       (item, index, self) =>
         index === self.findIndex((t) => t.chatId === item.chatId)
     );
-    console.debug(combinedItems)
 
     setChatPreviewList((prev) => ({
       ...prev,
@@ -247,7 +245,6 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
         ) {
           return;
         }
-
         setChatPreviewList((prev) => ({
           nonce: generateRandomNonce(),
           items: transformedChats,
@@ -411,21 +408,21 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
   // Effects
 
   // If account, env or signer changes
-  useEffect(() => {
-    setChatPreviewList({
-      nonce: generateRandomNonce(),
-      items: [],
-      page: 1,
-      preloading: true,
-      loading: false,
-      loaded: false,
-      reset: false,
-      resume: false,
-      errored: false,
-      error: null,
-    });
-    resetBadge();
-  }, [account, signer, env]);
+  // useEffect(() => {
+  //   setChatPreviewList({
+  //     nonce: generateRandomNonce(),
+  //     items: [],
+  //     page: 1,
+  //     preloading: true,
+  //     loading: false,
+  //     loaded: false,
+  //     reset: false,
+  //     resume: false,
+  //     errored: false,
+  //     error: null,
+  //   });
+  //   resetBadge();
+  // }, [account, env]);
 
   useEffect(() => {
     if (options?.onLoading) {
@@ -444,9 +441,11 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
   ]);
   // If push user changes | preloading
   useEffect(() => {
+
     if (!user) {
       return;
     }
+    console.debug('************',user,chatPreviewList)
 
     // reset the entire state
     setChatPreviewList({
@@ -462,11 +461,13 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       error: null,
     });
   }, [
+  
     options?.searchParamter,
     user,
     options.listType,
     options.overrideAccount,
   ]);
+
 
   useEffect(() => {
     if (
@@ -493,16 +494,18 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
 
   // If reset is called
   useEffect(() => {
-    if (!user) {
-      return;
-    }
+      if (!user) {
+        return;
+      }
+  
+      // reset badge as well
+      resetBadge();
+      if (chatPreviewList.reset) {
+        console.debug('********',chatPreviewList)
+        initializeChatList();
+      }
 
-    // reset badge as well
-    resetBadge();
-
-    if (chatPreviewList.reset) {
-      initializeChatList();
-    }
+   
   }, [chatPreviewList.reset]);
 
   // If loading becomes active
@@ -532,35 +535,28 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       Object.keys(chatStream).length > 0 &&
       chatStream.constructor === Object
     ) {
-      console.debug('Chat stream', chatStream);
       if (options.listType === CONSTANTS.CHAT.LIST_TYPE.CHATS) {
         transformStreamMessage(chatStream);
       }
     }
   }, [chatStream]);
-  console.debug(chatRequestStream)
   useEffect(() => {
-    console.debug(chatRequestStream)
     if (
       Object.keys(chatRequestStream).length > 0 &&
       chatRequestStream.constructor === Object
     ) {
-      console.debug('Chat request stream', chatRequestStream);
       if (options.listType === CONSTANTS.CHAT.LIST_TYPE.CHATS && chatRequestStream.origin === "self") {
-        console.debug('to transform stream')
         transformStreamMessage(chatRequestStream);
       }else if(options.listType === CONSTANTS.CHAT.LIST_TYPE.REQUESTS && chatRequestStream.origin === "other" ){
         transformStreamMessage(chatRequestStream);
       }
     }
   }, [chatRequestStream]);
-
   useEffect(() => {
     if (
       Object.keys(chatAcceptStream).length > 0 &&
       chatAcceptStream.constructor === Object
     ) {
-      console.debug('Chat accept stream', chatAcceptStream);
       transformAcceptedRequest(chatAcceptStream);
     }
   }, [chatAcceptStream]);
@@ -600,7 +596,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
         if (!error) {
           if (await ethers.utils.isAddress(formattedChatId)) {
             //fetch  profile
-            userProfile = await fetchChatProfile({
+            userProfile = await fetchUserProfile({
               profileId: formattedChatId,
               user
             });
