@@ -87,7 +87,6 @@ const web3OnBoard = init({
   connect: {
     autoConnectLastWallet: true,
   },
-
 })
 
 interface IConnectButtonCompProps {
