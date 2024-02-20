@@ -209,8 +209,8 @@ export class PushAPI {
       }
 
       if (!readMode) {
-        if (user && user.encryptedPrivateKey) {
-          try {
+        try {
+          if (user && user.encryptedPrivateKey) {
             decryptedPGPPrivateKey = await PUSH_CHAT.decryptPGPKey({
               encryptedPGPPrivateKey: user.encryptedPrivateKey,
               signer: signer,
@@ -219,38 +219,38 @@ export class PushAPI {
               progressHook: settings.progressHook,
               env: settings.env,
             });
-          } catch (error) {
-            const decryptionError =
-              'Error decrypting PGP private key ...swiching to Guest mode';
-            initializationErrors.push({
-              type: 'ERROR',
-              message: decryptionError,
+          } else {
+            const newUser = await PUSH_USER.create({
+              env: settings.env,
+              account: derivedAccount,
+              signer,
+              version: settings.version,
+              additionalMeta: settings.versionMeta,
+              origin: settings.origin,
+              progressHook: settings.progressHook,
             });
-            console.error(decryptionError);
-            if (isValidCAIP10NFTAddress(derivedAccount)) {
-              const nftDecryptionError =
-                'NFT Account Detected. If this NFT was recently transferred to you, please ensure you have received the correct password from the previous owner. Alternatively, you can reinitialize for a fresh start. Please be aware that reinitialization will result in the loss of all previous account data.';
-
-              initializationErrors.push({
-                type: 'WARN',
-                message: nftDecryptionError,
-              });
-              console.warn(nftDecryptionError);
-            }
-            readMode = true;
+            decryptedPGPPrivateKey = newUser.decryptedPrivateKey as string;
+            pgpPublicKey = newUser.publicKey;
           }
-        } else {
-          const newUser = await PUSH_USER.create({
-            env: settings.env,
-            account: derivedAccount,
-            signer,
-            version: settings.version,
-            additionalMeta: settings.versionMeta,
-            origin: settings.origin,
-            progressHook: settings.progressHook,
+        } catch (error) {
+          const decryptionError =
+            'Error decrypting PGP private key ...swiching to Guest mode';
+          initializationErrors.push({
+            type: 'ERROR',
+            message: decryptionError,
           });
-          decryptedPGPPrivateKey = newUser.decryptedPrivateKey as string;
-          pgpPublicKey = newUser.publicKey;
+          console.error(decryptionError);
+          if (isValidCAIP10NFTAddress(derivedAccount)) {
+            const nftDecryptionError =
+              'NFT Account Detected. If this NFT was recently transferred to you, please ensure you have received the correct password from the previous owner. Alternatively, you can reinitialize for a fresh start. Please be aware that reinitialization will result in the loss of all previous account data.';
+
+            initializationErrors.push({
+              type: 'WARN',
+              message: nftDecryptionError,
+            });
+            console.warn(nftDecryptionError);
+          }
+          readMode = true;
         }
       }
 
