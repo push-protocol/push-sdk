@@ -285,7 +285,7 @@ export class PushStream extends EventEmitter {
               data.messageCategory == 'Request'
             ) {
               // Dont call this if read only mode ?
-              if (this.signer) {
+              if (this.decryptedPgpPvtKey) {
                 data = await this.chatInstance.decrypt([data]);
                 data = data[0];
               }

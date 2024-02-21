@@ -141,7 +141,7 @@ export class Chat {
   }
 
   async send(recipient: string, options: Message): Promise<MessageWithCID> {
-    if (!this.signer) {
+    if (!this.decryptedPgpPvtKey) {
       throw new Error(PushAPI.ensureSignerMessage());
     }
 
@@ -160,7 +160,7 @@ export class Chat {
   }
 
   async decrypt(messagePayloads: IMessageIPFS[]) {
-    if (!this.signer) {
+    if (!this.decryptedPgpPvtKey) {
       throw new Error(PushAPI.ensureSignerMessage());
     }
     return await PUSH_CHAT.decryptConversation({
@@ -173,7 +173,7 @@ export class Chat {
   }
 
   async accept(target: string): Promise<string> {
-    if (!this.signer) {
+    if (!this.decryptedPgpPvtKey) {
       throw new Error(PushAPI.ensureSignerMessage());
     }
     return await PUSH_CHAT.approve({
@@ -187,7 +187,7 @@ export class Chat {
   }
 
   async reject(target: string): Promise<void> {
-    if (!this.signer) {
+    if (!this.decryptedPgpPvtKey) {
       throw new Error(PushAPI.ensureSignerMessage());
     }
     await PUSH_CHAT.reject({
@@ -200,7 +200,7 @@ export class Chat {
   }
 
   async block(users: Array<string>): Promise<IUser> {
-    if (!this.signer || !this.decryptedPgpPvtKey) {
+    if (!this.decryptedPgpPvtKey) {
       throw new Error(PushAPI.ensureSignerMessage());
     }
     const user = await PUSH_USER.get({
@@ -241,7 +241,7 @@ export class Chat {
   }
 
   async unblock(users: Array<string>): Promise<IUser> {
-    if (!this.signer || !this.decryptedPgpPvtKey) {
+    if (!this.decryptedPgpPvtKey) {
       throw new Error(PushAPI.ensureSignerMessage());
     }
     const user = await PUSH_USER.get({
@@ -305,7 +305,7 @@ export class Chat {
       name: string,
       options?: GroupCreationOptions
     ): Promise<GroupInfoDTO | GroupDTO> => {
-      if (!this.signer) {
+      if (!this.decryptedPgpPvtKey) {
         throw new Error(PushAPI.ensureSignerMessage());
       }
 
@@ -421,7 +421,7 @@ export class Chat {
       chatId: string,
       options: GroupUpdateOptions
     ): Promise<GroupInfoDTO | GroupDTO> => {
-      if (!this.signer) {
+      if (!this.decryptedPgpPvtKey) {
         throw new Error(PushAPI.ensureSignerMessage());
       }
 
@@ -474,7 +474,7 @@ export class Chat {
       chatId: string,
       options: ManageGroupOptions
     ): Promise<GroupInfoDTO | GroupDTO> => {
-      if (!this.signer) {
+      if (!this.decryptedPgpPvtKey) {
         throw new Error(PushAPI.ensureSignerMessage());
       }
       const { role, accounts } = options;
@@ -533,7 +533,7 @@ export class Chat {
     ): Promise<GroupInfoDTO | GroupDTO> => {
       const { accounts } = options;
 
-      if (!this.signer) {
+      if (!this.decryptedPgpPvtKey) {
         throw new Error(PushAPI.ensureSignerMessage());
       }
 
@@ -591,7 +591,7 @@ export class Chat {
 
     modify: async (chatId: string, options: ManageGroupOptions) => {
       const { role, accounts } = options;
-      if (!this.signer) {
+      if (!this.decryptedPgpPvtKey) {
         throw new Error(PushAPI.ensureSignerMessage());
       }
       const validRoles = ['ADMIN', 'MEMBER'];
@@ -622,7 +622,7 @@ export class Chat {
     },
 
     join: async (target: string): Promise<GroupInfoDTO | GroupDTO> => {
-      if (!this.signer) {
+      if (!this.decryptedPgpPvtKey) {
         throw new Error(PushAPI.ensureSignerMessage());
       }
       const status = await PUSH_CHAT.getGroupMemberStatus({
@@ -655,7 +655,7 @@ export class Chat {
     },
 
     leave: async (target: string): Promise<GroupInfoDTO | GroupDTO> => {
-      if (!this.signer) {
+      if (!this.decryptedPgpPvtKey) {
         throw new Error(PushAPI.ensureSignerMessage());
       }
 
@@ -700,7 +700,7 @@ export class Chat {
     },
 
     reject: async (target: string): Promise<void> => {
-      if (!this.signer) {
+      if (!this.decryptedPgpPvtKey) {
         throw new Error(PushAPI.ensureSignerMessage());
       }
       await PUSH_CHAT.reject({
