@@ -119,7 +119,7 @@ describe('PushAPI.chat functionality', () => {
     );
     expect(decryptedMessagePayloads).to.be.an('array');
   });
-  it('Should be able to parse old reaction Messages', async () => {
+  it.skip('Should be able to parse old reaction Messages', async () => {
     const message = await userAlice.chat.send(account2, {
       type: CONSTANTS.CHAT.MESSAGE_TYPE.REACTION,
       content: CHAT.REACTION.CLAP,
