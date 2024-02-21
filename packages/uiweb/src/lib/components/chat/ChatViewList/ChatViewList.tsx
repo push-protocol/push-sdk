@@ -34,6 +34,9 @@ import useGetGroup from '../../../hooks/chat/useGetGroup';
 import useGetChatProfile from '../../../hooks/useGetChatProfile';
 import { ApproveRequestBubble } from './ApproveRequestBubble';
 import { ENCRYPTION_KEYS, EncryptionMessage } from './MessageEncryption';
+import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities';
+import { MdError } from 'react-icons/md';
+import { ChatInfoResponse } from 'packages/restapi/src/lib/chat';
 
 /**
  * @interface IThemeProps
@@ -55,6 +58,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   const { pgpPrivateKey, account, connectedProfile, setConnectedProfile } =
     useChatData();
   const [chatFeed, setChatFeed] = useState<IFeeds>({} as IFeeds);
+  const [chatInfo, setChatInfo] = useState<ChatInfoResponse>({} as ChatInfoResponse);
   const [chatStatusText, setChatStatusText] = useState<string>('');
   const [messages, setMessages] = useState<Messagetype>();
   const [loading, setLoading] = useState<boolean>(true);
@@ -65,6 +69,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   const [isMember, setIsMember] = useState<boolean>(false);
   const { fetchChat } = useFetchChat();
   const { fetchChatProfile } = useGetChatProfile();
+  const { fetchMemberStatus} = useGroupMemberUtilities();
   const { getGroup } = useGetGroup();
 
   const { messagesSinceLastConnection, groupInformationSinceLastConnection } =
@@ -202,19 +207,40 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     }
   }, [messages]);
 
-  useEffect(()=>{
+  // useEffect(()=>{
 
-    if(chatFeed &&  !chatFeed?.groupInformation?.isPublic && account)
-    {
-      chatFeed?.groupInformation?.members.forEach((acc) => {
-        if (
-          acc.wallet.toLowerCase() === walletToPCAIP10(account!).toLowerCase()
-        ) {
-          setIsMember(true);
+  //   if(chatFeed &&  !chatFeed?.groupInformation?.isPublic && account)
+  //   {
+  //     chatFeed?.groupInformation?.members.forEach((acc) => {
+  //       if (
+  //         acc.wallet.toLowerCase() === walletToPCAIP10(account!).toLowerCase()
+  //       ) {
+  //         setIsMember(true);
+  //       }
+  //     });
+  //   }
+  // },[account,chatFeed])
+  useEffect(() => {
+    if (account && chatFeed?.chatId) {
+      (async () => {
+        const status = await fetchMemberStatus({
+          chatId: chatFeed?.chatId!,
+          accountId: account,
+        });
+        if (status && typeof status !== 'string') {
+          setIsMember(status?.participant);
+        } else {
+          //show toast
+          // groupInfoToast.showMessageToast({
+          //   toastTitle: 'Error',
+          //   toastMessage: 'Error in fetching member details',
+          //   toastType: 'ERROR',
+          //   getToastIcon: (size) => <MdError size={size} color="red" />,
+          // });
         }
-      });
+      })();
     }
-  },[account,chatFeed])
+  }, [account,chatFeed]);
 
   //methods
   const scrollToBottom = () => {

@@ -17,14 +17,14 @@ interface IThemeProps {
 export interface IApproveRequestBubbleProps {
   chatId: string;
   chatFeed: IFeeds;
-  setChatFeed: Dispatch<IFeeds>;
+  // setChatFeed: Dispatch<IFeeds>;
 }
 
 
 export const ApproveRequestBubble = ({
   chatFeed,
   chatId,
-  setChatFeed,
+  // setChatFeed,
 }: IApproveRequestBubbleProps) => {
   const { pgpPrivateKey } = useChatData();
 
@@ -46,12 +46,15 @@ export const ApproveRequestBubble = ({
       const response = await approveChatRequest({
         chatId,
       });
-      if (response) {
-        const updatedChatFeed = { ...(chatFeed as IFeeds) };
-        updatedChatFeed.intent = response;
+      //will be updated via  socket but will show toast that request is accepted
 
-        setChatFeed(updatedChatFeed);
-      }
+      
+      // if (response) {
+      //   const updatedChatFeed = { ...(chatFeed as IFeeds) };
+      //   updatedChatFeed.intent = response;
+
+      //   setChatFeed(updatedChatFeed);
+      // }
     } catch (error_: Error | any) {
       console.log(error_.message);
     }
