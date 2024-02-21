@@ -19,8 +19,9 @@ import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
 import { Button, Section, Span, Spinner } from '../../reusables';
 import { ChatPreview } from '../ChatPreview';
 
-import { getAddress, pCAIP10ToWallet } from '../../../helpers';
+import { getAddress, getNewChatUser, pCAIP10ToWallet, walletToPCAIP10 } from '../../../helpers';
 import {
+  displayDefaultUser,
   generateRandomNonce,
   transformChatItems,
   transformStreamToIChatPreviewPayload,
@@ -408,21 +409,21 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
   // Effects
 
   // If account, env or signer changes
-  // useEffect(() => {
-  //   setChatPreviewList({
-  //     nonce: generateRandomNonce(),
-  //     items: [],
-  //     page: 1,
-  //     preloading: true,
-  //     loading: false,
-  //     loaded: false,
-  //     reset: false,
-  //     resume: false,
-  //     errored: false,
-  //     error: null,
-  //   });
-  //   resetBadge();
-  // }, [account, env]);
+  useEffect(() => {
+    setChatPreviewList({
+      nonce: generateRandomNonce(),
+      items: [],
+      page: 1,
+      preloading: true,
+      loading: false,
+      loaded: false,
+      reset: false,
+      resume: false,
+      errored: false,
+      error: null,
+    });
+    resetBadge();
+  }, [account, env,signer]);
 
   useEffect(() => {
     if (options?.onLoading) {
@@ -506,7 +507,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       }
 
    
-  }, [chatPreviewList.reset]);
+  }, [chatPreviewList.reset,user?.readmode()]);
 
   // If loading becomes active
   useEffect(() => {
@@ -579,7 +580,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     try {
       if (options?.searchParamter) {
         let formattedChatId: string | null = options?.searchParamter;
-        let userProfile: IUser | null = null;
+        let userProfile: IUser | undefined = undefined;
         let groupProfile: Group;
 
         //check if ens then convert to address
@@ -596,9 +597,12 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
         if (!error) {
           if (await ethers.utils.isAddress(formattedChatId)) {
             //fetch  profile
-            userProfile = await fetchUserProfile({
-              profileId: formattedChatId,
+            userProfile = await getNewChatUser({
+              searchText: formattedChatId,
+              env,
+              fetchChatProfile:fetchUserProfile,
               user
+
             });
           } else {
             //fetch group info
