@@ -4,6 +4,7 @@ import { IFeeds, IUser, ParticipantStatus } from '@pushprotocol/restapi';
 import { getAddress, walletToPCAIP10 } from '../../../helpers';
 import { Env,  } from '@pushprotocol/restapi';
 import moment from 'moment';
+import { ProfilePicture } from '../../../config';
 
 export const profilePicture = `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==`;
 
@@ -12,7 +13,7 @@ export const displayDefaultUser = ({ caip10 }: { caip10: string }): IUser => {
     did: caip10,
     wallets: caip10,
     publicKey: 'temp',
-    profilePicture: profilePicture,
+    profilePicture: ProfilePicture,
     encryptedPrivateKey: 'temp',
     encryptionType: 'temp',
     signature: 'temp',

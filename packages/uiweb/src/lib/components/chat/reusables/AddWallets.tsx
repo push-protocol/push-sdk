@@ -54,7 +54,7 @@ export const AddWallets = ({
   const theme = useContext(ThemeContext);
 
   const [filteredUserData, setFilteredUserData] = useState<any>(null);
-  const { env } = useChatData();
+  const { env,user } = useChatData();
   const isMobile = useMediaQuery(device.mobileL);
   const { fetchUserProfile } = useUserProfile();
   const groupInfoToast = useToast();
@@ -76,6 +76,7 @@ export const AddWallets = ({
       searchText: searchedText,
       fetchChatProfile:fetchUserProfile,
       env,
+      user
     });
     if (newChatUser) {
       setFilteredUserData(newChatUser);
