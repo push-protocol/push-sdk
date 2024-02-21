@@ -73,7 +73,7 @@ export class Chat {
       page: options?.page,
       limit: options?.limit,
       env: this.env,
-      toDecrypt: !!this.signer, // Set to false if signer is undefined or null,
+      toDecrypt: !!this.decryptedPgpPvtKey, // Set to false if signer is undefined or null,
     };
 
     switch (type) {
@@ -96,7 +96,7 @@ export class Chat {
 
     const latestMessages = await PUSH_CHAT.latest({
       threadhash: threadHash,
-      toDecrypt: !!this.signer, // Set to false if signer is undefined or null,
+      toDecrypt: !!this.decryptedPgpPvtKey, // Set to false if signer is undefined or null,
       pgpPrivateKey: this.decryptedPgpPvtKey,
       account: this.account,
       env: this.env,
@@ -131,7 +131,7 @@ export class Chat {
       env: this.env,
       threadhash: reference,
       pgpPrivateKey: this.decryptedPgpPvtKey,
-      toDecrypt: !!this.signer, // Set to false if signer is undefined or null,
+      toDecrypt: !!this.decryptedPgpPvtKey, // Set to false if signer is undefined or null,
       limit: options?.limit,
     });
     const listType = intent ? 'CHATS' : 'REQUESTS';
