@@ -24,7 +24,7 @@ import { useChatData, usePushChatSocket } from '../../../hooks';
 import useFetchMessageUtilities from '../../../hooks/chat/useFetchMessageUtilities';
 import { Section, Span, Spinner } from '../../reusables';
 import { ChatViewBubble } from '../ChatViewBubble';
-import { IChatViewListProps } from '../exportedTypes';
+import { Group, IChatViewListProps } from '../exportedTypes';
 import { IGroup, Messagetype } from '../../../types';
 import { IChatTheme } from '../theme';
 import { ThemeContext } from '../theme/ThemeProvider';
@@ -55,10 +55,12 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   options: IChatViewListProps
 ) => {
   const { chatId, limit = chatLimit, chatFilterList = [] } = options || {};
-  const { pgpPrivateKey, account, connectedProfile, setConnectedProfile } =
+  const { pgpPrivateKey, account,user, connectedProfile, setConnectedProfile } =
     useChatData();
   const [chatFeed, setChatFeed] = useState<IFeeds>({} as IFeeds);
   const [chatInfo, setChatInfo] = useState<ChatInfoResponse>({} as ChatInfoResponse);
+  const [groupInfo, setGroupInfo] = useState<Group>({} as Group);
+
   const [chatStatusText, setChatStatusText] = useState<string>('');
   const [messages, setMessages] = useState<Messagetype>();
   const [loading, setLoading] = useState<boolean>(true);
@@ -101,43 +103,56 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   //need to make a common method for fetching chatFeed to ruse in messageInput
   useEffect(() => {
     (async () => {
-      if (!account && !env) return;
+      if (!user) return;
       const chat = await fetchChat({ chatId:chatId });
       if (Object.keys(chat || {}).length) {
-        setConversationHash(chat?.threadhash as string);
-        setChatFeed(chat as IFeeds);
+        // setConversationHash(chat?.threadhash as string);
+        setChatInfo(chat as ChatInfoResponse);
       }
-      else {
-        let newChatFeed;
-        let group;
-        const result = await getNewChatUser({
-          searchText: chatId,
-          fetchChatProfile,
-          env,
-        });
-        if (result) {
-          newChatFeed = getDefaultFeedObject({ user: result });
-        } else {
-          group = await getGroup({ searchText: chatId });
-          if (group) {
-            newChatFeed = getDefaultFeedObject({ groupInformation: group });
-          }
-        }
-        if (newChatFeed) {
-          if (!newChatFeed?.groupInformation) {
-            setChatStatusText(ChatStatus.FIRST_CHAT);
-          }
-          setConversationHash(newChatFeed.threadhash as string);
-          setChatFeed(newChatFeed);
-        } else {
-          setChatStatusText(ChatStatus.INVALID_CHAT);
-        }
-      }
+      // else {
+      //   let newChatFeed;
+      //   let group;
+      //   const result = await getNewChatUser({
+      //     searchText: chatId,
+      //     fetchChatProfile,
+      //     env,
+      //   });
+      //   if (result) {
+      //     newChatFeed = getDefaultFeedObject({ user: result });
+      //   } else {
+      //     group = await getGroup({ searchText: chatId });
+      //     if (group) {
+      //       newChatFeed = getDefaultFeedObject({ groupInformation: group });
+      //     }
+      //   }
+      //   if (newChatFeed) {
+      //     if (!newChatFeed?.groupInformation) {
+      //       setChatStatusText(ChatStatus.FIRST_CHAT);
+      //     }
+      //     setConversationHash(newChatFeed.threadhash as string);
+      //     setChatFeed(newChatFeed);
+      //   } else {
+      //     setChatStatusText(ChatStatus.INVALID_CHAT);
+      //   }
+      // }
       setLoading(false);
     })();
 
-  }, [chatId, pgpPrivateKey, account, env]);
+  }, [chatId, user, account, env]);
 
+  useEffect(() => {
+    (async () => {
+
+      if(chatInfo){
+console.debug(chatInfo)
+        // if()
+
+      }
+      
+   
+    })();
+
+  }, [chatInfo]);
   //moniters socket changes
   useEffect(() => {
     if (checkIfSameChat(messagesSinceLastConnection, account!, chatId)) {
