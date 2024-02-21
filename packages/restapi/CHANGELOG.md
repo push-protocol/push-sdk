@@ -2,6 +2,24 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.68](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.67...restapi-0.0.1-alpha.68) (2024-02-21)
+
+
+### Bug Fixes
+
+* add benchamark tests, fix reference msgs' ([#1089](https://github.com/ethereum-push-notification-service/push-sdk/issues/1089)) ([2001963](https://github.com/ethereum-push-notification-service/push-sdk/commit/2001963716384ba8935f9dccbe74784c43c9af89))
+* added channel setting parse logic ([#1107](https://github.com/ethereum-push-notification-service/push-sdk/issues/1107)) ([6d0d6d5](https://github.com/ethereum-push-notification-service/push-sdk/commit/6d0d6d5051d8aaf3c3ab8ae140a438cc7345661c))
+* caching implementation on user profile API ([#1053](https://github.com/ethereum-push-notification-service/push-sdk/issues/1053)) ([5dc0dee](https://github.com/ethereum-push-notification-service/push-sdk/commit/5dc0dee987335e5fd97df3c4914ebd305098f59a))
+* fix encV1 key decryption ([#1088](https://github.com/ethereum-push-notification-service/push-sdk/issues/1088)) ([fb4db88](https://github.com/ethereum-push-notification-service/push-sdk/commit/fb4db882f4fa88184e6193155c017fb3fccab750))
+* fix public key in read mode ([#1074](https://github.com/ethereum-push-notification-service/push-sdk/issues/1074)) ([32e6cea](https://github.com/ethereum-push-notification-service/push-sdk/commit/32e6cea2d904495e42eb7e14d2bb4527439b69c4))
+* fixed message parsing ([#1051](https://github.com/ethereum-push-notification-service/push-sdk/issues/1051)) ([0aa0acd](https://github.com/ethereum-push-notification-service/push-sdk/commit/0aa0acdcd4d7c132a033e6fcc97cd473f3e99c3f))
+* fixed readmode ([7214d68](https://github.com/ethereum-push-notification-service/push-sdk/commit/7214d686d1b826c07758d54b02b5be003aa4efd2))
+* merge main to alpha ([ae6934f](https://github.com/ethereum-push-notification-service/push-sdk/commit/ae6934f01d1ed0dac1830d312329f7839888982c))
+* send intent in history and latest. ([#1069](https://github.com/ethereum-push-notification-service/push-sdk/issues/1069)) ([a4747ed](https://github.com/ethereum-push-notification-service/push-sdk/commit/a4747ed8e66ae04f0aea008362c7747da9d98a52))
+* v2 user creation / upgrades / downgrades ([#1099](https://github.com/ethereum-push-notification-service/push-sdk/issues/1099)) ([d0bfed7](https://github.com/ethereum-push-notification-service/push-sdk/commit/d0bfed70243bcabb9516b0b046fc2dab29b1d598))
+
+
+
 ## [0.0.1-alpha.67](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.66...restapi-0.0.1-alpha.67) (2024-02-13)
 
 
