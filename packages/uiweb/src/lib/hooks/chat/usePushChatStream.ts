@@ -82,7 +82,6 @@ console.debug('in stream')
    *  - create a new connection object
    */
   useEffect(() => {
-    console.debug('in stream',user)
 
     if (!user) {
       return;
