@@ -1,6 +1,6 @@
 // for namespace TYPES
 /* eslint-disable @typescript-eslint/no-namespace */
-import { TypedDataDomain } from 'viem';
+import { ResolvedConfig } from 'viem';
 import {
   ADDITIONAL_META_TYPE,
   IDENTITY_TYPE,
@@ -691,6 +691,14 @@ export interface UserInfo {
 export type TypedDataField = {
   name: string;
   type: string;
+};
+
+export type TypedDataDomain = {
+  chainId?: number | undefined;
+  name?: string | undefined;
+  salt?: ResolvedConfig['BytesType']['outputs'] | undefined;
+  verifyingContract?: string | undefined;
+  version?: string | undefined;
 };
 
 export type ethersV5SignerType = {

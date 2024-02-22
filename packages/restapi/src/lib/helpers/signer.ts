@@ -1,6 +1,5 @@
 import { SignerType, viemSignerType } from '../types';
-import { TypedDataDomain } from 'viem';
-import { TypedDataField } from '../types';
+import { TypedDataField, TypedDataDomain } from '../types';
 
 export class Signer {
   private signer: SignerType;
