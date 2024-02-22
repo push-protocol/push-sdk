@@ -101,7 +101,7 @@ export class Chat {
       account: this.account,
       env: this.env,
     });
-     const listType = intent ? 'CHATS' : 'REQUESTS';
+    const listType = intent ? 'CHATS' : 'REQUESTS';
     return latestMessages.map((message) => ({ ...message, listType }));
   }
 
@@ -137,7 +137,6 @@ export class Chat {
     const listType = intent ? 'CHATS' : 'REQUESTS';
 
     return historyMessages.map((message: any) => ({ ...message, listType }));
-     
   }
 
   async send(recipient: string, options: Message): Promise<MessageWithCID> {
@@ -436,10 +435,12 @@ export class Chat {
       const updateGroupProfileOptions: ChatUpdateGroupProfileType = {
         chatId: chatId,
         groupName: options.name ? options.name : group.groupName,
-        groupDescription: options.description
-          ? options.description
-          : group.groupDescription,
-        groupImage: options.image ? options.image : group.groupImage,
+        groupDescription:
+          options.description !== undefined
+            ? options.description
+            : group.groupDescription,
+        groupImage:
+          options.image !== undefined ? options.image : group.groupImage,
         rules: options.rules ? options.rules : group.rules,
         account: this.account,
         pgpPrivateKey: this.decryptedPgpPvtKey,
