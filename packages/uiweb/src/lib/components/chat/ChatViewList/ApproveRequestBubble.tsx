@@ -6,6 +6,7 @@ import useApproveChatRequest from '../../../hooks/chat/useApproveChatRequest';
 import { useChatData } from '../../../hooks';
 import styled from 'styled-components';
 import { IChatTheme } from '../theme';
+import { Group } from '../exportedTypes';
 
 /**
  * @interface IThemeProps
@@ -16,20 +17,20 @@ interface IThemeProps {
 }
 export interface IApproveRequestBubbleProps {
   chatId: string;
-  chatFeed: IFeeds;
+  groupInfo?: Group | null;
   // setChatFeed: Dispatch<IFeeds>;
 }
 
 
 export const ApproveRequestBubble = ({
-  chatFeed,
+  groupInfo = null,
   chatId,
   // setChatFeed,
 }: IApproveRequestBubbleProps) => {
   const { pgpPrivateKey } = useChatData();
 
   const ApproveRequestText = {
-    GROUP: `You were invited to the group ${chatFeed?.groupInformation?.groupName}. Please accept to continue messaging in this group.`,
+    GROUP: `You were invited to the group ${groupInfo?.groupName}. Please accept to continue messaging in this group.`,
     W2W: ` Please accept to enable push chat from this wallet`,
   };
   
@@ -83,7 +84,7 @@ export const ApproveRequestBubble = ({
         color={theme.textColor?.chatReceivedBubbleText}
         lineHeight="24px"
       >
-        {chatFeed?.groupInformation
+        {groupInfo
           ? ApproveRequestText.GROUP
           : ApproveRequestText.W2W}
       </Span>

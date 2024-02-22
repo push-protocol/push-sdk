@@ -5,10 +5,9 @@ import type {
   AccountEnvOptionsType,
   IGroup,
   IMessageIPFS,
-  Messagetype,
 } from '../../types';
 import { ChatFeedsType } from '../../types';
-import type { Env, IConnectedUser, IFeeds, IUser } from '@pushprotocol/restapi';
+import type { Env, IConnectedUser, IFeeds, IMessageIPFSWithCID, IUser } from '@pushprotocol/restapi';
 import { isPCAIP, pCAIP10ToWallet, walletToPCAIP10 } from '../address';
 import { Group } from '../../components';
 import { getData } from './localStorage';
@@ -199,14 +198,14 @@ export const getChatId = ({
 };
 
 export const appendUniqueMessages = (
-  parentList: Messagetype,
+  parentList: IMessageIPFSWithCID[],
   newlist: IMessageIPFS[],
   infront: boolean
 ) => {
   const uniqueMap: { [timestamp: number]: IMessageIPFS } = {};
   const appendedArray = infront
-    ? [...newlist, ...parentList.messages]
-    : [...parentList.messages, ...newlist];
+    ? [...newlist, ...parentList]
+    : [...parentList, ...newlist];
   const newMessageList = Object.values(
     appendedArray.reduce((uniqueMap, message) => {
       if (message.timestamp && !uniqueMap[message.timestamp]) {

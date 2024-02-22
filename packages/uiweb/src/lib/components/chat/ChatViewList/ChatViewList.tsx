@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import {
-  GroupDTO,
   IFeeds,
   IMessageIPFS,
   IMessageIPFSWithCID,
+  IUser,
 } from '@pushprotocol/restapi';
 import moment from 'moment';
 import styled from 'styled-components';
@@ -24,19 +24,19 @@ import { useChatData, usePushChatSocket } from '../../../hooks';
 import useFetchMessageUtilities from '../../../hooks/chat/useFetchMessageUtilities';
 import { Section, Span, Spinner } from '../../reusables';
 import { ChatViewBubble } from '../ChatViewBubble';
-import { Group, IChatViewListProps } from '../exportedTypes';
-import { IGroup, Messagetype } from '../../../types';
+import { Group, IChatViewListProps, MessageIPFS } from '../exportedTypes';
 import { IChatTheme } from '../theme';
 import { ThemeContext } from '../theme/ThemeProvider';
 
 import useFetchChat from '../../../hooks/chat/useFetchChat';
-import useGetGroup from '../../../hooks/chat/useGetGroup';
 import useGetChatProfile from '../../../hooks/useGetChatProfile';
 import { ApproveRequestBubble } from './ApproveRequestBubble';
 import { ENCRYPTION_KEYS, EncryptionMessage } from './MessageEncryption';
 import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities';
 import { MdError } from 'react-icons/md';
 import { ChatInfoResponse } from 'packages/restapi/src/lib/chat';
+import useUserProfile from '../../../hooks/useUserProfile';
+import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
 
 /**
  * @interface IThemeProps
@@ -55,24 +55,22 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   options: IChatViewListProps
 ) => {
   const { chatId, limit = chatLimit, chatFilterList = [] } = options || {};
-  const { pgpPrivateKey, account,user, connectedProfile, setConnectedProfile } =
-    useChatData();
-  const [chatFeed, setChatFeed] = useState<IFeeds>({} as IFeeds);
-  const [chatInfo, setChatInfo] = useState<ChatInfoResponse>({} as ChatInfoResponse);
-  const [groupInfo, setGroupInfo] = useState<Group>({} as Group);
+  const { account, user } = useChatData();
+  const [chatInfo, setChatInfo] = useState<ChatInfoResponse | null>(null);
+  const [groupInfo, setGroupInfo] = useState<Group | null>(null);
+  const [userInfo, setUserInfo] = useState<IUser | null>(null);
 
   const [chatStatusText, setChatStatusText] = useState<string>('');
-  const [messages, setMessages] = useState<Messagetype>();
+  const [messages, setMessages] = useState<IMessageIPFSWithCID[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [conversationHash, setConversationHash] = useState<string>();
   const { historyMessages, historyLoading: messageLoading } =
-  useFetchMessageUtilities();
+    useFetchMessageUtilities();
   const listInnerRef = useRef<HTMLDivElement>(null);
   const [isMember, setIsMember] = useState<boolean>(false);
   const { fetchChat } = useFetchChat();
-  const { fetchChatProfile } = useGetChatProfile();
-  const { fetchMemberStatus} = useGroupMemberUtilities();
-  const { getGroup } = useGetGroup();
+  const { fetchUserProfile } = useUserProfile();
+  const { getGroupByIDnew } = useGetGroupByIDnew();
+  const { fetchMemberStatus } = useGroupMemberUtilities();
 
   const { messagesSinceLastConnection, groupInformationSinceLastConnection } =
     usePushChatSocket();
@@ -85,28 +83,17 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   }, [chatId, account, env]);
 
   useEffect(() => {
-    (async () => {
-      if (!connectedProfile && account) {
-        const user = await fetchChatProfile({ profileId: account!, env });
-        if (user) setConnectedProfile(user);
-      }
-    })();
-  }, [account]);
-  useEffect(() => {
-    setConversationHash(undefined);
-    setChatFeed({} as IFeeds);
-    setMessages(undefined);
- 
-   
-  }, [chatId, account, pgpPrivateKey, env]);
+    setChatInfo(null);
+    setMessages([]);
+    setGroupInfo(null);
+  }, [chatId, account, user, env]);
 
   //need to make a common method for fetching chatFeed to ruse in messageInput
   useEffect(() => {
     (async () => {
       if (!user) return;
-      const chat = await fetchChat({ chatId:chatId });
+      const chat = await fetchChat({ chatId: chatId });
       if (Object.keys(chat || {}).length) {
-        // setConversationHash(chat?.threadhash as string);
         setChatInfo(chat as ChatInfoResponse);
       }
       // else {
@@ -137,109 +124,91 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       // }
       setLoading(false);
     })();
-
   }, [chatId, user, account, env]);
 
   useEffect(() => {
     (async () => {
-
-      if(chatInfo){
-console.debug(chatInfo)
-        // if()
-
+      if (chatInfo && !chatInfo?.meta?.group) {
+        const UserProfile = await fetchUserProfile({
+          profileId: chatId,
+          env,
+          user,
+        });
+        setUserInfo(UserProfile);
+      } else if (chatInfo && chatInfo?.meta?.group){
+        const GroupProfile = await getGroupByIDnew({ groupId: chatId });
+        setGroupInfo(GroupProfile);
       }
-      
-   
     })();
-
   }, [chatInfo]);
+
   //moniters socket changes
-  useEffect(() => {
-    if (checkIfSameChat(messagesSinceLastConnection, account!, chatId)) {
-      const updatedChatFeed = chatFeed;
-      updatedChatFeed.msg = messagesSinceLastConnection;
-      if (!Object.keys(messages || {}).length) {
+  // useEffect(() => {
+  //   if (checkIfSameChat(messagesSinceLastConnection, account!, chatId)) {
+  //     const updatedChatFeed = chatFeed;
+  //     updatedChatFeed.msg = messagesSinceLastConnection;
+  //     if (!Object.keys(messages || {}).length) {
 
-        setFilteredMessages([
-          messagesSinceLastConnection,
-        ] as IMessageIPFSWithCID[]);
-        setConversationHash(messagesSinceLastConnection.cid);
-      } else {
-        const newChatViewList = appendUniqueMessages(
-          messages as Messagetype,
-          [messagesSinceLastConnection],
-          false
-        );
-        setFilteredMessages(newChatViewList as IMessageIPFSWithCID[]);
-      }
-      setChatStatusText('');
-      setChatFeed(updatedChatFeed);
-      scrollToBottom();
-    }
-  }, [messagesSinceLastConnection]);
+  //       setFilteredMessages([
+  //         messagesSinceLastConnection,
+  //       ] as IMessageIPFSWithCID[]);
+  //       setConversationHash(messagesSinceLastConnection.cid);
+  //     } else {
+  //       const newChatViewList = appendUniqueMessages(
+  //         messages as Messagetype,
+  //         [messagesSinceLastConnection],
+  //         false
+  //       );
+  //       setFilteredMessages(newChatViewList as IMessageIPFSWithCID[]);
+  //     }
+  //     setChatStatusText('');
+  //     setChatFeed(updatedChatFeed);
+  //     scrollToBottom();
+  //   }
+  // }, [messagesSinceLastConnection]);
 
-  // remove  fetching group once stream comes 
-  useEffect(() => {
-    if (Object.keys(groupInformationSinceLastConnection || {}).length) {
-      if (
-        chatFeed?.groupInformation?.chatId.toLowerCase() ===
-        groupInformationSinceLastConnection.chatId.toLowerCase()
-      ) {
-        (async()=>{
-          const updateChatFeed = chatFeed;
-          const group:IGroup | undefined =  await getGroup({ searchText: chatId });
-          if (group || !!Object.keys(group || {}).length){
-            updateChatFeed.groupInformation = group! as GroupDTO ;
-          
-            setChatFeed(updateChatFeed);
-          }
-         
-        })();
-       
-      }
-    }
-  }, [groupInformationSinceLastConnection]);
+  // // remove  fetching group once stream comes
+  // useEffect(() => {
+  //   if (Object.keys(groupInformationSinceLastConnection || {}).length) {
+  //     if (
+  //       chatFeed?.groupInformation?.chatId.toLowerCase() ===
+  //       groupInformationSinceLastConnection.chatId.toLowerCase()
+  //     ) {
+  //       (async()=>{
+  //         const updateChatFeed = chatFeed;
+  //         const group:IGroup | undefined =  await getGroup({ searchText: chatId });
+  //         if (group || !!Object.keys(group || {}).length){
+  //           updateChatFeed.groupInformation = group! as GroupDTO ;
+
+  //           setChatFeed(updateChatFeed);
+  //         }
+
+  //       })();
+
+  //     }
+  //   }
+  // }, [groupInformationSinceLastConnection]);
 
   useEffect(() => {
-    if (conversationHash) {
+    if (chatInfo) {
       (async function () {
         await getMessagesCall();
       })();
     }
-  }, [conversationHash, pgpPrivateKey, account, env,chatFeed, chatId]);
-
-
+  }, [chatInfo, user?.readmode(), account, env, chatId]);
 
   useEffect(() => {
-    if (
-      conversationHash &&
-      Object.keys(messages || {}).length &&
-      messages?.messages.length &&
-      messages?.messages.length <= limit
-    ) {
+    if (messages && messages?.length && messages?.length <= limit) {
       setChatStatusText('');
       scrollToBottom();
     }
   }, [messages]);
 
-  // useEffect(()=>{
-
-  //   if(chatFeed &&  !chatFeed?.groupInformation?.isPublic && account)
-  //   {
-  //     chatFeed?.groupInformation?.members.forEach((acc) => {
-  //       if (
-  //         acc.wallet.toLowerCase() === walletToPCAIP10(account!).toLowerCase()
-  //       ) {
-  //         setIsMember(true);
-  //       }
-  //     });
-  //   }
-  // },[account,chatFeed])
   useEffect(() => {
-    if (account && chatFeed?.chatId) {
+    if (user && account && groupInfo) {
       (async () => {
         const status = await fetchMemberStatus({
-          chatId: chatFeed?.chatId!,
+          chatId: groupInfo?.chatId!,
           accountId: account,
         });
         if (status && typeof status !== 'string') {
@@ -255,20 +224,21 @@ console.debug(chatInfo)
         }
       })();
     }
-  }, [account,chatFeed]);
+  }, [account, groupInfo]);
 
   //methods
   const scrollToBottom = () => {
-    setTimeout(()=>{
+    console.debug('scroll to bottom');
+    setTimeout(() => {
       if (listInnerRef.current) {
-        listInnerRef.current.scrollTop = listInnerRef.current.scrollHeight +100;
-
+        listInnerRef.current.scrollTop =
+          listInnerRef.current.scrollHeight + 100;
       }
-    },0)
-  
+    }, 0);
   };
 
   const onScroll = async () => {
+    console.debug('on scroll');
     if (listInnerRef.current) {
       const { scrollTop } = listInnerRef.current;
       if (scrollTop === 0) {
@@ -285,60 +255,55 @@ console.debug(chatInfo)
   };
 
   const getMessagesCall = async () => {
-    let threadHash = null;
-    if (!messages) {
-      threadHash = conversationHash;
-    } else {
-      threadHash = messages?.lastThreadHash;
+    let reference = null;
+    if (messages && messages?.length) {
+      reference = messages[0].cid;
     }
-    if (
-      threadHash &&
-      ((account && pgpPrivateKey&& chatFeed && !chatFeed?.groupInformation) ||
-        (chatFeed && chatFeed?.groupInformation))
-    ) {
-      
+
+    if ((user && !user?.readmode() && !groupInfo) || groupInfo) {
+      console.debug('reference', reference);
       const chatHistory = await historyMessages({
         limit: limit,
-        threadHash,
+        chatId,
+        reference,
       });
+      console.debug(chatHistory);
       if (chatHistory?.length) {
-        if (Object.keys(messages || {}) && messages?.messages.length) {
+        if (messages && messages?.length) {
           const newChatViewList = appendUniqueMessages(
             messages,
             chatHistory,
             true
           );
-          setFilteredMessages(newChatViewList as IMessageIPFSWithCID[]);
+          setMessages(newChatViewList as IMessageIPFSWithCID[]);
         } else {
-
-          setFilteredMessages(chatHistory as IMessageIPFSWithCID[]);
+          setMessages(chatHistory as IMessageIPFSWithCID[]);
         }
       }
     }
   };
 
-  const setFilteredMessages = (messageList: Array<IMessageIPFSWithCID>) => {
-    const updatedMessageList = messageList.filter(
-      (msg) => !chatFilterList.includes(msg.cid)
-    );
+  // const setFilteredMessages = (messageList: Array<IMessageIPFSWithCID>) => {
+  //   const updatedMessageList = messageList.filter(
+  //     (msg) => !chatFilterList.includes(msg.cid)
+  //   );
 
-    if (updatedMessageList && updatedMessageList.length) {
-      setMessages({
-        messages: updatedMessageList,
-        lastThreadHash: updatedMessageList[0].link,
-      });
-    }
-  };
-
-  const ifBlurChat = () =>{
-  
+  //   if (updatedMessageList && updatedMessageList.length) {
+  //     setMessages({
+  //       messages: updatedMessageList,
+  //       lastThreadHash: updatedMessageList[0].link,
+  //     });
+  //   }
+  // };
+console.debug(userInfo,groupInfo)
+  const ifBlurChat = () => {
     return !!(
-      chatFeed &&
-      chatFeed?.groupInformation &&
-      !chatFeed?.groupInformation?.isPublic &&
-      ((!isMember && pgpPrivateKey) || (!pgpPrivateKey))
+      groupInfo &&
+      user &&
+      !groupInfo?.isPublic &&
+      ((!isMember && user?.readmode()) || !user?.readmode())
     );
-  }
+  };
 
   type RenderDataType = {
     chat: IMessageIPFS;
@@ -368,26 +333,24 @@ console.debug(chatInfo)
       justifyContent="start"
       padding="0 2px"
       theme={theme}
-      blur={
-        ifBlurChat()
-      }
+      blur={ifBlurChat()}
       onScroll={(e) => {
-        e.stopPropagation();
-        onScroll();
+        console.debug('on scroll');
+
+        // e.stopPropagation();
+        // onScroll();
       }}
     >
       {loading ? <Spinner color={theme.spinnerColor} /> : ''}
       {!loading && (
         <>
-          {chatFeed &&
-          (chatFeed.publicKey ||
-            (chatFeed?.groupInformation &&
-              !chatFeed?.groupInformation?.isPublic)) ? (
+          {
+          ((userInfo&&userInfo.publicKey) || (groupInfo && !groupInfo?.isPublic)) ? (
             <EncryptionMessage id={ENCRYPTION_KEYS.ENCRYPTED} />
           ) : (
             <EncryptionMessage
               id={
-                chatFeed?.groupInformation
+                groupInfo
                   ? ENCRYPTION_KEYS.NO_ENCRYPTED_GROUP
                   : ENCRYPTION_KEYS.NO_ENCRYPTED
               }
@@ -414,43 +377,35 @@ console.debug(chatInfo)
                 justifyContent="start"
                 width="100%"
               >
-                {messages?.messages &&
-                  messages?.messages?.map(
-                    (chat: IMessageIPFS, index: number) => {
-                      const dateNum = moment(chat.timestamp).format('L');
-                      const position =
-                        pCAIP10ToWallet(chat.fromDID).toLowerCase() !==
-                        account?.toLowerCase()
-                          ? 0
-                          : 1;
-                      return (
-                        <>
-                          {dates.has(dateNum)
-                            ? null
-                            : renderDate({ chat, dateNum })}
-                          <Section
-                            justifyContent={position ? 'end' : 'start'}
-                            margin="7px"
-                          >
-                            <ChatViewBubble decryptedMessagePayload={chat} key={index} />
-                          </Section>
-                        </>
-                      );
-                    }
-                  )}
+                {messages &&
+                  messages?.map((chat: IMessageIPFS, index: number) => {
+                    const dateNum = moment(chat.timestamp).format('L');
+                    const position =
+                      pCAIP10ToWallet(chat.fromDID).toLowerCase() !==
+                      account?.toLowerCase()
+                        ? 0
+                        : 1;
+                    return (
+                      <>
+                        {dates.has(dateNum)
+                          ? null
+                          : renderDate({ chat, dateNum })}
+                        <Section
+                          justifyContent={position ? 'end' : 'start'}
+                          margin="7px"
+                        >
+                          <ChatViewBubble
+                            decryptedMessagePayload={chat}
+                            key={index}
+                          />
+                        </Section>
+                      </>
+                    );
+                  })}
               </Section>
-              {!!Object.keys(chatFeed || {}).length &&
-                account &&
-                checkIfIntent({
-                  chat: chatFeed as IFeeds,
-                  account: account!,
-                }) && (
-                  <ApproveRequestBubble
-                    chatFeed={chatFeed}
-                    chatId={chatId}
-                    setChatFeed={setChatFeed}
-                  />
-                )}
+              {chatInfo && chatInfo?.list === 'REQUESTS' && (
+                <ApproveRequestBubble groupInfo={groupInfo} chatId={chatId} />
+              )}
             </>
           }
         </>
@@ -477,4 +432,3 @@ const ChatViewListCard = styled(Section)<IThemeProps>`
   overscroll-behavior: contain;
   scroll-behavior: smooth;
 `;
-
