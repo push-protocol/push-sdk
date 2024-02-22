@@ -90,13 +90,13 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
 ## Installation
 
 ```bash
-yarn add @pushprotocol/restapi@latest ethers
+yarn add @pushprotocol/restapi@latest
 ```
 
 or
 
 ```bash
-npm install @pushprotocol/restapi@latest ethers
+npm install @pushprotocol/restapi@latest
 ```
 
 ## Import SDK

@@ -1,7 +1,6 @@
 // for namespace TYPES
 /* eslint-disable @typescript-eslint/no-namespace */
-
-import { TypedDataDomain, TypedDataField } from 'ethers';
+import { TypedDataDomain } from 'viem';
 import {
   ADDITIONAL_META_TYPE,
   IDENTITY_TYPE,
@@ -89,9 +88,9 @@ export type ParsedResponseType = {
 };
 
 export type ApiSubscriptionType = {
-  channel: string,
-  user_settings: string | null
-}
+  channel: string;
+  user_settings: string | null;
+};
 
 export type NotificationSettingType = {
   type: number;
@@ -103,17 +102,18 @@ export type NotificationSettingType = {
     ticker?: number;
   };
   userPreferance?: {
-    value: number | { upper: number; lower: number },
-    enabled: boolean
-  }
+    value: number | { upper: number; lower: number };
+    enabled: boolean;
+  };
 };
 
 export type ApiSubscribersType = {
-  itemcount: number,
+  itemcount: number;
   subscribers: {
-    subscriber: string, settings: string | null
-  }[]
-}
+    subscriber: string;
+    settings: string | null;
+  }[];
+};
 export interface VideoNotificationRules {
   access: {
     type: VIDEO_NOTIFICATION_ACCESS_TYPE;
@@ -687,6 +687,11 @@ export interface UserInfo {
   image: string;
   isAdmin: boolean;
 }
+
+export type TypedDataField = {
+  name: string;
+  type: string;
+};
 
 export type ethersV5SignerType = {
   _signTypedData: (
