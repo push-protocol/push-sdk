@@ -99,6 +99,8 @@ or
 npm install @pushprotocol/restapi@latest
 ```
 
+**Note** - ethers is an optional peer dependency and is required only when sdk is used with ethers signer.
+
 ## Import SDK
 
 ```typescript
