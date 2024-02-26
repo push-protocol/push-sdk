@@ -2,6 +2,18 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.71](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.70...restapi-0.0.1-alpha.71) (2024-02-26)
+
+
+### Bug Fixes
+
+* allow groupImage and groupDesc to be updated to null ([#1118](https://github.com/ethereum-push-notification-service/push-sdk/issues/1118)) ([0b7fac0](https://github.com/ethereum-push-notification-service/push-sdk/commit/0b7fac04426d1f778491ebb3eb9bbd17e6e73d55))
+* Merge branch 'alpha' into alpha-deployment ([07cdbeb](https://github.com/ethereum-push-notification-service/push-sdk/commit/07cdbeb386f3bc319878597672549d04d369db02))
+* merged main ([e5f598e](https://github.com/ethereum-push-notification-service/push-sdk/commit/e5f598e447b0fba27fe1dd69933acf48425103da))
+* optimize chat.list ([#1115](https://github.com/ethereum-push-notification-service/push-sdk/issues/1115)) ([195a6e1](https://github.com/ethereum-push-notification-service/push-sdk/commit/195a6e1c3713aa0c42971efebda47581405f37d7))
+
+
+
 ## [0.0.1-alpha.70](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.69...restapi-0.0.1-alpha.70) (2024-02-21)
 
 
