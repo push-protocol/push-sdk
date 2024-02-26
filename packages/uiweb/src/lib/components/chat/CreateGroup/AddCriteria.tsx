@@ -456,7 +456,7 @@ const AddCriteria = ({
         justifyContent="space-between"
         alignItems="center"
       >
-        <Section width="48%" zIndex='unset'>
+        <Section width="48%" zIndex='unset' >
           {Array.isArray(
             getCategoryDropdownValues({
               dropdownCategoryValues,
