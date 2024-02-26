@@ -19,12 +19,13 @@ import { QuantityInput } from '../reusables/QuantityInput';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { Checkbox } from '../reusables/Checkbox';
 import OptionButtons from '../reusables/OptionButtons';
-
+import BerachainSVG  from '../../../icons/berachain.svg';
 import EthereumSvg from '../../../icons/ethereum.svg';
 import FuseSVG from '../../../icons/fuse.svg';
 import PolygonSvg from '../../../icons/polygon.svg';
 import ArbitrumSvg from '../../../icons/arbitrum.svg';
 import BSCSvg from '../../../icons/bsc.svg';
+
 import OptimismSvg from '../../../icons/optimisim.svg';
 import { BLOCKCHAIN_NETWORK, device } from '../../../config';
 import { GUILD_COMPARISON_OPTIONS, INVITE_CHECKBOX_LABEL } from '../constants';
@@ -248,6 +249,13 @@ const AddCriteria = ({
       icon: FuseSVG,
       function: () => setSelectedChainValue(5),
     },
+    {
+      id: 6,
+      value: BLOCKCHAIN_NETWORK[env].BERACHAIN,
+      title: 'Berachain',
+      icon: BerachainSVG,
+      function: () => setSelectedChainValue(46),
+    }
   ];
 
   const onQuantityChange = (e: any) => {

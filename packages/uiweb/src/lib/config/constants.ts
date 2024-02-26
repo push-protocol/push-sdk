@@ -33,6 +33,7 @@ export const NETWORK_DETAILS = {
   },
   97: {},
   420: {},
+  80085: {}
 };
 
 //todo: need to change o sepolia
@@ -52,7 +53,8 @@ const TESTNET_NETWORK = {
   OPTIMISM: 'eip155:420',
   POLYGON_ZK_EVM: 'eip155:1442',
   ARBITRUM:'eip155:421613',
-  FUSE: 'eip155:123'
+  FUSE: 'eip155:123',
+  BERACHAIN: 'eip155:80085'
 };
 const MAINET_NETWORK = {
   ETHEREUM: 'eip155:1',
@@ -61,7 +63,8 @@ const MAINET_NETWORK = {
   OPTIMISM: 'eip155:10',
   POLYGON_ZK_EVM: 'eip155:1101',
   ARBITRUM:'eip155:42161',
-  FUSE: 'eip155:122'
+  FUSE: 'eip155:122',
+  BERACHAIN: 'eip155:80085'
 };
 
 export const BLOCKCHAIN_NETWORK = {
@@ -78,7 +81,8 @@ export const allowedNetworks = {
     56, // for bnb mainnet
     10, // for optimism mainnet
     42161, // for arbitrum mainnet
-    122 // for fuse mainnet
+    122, // for fuse mainnet
+    80085 // while berachain dont have a mainnet
   ],
   dev: [
     11155111, // for eth sepolia
@@ -86,7 +90,8 @@ export const allowedNetworks = {
     97, // bnb testnet
     420, // optimism goerli testnet
     421613, // for arbitrum testnet
-    123 // for fuse testnet
+    123, // for fuse testnet
+    80085 // for Berachainn Testnet
   ],
   staging: [
     // 42, //for kovan
@@ -95,7 +100,8 @@ export const allowedNetworks = {
     97, // bnb testnet
     420, // optimism goerli testnet
     421613, // for arbitrum testnet
-    123 // for fuse testnet
+    123, // for fuse testnet
+    80085 // for berachain testnet
   ],
   local: [
     11155111, // for eth sepolia
@@ -103,7 +109,8 @@ export const allowedNetworks = {
     97, // bnb testnet
     420, // optimism goerli testnet
     421613, // for arbitrum testnet
-    123 // for fuse testnet
+    123, // for fuse testnet
+    80085 // for berachain testnet
   ]
 }
 
