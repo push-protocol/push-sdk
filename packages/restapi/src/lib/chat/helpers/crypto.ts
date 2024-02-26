@@ -539,32 +539,49 @@ export const decryptAndVerifyMessage = async (
 
   /**
    * DECRYPTION
-   * 1. Decrypt AES Key
-   * 2. Decrypt messageObj.message, messageObj.meta , messageContent
+   * 1. Fetch encryptedSecret for given sessionKey ( if encType is pgpv1:group - v2 private group )
+   * 1. Decrypt encryptedSecret using pgpPrivateKey
+   * 2. Decrypt messageObj & messageContent using decryptedSecret
    */
   const decryptedMessage: IMessageIPFS | IMessageIPFSWithCID = { ...message };
   try {
-    /**
-     * Get encryptedSecret from Backend using sessionKey for this encryption type
-     */
+    let decryptedSecret: string;
     if (message.encType === 'pgpv1:group') {
-      message.encryptedSecret = await getEncryptedSecret({
-        sessionKey: message.sessionKey as string,
-        env,
+      /**
+       * CACHE [ sessionKey -> decryptedSecret ]
+       */
+      const cacheKey = `sessionKey-${message.sessionKey}`;
+      if (cache.has(cacheKey)) {
+        decryptedSecret = cache.get(cacheKey);
+      } else {
+        /**
+         * Get encryptedSecret from Backend using sessionKey for this encryption type
+         */
+        const encryptedSecret = await getEncryptedSecret({
+          sessionKey: message.sessionKey as string,
+          env,
+        });
+        decryptedSecret = await pgpHelper.pgpDecrypt({
+          cipherText: encryptedSecret,
+          toPrivateKeyArmored: pgpPrivateKey,
+        });
+        cache.set(cacheKey, decryptedSecret);
+      }
+    } else {
+      decryptedSecret = await pgpHelper.pgpDecrypt({
+        cipherText: message.encryptedSecret,
+        toPrivateKeyArmored: pgpPrivateKey,
       });
     }
-    const secretKey: string = await pgpHelper.pgpDecrypt({
-      cipherText: message.encryptedSecret,
-      toPrivateKeyArmored: pgpPrivateKey,
-    });
+
     decryptedMessage.messageContent = aesDecrypt({
       cipherText: message.messageContent,
-      secretKey,
+      secretKey: decryptedSecret,
     });
     if (message.messageObj) {
       const decryptedMessageObj = aesDecrypt({
         cipherText: message.messageObj as string,
-        secretKey,
+        secretKey: decryptedSecret,
       });
       /**
        * @dev - messageObj can be an invalid JSON string which needs to be handled

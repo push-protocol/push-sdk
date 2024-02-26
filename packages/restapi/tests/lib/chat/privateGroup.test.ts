@@ -11,6 +11,7 @@ import {
 } from 'unique-names-generator';
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI'; // Ensure correct import path
 import { GroupDTO, GroupInfoDTO, MessageWithCID } from '../../../src/lib/types';
+import { cache } from '../../../src/lib/helpers/cache';
 
 const _env = Constants.ENV.DEV;
 let groupName: string;
@@ -794,6 +795,40 @@ describe('Private Groups', () => {
 
       const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
       expectMsg(msg2, Content, account1, group.chatId, 'pgpv1:group', false);
+    });
+
+    it('Caching should be enabled while message decryption', async () => {
+      // Autojoin
+      await userBob.chat.group.join(group.chatId);
+
+      await userAlice.chat.send(group.chatId, {
+        content: 'Sending Message 1 to Private Group',
+        type: 'Text',
+      });
+      await userAlice.chat.send(group.chatId, {
+        content: 'Sending Message 2 to Private Group',
+        type: 'Text',
+      });
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      const msgs = await userAlice.chat.history(group.chatId);
+      expect(cache.has(`sessionKey-${msgs[0].sessionKey}`)).to.be.true;
+      expectMsg(
+        msgs[0],
+        'Sending Message 2 to Private Group',
+        account1,
+        group.chatId,
+        'pgpv1:group',
+        true
+      );
+      expectMsg(
+        msgs[1],
+        'Sending Message 1 to Private Group',
+        account1,
+        group.chatId,
+        'pgpv1:group',
+        true
+      );
     });
   });
 });
