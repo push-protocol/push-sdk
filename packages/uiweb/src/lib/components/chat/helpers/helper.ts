@@ -1,4 +1,4 @@
-import { IChatPreviewPayload, IMessagePayload, User } from '../exportedTypes';
+import { Group, IChatPreviewPayload, IMessagePayload, User } from '../exportedTypes';
 import { ethers } from 'ethers';
 import { IFeeds, IMessageIPFSWithCID, IUser, ParticipantStatus } from '@pushprotocol/restapi';
 import { getAddress, walletToPCAIP10 } from '../../../helpers';
@@ -104,12 +104,13 @@ export const checkIfMember = (chatFeed: IFeeds, account: string) => {
   return isMember;
 };
 
-export const checkIfAccessVerifiedGroup = (chatFeed: IFeeds) => {
+export const checkIfAccessVerifiedGroup = (groupInfo: Group) => {
   let isRules = false;
   if (
-    chatFeed?.groupInformation?.rules &&
-    (chatFeed?.groupInformation?.rules?.entry ||
-      chatFeed?.groupInformation?.rules?.chat)
+    groupInfo &&
+    groupInfo.rules &&
+    (groupInfo.rules?.entry ||
+      groupInfo.rules?.chat)
   ) {
     isRules = true;
   }

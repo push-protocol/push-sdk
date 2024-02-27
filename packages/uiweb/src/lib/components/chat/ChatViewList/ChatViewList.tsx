@@ -86,7 +86,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   const { env } = useChatData();
   useEffect(() => {
     setChatStatusText('');
-  }, [chatId, account, env]);
+  }, [chatId, account, env,user]);
 
   useEffect(() => {
     setChatInfo(null);
@@ -94,16 +94,18 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     setGroupInfo(null);
   }, [chatId, account, user, env]);
 
-  //need to make a common method for fetching chatFeed to ruse in messageInput
   useEffect(() => {
     (async () => {
       if (!user) return;
-      const chat = await fetchChat({ chatId: chatId });
-      if (Object.keys(chat || {}).length) {
-        setChatInfo(chat as ChatInfoResponse);
+      if(chatId){
+        const chat = await fetchChat({ chatId: chatId });
+        if (Object.keys(chat || {}).length) {
+          setChatInfo(chat as ChatInfoResponse);
+        }
+  
+        setLoading(false);
       }
-
-      setLoading(false);
+     
     })();
   }, [chatId, user, account, env]);
 
@@ -191,6 +193,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
         updatedGroupInfo.groupImage = item?.meta?.image;
         updatedGroupInfo.groupCreator = item?.meta?.owner;
         updatedGroupInfo.isPublic = !item?.meta?.private;
+        updatedGroupInfo.rules = item?.meta?.rules;
         setGroupInfo(updatedGroupInfo);
       }
     }
@@ -305,12 +308,11 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   };
   const ifBlurChat = () => {
     return !!(
-      groupInfo &&
       user &&
-      !groupInfo?.isPublic &&
-      ((!isMember && user?.readmode()) || !user?.readmode())
+      ((groupInfo&&!groupInfo?.isPublic && !isMember ) || user?.readmode())
     );
   };
+
 
   type RenderDataType = {
     chat: IMessageIPFS;

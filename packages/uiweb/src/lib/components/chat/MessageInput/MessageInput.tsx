@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { MdCheckCircle, MdError } from 'react-icons/md';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import GifPicker from 'gif-picker-react';
-import { GroupDTO, IFeeds } from '@pushprotocol/restapi';
+import { IUser } from '@pushprotocol/restapi';
 import { ToastContainer } from 'react-toastify';
 
 import { Section, Div, Span } from '../../reusables';
@@ -21,28 +21,32 @@ import { Modal, ModalHeader } from '../reusables/Modal';
 import { ConnectButtonComp } from '../ConnectButton';
 import useToast from '../reusables/NewToast';
 import { ConditionsInformation } from '../ChatProfile/GroupInfoModal';
-import {
-  checkIfIntent,
-  getDefaultFeedObject,
-  getNewChatUser,
-  setAccessControl,
-} from '../../../helpers';
+import { setAccessControl } from '../../../helpers';
 import useFetchChat from '../../../hooks/chat/useFetchChat';
-import useGetChatProfile from '../../../hooks/useGetChatProfile';
-import useGetGroup from '../../../hooks/chat/useGetGroup';
-import useApproveChatRequest from '../../../hooks/chat/useApproveChatRequest';
 import {
   useChatData,
   useClickAway,
   useDeviceWidthCheck,
-  usePushChatSocket,
+  usePushChatStream,
 } from '../../../hooks';
+import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
+import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities';
 
-import { MODAL_BACKGROUND_TYPE, type FileMessageContent, type IGroup, MODAL_POSITION_TYPE } from '../../../types';
-import { GIFType, IChatTheme, MessageInputProps } from '../exportedTypes';
+import {
+  MODAL_BACKGROUND_TYPE,
+  type FileMessageContent,
+  MODAL_POSITION_TYPE,
+} from '../../../types';
+import {
+  GIFType,
+  Group,
+  IChatTheme,
+  MessageInputProps,
+} from '../exportedTypes';
 import { PUBLIC_GOOGLE_TOKEN, device } from '../../../config';
-import { checkIfAccessVerifiedGroup, checkIfMember, isValidETHAddress } from '../helpers';
+import { checkIfAccessVerifiedGroup } from '../helpers';
 import { InfoContainer } from '../reusables';
+import { ChatInfoResponse } from '../types';
 
 /**
  * @interface IThemeProps
@@ -53,7 +57,7 @@ interface IThemeProps {
 }
 
 const ConnectButtonSection = ({ autoConnect }: { autoConnect: boolean }) => {
-  const { pgpPrivateKey,account } = useChatData();
+  const { account, user } = useChatData();
   return (
     <Section
       width="100%"
@@ -61,7 +65,7 @@ const ConnectButtonSection = ({ autoConnect }: { autoConnect: boolean }) => {
       alignItems="center"
       padding="8px"
     >
-     {!(pgpPrivateKey && account) && (
+      {!(user && !user?.readmode() && account) && (
         <Span
           padding="8px 8px 8px 16px"
           color="#B6BCD6"
@@ -96,11 +100,19 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   const [fileUploading, setFileUploading] = useState<boolean>(false);
   const [isRules, setIsRules] = useState<boolean>(false);
   const [isMember, setIsMember] = useState<boolean>(false);
-  const { approveChatRequest, loading: approveLoading } =
-    useApproveChatRequest();
-  const { acceptedRequestMessage, groupInformationSinceLastConnection } =
-    usePushChatSocket();
-  const [chatFeed, setChatFeed] = useState<IFeeds>({} as IFeeds);
+
+  const {
+    chatAcceptStream,
+    groupUpdateStream,
+    participantJoinStream,
+    participantLeaveStream,
+    participantRemoveStream,
+  } = usePushChatStream();
+  const { getGroupByIDnew } = useGetGroupByIDnew();
+  const [groupInfo, setGroupInfo] = useState<Group | null>(null);
+  const [userInfo, setUserInfo] = useState<IUser | null>(null);
+
+  const [chatInfo, setChatInfo] = useState<ChatInfoResponse | null>(null);
   const theme = useContext(ThemeContext);
   const isMobile = useDeviceWidthCheck(425);
   const { sendMessage, loading } = usePushSendMessage();
@@ -112,17 +124,11 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     setVerified,
     loading: accessLoading,
   } = useVerifyAccessControl();
-  const {
-    account,
-    env,
-    connectedProfile,
-    setConnectedProfile,
-    pgpPrivateKey,
-    signer,
-  } = useChatData();
+  const { fetchMemberStatus, joinGroup, joinLoading, joinError } =
+    useGroupMemberUtilities();
+
+  const { account, env, signer, user } = useChatData();
   const { fetchChat } = useFetchChat();
-  const { fetchChatProfile } = useGetChatProfile();
-  const { getGroup } = useGetGroup();
   const statusToast = useToast();
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -147,107 +153,129 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       textAreaRef.current.focus();
     }
   }, [loading, textAreaRef]);
-  //need to do something about fetching connectedUser in every component
-  useEffect(() => {
-    (async () => {
-      if (!connectedProfile && account) {
-        const user = await fetchChatProfile({ profileId: account!, env });
-        if (user) setConnectedProfile(user);
-      }
-    })();
-  }, [account]);
 
   useEffect(() => {
-    if (!isValidETHAddress(chatId)) {
-    const storedTimestampJSON = localStorage.getItem(chatId);
+    if (groupInfo) {
+      const storedTimestampJSON = localStorage.getItem(chatId);
 
-    if (storedTimestampJSON) {
-      const storedTimestamp = JSON.parse(storedTimestampJSON);
-      const currentTimestamp = new Date().getTime();
-      const twentyFourHoursInMilliseconds = 24 * 60 * 60 * 1000;
+      if (storedTimestampJSON) {
+        const storedTimestamp = JSON.parse(storedTimestampJSON);
+        const currentTimestamp = new Date().getTime();
+        const twentyFourHoursInMilliseconds = 24 * 60 * 60 * 1000;
 
-      if (
-        Math.abs(currentTimestamp - storedTimestamp) <
-        twentyFourHoursInMilliseconds
-      ) {
-        setVerified(true);
-      } else {
-        setVerified(false);
-        setAccessControl(chatId, true);
-      }
-    }
-  }
-  }, [chatId, verified, isMember, account, env]);
-
-  useEffect(() => {
-    if (Object.keys(groupInformationSinceLastConnection || {}).length) {
-      if (
-        chatFeed?.groupInformation?.chatId.toLowerCase() ===
-        groupInformationSinceLastConnection.chatId.toLowerCase()
-      ) {
-        (async()=>{
-          const updateChatFeed = chatFeed;
-          const group:IGroup | undefined =  await getGroup({ searchText: chatId });
-          if (group || !!Object.keys(group || {}).length){
-            updateChatFeed.groupInformation = group! as GroupDTO ;
-          
-            setChatFeed(updateChatFeed);
-          }
-         
-        })();
-      }
-    }
-  }, [groupInformationSinceLastConnection]);
-
-  useEffect(() => {
-    (async () => {
-      if (
-        Object.keys(acceptedRequestMessage || {}).length &&
-        Object.keys(chatFeed || {}).length
-      ) {
-        await updateChatFeed();
-      }
-    })();
-  }, [acceptedRequestMessage]);
-
-  //need to makea common method for fetching chatFeed to ruse in messageInput
-  useEffect(() => {
-    (async () => {
-      if (!account && !env) return;
-      if (account && env) {
-        const chat = await fetchChat({ chatId });
-        if (Object.keys(chat || {}).length) setChatFeed(chat as IFeeds);
-        else {
-          let newChatFeed;
-          let group;
-          const result = await getNewChatUser({
-            searchText: chatId,
-            fetchChatProfile,
-            env,
-          });
-          if (result) {
-            newChatFeed = getDefaultFeedObject({ user: result });
-          } else {
-            group = await getGroup({ searchText: chatId });
-            if (group) {
-              newChatFeed = getDefaultFeedObject({ groupInformation: group });
-            }
-          }
-          if (newChatFeed) {
-            setChatFeed(newChatFeed);
-          }
+        if (
+          Math.abs(currentTimestamp - storedTimestamp) <
+          twentyFourHoursInMilliseconds
+        ) {
+          setVerified(true);
+        } else {
+          setVerified(false);
+          setAccessControl(chatId, true);
         }
       }
-    })();
-  }, [chatId, pgpPrivateKey, account, env]);
+    }
+  }, [chatId, verified, isMember, account, env, user]);
+ 
+
+  // useEffect(() => {
+  //   (async () => {
+  //     if (
+  //       Object.keys(acceptedRequestMessage || {}).length &&
+  //       Object.keys(chatFeed || {}).length
+  //     ) {
+  //       await updateChatFeed();
+  //     }
+  //   })();
+  // }, [acceptedRequestMessage]);
 
   useEffect(() => {
-    if (!account && !env && !chatId) return;
-    if (account && env && chatId && chatFeed && chatFeed?.groupInformation) {
-      setIsMember(checkIfMember(chatFeed, account));
-      setIsRules(checkIfAccessVerifiedGroup(chatFeed));
+    (async () => {
+      if (!user) return;
+      if(chatId){
+        const chat = await fetchChat({ chatId: chatId });
+        if (Object.keys(chat || {}).length) {
+          setChatInfo(chat as ChatInfoResponse);
+        }
+      }
+    
+    })();
+  }, [chatId, user, account, env]);
+
+  useEffect(() => {
+    (async () => {
+      let UserProfile, GroupProfile;
+      if (chatInfo && !chatInfo?.meta?.group) {
+        //change  chatId to user address, maybe it can be sent in chatInfo as members
+        // UserProfile = await fetchUserProfile({
+        //   profileId: chatId,
+        //   env,
+        //   user,
+        // });
+        // if (UserProfile) setUserInfo(UserProfile);
+      } else if (chatInfo && chatInfo?.meta?.group) {
+        GroupProfile = await getGroupByIDnew({ groupId: chatId });
+        if (GroupProfile) setGroupInfo(GroupProfile);
+      }
+    })();
+  }, [chatInfo]);
+  
+ 
+
+//moniter stream changes
+  useEffect(() => {
+    if (
+      Object.keys(groupUpdateStream).length > 0 &&
+      groupUpdateStream.constructor === Object
+    )
+      transformGroupDetails(groupUpdateStream);
+  }, [groupUpdateStream]);
+
+  useEffect(() => {
+    if (!user) return;
+    if (user && account && groupInfo) {
+      (async () => {
+        const status = await fetchMemberStatus({
+          chatId: groupInfo.chatId!,
+          accountId: account,
+        });
+        if (status && typeof status !== 'string') {
+          setIsMember(status?.participant);
+        } else {
+          //show toast
+          showError('Error', 'Error in fetching member details');
+        }
+      })();
     }
-  }, [chatId, chatFeed, account, env]);
+  }, [
+    account,
+    groupInfo,
+    chatInfo,
+    participantJoinStream,
+    participantLeaveStream,
+    participantRemoveStream,
+  ]);
+  useEffect(() => {
+    if (!user) return;
+    if (user && chatId && groupInfo) {
+      setIsRules(checkIfAccessVerifiedGroup(groupInfo));
+    }
+  }, [chatId, groupInfo, user, account, env]);
+
+
+  const transformGroupDetails = (item: any): void => {
+    if (groupInfo?.chatId === item?.chatId) {
+      const updatedGroupInfo = groupInfo;
+      if (updatedGroupInfo) {
+        updatedGroupInfo.groupName = item?.meta?.name;
+        updatedGroupInfo.groupDescription = item?.meta?.description;
+        updatedGroupInfo.groupImage = item?.meta?.image;
+        updatedGroupInfo.groupCreator = item?.meta?.owner;
+        updatedGroupInfo.isPublic = !item?.meta?.private;
+        updatedGroupInfo.rules = item?.meta?.rules;
+        setGroupInfo(updatedGroupInfo);
+      }
+    }
+  };
 
   const addEmoji = (emojiData: EmojiClickData, event: MouseEvent): void => {
     setTypedMessage(typedMessage + emojiData.emoji);
@@ -265,35 +293,47 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   };
 
   const handleJoinGroup = async () => {
-    if (chatFeed && chatFeed?.groupInformation?.isPublic) {
-      const response = await approveChatRequest({
+    if (chatInfo && groupInfo && groupInfo?.isPublic) {
+      const response = await joinGroup({
         chatId,
       });
-      if (response) {
-        await updateChatFeed();
+      if (typeof response !== 'string') {
+        showSuccess('Success', 'Successfully joined group');
+      } else {
+        if (joinError) {
+          showError('Error', 'Unable to join group');
+        }
       }
     } else {
       const sendTextMessage = await sendMessage({
         message: `Hello, please let me join this group, my wallet address is ${account}`,
-        chatId: chatFeed?.groupInformation?.groupCreator || '',
+        chatId: groupInfo?.groupCreator || '',
         messageType: 'Text',
       });
       if (sendTextMessage) {
-        statusToast.showMessageToast({
-          toastTitle: 'Success',
-          toastMessage: 'Request sent successfully',
-          toastType: 'SUCCESS',
-          getToastIcon: (size) => <MdCheckCircle size={size} color="green" />,
-        });
+        showSuccess('Success', 'Request sent successfully');
       } else {
-        statusToast.showMessageToast({
-          toastTitle: 'Error',
-          toastMessage: 'Unable to send request',
-          toastType: 'ERROR',
-          getToastIcon: (size) => <MdError size={size} color="red" />,
-        });
+        showError('Error', 'Unable to send request');
       }
     }
+  };
+
+  const showError = (title: string, subTitle: string) => {
+    statusToast.showMessageToast({
+      toastTitle: title,
+      toastMessage: subTitle,
+      toastType: 'ERROR',
+      getToastIcon: (size) => <MdError size={size} color="red" />,
+    });
+  };
+
+  const showSuccess = (title: string, subTitle: string) => {
+    statusToast.showMessageToast({
+      toastTitle: title,
+      toastMessage: subTitle,
+      toastType: 'SUCCESS',
+      getToastIcon: (size) => <MdCheckCircle size={size} color="green" />,
+    });
   };
 
   const uploadFile = async (
@@ -343,11 +383,11 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   };
 
   const isJoinGroup = () => {
-    return !!pgpPrivateKey && !isMember;
+    return user && !user?.readmode() && !isMember;
   };
 
   const isNotVerified = () => {
-    return !!pgpPrivateKey && !verified && isMember && isRules;
+    return user && !user?.readmode() && !verified && isMember && isRules;
   };
 
   const sendPushMessage = async (content: string, type: string) => {
@@ -383,43 +423,32 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     setGifOpen(false);
   };
 
-  const updateChatFeed = async () => {
-
-    const chat = await fetchChat({ chatId });
-
-    if (Object.keys(chat || {}).length) {
-
-      setChatFeed(chat as IFeeds);
-    }
-  };
-
-  return !(pgpPrivateKey && account) && isConnected ? (
+  return !(user && !user?.readmode()) && isConnected ? (
     <TypebarSection
       width="100%"
       overflow="hidden"
       borderRadius="13px"
       position="static"
-      padding={` ${pgpPrivateKey ? '13px 16px' : ''}`}
+      padding={` ${user && !user?.readmode() ? '13px 16px' : ''}`}
       background={`${theme.backgroundColor?.messageInputBackground}`}
       alignItems="center"
       justifyContent="space-between"
     >
       <ConnectButtonSection autoConnect={autoConnect} />
     </TypebarSection>
-  ) : !checkIfIntent({ chat: chatFeed, account: account! }) &&
-    Object.keys(chatFeed || {}).length ? (
+  ) : Object.keys(chatInfo || {}).length && chatInfo?.list !== 'REQUESTS' ? (
     <TypebarSection
       width="100%"
       overflow="hidden"
       borderRadius={theme.borderRadius?.messageInput}
       position="static"
       border={theme.border?.messageInput}
-      padding={` ${pgpPrivateKey ? '13px 16px' : ''}`}
+      padding={` ${user && !user?.readmode() ? '13px 16px' : ''}`}
       background={`${theme.backgroundColor?.messageInputBackground}`}
       alignItems="center"
       justifyContent="space-between"
     >
-      {Object.keys(chatFeed || {}).length && chatFeed?.groupInformation ? (
+      {Object.keys(chatInfo || {}).length && groupInfo ? (
         <>
           {(isJoinGroup() || isNotVerified()) && (
             <Section
@@ -458,7 +487,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                 >
                   {isJoinGroup() && (
                     <>
-                      {approveLoading ? (
+                      {joinLoading ? (
                         <Spinner color="#fff" size="24" />
                       ) : (
                         ' Join Group '
@@ -478,8 +507,12 @@ export const MessageInput: React.FC<MessageInputProps> = ({
               </ConnectWrapper>
             </Section>
           )}
-          {!!pgpPrivateKey && !verificationSuccessfull && (
-            <Modal width="550px" modalBackground={verificationFailModalBackground} modalPositionType={verificationFailModalPosition}>
+          {!!user && !user?.readmode() && !verificationSuccessfull && (
+            <Modal
+              width="550px"
+              modalBackground={verificationFailModalBackground}
+              modalPositionType={verificationFailModalPosition}
+            >
               <Section
                 margin="5px 0px 0px 0px"
                 gap="16px"
@@ -489,7 +522,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                 <ModalHeader title="Access Failed" />
                 <ConditionsInformation
                   theme={theme}
-                  groupInfo={chatFeed?.groupInformation}
+                  groupInfo={groupInfo}
                   subheader="Please make sure the following conditions
                    are met to pariticpate and send messages."
                   alert={true}
@@ -514,9 +547,10 @@ export const MessageInput: React.FC<MessageInputProps> = ({
           )}
         </>
       ) : null}
-      {!!pgpPrivateKey &&
+      {user &&
+        !user?.readmode() &&
         (((isRules ? verified : true) && isMember) ||
-          (chatFeed && !chatFeed?.groupInformation)) && (
+          (chatInfo && !groupInfo)) && (
           <>
             <Section gap="8px" flex="1" position="static">
               {emoji && (

@@ -485,7 +485,7 @@ export class Space {
       page: options?.page,
       limit: options?.limit,
       env: this.env,
-      toDecrypt: !!this.signer, // Set to false if signer is undefined or null,
+      toDecrypt: !!this.decryptedPgpPvtKey, // Set to false if signer is undefined or null,
     };
 
     switch (type) {

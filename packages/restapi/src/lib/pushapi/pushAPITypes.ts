@@ -70,8 +70,8 @@ export interface GetGroupParticipantsOptions {
 
 export interface GroupUpdateOptions {
   name?: string;
-  description?: string;
-  image?: string;
+  description?: string | null;
+  image?: string | null;
   scheduleAt?: Date | null;
   scheduleEnd?: Date | null;
   status?: ChatStatus | null;
