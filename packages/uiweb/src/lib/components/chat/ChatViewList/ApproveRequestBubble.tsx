@@ -7,6 +7,8 @@ import { useChatData } from '../../../hooks';
 import styled from 'styled-components';
 import { IChatTheme } from '../theme';
 import { Group } from '../exportedTypes';
+import useToast from '../reusables/NewToast';
+import { MdCheckCircle } from 'react-icons/md';
 
 /**
  * @interface IThemeProps
@@ -18,14 +20,12 @@ interface IThemeProps {
 export interface IApproveRequestBubbleProps {
   chatId: string;
   groupInfo?: Group | null;
-  // setChatFeed: Dispatch<IFeeds>;
 }
 
 
 export const ApproveRequestBubble = ({
   groupInfo = null,
   chatId,
-  // setChatFeed,
 }: IApproveRequestBubbleProps) => {
   const { pgpPrivateKey } = useChatData();
 
@@ -37,6 +37,7 @@ export const ApproveRequestBubble = ({
   const theme = useContext(ThemeContext);
   const { approveChatRequest, loading: approveLoading } =
     useApproveChatRequest();
+    const approveToast = useToast();
 
   const handleApproveChatRequest = async () => {
     try {
@@ -47,15 +48,15 @@ export const ApproveRequestBubble = ({
       const response = await approveChatRequest({
         chatId,
       });
-      //will be updated via  socket but will show toast that request is accepted
-
       
-      // if (response) {
-      //   const updatedChatFeed = { ...(chatFeed as IFeeds) };
-      //   updatedChatFeed.intent = response;
-
-      //   setChatFeed(updatedChatFeed);
-      // }
+      if (response) {
+        approveToast.showMessageToast({
+          toastTitle: 'Success',
+          toastMessage: 'Group Invitation sent',
+          toastType: 'SUCCESS',
+          getToastIcon: (size) => <MdCheckCircle size={size} color="green" />,
+        });
+      }
     } catch (error_: Error | any) {
       console.log(error_.message);
     }

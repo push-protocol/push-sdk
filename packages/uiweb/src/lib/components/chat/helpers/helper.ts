@@ -1,6 +1,6 @@
 import { IChatPreviewPayload, IMessagePayload, User } from '../exportedTypes';
 import { ethers } from 'ethers';
-import { IFeeds, IUser, ParticipantStatus } from '@pushprotocol/restapi';
+import { IFeeds, IMessageIPFSWithCID, IUser, ParticipantStatus } from '@pushprotocol/restapi';
 import { getAddress, walletToPCAIP10 } from '../../../helpers';
 import { Env,  } from '@pushprotocol/restapi';
 import moment from 'moment';
@@ -219,3 +219,29 @@ export const generateRandomNonce: () => string = () => {
 
     return transformedItem;
   };
+
+
+  export  const transformStreamToIMessageIPFSWithCID: (
+    item: any
+  ) => IMessageIPFSWithCID = (item: any) =>{
+
+    const transformedItem :IMessageIPFSWithCID = {
+      fromCAIP10: item?.raw?.fromCAIP10,
+      toCAIP10: item?.raw?.toCAIP10,
+      fromDID: item?.raw?.fromDID,
+      toDID: item?.raw?.toDID,
+      messageType: item?.message?.type,
+      messageObj: {content:item?.message?.content},
+      sigType: item?.raw?.sigType,
+      link:  item?.raw?.previousReference,
+      timestamp: parseInt(item?.timestamp),
+      encType: item?.raw?.encType,
+      encryptedSecret: item?.raw?.encryptedSecret,
+      cid: item?.reference,
+      messageContent:  item?.message?.content,
+      signature: item?.raw?.signature,
+      verificationProof:  item?.raw?.verificationProof,
+    }
+    return transformedItem;
+
+  }

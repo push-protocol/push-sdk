@@ -199,10 +199,10 @@ export const getChatId = ({
 
 export const appendUniqueMessages = (
   parentList: IMessageIPFSWithCID[],
-  newlist: IMessageIPFS[],
+  newlist: IMessageIPFSWithCID[],
   infront: boolean
 ) => {
-  const uniqueMap: { [timestamp: number]: IMessageIPFS } = {};
+  const uniqueMap: { [timestamp: number]: IMessageIPFSWithCID } = {};
   const appendedArray = infront
     ? [...newlist, ...parentList]
     : [...parentList, ...newlist];
@@ -217,33 +217,4 @@ export const appendUniqueMessages = (
   return newMessageList;
 };
 
-export const checkIfSameChat = (
-  msg: IMessageIPFS,
-  account: string,
-  chatId: string
-) => {
-  if (ethers.utils.isAddress(pCAIP10ToWallet(chatId))) {
-    chatId = walletToPCAIP10(chatId);
-    if (
-      Object.keys(msg || {}).length &&
-      (((chatId.toLowerCase() === (msg.fromCAIP10?.toLowerCase())) &&
-       ( walletToPCAIP10(account!).toLowerCase() ===
-          msg.toCAIP10?.toLowerCase())) ||
-        ((chatId.toLowerCase() === (msg.toCAIP10?.toLowerCase())) &&
-          (walletToPCAIP10(account!).toLowerCase() ===
-            msg.fromCAIP10?.toLowerCase())))
-    ) {
-      return true;
-    }
-  } else {
-    if (
-      Object.keys(msg || {}).length &&
-      (chatId.toLowerCase() === msg.toCAIP10?.toLowerCase())
-    ) {
-      return true;
-    }
-  }
 
-
-  return false;
-};

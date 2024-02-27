@@ -153,7 +153,6 @@ export const SubscriptionManager: React.FC<ISubscriptionManagerProps> = (
     }
   };
   return (
-    <>
     <Modal
       clickawayClose={onClose}
       modalBackground={modalBackground}
@@ -197,7 +196,6 @@ export const SubscriptionManager: React.FC<ISubscriptionManagerProps> = (
 
       <ToastContainer />
     </Modal>
-    </>
   );
 };
 
