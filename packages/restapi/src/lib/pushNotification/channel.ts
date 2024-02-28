@@ -10,6 +10,7 @@ import {
   NotificationOptions,
   CreateChannelOptions,
   NotificationSettings,
+  ChannelFeedsOptions,
   ChannelOptions
 } from './PushNotificationTypes';
 import * as config from '../config';
@@ -410,4 +411,28 @@ export class Channel extends PushNotificationBaseClass {
       throw new Error(`Push SDK Error: Contract : channel::setting : ${error}`);
     }
   };
+
+  notifications = async(options?:ChannelFeedsOptions) => {
+    try{
+      const {
+        account = this.account,
+        page,
+        limit,
+        filter = null,
+        raw = true
+      } = options || {}
+      return await PUSH_CHANNEL.getChannelNotifications({
+        channel: account as string,
+        env: this.env,
+        filter,
+        raw,
+        page,
+        limit
+      })
+
+    }catch(error){
+      throw new Error(`Push SDK Error: Contract : channel::notifications : ${error}`);
+    }
+
+  }
 }
