@@ -12,8 +12,8 @@ import { formatAddress, formatDate } from '../helpers';
 import { resolveNewEns, shortenText } from '../../../helpers';
 import { CoreContractChainId, InfuraAPIKey } from '../../../config';
 import { ethers } from 'ethers';
-import { FaFile } from "react-icons/fa";
-import { CiImageOn } from "react-icons/ci";
+import { FaFile } from 'react-icons/fa';
+import { CiImageOn } from 'react-icons/ci';
 /**
  * @interface IThemeProps
  * this interface is used for defining the props for styled components
@@ -27,33 +27,36 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
   options: IChatPreviewProps
 ) => {
   const theme = useContext(ThemeContext);
-  const {env} = useChatData();
-  const provider = new ethers.providers.InfuraProvider(CoreContractChainId[env], InfuraAPIKey);
-  const [formattedAddress,setFormattedAddress] = useState<string>('');
+  const { env } = useChatData();
+  const provider = new ethers.providers.InfuraProvider(
+    CoreContractChainId[env],
+    InfuraAPIKey
+  );
+  const [formattedAddress, setFormattedAddress] = useState<string>('');
   const [web3Name, setWeb3Name] = useState<string | null>(null);
 
-  useEffect(()=>{
-    (async()=>{
-    const address = await formatAddress(options.chatPreviewPayload,env);
-    setFormattedAddress(address);
-    if(!options.chatPreviewPayload?.chatGroup){
-      const result = await resolveNewEns(address, provider,env);
-      setWeb3Name(result);
-    }
+  useEffect(() => {
+    (async () => {
+      const address = await formatAddress(options.chatPreviewPayload, env);
+      setFormattedAddress(address);
+      if (!options.chatPreviewPayload?.chatGroup) {
+        try {
+          const result = await resolveNewEns(address, provider, env);
+          if (result) setWeb3Name(result);
+        } catch (e) {
+          // console.debug(e);
+        }
+      }
     })();
+  }, []);
 
-
-  },[])
-
-  const getProfileName = (formattedAddress:string) => {
+  const getProfileName = (formattedAddress: string) => {
     return options.chatPreviewPayload?.chatGroup
       ? formattedAddress
       : web3Name
       ? web3Name
-      : formattedAddress
-      
+      : formattedAddress;
   };
-
 
   return (
     <ChatPreviewContainer>
@@ -76,7 +79,10 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
         onClick={() => {
           // set chatid as selected
           if (options?.setSelected)
-            options.setSelected(options?.chatPreviewPayload?.chatId || '',options?.chatPreviewPayload?.chatParticipant);
+            options.setSelected(
+              options?.chatPreviewPayload?.chatId || '',
+              options?.chatPreviewPayload?.chatParticipant
+            );
         }}
       >
         <Section
@@ -112,8 +118,13 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
             overflow="hidden"
             flex="1"
           >
-            <Account theme={theme}>{ shortenText(getProfileName(formattedAddress),8,true) ||  shortenText(formattedAddress,8,true)}</Account>
-            <Dated theme={theme}>{formatDate(options.chatPreviewPayload)}</Dated>
+            <Account theme={theme}>
+              {shortenText(getProfileName(formattedAddress), 8, true) ||
+                shortenText(formattedAddress, 8, true)}
+            </Account>
+            <Dated theme={theme}>
+              {formatDate(options.chatPreviewPayload)}
+            </Dated>
           </Section>
           <Section
             justifyContent="flex-start"
@@ -124,23 +135,10 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
             flex="1"
           >
             <Message theme={theme}>
-            {
-                (options?.chatPreviewPayload?.chatMsg?.messageType === "Image" || options?.chatPreviewPayload?.chatMsg?.messageType === "GIF" || options?.chatPreviewPayload?.chatMsg?.messageType === "MediaEmbed" )
-                ? 
-               ( 
-                <Section
-                justifyContent="flex-start"
-                flexDirection="row"
-                alignItems="center"
-                alignSelf="stretch"
-                overflow="hidden"
-                flex="1"
-                gap="4px"
-                >
-                  <CiImageOn />
-                  Media
-                </Section>
-              ) : (options?.chatPreviewPayload?.chatMsg?.messageType === "File" ?
+              {options?.chatPreviewPayload?.chatMsg?.messageType === 'Image' ||
+              options?.chatPreviewPayload?.chatMsg?.messageType === 'GIF' ||
+              options?.chatPreviewPayload?.chatMsg?.messageType ===
+                'MediaEmbed' ? (
                 <Section
                   justifyContent="flex-start"
                   flexDirection="row"
@@ -149,16 +147,31 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
                   overflow="hidden"
                   flex="1"
                   gap="4px"
-                  >
-                    <FaFile/>
-                    File
+                >
+                  <CiImageOn />
+                  Media
                 </Section>
-               
-               : options?.chatPreviewPayload?.chatMsg?.messageContent )
-
-              }
+              ) : options?.chatPreviewPayload?.chatMsg?.messageType ===
+                'File' ? (
+                <Section
+                  justifyContent="flex-start"
+                  flexDirection="row"
+                  alignItems="center"
+                  alignSelf="stretch"
+                  overflow="hidden"
+                  flex="1"
+                  gap="4px"
+                >
+                  <FaFile />
+                  File
+                </Section>
+              ) : (
+                options?.chatPreviewPayload?.chatMsg?.messageContent
+              )}
             </Message>
-            {!!options?.badge?.count && <Badge theme={theme}>{options.badge.count}</Badge>}
+            {!!options?.badge?.count && (
+              <Badge theme={theme}>{options.badge.count}</Badge>
+            )}
           </Section>
         </Section>
       </Button>
@@ -197,7 +210,6 @@ const Account = styled.div<IThemeProps>`
   white-space: nowrap;
   overflow: hidden;
   margin-right: 10px;
-
 `;
 
 const Dated = styled.div<IThemeProps>`
@@ -221,7 +233,8 @@ const Message = styled.div<IThemeProps>`
 `;
 
 const Badge = styled.div<IThemeProps>`
-  background: ${(props) => props.theme.backgroundColor?.chatPreviewBadgeBackground};
+  background: ${(props) =>
+    props.theme.backgroundColor?.chatPreviewBadgeBackground};
   font-weight: ${(props) => props.theme.fontWeight?.chatPreviewBadgeText};
   font-size: ${(props) => props.theme.fontSize?.chatPreviewBadgeText};
   color: ${(props) => props.theme.textColor?.chatPreviewBadgeText};
@@ -229,5 +242,4 @@ const Badge = styled.div<IThemeProps>`
   min-height: 24px;
   border-radius: 24px;
   align-self: center;
-
 `;

@@ -90,14 +90,16 @@ This package gives access to Push Protocol (Push Nodes) APIs. Visit [Developer D
 ## Installation
 
 ```bash
-yarn add @pushprotocol/restapi@latest ethers
+yarn add @pushprotocol/restapi@latest
 ```
 
 or
 
 ```bash
-npm install @pushprotocol/restapi@latest ethers
+npm install @pushprotocol/restapi@latest
 ```
+
+**Note** - ethers is an optional peer dependency and is required only when sdk is used with ethers signer.
 
 ## Import SDK
 
