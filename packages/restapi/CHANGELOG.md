@@ -2,6 +2,18 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.6.9](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.6.8...restapi-1.6.9) (2024-02-28)
+
+
+### Bug Fixes
+
+* added cacheing to grp message decryption ([#1126](https://github.com/ethereum-push-notification-service/push-sdk/issues/1126)) ([dcb883c](https://github.com/ethereum-push-notification-service/push-sdk/commit/dcb883cb3ca1d5def7ecb0019bb3dd7865f78b07))
+* allow groupImage and groupDesc to be updated to null ([#1118](https://github.com/ethereum-push-notification-service/push-sdk/issues/1118)) ([0b7fac0](https://github.com/ethereum-push-notification-service/push-sdk/commit/0b7fac04426d1f778491ebb3eb9bbd17e6e73d55))
+* Merge branch 'main' into deployment ([aa6667e](https://github.com/ethereum-push-notification-service/push-sdk/commit/aa6667ebd6e51a5f6d643729caa687c85c96e163))
+* optimize chat.list ([#1115](https://github.com/ethereum-push-notification-service/push-sdk/issues/1115)) ([195a6e1](https://github.com/ethereum-push-notification-service/push-sdk/commit/195a6e1c3713aa0c42971efebda47581405f37d7))
+
+
+
 ## [1.6.8](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.6.7...restapi-1.6.8) (2024-02-09)
 
 
