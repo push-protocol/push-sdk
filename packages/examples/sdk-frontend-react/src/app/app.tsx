@@ -339,9 +339,7 @@ export function App() {
             <SocketContext.Provider value={socketData}>
               <AccountContext.Provider value={{ pgpPrivateKey, setSpaceId }}>
                 <WidgetUIProvider
-                  env={env}
-                  theme={lightWidgetTheme}
-                  user={pushUser}
+               
                 >
                   <ChatUIProvider
                     env={env}
