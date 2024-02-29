@@ -96,12 +96,13 @@ export const SubscriptionManager: React.FC<ISubscriptionManagerProps> = (
         }
         if (info) {
           setChannelInfo(info);
-        } else {
+        } 
+        // else {
       
-          setChannelInfoError(
-            WidgetErrorCodes.NOTIFICATION_WIDGET_CHANNEL_INFO_ERROR
-          );
-        }
+        //   setChannelInfoError(
+        //     WidgetErrorCodes.NOTIFICATION_WIDGET_CHANNEL_INFO_ERROR
+        //   );
+        // }
       } catch (e) {
         console.debug(e);
         setChannelInfoError(
