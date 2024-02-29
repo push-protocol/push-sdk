@@ -114,22 +114,27 @@ export const SubscribeComponent: React.FC<ISubscribeComponentProps> = (
           </Span>
         </Section>
         <ChannelDetailsComponent channelInfo={channelInfo}/>
-     {channelInfo && channelInfo?.channel_settings && <Section margin=' 0' width='100%'>
+     {channelInfo && channelInfo?.channel_settings && <Section margin=' 0' width='100%' >
       <SettingsComponent settings={modifiedSettings!} setSettings={setModifiedSettings}/>
       </Section>}
-   
-     {(user?.readmode()) && (
+      
+   {(user && !!user?.readmode)?
+   <>
+     {user?.readmode() && (
         <ConnectButtonComp
           autoconnect={autoconnect}
           setAccount={setAccount}
           setSigner={setSigner}
           signer={signer}
-        />
-      )}  
-      {!(user?.readmode()) &&  
+        />)}
+         
+       {!user?.readmode() &&  
       <Button onClick={handleSubscribe}>
         {subscribeLoading ? <Spinner color="#fff" size="24" /> : 'Subscribe'}
-      </Button> }
+      </Button>}
+      </>
+     :null
+    }
  
       <PoweredByPush />
     </Section>

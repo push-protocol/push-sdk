@@ -53,6 +53,7 @@ export const SettingsComponent: React.FC<ISettingsComponentProps> = (
       gap="15px"
       width="100%"
       maxHeight="200px"
+      justifyContent='start'
       overflow="hidden scroll"
     >
       {settings.map(
