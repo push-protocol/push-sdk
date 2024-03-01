@@ -65,25 +65,25 @@ export const ChatUIProvider = ({
     (async () => {
       resetStates();
   
-      let address;
+      let address = null;
       if (Object.keys(signer || {}).length && !user) {
          address = await getAddressFromSigner(signer!);
-        // setAccountVal(address);
       } else if (!signer && user) {
         const profile = await fetchUserProfile({user});
+        if(profile)
         address = (pCAIP10ToWallet(profile?.wallets));
-      } else {
-        address = GUEST_MODE_ACCOUNT;
-      }
+      } 
+     
+
       setEnvVal(env);
-      setAccountVal(address);
+      setAccountVal(address || GUEST_MODE_ACCOUNT);
       setSignerVal(signer);
     
       setUserVal(user);
       setPgpPrivateKeyVal(pgpPrivateKey);
     })();
   }, [env, account, signer, pgpPrivateKey,user]);
-
+  
   useEffect(() => {
     (async () => {
 
@@ -99,7 +99,7 @@ export const ChatUIProvider = ({
   }, [signerVal, accountVal, envVal]);
   useEffect(() => {
     (async () => {
-      if (userVal && !pgpPrivateKeyVal) {
+      if (userVal && !userVal?.readmode()&& !pgpPrivateKeyVal) {
         const encryptionInfo = await fetchEncryptionInfo({user:userVal});
         if (encryptionInfo)
           setPgpPrivateKeyVal(encryptionInfo.decryptedPgpPrivateKey);
