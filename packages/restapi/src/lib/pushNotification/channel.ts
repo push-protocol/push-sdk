@@ -20,7 +20,6 @@ import {
   getCAIPDetails,
   validateCAIP,
   getFallbackETHCAIPAddress,
-  isValidNFTCAIP10Address,
   pCAIP10ToWallet,
 } from '../helpers';
 import PROGRESSHOOK from '../progressHook';
