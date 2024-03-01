@@ -40,6 +40,8 @@ export class DataModifier {
         return this.mapToRequestEvent(data, includeRaw);
       case GroupEventType.Remove:
         return this.mapToRemoveEvent(data, includeRaw);
+      case GroupEventType.RoleChange:
+        return this.mapToRoleChangeEvent(data, includeRaw);
       default:
         console.warn('Unknown eventType:', data.eventType);
         return data;
@@ -108,6 +110,23 @@ export class DataModifier {
   }
 
   private static mapToRemoveEvent(data: any, includeRaw: boolean): any {
+    // Whatever the structure of your RemoveEvent, modify accordingly
+    const eventData: RemoveEvent = {
+      origin: data.messageOrigin,
+      timestamp: data.timestamp,
+      chatId: data.chatId,
+      from: data.from,
+      to: data.to,
+      event: GroupEventType.Remove,
+    };
+
+    if (includeRaw) {
+      eventData.raw = { verificationProof: data.verificationProof };
+    }
+    return eventData;
+  }
+
+  private static mapToRoleChangeEvent(data: any, includeRaw: boolean): any {
     // Whatever the structure of your RemoveEvent, modify accordingly
     const eventData: RemoveEvent = {
       origin: data.messageOrigin,
@@ -203,7 +222,6 @@ export class DataModifier {
     includeRaw = false,
     eventType: MessageEventType
   ): MessageEvent {
-
     if (data.hasIntent === false && eventType === 'message') {
       eventType = MessageEventType.Request;
     }
