@@ -41,9 +41,9 @@ export const SettingsComponent: React.FC<ISettingsComponentProps> = (
 
   const handleToggleChange = (index: number) => {
     const updatedSettings = [...settings];
+    if(updatedSettings[index]?.userPreferance)
     updatedSettings[index].userPreferance!.enabled =
       !updatedSettings[index].userPreferance!.enabled;
-
     setSettings(updatedSettings);
   };
   return (

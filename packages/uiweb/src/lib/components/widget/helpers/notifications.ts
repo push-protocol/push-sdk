@@ -21,6 +21,30 @@ export const notifUserSettingFormatString = ({
     );
   return _notifSettings;
 };
+export const notifStrictUserSettingFromat = ({
+  settings,
+}: {
+  settings: NotificationSettingType[];
+}) => {
+  const _notifSettings: NotificationSettingType[] = [];
+
+  settings &&
+  settings.forEach((setting) =>
+    isSettingType1(setting)
+      ? _notifSettings.push({
+          ...setting,
+          userPreferance: setting?.userPreferance?? {value:0,enabled:false},
+        })
+      : _notifSettings.push({
+          ...setting,
+          userPreferance: setting?.userPreferance??  {
+            value: setting.default ||0,
+            enabled: false,
+          }
+        })
+  );
+  return _notifSettings;
+};
 
 export const notifUserSettingFromChannelSetting = ({
   settings

@@ -1,4 +1,4 @@
-import { useContext, useEffect,  } from 'react';
+import { useContext, useEffect, useState,  } from 'react';
 
 import styled from 'styled-components';
 
@@ -6,8 +6,9 @@ import { useAccount, useWidgetData } from '../../../hooks';
 import { ThemeContext } from '../theme/ThemeProvider';
 
 import { IWidgetTheme } from '../theme';
-import { device } from '../../../config';
+import { GUEST_MODE_ACCOUNT, device } from '../../../config';
 import { SignerType } from '@pushprotocol/restapi';
+import { getAddressFromSigner } from '../../../helpers';
 
 /**
  * @interface IThemeProps
@@ -33,6 +34,7 @@ export const ConnectButtonSub: React.FC<IConnectButtonSubProps> = ({
   const { env } = useWidgetData();
   const { wallet, connecting, connect, disconnect, provider, account } =
     useAccount({ env });
+    const [clickedConnect,setClickedConnect] = useState<boolean>(false);
 
   const theme = useContext(ThemeContext);
 
@@ -40,17 +42,20 @@ export const ConnectButtonSub: React.FC<IConnectButtonSubProps> = ({
     if (wallet) {
       (async () => {
         const librarySigner = provider?.getSigner(account);
+        const newAdd = await getAddressFromSigner(librarySigner)
+     
+        setAccount(account || newAdd);
         setSigner(librarySigner);
-        setAccount(account!);
       })();
-    } else if (!wallet) {
-      setAccount('');
+    } else if (!wallet ) {
+      setAccount(GUEST_MODE_ACCOUNT);
       setSigner(undefined);
     }
     changeModalStyle('zIndex', '2000');
   };
   useEffect(() => {
-    if (wallet && !autoconnect) {
+    if (wallet && !autoconnect ) {
+
       disconnect(wallet);
     }
     setUserData();
@@ -65,6 +70,7 @@ export const ConnectButtonSub: React.FC<IConnectButtonSubProps> = ({
 
   const handleConnect = () => {
     changeModalStyle('zIndex', 'unset');
+    setClickedConnect(true);
     connect();
   };
 
