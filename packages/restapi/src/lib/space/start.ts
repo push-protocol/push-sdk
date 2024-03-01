@@ -35,12 +35,9 @@ export async function start(this: Space): Promise<void> {
   // const { livepeerApiKey } = options || {};
 
   try {
-    // host should have there audio stream
-    // if (!this.data.local.stream) {
-    //   throw new Error('Local audio stream not found');
-    // }
-
-    await this.create({ audio: true, video: false });
+    // if local media stream is not present then create it
+    !this.data.local.stream &&
+    (await this.create({ audio: true, video: false }));
 
     const space = await get({
       spaceId: this.spaceSpecificData.spaceId,

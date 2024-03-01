@@ -69,7 +69,9 @@ export async function join(this: Space) {
     }
 
     if (isSpeaker || isSpeakerPending) {
-      await this.create({ audio: true, video: false });
+      // if local media stream is not present then create it
+      !this.data.local.stream &&
+        (await this.create({ audio: true, video: false }));
 
       // Call the host and join the mesh connection
       await this.request({
