@@ -40,6 +40,8 @@ export async function start(this: Space): Promise<void> {
     //   throw new Error('Local audio stream not found');
     // }
 
+    await this.create({ audio: true, video: false });
+
     const space = await get({
       spaceId: this.spaceSpecificData.spaceId,
       env: this.env,

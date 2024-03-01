@@ -240,7 +240,10 @@ export class Space extends Video {
   public initialize = initialize;
 
   public update = update;
-
+  
+  /**
+   * @deprecated - The createAudioStream method is now automatically called when the space is started and joined
+   */
   public createAudioStream = async () => {
     await this.create({ audio: true, video: false });
   };
@@ -274,7 +277,6 @@ export class Space extends Video {
   // public addCoHost = addCoHost;
   // public removeCoHost = removeCoHost;
 
-  // add listner to the space group as member
   public join = join;
 
   public leave = leave;
