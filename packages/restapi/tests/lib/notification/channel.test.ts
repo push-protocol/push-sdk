@@ -13,6 +13,7 @@ import {
   createPublicClient,
 } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
+import CONSTANTS from '../../../src/lib/constantsV2';
 
 describe('PushAPI.channel functionality', () => {
   let userAlice: PushAPI;
@@ -562,4 +563,24 @@ describe('PushAPI.channel functionality', () => {
       expect(res).not.null;
     }, 10000000000);
   });
+
+  describe("notifications", async()=>{
+    it("Should fetch channel specific feeds", async()=>{
+      const res = await userAlice.channel.notifications("eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681",{raw: false})
+      console.log(res)
+      expect(res).not.null
+    })
+
+    it("Should fetch channel specific feeds in raw fomrta", async()=>{
+      const res = await userAlice.channel.notifications("eip155:0xD8634C39BBFd4033c0d3289C4515275102423681",{raw: true})
+      console.log(res)
+      expect(res).not.null
+    })
+
+    it("Should fetch channel specific feeds broadcast type", async()=>{
+      const res = await userAlice.channel.notifications("0xD8634C39BBFd4033c0d3289C4515275102423681",{raw: false, filter: CONSTANTS.NOTIFICATION.TYPE.TARGETTED})
+      console.log(res)
+      expect(res).not.null
+    })
+  })
 });

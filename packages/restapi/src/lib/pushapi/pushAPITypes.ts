@@ -106,7 +106,7 @@ export interface SpaceCreationOptions {
     end?: Date;
   };
   rules?: SpaceRules;
-  private: boolean;
+  private?: boolean;
 }
 
 export interface SpaceQueryOptions {

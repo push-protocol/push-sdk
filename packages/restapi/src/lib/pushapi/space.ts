@@ -81,7 +81,7 @@ export class Space {
       listeners: options.participants.listeners,
       speakers: options.participants.speakers,
       spaceImage: options.image || null,
-      isPublic: !options.private,
+      isPublic: typeof options.private === 'boolean' ? !options.private : true,
       rules: options.rules || {},
       config: {
         scheduleAt: options.schedule.start,
