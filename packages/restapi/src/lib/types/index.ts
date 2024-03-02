@@ -959,3 +959,9 @@ export namespace TYPES {
     export type EVENT = SpaceMemberEventBase;
   }
 }
+
+export enum NotifictaionType  {
+  BROADCAT = 1,
+  TARGETTED = 3,
+  SUBSET = 4
+}
