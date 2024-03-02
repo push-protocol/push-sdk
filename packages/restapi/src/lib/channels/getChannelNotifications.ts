@@ -50,7 +50,6 @@ export const getChannelNotifications = async (
         }
   );
   const requestUrl = `${apiEndpoint}/${_channel}/notifications?${query}`;
-
   return await axiosGet(requestUrl)
     .then((response) => {
       if (raw) return {feeds: response.data?.feeds ?? [], itemcount:response.data?.itemcount} ;

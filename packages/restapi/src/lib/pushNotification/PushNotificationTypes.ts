@@ -118,7 +118,6 @@ export type NotificationSetting = {
 export type NotificationSettings = NotificationSetting[];
 
 export type ChannelFeedsOptions = {
-  account?: string;
   page?: number;
   limit?: number;
   raw?: boolean;
