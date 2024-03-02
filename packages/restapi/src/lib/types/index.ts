@@ -14,7 +14,7 @@ import {
 import { ENV, MessageType } from '../constants';
 import { EthEncryptedData } from '@metamask/eth-sig-util';
 import { Message, MessageObj } from './messageTypes';
-import { VideoEvent } from '../pushstream/pushStreamTypes';
+import { SpaceMemberEventBase, VideoEvent } from '../pushstream/pushStreamTypes';
 export * from './messageTypes';
 export * from './videoTypes';
 
@@ -953,5 +953,9 @@ export namespace TYPES {
   export namespace VIDEO {
     export type DATA = VideoCallData;
     export type EVENT = VideoEvent;
+  }
+  export namespace SPACE {
+    export type DATA = SpaceData;
+    export type EVENT = SpaceMemberEventBase;
   }
 }
