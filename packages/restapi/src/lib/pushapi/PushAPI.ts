@@ -156,10 +156,7 @@ export class PushAPI {
         ...options,
         version: options?.version || defaultOptions.version,
         versionMeta: options?.versionMeta || defaultOptions.versionMeta,
-        autoUpgrade:
-          options?.autoUpgrade !== undefined
-            ? options?.autoUpgrade
-            : defaultOptions.autoUpgrade,
+        autoUpgrade: true,
         alpha:
           options?.alpha && options.alpha.feature
             ? options.alpha
