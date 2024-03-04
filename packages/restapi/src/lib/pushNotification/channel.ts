@@ -20,6 +20,7 @@ import {
   getCAIPDetails,
   validateCAIP,
   getFallbackETHCAIPAddress,
+  pCAIP10ToWallet,
 } from '../helpers';
 import PROGRESSHOOK from '../progressHook';
 import * as viem from 'viem';
@@ -412,15 +413,17 @@ export class Channel extends PushNotificationBaseClass {
     }
   };
 
-  notifications = async(options?:ChannelFeedsOptions) => {
+  notifications = async(account: string, options?:ChannelFeedsOptions) => {
     try{
       const {
-        account = this.account,
         page,
         limit,
         filter = null,
         raw = true
       } = options || {}
+      if(account.split(":").length == 2){
+        account = pCAIP10ToWallet(account)
+      }
       return await PUSH_CHANNEL.getChannelNotifications({
         channel: account as string,
         env: this.env,

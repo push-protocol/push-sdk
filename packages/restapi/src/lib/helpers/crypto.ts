@@ -121,7 +121,7 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
     account = null,
     signer = null,
     env = Constants.ENV.PROD,
-    toUpgrade = false,
+    toUpgrade = true,
     additionalMeta = null,
     progressHook,
   } = options || {};

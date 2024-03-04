@@ -38,6 +38,13 @@ const CONSTANTS = {
   },
   ALPHA_FEATURES: ALPHA_FEATURES,
   USER: { ENCRYPTION_TYPE: ENCRYPTION_TYPE },
+  NOTIFICATION: {
+    TYPE: {
+      BROADCAST: 1,
+      SUBSET: 4,
+      TARGETTED: 3
+    }
+  }
 };
 
 export default CONSTANTS;
