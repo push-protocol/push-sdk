@@ -1,4 +1,4 @@
-import { ProgressHookType } from '../types';
+import { NotifictaionType, ProgressHookType } from '../types';
 import { GetAliasInfoOptionsType } from '../alias';
 import { ADDITIONAL_META_TYPE } from '../../lib/payloads/constants';
 
@@ -6,6 +6,8 @@ export type SubscriptionOptions = {
   account?: string;
   page?: number;
   limit?: number;
+  channel?: string;
+  raw?: boolean
 };
 export type ChannelInfoOptions = {
   channel?: string;
@@ -13,6 +15,7 @@ export type ChannelInfoOptions = {
   limit?: number;
   category?: number;
   setting?: boolean;
+  raw?: boolean
 };
 
 export type SubscribeUnsubscribeOptions = {
@@ -113,3 +116,13 @@ export type NotificationSetting = {
 };
 
 export type NotificationSettings = NotificationSetting[];
+
+export type ChannelFeedsOptions = {
+  page?: number;
+  limit?: number;
+  raw?: boolean;
+  filter?: NotifictaionType
+};
+export type ChannelOptions = {
+  raw: boolean
+}

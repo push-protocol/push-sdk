@@ -289,3 +289,6 @@ packages/restapi/yarn.lock
 yarn.lock
 *.env
 **/.next
+
+# NX cache
+.nx

@@ -5,7 +5,7 @@ import {
   RainbowKitProvider,
   darkTheme,
 } from '@rainbow-me/rainbowkit';
-import { configureChains, createClient, WagmiConfig } from 'wagmi';
+import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { sepolia } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 import { infuraProvider } from 'wagmi/providers/infura';
@@ -17,7 +17,7 @@ import { useEffect, useState } from 'react';
 // import { useSpaceComponents } from './../components/Spaces/useSpaceComponent';
 import { AccountContext } from '../contexts';
 
-const { chains, provider } = configureChains(
+const { chains, publicClient } = configureChains(
   [sepolia],
   [
     infuraProvider({ apiKey: '5524d420b29f4f7a8d8d2f582a0d43f7' }),
@@ -31,10 +31,10 @@ const { connectors } = getDefaultWallets({
   chains,
 });
 
-const wagmiClient = createClient({
+const wagmiConfig = createConfig({
   autoConnect: true,
   connectors,
-  provider,
+  publicClient,
 });
 
 export interface ISpacesComponentProps {
@@ -67,7 +67,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     <>
       {/* hacky fix for wagmi ssr hydration errors */}
       {loadWagmi ? (
-        <WagmiConfig client={wagmiClient}>
+        <WagmiConfig config={wagmiConfig}>
           <RainbowKitProvider theme={darkTheme()} chains={chains}>
             <AccountContext.Provider
               value={{ pgpPrivateKey, setPgpPrivateKey }}

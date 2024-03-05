@@ -5,7 +5,7 @@ import { IChatDataContextValues } from "../../context/chatContext";
 export const useChatData = (): IChatDataContextValues => {
   const context = useContext(ChatDataContext);
   if (!context) {
-    throw new Error('useSpaceData must be used within a ChatDataProvider');
+    throw new Error('useChatData must be used within a ChatDataProvider');
   }
   return context;
 }

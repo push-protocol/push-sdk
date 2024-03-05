@@ -13,14 +13,15 @@ import { ethers } from 'ethers';
 import styled from 'styled-components';
 
 import { useChatData, usePushChatStream } from '../../../hooks';
-import useChatProfile from '../../../hooks/chat/useChatProfile';
 import useFetchMessageUtilities from '../../../hooks/chat/useFetchMessageUtilities';
 import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
 import { Button, Section, Span, Spinner } from '../../reusables';
 import { ChatPreview } from '../ChatPreview';
+import useUserProfile from '../../../hooks/useUserProfile';
 
-import { getAddress, pCAIP10ToWallet } from '../../../helpers';
+import { getAddress, getNewChatUser, pCAIP10ToWallet } from '../../../helpers';
 import {
+  displayDefaultUser,
   generateRandomNonce,
   transformChatItems,
   transformStreamToIChatPreviewPayload,
@@ -59,7 +60,7 @@ interface IChatPreviewListMeta {
 }
 
 // Define Constants
-const CHAT_PAGE_LIMIT = 3;
+const CHAT_PAGE_LIMIT = 10;
 const SCROLL_LIMIT = 25;
 
 export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
@@ -67,7 +68,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
 ) => {
   // get hooks
   const { env, signer, account, user } = useChatData();
-  const { fetchChatProfile } = useChatProfile();
+  const { fetchUserProfile } = useUserProfile();
   const { getGroupByIDnew } = useGetGroupByIDnew();
   const { fetchLatestMessage, fetchChatList } = useFetchMessageUtilities();
 
@@ -91,15 +92,15 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       badges: {},
     });
 
+  console.log(chatPreviewList);
   // set theme
   const theme = useContext(ThemeContext);
 
   // set ref
   const listInnerRef = useRef<HTMLDivElement>(null);
 
-  const { chatStream, chatRequestStream, chatAcceptStream, groupMetaStream } =
+  const { chatStream, chatRequestStream, chatAcceptStream } =
     usePushChatStream();
-
   // Helper Functions
 
   // Add to chat items
@@ -116,7 +117,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
 
     setChatPreviewList((prev) => ({
       ...prev,
-      items: combinedItems,
+      items: [...combinedItems],
     }));
 
     // increment badge for each item
@@ -245,7 +246,6 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
         ) {
           return;
         }
-
         setChatPreviewList((prev) => ({
           nonce: generateRandomNonce(),
           items: transformedChats,
@@ -324,7 +324,10 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
 
         setChatPreviewList((prev) => ({
           nonce: generateRandomNonce(),
-          items: [...prev.items, ...transformedChats],
+          items: [...prev.items, ...transformedChats].filter(
+            (item, index, self) =>
+              index === self.findIndex((t) => t.chatId === item.chatId)
+          ),
           page: newpage,
           preloading: false,
           loading: false,
@@ -363,7 +366,10 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
 
   // Define Chat Preview List Meta Functions
   // Set selected badge
-  const setSelectedBadge: (chatId: string) => void = (chatId: string) => {
+  const setSelectedBadge: (chatId: string, chatParticipant: string) => void = (
+    chatId: string,
+    chatParticipant: string
+  ) => {
     // selected will reduce badge to 0
     setChatPreviewListMeta((prev) => ({
       selectedChatId: chatId,
@@ -375,7 +381,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
 
     // call onChatSelected if present
     if (options?.onChatSelected) {
-      options.onChatSelected(chatId);
+      options.onChatSelected(chatId, chatParticipant);
     }
   };
 
@@ -405,22 +411,45 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
 
   // Effects
 
+  useEffect(() => {
+    if (
+      options?.prefillChatPreviewList &&
+      options?.prefillChatPreviewList.length
+    ) {
+      setChatPreviewList({
+        nonce: generateRandomNonce(),
+        items: options?.prefillChatPreviewList.map(
+          (list) => list.chatPreviewPayload
+        ),
+        page: 1,
+        preloading: false,
+        loading: false,
+        loaded: false,
+        reset: false,
+        resume: false,
+        errored: false,
+        error: null,
+      });
+    }
+  }, [options?.prefillChatPreviewList]);
   // If account, env or signer changes
   useEffect(() => {
-    setChatPreviewList({
-      nonce: generateRandomNonce(),
-      items: [],
-      page: 1,
-      preloading: true,
-      loading: false,
-      loaded: false,
-      reset: false,
-      resume: false,
-      errored: false,
-      error: null,
-    });
-    resetBadge();
-  }, [account, signer, env]);
+    if (!options?.prefillChatPreviewList) {
+      setChatPreviewList({
+        nonce: generateRandomNonce(),
+        items: [],
+        page: 1,
+        preloading: true,
+        loading: false,
+        loaded: false,
+        reset: false,
+        resume: false,
+        errored: false,
+        error: null,
+      });
+      resetBadge();
+    }
+  }, [account, env, signer]);
 
   useEffect(() => {
     if (options?.onLoading) {
@@ -444,18 +473,20 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     }
 
     // reset the entire state
-    setChatPreviewList({
-      nonce: generateRandomNonce(),
-      items: [],
-      page: 1,
-      preloading: true,
-      loading: false,
-      loaded: false,
-      reset: true,
-      resume: false,
-      errored: false,
-      error: null,
-    });
+    if (!options?.prefillChatPreviewList) {
+      setChatPreviewList({
+        nonce: generateRandomNonce(),
+        items: [],
+        page: 1,
+        preloading: true,
+        loading: false,
+        loaded: false,
+        reset: true,
+        resume: false,
+        errored: false,
+        error: null,
+      });
+    }
   }, [
     options?.searchParamter,
     user,
@@ -470,7 +501,8 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       listInnerRef?.current?.parentElement &&
       !chatPreviewList.preloading &&
       (options.listType === CONSTANTS.CHAT.LIST_TYPE.CHATS ||
-        options.listType === CONSTANTS.CHAT.LIST_TYPE.REQUESTS)
+        options.listType === CONSTANTS.CHAT.LIST_TYPE.REQUESTS) &&
+      !options?.prefillChatPreviewList
     ) {
       if (
         listInnerRef.current.clientHeight + SCROLL_LIMIT >
@@ -494,15 +526,17 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
 
     // reset badge as well
     resetBadge();
-
-    if (chatPreviewList.reset) {
+    if (chatPreviewList.reset && !options?.prefillChatPreviewList) {
       initializeChatList();
     }
-  }, [chatPreviewList.reset]);
+  }, [chatPreviewList.reset, user?.readmode()]);
 
   // If loading becomes active
   useEffect(() => {
-    if (chatPreviewList.loading || chatPreviewList.resume) {
+    if (
+      (chatPreviewList.loading || chatPreviewList.resume) &&
+      !options.prefillChatPreviewList
+    ) {
       loadMoreChats();
     }
   }, [chatPreviewList.loading, chatPreviewList.resume]);
@@ -527,31 +561,34 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       Object.keys(chatStream).length > 0 &&
       chatStream.constructor === Object
     ) {
-      console.debug('Chat stream', chatStream);
       if (options.listType === CONSTANTS.CHAT.LIST_TYPE.CHATS) {
         transformStreamMessage(chatStream);
       }
     }
   }, [chatStream]);
-
   useEffect(() => {
     if (
       Object.keys(chatRequestStream).length > 0 &&
       chatRequestStream.constructor === Object
     ) {
-      console.debug('Chat request stream', chatRequestStream);
-      if (options.listType === CONSTANTS.CHAT.LIST_TYPE.REQUESTS) {
+      if (
+        options.listType === CONSTANTS.CHAT.LIST_TYPE.CHATS &&
+        chatRequestStream.origin === 'self'
+      ) {
+        transformStreamMessage(chatRequestStream);
+      } else if (
+        options.listType === CONSTANTS.CHAT.LIST_TYPE.REQUESTS &&
+        chatRequestStream.origin === 'other'
+      ) {
         transformStreamMessage(chatRequestStream);
       }
     }
   }, [chatRequestStream]);
-
   useEffect(() => {
     if (
       Object.keys(chatAcceptStream).length > 0 &&
       chatAcceptStream.constructor === Object
     ) {
-      console.debug('Chat accept stream', chatAcceptStream);
       transformAcceptedRequest(chatAcceptStream);
     }
   }, [chatAcceptStream]);
@@ -574,7 +611,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     try {
       if (options?.searchParamter) {
         let formattedChatId: string | null = options?.searchParamter;
-        let userProfile: IUser | null = null;
+        let userProfile: IUser | undefined = undefined;
         let groupProfile: Group;
 
         //check if ens then convert to address
@@ -591,8 +628,11 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
         if (!error) {
           if (await ethers.utils.isAddress(formattedChatId)) {
             //fetch  profile
-            userProfile = await fetchChatProfile({
-              profileId: formattedChatId,
+            userProfile = await getNewChatUser({
+              searchText: formattedChatId,
+              env,
+              fetchChatProfile: fetchUserProfile,
+              user,
             });
           } else {
             //fetch group info
@@ -729,22 +769,37 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     <ChatPreviewListContainer
       ref={listInnerRef}
       theme={theme}
-      onScroll={onScroll}
+      onScroll={!options?.prefillChatPreviewList ? onScroll : undefined}
     >
       {/* do actual chat previews */}
-      {chatPreviewList.items.map((item: IChatPreviewPayload) => {
+      {chatPreviewList.items.map((item: IChatPreviewPayload, index: number) => {
         return (
           <ChatPreview
+            key={item.chatId}
             chatPreviewPayload={item}
             badge={
-              chatPreviewListMeta.badges
+              options?.prefillChatPreviewList &&
+              options?.prefillChatPreviewList[index].badge
+                ? options?.prefillChatPreviewList[index].badge
+                : chatPreviewListMeta.badges
                 ? { count: chatPreviewListMeta.badges[item.chatId!] }
                 : { count: 0 }
             }
             selected={
+              options?.prefillChatPreviewList &&
+              options?.prefillChatPreviewList[index].selected
+              ?
+              options?.prefillChatPreviewList[index].selected
+              :
               chatPreviewListMeta.selectedChatId === item.chatId ? true : false
             }
-            setSelected={setSelectedBadge}
+            setSelected={
+              options?.prefillChatPreviewList &&
+              options?.prefillChatPreviewList[index].setSelected
+              ?
+              options?.prefillChatPreviewList[index].setSelected
+              :
+              setSelectedBadge}
           />
         );
       })}

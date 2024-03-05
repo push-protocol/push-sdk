@@ -43,6 +43,12 @@ export const CoreContractChainId = {
   local: 11155111,
 };
 
+export const CoreRPC = {
+  prod: 'https://mainnet.infura.io/v3/4ff53a5254144d988a8318210b56f47a',
+  dev:  'https://sepolia.infura.io/v3/5524d420b29f4f7a8d8d2f582a0d43f7',
+  staging: 'https://sepolia.infura.io/v3/49f638cc25a94ddb86b7aefd612f11ab',
+  local: 'https://sepolia.infura.io/v3/5524d420b29f4f7a8d8d2f582a0d43f7',
+};
 
 
 const TESTNET_NETWORK = {
@@ -135,3 +141,4 @@ export const FILE_ICON = (extension: string) =>
 export const LIVEKIT_SERVER_URL = "https://spacev2-demo-17wvllxz.livekit.cloud";
 export const LIVEKIT_SERVER_WEBSOCKET_URL = "wss://spacev2-demo-17wvllxz.livekit.cloud";
 export const LIVEKIT_TOKEN_GENERATOR_SERVER_URL = "https://ms-lk-server.onrender.com";
+export const GUEST_MODE_ACCOUNT = '0x0000000000000000000000000000000000000001';

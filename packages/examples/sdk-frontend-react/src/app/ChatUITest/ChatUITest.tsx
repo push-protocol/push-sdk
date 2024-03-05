@@ -26,7 +26,7 @@ const ChatUITest = () => {
 
       <Section>
         <NavMenu>
-        <Link to="/ChatProfile" className="nav-button">
+          <Link to="/ChatProfile" className="nav-button">
             CHAT PROFILE
           </Link>
           <Link to="/ChatViewBubble" className="nav-button">
@@ -43,6 +43,9 @@ const ChatUITest = () => {
           </Link>
           <Link to="/ChatPreviewList" className="nav-button">
             CHAT PREVIEW LIST
+          </Link>
+          <Link to="/userProfile" className="nav-button">
+            USER PROFILE COMPONENT
           </Link>
         </NavMenu>
       </Section>

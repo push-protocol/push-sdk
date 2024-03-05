@@ -8,4 +8,6 @@ export * from "./CreateGroup";
 export * from "./MessageInput";
 export * from './exportedTypes';
 export * from './theme';
+export * from "./CreateGroup";
+export * from "./UserProfile";
 

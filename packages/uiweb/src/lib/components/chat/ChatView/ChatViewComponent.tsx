@@ -2,9 +2,9 @@ import React, { useContext } from 'react';
 import {
   IChatTheme,
   IChatViewComponentProps,
-  MODAL_BACKGROUND_TYPE,
-  MODAL_POSITION_TYPE,
+
 } from '../exportedTypes';
+import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../../../types';
 
 import { chatLimit, device } from '../../../config';
 import { Section, Span } from '../../reusables';
@@ -45,7 +45,8 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
     groupInfoModalPositionType = MODAL_POSITION_TYPE.GLOBAL,
     verificationFailModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
     verificationFailModalPosition = MODAL_POSITION_TYPE.GLOBAL,
-    chatProfileHelperComponent = null,
+    chatProfileRightHelperComponent = null,
+    chatProfileLeftHelperComponent = null,
     welcomeComponent = null,
   } = options || {};
 
@@ -73,9 +74,9 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
         <>
           {chatProfile && 
           <ChatProfile
-            chatProfileHelperComponent={chatProfileHelperComponent}
+            chatProfileRightHelperComponent={chatProfileRightHelperComponent}
+            chatProfileLeftHelperComponent={chatProfileLeftHelperComponent}
             chatId={chatId}
-            style="Info"
             groupInfoModalBackground={groupInfoModalBackground}
             groupInfoModalPositionType={groupInfoModalPositionType}
           />}

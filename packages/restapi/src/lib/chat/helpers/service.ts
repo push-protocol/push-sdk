@@ -125,7 +125,7 @@ export const authUpdateUserService = async (options: CreateUserOptionsType) => {
 
 export const getConversationHashService = async (
   options: ConversationHashOptionsType
-): Promise<{ threadHash: string }> => {
+): Promise<{ threadHash: string, intent: boolean }> => {
   const { conversationId, account, env = Constants.ENV.PROD } = options || {};
 
   const API_BASE_URL = getAPIBaseUrls(env);

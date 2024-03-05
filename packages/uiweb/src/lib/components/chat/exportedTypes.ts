@@ -1,6 +1,6 @@
 import type { CONSTANTS, GroupDTO, GroupInfoDTO, IMessageIPFS } from '@pushprotocol/restapi';
-import { IGroup } from '../../types';
 import { IChatTheme } from "./theme";
+import { IGroup, ModalBackgroundType, ModalPositionType } from '../../types'
 
 
 export interface IChatPreviewPayload {
@@ -18,7 +18,7 @@ export interface IChatPreviewPayload {
 export interface IChatPreviewProps {
   chatPreviewPayload: IChatPreviewPayload;
   selected?: boolean;
-  setSelected?: (chatId: string) => void;
+  setSelected?: (chatId: string,chatParticipant: string) => void;
   badge?: {
     count?: number;
   };
@@ -30,7 +30,7 @@ export interface IChatPreviewListProps {
   listType?: 'CHATS' | 'REQUESTS' | 'SEARCH';
   prefillChatPreviewList?: Array<IChatPreviewProps>;
   searchParamter?: string;
-  onChatSelected?: (chatId: string) => void;
+  onChatSelected?: (chatId: string,chatParticipant: string) => void;
   onUnreadCountChange?: (count: number) => void;
   onPreload?: (chats: Array<IChatPreviewPayload>) => void;
   onPaging?: (chats: Array<IChatPreviewPayload>) => void;
@@ -42,6 +42,7 @@ export interface IChatViewListProps {
   chatFilterList?: Array<string>;
   limit?: number;
 }
+
 
 export interface IChatViewComponentProps {
   messageInput?: boolean;
@@ -60,16 +61,17 @@ export interface IChatViewComponentProps {
   verificationFailModalBackground?: ModalBackgroundType;
   verificationFailModalPosition?: ModalPositionType;
   onVerificationFail?: () => void;
-  chatProfileHelperComponent?: React.ReactNode;
+  chatProfileRightHelperComponent?: React.ReactNode;
+  chatProfileLeftHelperComponent?: React.ReactNode;
   welcomeComponent?:React.ReactNode;
 }
 
 export interface IChatProfile {
   chatId: string;
-  style: "Info" | "Preview";
   groupInfoModalBackground?: ModalBackgroundType;
   groupInfoModalPositionType?: ModalPositionType;
-  chatProfileHelperComponent?: React.ReactNode;
+  chatProfileRightHelperComponent?: React.ReactNode;
+  chatProfileLeftHelperComponent?: React.ReactNode;
 }
 
 export interface TwitterFeedReturnType {
@@ -159,27 +161,16 @@ export interface User {
   isAdmin?:boolean;
 }
 
-export const MODAL_BACKGROUND_TYPE = {
-  OVERLAY:'OVERLAY',
-  BLUR: 'BLUR',
-  TRANSPARENT: 'TRANSPARENT',
-
-  } as const;
-  
-  export type ModalBackgroundType = keyof typeof MODAL_BACKGROUND_TYPE;
-
-  export const MODAL_POSITION_TYPE = {
-    RELATIVE:'RELATIVE',
-    GLOBAL: 'GLOBAL',
-    } as const;
-    
-  export type ModalPositionType = keyof typeof MODAL_POSITION_TYPE;
 export interface CreateGroupModalProps {
   onClose: ()=>void;
   modalBackground?: ModalBackgroundType;
   modalPositionType?: ModalPositionType;
 };
 
+export interface UserProfileProps {
+  updateUserProfileModalBackground?: ModalBackgroundType;
+  updateUserProfileModalPositionType?: ModalPositionType;
+};
 
 export interface ModalButtonProps {
   memberListCount?: boolean;

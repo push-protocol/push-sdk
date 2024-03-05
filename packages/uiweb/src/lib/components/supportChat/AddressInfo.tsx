@@ -8,7 +8,9 @@ import { ethers } from 'ethers';
 import { ChatProps } from './Chat';
 
 export const AddressInfo: React.FC = () => {
+
   const { supportAddress, env, theme, user } = useContext<ChatProps>(SupportChatPropsContext);
+
   const [ensName, setEnsName] = useState<string>('');
   const [pushUser, setPushUser] = useState<any>({});
   const [isCopied, setIsCopied] = useState<boolean>(false);
@@ -20,7 +22,7 @@ export const AddressInfo: React.FC = () => {
     const getUser = async () => {
 if(user){
   const fetchedUser = await user.info();
- const ensNameResult = await resolveNewEns(supportAddress!, provider) 
+ const ensNameResult = await resolveNewEns(supportAddress!, provider,env!) 
   setEnsName(ensNameResult!)
 setPushUser(fetchedUser);
 }

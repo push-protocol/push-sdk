@@ -16,43 +16,73 @@ export const usePushChatStream = () => {
 
   const [chatStream, setChatStream] = useState<any>({}); // to track any new messages
   const [chatAcceptStream, setChatAcceptStream] = useState<any>({}); // to track any new messages
-  const [chatRequestStream, setChatRequestStream] = useState<any>({}); // any message in request
-  const [groupMetaStream, setGroupMetaStream] = useState<any>({}); //group info
+  const [chatRejectStream, setChatRejectStream] = useState<any>({}); // to track any rejected request
 
+  const [chatRequestStream, setChatRequestStream] = useState<any>({}); // any message in request
+  const [participantRemoveStream, setParticipantRemoveStream] = useState<any>({}); // to track if a participant is removed from group
+  const [participantLeaveStream, setParticipantLeaveStream] = useState<any>({}); // to track if a participant leaves a group
+  const [participantJoinStream, setParticipantJoinStream] = useState<any>({}); // to track if a participant joins a group
+  const [groupCreateStream, setGroupCreateStream] = useState<any>({}); // to track if group is created
+
+  const [groupUpdateStream, setGroupUpdateStream] = useState<any>({}); //group updation stream
+console.debug('in stream')
   const attachListenersAndConnect = async (stream: any) => {
     stream?.on(CONSTANTS.STREAM.CONNECT, (err: Error) => {
+        console.debug(' stream connected .........',err)
       setIsPushChatStreamConnected(true);
     });
 
     stream?.on(CONSTANTS.STREAM.DISCONNECT, (err: Error) => {
+        console.debug(err)
       setIsPushChatStreamConnected(false);
     });
 
     //Listen for chat messages, your message, request, accept, rejected,
     stream?.on(CONSTANTS.STREAM.CHAT, (message: any) => {
+      console.debug(message);
       if (message.event === 'chat.request') {
         setChatRequestStream(message);
       } else if (message.event === 'chat.accept') {
         setChatAcceptStream(message);
-      } else if (message.event === 'chat.message') {
+      } else if (message.event === 'chat.reject') {
+        setChatRejectStream(message);
+      }
+      else if (message.event === 'chat.group.participant.remove') {
+        setParticipantRemoveStream(message);
+      }
+      else if (message.event === 'chat.group.participant.leave') {
+        setParticipantLeaveStream(message);
+      }
+      else if (message.event === 'chat.group.participant.join') {
+        setParticipantJoinStream(message);
+      }
+   
+       else if (message.event === 'chat.message') {
         setChatStream(message);
       }
     });
 
     // Listen for group info
     stream?.on(CONSTANTS.STREAM.CHAT_OPS, (chatops: any) => {
-      setGroupMetaStream(chatops);
+        console.debug(chatops)
+         if (chatops.event === 'chat.group.update') {
+          setGroupUpdateStream(chatops);
+        }
+        else if (chatops.event === 'chat.group.create') {
+          setGroupCreateStream(chatops);
+        }
     });
 
     console.debug('stream listeners attached');
   };
-  
+
   /**
    * Whenever the requisite params to create a connection object change
    *  - disconnect the old connection
    *  - create a new connection object
    */
   useEffect(() => {
+
     if (!user) {
       return;
     }
@@ -74,7 +104,8 @@ export const usePushChatStream = () => {
             raw: true,
           }
         );
-          
+        console.debug(stream)
+
         // attach listeneres
         await attachListenersAndConnect(stream);
       }
@@ -84,7 +115,6 @@ export const usePushChatStream = () => {
         await user.stream?.connect();
         console.debug('Connect stream: ', user);
       }
-
     };
 
     initUser();
@@ -103,6 +133,11 @@ export const usePushChatStream = () => {
     chatStream,
     chatRequestStream,
     chatAcceptStream,
-    groupMetaStream,
+    groupUpdateStream,
+    chatRejectStream,
+    participantRemoveStream,
+    participantLeaveStream,
+    participantJoinStream,
+    groupCreateStream
   };
 };
