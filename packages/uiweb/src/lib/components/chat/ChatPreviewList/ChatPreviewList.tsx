@@ -21,6 +21,7 @@ import useUserProfile from '../../../hooks/useUserProfile';
 
 import { getAddress, getNewChatUser, pCAIP10ToWallet } from '../../../helpers';
 import {
+  displayDefaultUser,
   generateRandomNonce,
   transformChatItems,
   transformStreamToIChatPreviewPayload,

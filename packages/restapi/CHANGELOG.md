@@ -2,6 +2,17 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.72](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.71...restapi-0.0.1-alpha.72) (2024-03-02)
+
+
+### Bug Fixes
+
+* added cacheing to grp message decryption ([#1126](https://github.com/ethereum-push-notification-service/push-sdk/issues/1126)) ([dcb883c](https://github.com/ethereum-push-notification-service/push-sdk/commit/dcb883cb3ca1d5def7ecb0019bb3dd7865f78b07))
+* Merge branch 'main' into alpha ([370e2f2](https://github.com/ethereum-push-notification-service/push-sdk/commit/370e2f2e508ed7248f82c21ec82e67898e0cb2f8))
+* tweaked parameters ([#1137](https://github.com/ethereum-push-notification-service/push-sdk/issues/1137)) ([cd277e6](https://github.com/ethereum-push-notification-service/push-sdk/commit/cd277e6715c9cd14a1000a1ea4db6fb47e9bcba1))
+
+
+
 ## [0.0.1-alpha.71](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.70...restapi-0.0.1-alpha.71) (2024-02-26)
 
 
