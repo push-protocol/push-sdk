@@ -33,7 +33,8 @@ import { useChatData, usePushChatStream } from '../../../hooks';
 import { Messagetype } from '../../../types';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { IChatTheme } from '../theme';
-
+import { generateRandomNonce } from '../helpers';
+import { INITIAL_NONCE } from '../constants';
 
 /**
  * @interface IThemeProps
@@ -52,11 +53,14 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   options: IChatViewListProps
 ) => {
   const { chatId, limit = chatLimit, chatFilterList = [] } = options || {};
-  const { account, pushUser } =
-    useChatData();
+  const { account, pushUser } = useChatData();
   const [chatFeed, setChatFeed] = useState<IFeeds>({} as IFeeds);
   const [chatStatusText, setChatStatusText] = useState<string>('');
-  const [messages, setMessages] = useState<Messagetype>();
+  const [messages, setMessages] = useState<Messagetype>({
+    messages: [],
+    lastThreadHash: null,
+    nonce: INITIAL_NONCE
+  });
   const [loading, setLoading] = useState<boolean>(true);
   const [conversationHash, setConversationHash] = useState<string>();
   const { historyMessages, loading: messageLoading } =
@@ -69,8 +73,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
 
   // const { messagesSinceLastConnection, groupInformationSinceLastConnection } =
   //   usePushChatSocket();
-  const { chatRequestStream, groupMetaStream } =
-    usePushChatStream();
+  const { chatRequestStream, groupMetaStream } = usePushChatStream();
   const theme = useContext(ThemeContext);
   const dates = new Set();
   const { env } = useChatData();
@@ -80,14 +83,18 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   }, [chatId, account, env]);
 
   useEffect(() => {
-    setMessages(undefined);
+    setMessages({
+      messages: [],
+      lastThreadHash: null,
+      nonce: generateRandomNonce(),
+    });
     setConversationHash(undefined);
   }, [chatId, account, env]);
   //need to make a common method for fetching chatFeed to ruse in messageInput
   useEffect(() => {
     (async () => {
       if (Object.keys(pushUser || {}).length) {
-        const chat = await fetchChat({chatId});
+        const chat = await fetchChat({ chatId });
         if (chat) {
           setConversationHash(chat?.threadhash as string);
           setChatFeed(chat as IFeeds);
@@ -102,7 +109,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
           if (result) {
             newChatFeed = getDefaultFeedObject({ user: result });
           } else {
-            group = await getGroupByID({groupId:chatId});
+            group = await getGroupByID({ groupId: chatId });
             if (group) {
               newChatFeed = getDefaultFeedObject({ groupInformation: group });
             }
@@ -183,7 +190,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   }, [messages]);
 
   useEffect(() => {
-
     if (chatFeed && !chatFeed?.groupInformation?.isPublic && account) {
       chatFeed?.groupInformation?.members.forEach((acc) => {
         if (
@@ -193,17 +199,16 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
         }
       });
     }
-  }, [account, chatFeed])
+  }, [account, chatFeed]);
 
   //methods
   const scrollToBottom = () => {
     setTimeout(() => {
       if (listInnerRef.current) {
-        listInnerRef.current.scrollTop = listInnerRef.current.scrollHeight + 100;
-
+        listInnerRef.current.scrollTop =
+          listInnerRef.current.scrollHeight + 100;
       }
-    }, 0)
-
+    }, 0);
   };
 
   const onScroll = async () => {
@@ -224,14 +229,24 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
 
   const getMessagesCall = async () => {
     let threadHash;
-    if (!messages) {
+    if (!messages?.lastThreadHash) {
       threadHash = conversationHash;
     } else {
       threadHash = messages?.lastThreadHash;
     }
-    if (threadHash && ((account && chatFeed && !chatFeed?.groupInformation) || (chatFeed && chatFeed?.groupInformation))) {
+    if (
+      threadHash &&
+      ((account && chatFeed && !chatFeed?.groupInformation) ||
+        (chatFeed && chatFeed?.groupInformation))
+    ) {
+      const currentNonce = messages.nonce;
       const chatHistory = await historyMessages({ chatId, limit, threadHash });
       if (chatHistory?.length) {
+        // return if nonce doesn't match or if page is not 1
+        if (currentNonce !== messages.nonce) {
+          console.log('in return ',currentNonce)
+          return;
+        }
         if (Object.keys(messages || {}) && messages?.messages.length) {
           const newChatViewList = appendUniqueMessages(
             messages,
@@ -240,7 +255,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
           );
           setFilteredMessages(newChatViewList as IMessageIPFSWithCID[]);
         } else {
-
           setFilteredMessages(chatHistory as IMessageIPFSWithCID[]);
         }
       }
@@ -256,6 +270,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       setMessages({
         messages: updatedMessageList,
         lastThreadHash: updatedMessageList[0].link,
+        nonce: generateRandomNonce(),
       });
     }
   };
@@ -265,9 +280,10 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       chatFeed &&
       chatFeed?.groupInformation &&
       !chatFeed?.groupInformation?.isPublic &&
-      ((!isMember && Object.keys(pushUser || {}).length) || !(Object.keys(pushUser || {}).length))
+      ((!isMember && Object.keys(pushUser || {}).length) ||
+        !Object.keys(pushUser || {}).length)
     );
-  }
+  };
 
   type RenderDataType = {
     chat: IMessageIPFS;
@@ -297,9 +313,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       justifyContent="start"
       padding="0 2px"
       theme={theme}
-      blur={
-        ifBlurChat()
-      }
+      blur={ifBlurChat()}
       onScroll={(e) => {
         e.stopPropagation();
         onScroll();
@@ -309,9 +323,9 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       {!loading && (
         <>
           {chatFeed &&
-            (chatFeed.publicKey ||
-              (chatFeed?.groupInformation &&
-                !chatFeed?.groupInformation?.isPublic)) ? (
+          (chatFeed.publicKey ||
+            (chatFeed?.groupInformation &&
+              !chatFeed?.groupInformation?.isPublic)) ? (
             <EncryptionMessage id={ENCRYPTION_KEYS.ENCRYPTED} />
           ) : (
             <EncryptionMessage
@@ -343,25 +357,30 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
                 justifyContent="start"
                 width="100%"
               >
-                {messages?.messages &&
+                {messages?.messages && !!messages?.messages.length &&
                   messages?.messages?.map(
                     (chat: IMessageIPFS, index: number) => {
                       const dateNum = formatTime(chat.timestamp);
                       const position =
                         pCAIP10ToWallet(chat.fromCAIP10).toLowerCase() !==
-                          account?.toLowerCase()
+                        account?.toLowerCase()
                           ? 0
                           : 1;
                       return (
                         <>
                           {dates.has(dateNum)
                             ? null
-                            : dateNum ? renderDate({ chat, dateNum }) : null}
+                            : dateNum
+                            ? renderDate({ chat, dateNum })
+                            : null}
                           <Section
                             justifyContent={position ? 'end' : 'start'}
                             margin="7px"
                           >
-                            <ChatViewBubble decryptedMessagePayload={chat} key={index} />
+                            <ChatViewBubble
+                              decryptedMessagePayload={chat}
+                              key={index}
+                            />
                           </Section>
                         </>
                       );
@@ -389,7 +408,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
 };
 
 //styles
-const ChatViewListCard = styled(Section) <IThemeProps>`
+const ChatViewListCard = styled(Section)<IThemeProps>`
   &::-webkit-scrollbar-thumb {
     background: ${(props) => props.theme.scrollbarColor};
     border-radius: 10px;
