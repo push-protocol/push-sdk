@@ -39,11 +39,11 @@ const BLOCKCHAIN_NETWORK = {
   POLYGON_MUMBAI: 'eip155:80001',
   BSC_MAINNET: 'eip155:56',
   BSC_TESTNET: 'eip155:97',
-  OPTIMISM_TESTNET: 'eip155:420',
+  OPTIMISM_TESTNET: 'eip155:11155420',
   OPTIMISM_MAINNET: 'eip155:10',
   POLYGON_ZK_EVM_TESTNET: 'eip155:1442',
   POLYGON_ZK_EVM_MAINNET: 'eip155:1101',
-  ARBITRUM_TESTNET: 'eip155:421613',
+  ARBITRUM_TESTNET: 'eip155:421614',
   ARBITRUMONE_MAINNET: 'eip155:42161',
   FUSE_TESTNET: 'eip155:123',
   FUSE_MAINNET: 'eip155:122',
@@ -78,9 +78,9 @@ export const ALIAS_CHAIN_ID = {
   },
   OPTIMISM: {
     [ENV.PROD]: 10,
-    [ENV.STAGING]: 420,
-    [ENV.DEV]: 420,
-    [ENV.LOCAL]: 420,
+    [ENV.STAGING]: 11155420,
+    [ENV.DEV]: 11155420,
+    [ENV.LOCAL]: 11155420,
   },
   POLYGONZKEVM: {
     [ENV.PROD]: 1101,
@@ -90,9 +90,9 @@ export const ALIAS_CHAIN_ID = {
   },
   ARBITRUMONE: {
     [ENV.PROD]: 42161,
-    [ENV.STAGING]: 421613,
-    [ENV.DEV]: 421613,
-    [ENV.LOCAL]: 421613,
+    [ENV.STAGING]: 421614,
+    [ENV.DEV]: 421614,
+    [ENV.LOCAL]: 421614,
   },
   FUSE: {
     [ENV.PROD]: 122,
@@ -119,12 +119,12 @@ export const CHAIN_NAME: { [key: number]: string } = {
   97: 'BSC',
   // optimism
   10: 'OPTIMISM',
-  420: 'OPTIMISM',
+  11155420: 'OPTIMISM',
   // plygonzkevm
   1101: 'POLYGONZKEVM',
   1442: 'POLYGONZKEVM',
   // arbitrun
-  421613: 'ARBITRUN',
+  421614: 'ARBITRUN',
   42161: 'ARBITRUM',
   // fuse
   122: 'FUSE',

@@ -32,7 +32,7 @@ export const NETWORK_DETAILS = {
     network: 'polygon-mainnet',
   },
   97: {},
-  420: {},
+  11155420: {},
 };
 
 //todo: need to change o sepolia
@@ -51,7 +51,7 @@ const TESTNET_NETWORK = {
   BSC: 'eip155:97',
   OPTIMISM: 'eip155:420',
   POLYGON_ZK_EVM: 'eip155:1442',
-  ARBITRUM:'eip155:421613',
+  ARBITRUM:'eip155:421614',
   FUSE: 'eip155:123'
 };
 const MAINET_NETWORK = {
@@ -84,8 +84,8 @@ export const allowedNetworks = {
     11155111, // for eth sepolia
     80001, //for mumbai polygon
     97, // bnb testnet
-    420, // optimism goerli testnet
-    421613, // for arbitrum testnet
+    11155420, // optimism sepolia testnet
+    421614, // for arbitrum testnet
     123 // for fuse testnet
   ],
   staging: [
@@ -93,16 +93,16 @@ export const allowedNetworks = {
     11155111, // for sepolia
     80001, //for mumbai polygon
     97, // bnb testnet
-    420, // optimism goerli testnet
-    421613, // for arbitrum testnet
+    11155420, // optimism sepolia testnet
+    421614, // for arbitrum testnet
     123 // for fuse testnet
   ],
   local: [
     11155111, // for eth sepolia
     80001, //for mumbai polygon
     97, // bnb testnet
-    420, // optimism goerli testnet
-    421613, // for arbitrum testnet
+    11155420, // optimism sepolia testnet
+    421614, // for arbitrum testnet
     123 // for fuse testnet
   ]
 }

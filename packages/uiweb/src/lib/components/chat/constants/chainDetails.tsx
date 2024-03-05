@@ -43,7 +43,7 @@ export const NETWORK_ICON_DETAILS =  {
     label: 'BSC MAINNET',
     icon: createSVGIcon(<BSCSvg/>, 'Bsc Mainnet'),
   },
-  420: {
+  11155420: {
     label: 'OPTIMISM TESTNET',
     icon: createSVGIcon(<OptimismSvg/>, 'Optimism Testnet'),
   },
@@ -64,7 +64,7 @@ export const NETWORK_ICON_DETAILS =  {
     label: 'ARBITRUMONE MAINNET',
     icon: createSVGIcon(<ArbitrumSvg/>, 'Arbitrum Mainnet'),
   },
-  421613: {
+  421614: {
     label: 'ARBITRUM TESTNET',
     icon: createSVGIcon(<ArbitrumSvg/>, 'Arbitrum Testnet'),
   },
