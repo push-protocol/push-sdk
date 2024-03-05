@@ -7,3 +7,4 @@ export * from './_getSubscribers';
 export * from './getSubscribers';
 export * from './subscribeV2';
 export * from './unsubscribeV2';
+export * from './getChannelNotifications';

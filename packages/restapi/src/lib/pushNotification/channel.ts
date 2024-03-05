@@ -10,6 +10,7 @@ import {
   NotificationOptions,
   CreateChannelOptions,
   NotificationSettings,
+  ChannelFeedsOptions,
   ChannelOptions
 } from './PushNotificationTypes';
 import * as config from '../config';
@@ -19,6 +20,7 @@ import {
   getCAIPDetails,
   validateCAIP,
   getFallbackETHCAIPAddress,
+  pCAIP10ToWallet,
 } from '../helpers';
 import PROGRESSHOOK from '../progressHook';
 import * as viem from 'viem';
@@ -410,4 +412,30 @@ export class Channel extends PushNotificationBaseClass {
       throw new Error(`Push SDK Error: Contract : channel::setting : ${error}`);
     }
   };
+
+  notifications = async(account: string, options?:ChannelFeedsOptions) => {
+    try{
+      const {
+        page,
+        limit,
+        filter = null,
+        raw = true
+      } = options || {}
+      if(account.split(":").length == 2){
+        account = pCAIP10ToWallet(account)
+      }
+      return await PUSH_CHANNEL.getChannelNotifications({
+        channel: account as string,
+        env: this.env,
+        filter,
+        raw,
+        page,
+        limit
+      })
+
+    }catch(error){
+      throw new Error(`Push SDK Error: Contract : channel::notifications : ${error}`);
+    }
+
+  }
 }
