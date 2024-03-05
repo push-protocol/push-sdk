@@ -20,8 +20,8 @@ export const AddressInfo: React.FC = () => {
     const getUser = async () => {
 if(user){
   const fetchedUser = await user.info();
-//  const ensNameResult = await resolveNewEns(supportAddress, provider) 
-//   setEnsName(ensNameResult!)
+ const ensNameResult = await resolveNewEns(supportAddress!, provider) 
+  setEnsName(ensNameResult!)
 setPushUser(fetchedUser);
 }
       
