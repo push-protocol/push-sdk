@@ -190,6 +190,7 @@ const Container = styled.div`
   bottom: 0;
   right: 0;
   width: fit-content;
+  z-index: 999999;
   margin: 0 3rem 2rem 0;
   align-items: center;
   justify-content: center;
