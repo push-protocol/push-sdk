@@ -19,7 +19,7 @@ import { IWidgetTheme } from '../theme';
 import useMediaQuery from '../../../hooks/useMediaQuery';
 import { device } from '../../../config';
 import * as PushAPI from '@pushprotocol/restapi';
-import { notifUserSettingFormatString } from '../helpers';
+import { notifStrictUserSettingFromat, notifUserSettingFormatString } from '../helpers';
 import { ChannelDetailsComponent } from './ChannelDetailsComponent';
 import { ConnectButtonComp } from '../ConnectButton';
 
@@ -107,6 +107,7 @@ export const ManageNotficationsComponent: React.FC<
       );
     }
   };
+
 
   const getFlexDirection = () => {
     if (userSettings && userSettings.length) {

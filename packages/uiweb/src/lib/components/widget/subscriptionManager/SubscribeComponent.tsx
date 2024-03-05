@@ -54,9 +54,10 @@ export const SubscribeComponent: React.FC<ISubscribeComponentProps> = (
     return null;
   }, [channelInfo]));
 
-
+ 
 
   const handleSubscribe = async () => {
+ 
     try {
       const response = await subscribeToChannel({
         channelAddress: channelAddress,
@@ -77,7 +78,6 @@ export const SubscribeComponent: React.FC<ISubscribeComponentProps> = (
       }
     } catch (e) {
       console.debug(e);
-      console.debug('subscribe error')
       setSubscribeError(
         WidgetErrorCodes.NOTIFICATION_WIDGET_SUBSCRIBE_ERROR
       );

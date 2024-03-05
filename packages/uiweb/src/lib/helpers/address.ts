@@ -131,6 +131,6 @@ export const getAddressFromSigner = async (
   if ('getAddress' in signer) {
     return await signer.getAddress();
   } else {
-    return signer.account['address'] ?? '';
+    return signer.account['address'] ?? undefined;
   }
 };
