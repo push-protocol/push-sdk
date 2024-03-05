@@ -104,5 +104,5 @@ export interface FileMessageContent {
   type: string
   size: number
 }
-export type Messagetype = { messages: IMessageIPFS[]; lastThreadHash: string | null; nonce: string };
+export type Messagetype = { messages: IMessageIPFS[]; lastThreadHash: string | null };
 
