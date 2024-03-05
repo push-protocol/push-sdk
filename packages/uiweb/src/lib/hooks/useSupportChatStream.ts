@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import {  ENV } from '../config';
 import { CONSTANTS, PushAPI, SignerType } from '@pushprotocol/restapi';
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { PushStream } from 'packages/restapi/src/lib/pushstream/PushStream';
+// import { PushStream } from 'packages/restapi/src/lib/pushstream/PushStream';
 
 
 export type SupportChatStreamHookOption = {
@@ -19,7 +19,7 @@ export const useSupportChatStream =({ account, env , user, supportAddress, signe
   const [isSupportChatStreamConnected, setIsSupportChatStreamConnected] = useState<boolean>(false);
 
   
-  const attachListenersAndConnect = async (stream: PushStream) => {
+  const attachListenersAndConnect = async (stream: any) => {
     console.warn('\n--> addChatSocketEvents');
     stream.on(CONSTANTS.STREAM.CONNECT, (err:Error) => {
       console.log('CONNECTED to the stream');
