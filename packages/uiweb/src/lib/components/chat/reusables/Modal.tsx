@@ -117,7 +117,7 @@ const ModalOverlay = styled.div<IModalProps>`
   color: ${(props) => props.theme.textColor!.modalHeadingText ?? '#000'};
   justify-content: center;
   align-items: center;
-  z-index: 999999;
+  z-index: 2000;
 
   max-height: 100vh;
   overflow-y: auto;
