@@ -476,20 +476,6 @@ export const preparePGPPublicKey = async (
     case Constants.ENC_TYPE_V3:
     case Constants.ENC_TYPE_V4: {
       const verificationProof = 'DEPRECATED';
-
-      /**
-       * @deprecated
-       * PUSH CHAT PROFILE CREATION DOES NOT SIGN PGP PUBLIC KEY
-       * VERIFICATION PROOF SIGNATURE SHOULD BE USED FOR VERIFICATION OF PUSH PROFILE KEYS
-       */
-
-      // const createProfileMessage =
-      //   'Create Push Profile \n' + generateHash(publicKey);
-      // const { verificationProof } = await getEip191Signature(
-      //   wallet,
-      //   createProfileMessage
-      // );
-
       // TODO - Change JSON Structure to string ie equivalent to ENC_TYPE_V1 ( would be done after PUSH Node changes )
       chatPublicKey = JSON.stringify({
         key: publicKey,
