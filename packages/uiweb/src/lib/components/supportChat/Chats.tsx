@@ -156,6 +156,7 @@ const FileMessage = styled.div`
 
 const TextMessage = styled.p`
   word-wrap: break-word;
+  word-break: break-word;
   padding: 0 45px 6px 4px;
   text-align: left;
   font-weight: 400;
