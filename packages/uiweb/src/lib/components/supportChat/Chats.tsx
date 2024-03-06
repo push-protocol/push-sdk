@@ -155,8 +155,9 @@ const FileMessage = styled.div`
 `;
 
 const TextMessage = styled.p`
-  word-wrap: break-word;
-  padding: 0 45px 6px 4px;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  padding: 0 13px 6px 4px;
   text-align: left;
   font-weight: 400;
   font-size: 15px;
@@ -211,7 +212,7 @@ const SenderMessage = styled.div`
   border: ${(props) => props.theme.border};
   border-radius: 16px 2px 16px 16px;
   display: flex;
-  justify-content: flex-strt;
+  justify-content: flex-start;
   align-items: center;
   color: ${(props: any): string => props.theme.textColorSecondary || '#ffffff'};
 `;
