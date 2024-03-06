@@ -98,6 +98,8 @@ export const createUserCore = async (
     progressHook?.(PROGRESSHOOK['PUSH-CREATE-01'] as ProgressHookType);
     const keyPairs = await pgpHelper.generateKeyPair();
 
+    // Report Progress
+    progressHook?.(PROGRESSHOOK['PUSH-CREATE-02'] as ProgressHookType);
     const publicKey: string = await preparePGPPublicKey(
       encryptionType,
       keyPairs.publicKeyArmored,
