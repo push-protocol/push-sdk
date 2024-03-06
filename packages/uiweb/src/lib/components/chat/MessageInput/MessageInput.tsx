@@ -250,6 +250,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     account,
     groupInfo,
     chatInfo,
+    chatAcceptStream,
     participantJoinStream,
     participantLeaveStream,
     participantRemoveStream,

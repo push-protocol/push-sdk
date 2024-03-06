@@ -238,6 +238,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     account,
     groupInfo,
     chatInfo,
+    chatAcceptStream,
     participantJoinStream,
     participantLeaveStream,
     participantRemoveStream,
