@@ -2,6 +2,18 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.6.11](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.6.10...restapi-1.6.11) (2024-03-07)
+
+
+### Bug Fixes
+
+* **autoupgrade:** turn autoUpgrade True in low level SDK fns ([#1138](https://github.com/ethereum-push-notification-service/push-sdk/issues/1138)) ([5717b1d](https://github.com/ethereum-push-notification-service/push-sdk/commit/5717b1da3d1b1e96df2e552092666736654a8ee7))
+* mark push-create-02 as deprecated ([#1147](https://github.com/ethereum-push-notification-service/push-sdk/issues/1147)) ([46e119e](https://github.com/ethereum-push-notification-service/push-sdk/commit/46e119ee8032def40dfc863ba96eee13e3537ebf))
+* Merge branch 'main' into deployment ([b6c6f19](https://github.com/ethereum-push-notification-service/push-sdk/commit/b6c6f19f16e98017ae717bcb387828dd633dbd96))
+* progressHook info message changes ([#1142](https://github.com/ethereum-push-notification-service/push-sdk/issues/1142)) ([ee074a1](https://github.com/ethereum-push-notification-service/push-sdk/commit/ee074a1890aecabb308b15e8eebf890f058af232))
+
+
+
 ## [1.6.10](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.6.9...restapi-1.6.10) (2024-03-02)
 
 
