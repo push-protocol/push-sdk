@@ -6,7 +6,7 @@ import { PushAPI } from '../../../src/lib/pushapi/PushAPI';
 import CONSTANTS from '../../../src/lib/constantsV2';
 import { PushStream } from '../../../src/lib/pushstream/PushStream';
 
-describe.only('Push Chat Group Events functionality', () => {
+describe('Push Chat Group Events functionality', () => {
   const env = CONSTANTS.ENV.DEV;
   let userAlice: PushAPI;
   let userBob: PushAPI;

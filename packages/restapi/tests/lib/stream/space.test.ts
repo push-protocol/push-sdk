@@ -9,7 +9,7 @@ import CONSTANTS from '../../../src/lib/constantsV2';
 import * as util from 'util';
 import { PushStream } from '../../../src/lib/pushstream/PushStream';
 
-describe.only('PushStream.initialize functionality', () => {
+describe('PushStream.initialize functionality', () => {
   it('Should initialize new stream and listen to events', async () => {
     const spaceDescription = 'Hey There!!!';
     const spaceImage =
