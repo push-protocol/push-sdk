@@ -2,6 +2,19 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.73](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.72...restapi-0.0.1-alpha.73) (2024-03-07)
+
+
+### Bug Fixes
+
+* **autoupgrade:** turn autoUpgrade True in low level SDK fns ([#1138](https://github.com/ethereum-push-notification-service/push-sdk/issues/1138)) ([5717b1d](https://github.com/ethereum-push-notification-service/push-sdk/commit/5717b1da3d1b1e96df2e552092666736654a8ee7))
+* mark push-create-02 as deprecated ([#1147](https://github.com/ethereum-push-notification-service/push-sdk/issues/1147)) ([46e119e](https://github.com/ethereum-push-notification-service/push-sdk/commit/46e119ee8032def40dfc863ba96eee13e3537ebf))
+* Merge branch 'main' into alpha ([dd88465](https://github.com/ethereum-push-notification-service/push-sdk/commit/dd884652aaf72ed57d1cfac43fd786e5eeccf6fa))
+* progressHook info message changes ([#1142](https://github.com/ethereum-push-notification-service/push-sdk/issues/1142)) ([ee074a1](https://github.com/ethereum-push-notification-service/push-sdk/commit/ee074a1890aecabb308b15e8eebf890f058af232))
+* stream connection support chat + pushUser to user fix ([#1066](https://github.com/ethereum-push-notification-service/push-sdk/issues/1066)) ([0ea4e02](https://github.com/ethereum-push-notification-service/push-sdk/commit/0ea4e026bceb38d3b37267b43709614cb1740472))
+
+
+
 ## [0.0.1-alpha.72](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.71...restapi-0.0.1-alpha.72) (2024-03-02)
 
 
