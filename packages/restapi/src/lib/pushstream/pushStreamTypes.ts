@@ -54,7 +54,7 @@ export enum GroupEventType {
   JoinGroup = 'joinGroup',
   LeaveGroup = 'leaveGroup',
   Remove = 'remove',
-  RoleChange = 'roleChange'
+  RoleChange = 'roleChange',
 }
 
 export enum SpaceEventType {
@@ -64,7 +64,7 @@ export enum SpaceEventType {
   Leave = 'leaveSpace',
   Remove = 'remove',
   Stop = 'stop',
-  Start = 'start' 
+  Start = 'start',
 }
 
 export enum VideoEventType {
@@ -75,7 +75,7 @@ export enum VideoEventType {
   DISCONNECT = 'video.disconnect',
   // retry events
   RETRY_REQUEST = 'video.retry.request',
-  RETRY_APPROVE = 'video.retry.approve'
+  RETRY_APPROVE = 'video.retry.approve',
 }
 
 export enum ProposedEventNames {
@@ -88,6 +88,7 @@ export enum ProposedEventNames {
   CreateGroup = 'chat.group.create',
   UpdateGroup = 'chat.group.update',
   Remove = 'chat.group.participant.remove',
+  RoleChange = 'chat.group.participant.role',
 
   CreateSpace = 'space.create',
   UpdateSpace = 'space.update',
@@ -98,7 +99,7 @@ export enum ProposedEventNames {
   JoinSpace = 'space.participant.join',
   SpaceRemove = 'space.participant.remove',
   StartSpace = 'space.start',
-  StopSpace = 'space.stop'
+  StopSpace = 'space.stop',
 }
 
 export interface Profile {
@@ -176,7 +177,10 @@ export interface RemoveEvent extends GroupMemberEventBase {
   event: GroupEventType.Remove;
 }
 
-
+export interface RoleEvent extends GroupMemberEventBase {
+  newRole: string;
+  event: GroupEventType.RoleChange;
+}
 
 export interface SpaceMemberEventBase {
   event: SpaceEventType | MessageEventType;
