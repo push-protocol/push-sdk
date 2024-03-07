@@ -22,7 +22,7 @@ export interface ChatCreateGroupTypeV2 extends EnvOptionsType {
   groupImage: string | null;
   rules: Rules | null;
   isPublic: boolean;
-  groupType: 'default' | 'space';
+  groupType: 'default' | 'spaces';
   config: {
     meta: string | null;
     scheduleAt: Date | null;

@@ -13,7 +13,7 @@ import { IChatTheme } from '../theme';
 import { Section, Span, Image } from '../../reusables';
 import { BackIcon } from '../../../icons/Back';
 import CloseIcon from '../../../icons/close.svg';
-import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, ModalBackgroundType, ModalPositionType } from '../exportedTypes';
+import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, ModalBackgroundType, ModalPositionType } from '../../../types';
 import { device } from '../../../config';
 
 interface IModalProps {

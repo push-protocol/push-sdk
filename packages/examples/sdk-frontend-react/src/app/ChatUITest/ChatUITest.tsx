@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { Section } from '../components/StyledComponents';
+import styled from 'styled-components';
 import Loader from '../components/Loader';
+import { Section } from '../components/StyledComponents';
 
 const ChatUITest = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -26,19 +26,27 @@ const ChatUITest = () => {
 
       <Section>
         <NavMenu>
-        <Link to="/ChatProfile" className="nav-button">
+          <Link to="/ChatProfile" className="nav-button">
             CHAT PROFILE
           </Link>
-          <Link to="/messageBubble" className="nav-button">
+          <Link to="/ChatViewBubble" className="nav-button">
             CHAT BUBBLE
           </Link>
-          <Link to="/messageList" className="nav-button">
+          <Link to="/ChatViewList" className="nav-button">
            CHAT VIEW LIST
           </Link>
-          <Link to="/messageContainer" className="nav-button">
-            CHAT VIEW COMPONENT
+          <Link to="/ChatView" className="nav-button">
+            CHAT VIEW
           </Link>
-       
+          <Link to="/ChatPreview" className="nav-button">
+            CHAT PREVIEW
+          </Link>
+          <Link to="/ChatPreviewList" className="nav-button">
+            CHAT PREVIEW LIST
+          </Link>
+          <Link to="/userProfile" className="nav-button">
+            USER PROFILE COMPONENT
+          </Link>
         </NavMenu>
       </Section>
     </div>

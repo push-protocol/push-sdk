@@ -38,8 +38,8 @@ import {
   usePushChatSocket,
 } from '../../../hooks';
 
-import type { FileMessageContent, IGroup } from '../../../types';
-import { GIFType, IChatTheme, MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, MessageInputProps } from '../exportedTypes';
+import { MODAL_BACKGROUND_TYPE, type FileMessageContent, type IGroup, MODAL_POSITION_TYPE } from '../../../types';
+import { GIFType, IChatTheme, MessageInputProps } from '../exportedTypes';
 import { PUBLIC_GOOGLE_TOKEN, device } from '../../../config';
 import { checkIfAccessVerifiedGroup, checkIfMember, isValidETHAddress } from '../helpers';
 import { InfoContainer } from '../reusables';
@@ -54,7 +54,6 @@ interface IThemeProps {
 
 const ConnectButtonSection = ({ autoConnect }: { autoConnect: boolean }) => {
   const { pgpPrivateKey,account } = useChatData();
-
   return (
     <Section
       width="100%"
@@ -62,7 +61,7 @@ const ConnectButtonSection = ({ autoConnect }: { autoConnect: boolean }) => {
       alignItems="center"
       padding="8px"
     >
-      {!(pgpPrivateKey && account) && (
+     {!(pgpPrivateKey && account) && (
         <Span
           padding="8px 8px 8px 16px"
           color="#B6BCD6"

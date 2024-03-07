@@ -1,6 +1,7 @@
 import { ENV, MessageType, ALPHA_FEATURES, ENCRYPTION_TYPE } from './constants';
 import { ChatListType } from './pushapi/pushAPITypes';
-import { STREAM, VideoEventType } from './pushstream/pushStreamTypes';
+import { STREAM, SpaceEventType, VideoEventType } from './pushstream/pushStreamTypes';
+import { initSpaceData } from './space';
 import {
   ConditionType,
   GROUP_INVITER_ROLE,
@@ -35,6 +36,10 @@ const CONSTANTS = {
     EVENT: VideoEventType,
     STATUS: VideoCallStatus,
     INITIAL_DATA: initVideoCallData
+  },
+  SPACE: {
+    EVENT: SpaceEventType,
+    INITIAL_DATA: initSpaceData
   },
   ALPHA_FEATURES: ALPHA_FEATURES,
   USER: { ENCRYPTION_TYPE: ENCRYPTION_TYPE },
