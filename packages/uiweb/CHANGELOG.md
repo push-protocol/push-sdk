@@ -2,6 +2,28 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.45](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.44...uiweb-0.0.1-alpha.45) (2024-03-07)
+
+
+### Bug Fixes
+
+* added prefillChatList ([#1122](https://github.com/ethereum-push-notification-service/push-sdk/issues/1122)) ([8b00609](https://github.com/ethereum-push-notification-service/push-sdk/commit/8b006090d414c19f75a13ca782cde5dab0569b91))
+* fixed build issues ([f68a1ed](https://github.com/ethereum-push-notification-service/push-sdk/commit/f68a1edad6aa0b4c43511cd3f25cb08888f2a235))
+* fixed chat bugs ([f4cdbda](https://github.com/ethereum-push-notification-service/push-sdk/commit/f4cdbdac6088cfc31b2b555038838bd5bb795f0c))
+* fixed chatpreview ([25184de](https://github.com/ethereum-push-notification-service/push-sdk/commit/25184de7d505d72b1603e37b630d9ed205d479f5))
+* fixed chatpreview and widget issues ([ff6b576](https://github.com/ethereum-push-notification-service/push-sdk/commit/ff6b576ed969b328c29806966daee57b397f83a2))
+* fixed gues mode user profile ([f08725e](https://github.com/ethereum-push-notification-service/push-sdk/commit/f08725e27e5e6257cdaccd0634d706d4ce4de8b2))
+* fixed merge conflicts ([db2fd58](https://github.com/ethereum-push-notification-service/push-sdk/commit/db2fd5860ced139b5d5cc269e1cd518e52e4e180))
+* fixed minor bugs ([2b02a65](https://github.com/ethereum-push-notification-service/push-sdk/commit/2b02a65907659cecfbcdbf03e78b20b60a9021c1))
+* fixed minor issue ([841a2b7](https://github.com/ethereum-push-notification-service/push-sdk/commit/841a2b79e504af904aa99fc07b1d73c9e4f56b22))
+* fixed subscription error ([5431ff8](https://github.com/ethereum-push-notification-service/push-sdk/commit/5431ff849d7c01cbbb2511ebc9473d3d8548b2b3))
+* fixed support chat issues ([c63cbb8](https://github.com/ethereum-push-notification-service/push-sdk/commit/c63cbb8b64c20c2b84046beae7e3b6135ca9332e))
+* pulled alpha ([8d33691](https://github.com/ethereum-push-notification-service/push-sdk/commit/8d336911012e39bb0c4360820754230fa9b28a55))
+* stream connection support chat + pushUser to user fix ([#1066](https://github.com/ethereum-push-notification-service/push-sdk/issues/1066)) ([0ea4e02](https://github.com/ethereum-push-notification-service/push-sdk/commit/0ea4e026bceb38d3b37267b43709614cb1740472))
+* troubleshoot ([815c59a](https://github.com/ethereum-push-notification-service/push-sdk/commit/815c59a87deba30c8323a4d7d68f48bcedbbe730))
+
+
+
 ## [0.0.1-alpha.44](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.36...uiweb-0.0.1-alpha.44) (2024-02-13)
 
 
