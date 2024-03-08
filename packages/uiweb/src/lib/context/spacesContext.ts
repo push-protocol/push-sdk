@@ -30,7 +30,7 @@ export interface ISpaceDataContextValues {
   account: string;
   setAccount: React.Dispatch<React.SetStateAction<string>>;
   signer: SignerType | undefined;
-  setSigner: React.Dispatch<React.SetStateAction<SignerType>>;
+  setSigner: React.Dispatch<React.SetStateAction<SignerType | undefined>>;
   pgpPrivateKey: string;
   setPgpPrivateKey: React.Dispatch<React.SetStateAction<string>>;
   env: ENV;

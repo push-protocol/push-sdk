@@ -7,6 +7,7 @@ import {
   MessageOrigin,
   NotificationEventType,
   PushStreamInitializeProps,
+  SpaceEventType,
   STREAM,
   EVENTS,
 } from './pushStreamTypes';
@@ -26,6 +27,7 @@ export class PushStream extends EventEmitter {
   private options: PushStreamInitializeProps;
   private chatInstance: Chat;
   private listen: STREAM[];
+  private disconnected: boolean;
 
   constructor(
     account: string,
@@ -42,7 +44,7 @@ export class PushStream extends EventEmitter {
     this.raw = options.raw ?? false;
     this.options = options;
     this.listen = _listen;
-
+    this.disconnected = false;
     this.chatInstance = new Chat(
       this.account,
       this.options.env as ENV,
@@ -110,7 +112,9 @@ export class PushStream extends EventEmitter {
       !this.listen ||
       this.listen.length === 0 ||
       this.listen.includes(STREAM.CHAT) ||
-      this.listen.includes(STREAM.CHAT_OPS);
+      this.listen.includes(STREAM.CHAT_OPS) ||
+      this.listen.includes(STREAM.SPACE) ||
+      this.listen.includes(STREAM.SPACE_OPS);
     const shouldInitializeNotifSocket =
       !this.listen ||
       this.listen.length === 0 ||
@@ -234,7 +238,6 @@ export class PushStream extends EventEmitter {
 
       this.pushChatSocket.on(EVENTS.DISCONNECT, async () => {
         await handleSocketDisconnection('chat');
-        //console.log(`Chat Socket Disconnected`);
       });
 
       this.pushChatSocket.on(EVENTS.CHAT_GROUPS, (data: any) => {
@@ -252,7 +255,8 @@ export class PushStream extends EventEmitter {
               data.eventType === GroupEventType.JoinGroup ||
               data.eventType === GroupEventType.LeaveGroup ||
               data.eventType === MessageEventType.Request ||
-              data.eventType === GroupEventType.Remove
+              data.eventType === GroupEventType.Remove ||
+              data.eventType === GroupEventType.RoleChange
             ) {
               if (shouldEmit(STREAM.CHAT)) {
                 this.emit(STREAM.CHAT, modifiedData);
@@ -282,7 +286,7 @@ export class PushStream extends EventEmitter {
               data.messageCategory == 'Request'
             ) {
               // Dont call this if read only mode ?
-              if (this.signer) {
+              if (this.decryptedPgpPvtKey) {
                 data = await this.chatInstance.decrypt([data]);
                 data = data[0];
               }
@@ -308,6 +312,57 @@ export class PushStream extends EventEmitter {
           }
         }
       );
+
+      this.pushChatSocket.on('SPACES', (data: any) => {
+        try {
+          const modifiedData = DataModifier.handleSpaceEvent(data, this.raw);
+          modifiedData.event = DataModifier.convertToProposedNameForSpace(
+            modifiedData.event
+          );
+
+          DataModifier.handleToField(modifiedData);
+
+          if (this.shouldEmitSpace(data.spaceId)) {
+            if (
+              data.eventType === SpaceEventType.Join ||
+              data.eventType === SpaceEventType.Leave ||
+              data.eventType === MessageEventType.Request ||
+              data.eventType === SpaceEventType.Remove ||
+              data.eventType === SpaceEventType.Start ||
+              data.eventType === SpaceEventType.Stop
+            ) {
+              if (shouldEmit(STREAM.SPACE)) {
+                this.emit(STREAM.SPACE, modifiedData);
+              }
+            } else {
+              if (shouldEmit(STREAM.SPACE_OPS)) {
+                this.emit(STREAM.SPACE_OPS, modifiedData);
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Error handling SPACES event:', error, 'Data:', data);
+        }
+      });
+
+      this.pushChatSocket.on('SPACES_MESSAGES', (data: any) => {
+        try {
+          const modifiedData = DataModifier.handleSpaceEvent(data, this.raw);
+          modifiedData.event = DataModifier.convertToProposedNameForSpace(
+            modifiedData.event
+          );
+
+          DataModifier.handleToField(modifiedData);
+
+          if (this.shouldEmitSpace(data.spaceId)) {
+            if (shouldEmit(STREAM.SPACE)) {
+              this.emit(STREAM.SPACE, modifiedData);
+            }
+          }
+        } catch (error) {
+          console.error('Error handling SPACES event:', error, 'Data:', data);
+        }
+      });
     }
 
     if (this.pushNotificationSocket) {
@@ -392,6 +447,15 @@ export class PushStream extends EventEmitter {
         }
       });
     }
+
+    this.disconnected = false;
+  }
+
+  public connected(): boolean {
+    return (
+      (this.pushNotificationSocket && this.pushNotificationSocket.connected) ||
+      (this.pushChatSocket && this.pushChatSocket.connected)
+    );
   }
 
   public async disconnect(): Promise<void> {
@@ -424,6 +488,17 @@ export class PushStream extends EventEmitter {
       return true;
     }
     return this.options.filter.chats.includes(dataChatId);
+  }
+
+  private shouldEmitSpace(dataSpaceId: string): boolean {
+    if (
+      !this.options.filter?.spaces ||
+      this.options.filter.spaces.length === 0 ||
+      this.options.filter.spaces.includes('*')
+    ) {
+      return true;
+    }
+    return this.options.filter.spaces.includes(dataSpaceId);
   }
 
   private shouldEmitChannel(dataChannelId: string): boolean {

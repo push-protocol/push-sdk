@@ -21,7 +21,6 @@ import { Checkbox } from '../reusables/Checkbox';
 import OptionButtons from '../reusables/OptionButtons';
 
 import EthereumSvg from '../../../icons/ethereum.svg';
-import FuseSVG from '../../../icons/fuse.svg';
 import PolygonSvg from '../../../icons/polygon.svg';
 import ArbitrumSvg from '../../../icons/arbitrum.svg';
 import BSCSvg from '../../../icons/bsc.svg';
@@ -208,45 +207,38 @@ const AddCriteria = ({
   const dropdownChainsValues: Array<DropdownValueType> = [
     {
       id: 0,
-      value: BLOCKCHAIN_NETWORK[env].ETHEREUM,
+      value: BLOCKCHAIN_NETWORK[env as keyof typeof BLOCKCHAIN_NETWORK].ETHEREUM,
       title: 'Ethereum',
       icon: EthereumSvg,
       function: () => setSelectedChainValue(0),
     },
     {
       id: 1,
-      value: BLOCKCHAIN_NETWORK[env].POLYGON,
+      value: BLOCKCHAIN_NETWORK[env as keyof typeof BLOCKCHAIN_NETWORK].POLYGON,
       title: 'Polygon',
       icon: PolygonSvg,
       function: () => setSelectedChainValue(1),
     },
     {
       id: 2,
-      value: BLOCKCHAIN_NETWORK[env].BSC,
+      value: BLOCKCHAIN_NETWORK[env as keyof typeof BLOCKCHAIN_NETWORK].BSC,
       title: 'BSC',
       icon: BSCSvg,
       function: () => setSelectedChainValue(2),
     },
     {
       id: 3,
-      value: BLOCKCHAIN_NETWORK[env].OPTIMISM,
+      value: BLOCKCHAIN_NETWORK[env as keyof typeof BLOCKCHAIN_NETWORK].OPTIMISM,
       title: 'Optimism',
       icon: OptimismSvg,
       function: () => setSelectedChainValue(3),
     },
     {
       id: 4,
-      value: BLOCKCHAIN_NETWORK[env].ARBITRUM,
+      value: BLOCKCHAIN_NETWORK[env as keyof typeof BLOCKCHAIN_NETWORK].ARBITRUM,
       title: 'Arbitrum',
       icon: ArbitrumSvg,
       function: () => setSelectedChainValue(4),
-    },
-    {
-      id: 5,
-      value: BLOCKCHAIN_NETWORK[env].FUSE,
-      title: 'Fuse',
-      icon: FuseSVG,
-      function: () => setSelectedChainValue(5),
     },
   ];
 

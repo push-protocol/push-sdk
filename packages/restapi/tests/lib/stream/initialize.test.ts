@@ -158,6 +158,7 @@ describe('PushStream.initialize functionality', () => {
     const stream = await userAlice.initStream(
       [
         CONSTANTS.STREAM.CHAT,
+        CONSTANTS.STREAM.CHAT_OPS,
         CONSTANTS.STREAM.NOTIF,
         CONSTANTS.STREAM.CONNECT,
         CONSTANTS.STREAM.DISCONNECT,
@@ -245,7 +246,7 @@ describe('PushStream.initialize functionality', () => {
     );
 
     // Create and update group
-    const createdGroup = await user.chat.group.create(
+    const createdGroup = await userAlice.chat.group.create(
       'test',
       CREATE_GROUP_REQUEST_2
     );

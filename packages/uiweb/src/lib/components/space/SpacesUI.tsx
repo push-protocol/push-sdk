@@ -14,7 +14,7 @@ import { ISpacesUIProps, ISpaceWidgetProps } from './exportedTypes';
 
 export class SpacesUI {
   public account: string;
-  public signer: SignerType;
+  public signer: SignerType | undefined;
   public pgpPrivateKey: string;
   public env: ENV;
   public customSearch: ICustomSearchResult | undefined;

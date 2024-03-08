@@ -1,4 +1,4 @@
-import type { Env, IFeeds, IUser } from '@pushprotocol/restapi';
+import type { Env, IFeeds, IUser, PushAPI } from '@pushprotocol/restapi';
 import { add } from 'date-fns';
 import { ethers } from 'ethers';
 import {
@@ -7,7 +7,7 @@ import {
   InfuraAPIKey,
   ProfilePicture,
 } from '../../config';
-import type { GetProfileParams } from '../../hooks';
+import type { FetchProfileParams, GetProfileParams } from '../../hooks';
 import type {
   ChatFeedsType,
   NotificationFeedsType,
@@ -54,17 +54,16 @@ export const getObjectsWithMatchingKeys = (
 
 type getNewChatUserParamType = {
   searchText: string;
-  fetchChatProfile: ({
-    profileId,
-    env
-  }: GetProfileParams) => Promise<IUser | undefined>;
+  fetchChatProfile: any;
   env: Env;
+  user?: PushAPI
 };
 
 export const getNewChatUser = async ({
   searchText,
   fetchChatProfile,
   env,
+  user
 }: getNewChatUserParamType): Promise<IUser | undefined> => {
   let chatProfile: IUser | undefined;
   let address: string | null = null;
@@ -75,7 +74,7 @@ export const getNewChatUser = async ({
   //   address = await getAddress(searchText, env);
   // }
   if (address) {
-    chatProfile = await fetchChatProfile({ profileId: address, env });
+    chatProfile = await fetchChatProfile({ profileId: address, env,user });
     if (!chatProfile)
       chatProfile = displayDefaultUser({ caip10: walletToPCAIP10(address) });
     return chatProfile;
@@ -93,16 +92,15 @@ export const getAddress = async (searchText: string, env: Env) => {
   if (searchText.includes('.')) {
     try {
       address = await udResolver.owner(searchText);
-    } catch (err) {
-      console.log(err);
-    }
-    if (!address) {
+  } catch (err) {
       try {
         address = await provider.resolveName(searchText);
       } catch (err) {
-        console.log(err);
+        console.debug(err);
       }
-    }
+   
+    console.debug(err);
+  }
 
     return address || null;
   } else if (await ethers.utils.isAddress(pCAIP10ToWallet(searchText))) {
