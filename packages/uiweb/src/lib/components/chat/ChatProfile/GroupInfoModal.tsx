@@ -513,13 +513,12 @@ export const GroupInfoModal = ({
   const {
     chatAcceptStream,
     chatRejectStream,
-    chatRequestStream,
     participantRemoveStream,
     participantLeaveStream,
     participantJoinStream,
     groupUpdateStream,
+    participantRoleChangeStream,
   } = usePushChatStream();
-
 
   //stream listeners
   useEffect(() => {
@@ -562,7 +561,6 @@ export const GroupInfoModal = ({
     })();
    
   }, [participantJoinStream]);
-
   useEffect(() => {
     if (
       Object.keys(groupUpdateStream).length > 0 &&
@@ -571,6 +569,13 @@ export const GroupInfoModal = ({
     transformGroupDetails(groupUpdateStream);
   }, [groupUpdateStream]);
 
+  useEffect(() => {
+    if (
+      Object.keys(participantRoleChangeStream).length > 0 &&
+      participantRoleChangeStream.constructor === Object
+    ) 
+    transformRoleChange(participantRoleChangeStream);
+  }, [participantRoleChangeStream]);
   useEffect(() => {
     (async () => {
       const count = await fetchMembersCount({ chatId: groupInfo!.chatId! });
@@ -713,6 +718,14 @@ export const GroupInfoModal = ({
         ),
     }));
   };
+  const memberRoleChange = (item:any): void => {
+    const acceptedMember:ChatMemberProfile[] = groupMembers?.accepted.map(member => member.address == item.to[0] ? {...member, role:item.newRole} : member);
+    console.debug(acceptedMember)
+    setGroupMembers((prevMembers: MembersType) => ({
+      ...prevMembers,
+      accepted: acceptedMember,
+    }));
+  };
 
   const transformAcceptedRequest = (item: any): void => {
     if (item?.meta?.group && groupInfo?.chatId === item?.chatId) {
@@ -766,18 +779,24 @@ export const GroupInfoModal = ({
   //   }
   // };
 
+  const transformRoleChange = (item: any): void => {
+    if ( groupInfo?.chatId === item?.chatId) {
+      memberRoleChange(item)
+     
+    }
+  };
   const transformGroupDetails = (item: any): void => {
     if ( groupInfo?.chatId === item?.chatId) {
       const updatedGroupInfo = groupInfo;
-      // console.debug(updatedGroupInfo)
-      // if(updatedGroupInfo){
-      //   updatedGroupInfo.groupName= item?.meta?.name;
-      //   updatedGroupInfo.groupDescription=item?.meta?.description;
-      //   updatedGroupInfo.groupImage=item?.meta?.image;
-      //   updatedGroupInfo.groupCreator=item?.meta?.owner;
-      //   updatedGroupInfo.isPublic=!item?.meta?.private;
-      //   setGroupInfo(updatedGroupInfo);
-      // }
+      if(updatedGroupInfo){
+        updatedGroupInfo.groupName= item?.meta?.name;
+        updatedGroupInfo.groupDescription=item?.meta?.description;
+        updatedGroupInfo.groupImage=item?.meta?.image;
+        updatedGroupInfo.groupCreator=item?.meta?.owner;
+        updatedGroupInfo.isPublic=!item?.meta?.private;
+        updatedGroupInfo.rules=item?.meta?.rules;
+        setGroupInfo(updatedGroupInfo);
+      }
      
     }
   };
