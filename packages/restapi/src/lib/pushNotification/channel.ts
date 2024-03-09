@@ -436,7 +436,6 @@ export class Channel extends PushNotificationBaseClass {
         page,
         limit
       })
-
     } catch(error){
       throw new Error(`Push SDK Error: Contract : channel::notifications : ${error}`);
     }
