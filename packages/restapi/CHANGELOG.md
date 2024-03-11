@@ -2,6 +2,38 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [1.7.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.6.11...restapi-1.7.0) (2024-03-11)
+
+
+### Bug Fixes
+
+* added notification widget layout ([#1076](https://github.com/ethereum-push-notification-service/push-sdk/issues/1076)) ([c695c18](https://github.com/ethereum-push-notification-service/push-sdk/commit/c695c185c14ef23669c2d0836a6aa9c597ce525c)), closes [#1051](https://github.com/ethereum-push-notification-service/push-sdk/issues/1051) [#1062](https://github.com/ethereum-push-notification-service/push-sdk/issues/1062) [#1070](https://github.com/ethereum-push-notification-service/push-sdk/issues/1070) [#1073](https://github.com/ethereum-push-notification-service/push-sdk/issues/1073) [#1069](https://github.com/ethereum-push-notification-service/push-sdk/issues/1069) [#1053](https://github.com/ethereum-push-notification-service/push-sdk/issues/1053) [#1074](https://github.com/ethereum-push-notification-service/push-sdk/issues/1074) [#1081](https://github.com/ethereum-push-notification-service/push-sdk/issues/1081) [#1088](https://github.com/ethereum-push-notification-service/push-sdk/issues/1088) [#1089](https://github.com/ethereum-push-notification-service/push-sdk/issues/1089) [#1099](https://github.com/ethereum-push-notification-service/push-sdk/issues/1099) [#1102](https://github.com/ethereum-push-notification-service/push-sdk/issues/1102) [#1107](https://github.com/ethereum-push-notification-service/push-sdk/issues/1107)
+* fix channel.update ([4bccf07](https://github.com/ethereum-push-notification-service/push-sdk/commit/4bccf071fecc2a3eabe6966d156eef9051dd9993))
+* fix ethers provider issue ([40e5941](https://github.com/ethereum-push-notification-service/push-sdk/commit/40e5941b296e068e00804ee45beb9b6a2bc3ef8d))
+* Merge branch 'alpha' into deployment ([5c74c0f](https://github.com/ethereum-push-notification-service/push-sdk/commit/5c74c0fb79ef4c04af7f6adb9a93b5bfada4a301))
+* Merge branch 'main' into alpha ([dd88465](https://github.com/ethereum-push-notification-service/push-sdk/commit/dd884652aaf72ed57d1cfac43fd786e5eeccf6fa))
+* Merge branch 'main' into alpha ([370e2f2](https://github.com/ethereum-push-notification-service/push-sdk/commit/370e2f2e508ed7248f82c21ec82e67898e0cb2f8))
+* Merge branch 'main' into alpha ([d5ef9ce](https://github.com/ethereum-push-notification-service/push-sdk/commit/d5ef9ce8bd351bf978ff3e16eb4f760226af2802))
+* merge main ([25b30c8](https://github.com/ethereum-push-notification-service/push-sdk/commit/25b30c810062aba091e1ec7a8dc0ded659511405))
+* merge main ([2979e5a](https://github.com/ethereum-push-notification-service/push-sdk/commit/2979e5a30a74875cab9d225f984972bad286eab0))
+* merge main ([98e8e86](https://github.com/ethereum-push-notification-service/push-sdk/commit/98e8e86cb95f928542dcd0042f098eb84eca9fb9))
+* merge main to alpha ([ae6934f](https://github.com/ethereum-push-notification-service/push-sdk/commit/ae6934f01d1ed0dac1830d312329f7839888982c))
+* merged main ([e5f598e](https://github.com/ethereum-push-notification-service/push-sdk/commit/e5f598e447b0fba27fe1dd69933acf48425103da))
+* **restapi:** build errors from spaces ([#1098](https://github.com/ethereum-push-notification-service/push-sdk/issues/1098)) ([638b5d7](https://github.com/ethereum-push-notification-service/push-sdk/commit/638b5d76101d5f8b250e5c5f4af22e9cafa413de))
+* stream connection support chat + pushUser to user fix ([#1066](https://github.com/ethereum-push-notification-service/push-sdk/issues/1066)) ([0ea4e02](https://github.com/ethereum-push-notification-service/push-sdk/commit/0ea4e026bceb38d3b37267b43709614cb1740472))
+
+
+### Features
+
+* **spaces v2:** update space.initialize() param name, rename media() in SpacesV2 ([#1101](https://github.com/ethereum-push-notification-service/push-sdk/issues/1101)) ([d832ae3](https://github.com/ethereum-push-notification-service/push-sdk/commit/d832ae37389935eeebf8e481d148fd393fa20141))
+* **video-v2:** add video v2 class and stream ([#930](https://github.com/ethereum-push-notification-service/push-sdk/issues/930)) ([aacfea3](https://github.com/ethereum-push-notification-service/push-sdk/commit/aacfea3a5bd5a3301f60cb1d1c04a1754e6f03b8))
+
+
+
+## [0.0.1-alpha.60](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.5.1...restapi-0.0.1-alpha.60) (2024-01-02)
+
+
+
 ## [0.0.1-alpha.72](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-0.0.1-alpha.71...restapi-0.0.1-alpha.72) (2024-03-02)
 
 
