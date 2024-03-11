@@ -1,6 +1,6 @@
-import { NotifictaionType, ProgressHookType } from '../types';
-import { GetAliasInfoOptionsType } from '../alias';
 import { ADDITIONAL_META_TYPE } from '../../lib/payloads/constants';
+import { GetAliasInfoOptionsType } from '../alias';
+import { NotifictaionType, ProgressHookType } from '../types';
 
 export type SubscriptionOptions = {
   account?: string;
@@ -126,3 +126,25 @@ export type ChannelFeedsOptions = {
 export type ChannelOptions = {
   raw: boolean
 }
+
+export type ChannelListOptions = {
+  page?: number;
+  limit?: number;
+  sort?: ChannelListSortType;
+  order?: ChannelListOrderType;
+};
+
+export enum ChannelListType {
+  ALL = 'all',
+  VERIFIED = 'verified',
+  UNVERIFIED = 'unverified',
+};
+
+export enum ChannelListSortType {
+  SUBSCRIBER = 'subscribers',
+};
+
+export enum ChannelListOrderType {
+  ASCENDING = 'asc',
+  DESCENDING = 'desc',
+};
