@@ -1,5 +1,6 @@
 import { ALPHA_FEATURE_CONFIG } from '../config';
 import Constants, { PACKAGE_BUILD } from '../constants';
+import { handleError } from '../errors/ValidationError';
 import { EnvOptionsType, SignerType, GroupInfoDTO } from '../types';
 import {
   GroupMemberUpdateOptions,
@@ -56,12 +57,6 @@ export const removeAdmins = async (
     };
     return await updateGroupMembers(groupMemberUpdateOptions);
   } catch (err) {
-    console.error(
-      `[Push SDK] - API  - Error - API ${removeAdmins.name} -:  `,
-      err
-    );
-    throw Error(
-      `[Push SDK] - API  - Error - API ${removeAdmins.name} -: ${err}`
-    );
+      throw handleError(err, removeAdmins.name);
   }
 };

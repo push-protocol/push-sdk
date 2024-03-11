@@ -1,6 +1,7 @@
 import { getAPIBaseUrls } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { axiosGet } from '../utils/axiosUtil';
+import { handleError } from '../errors/ValidationError';
 
 /**
  * Represents the response type for the chat status.
@@ -39,7 +40,6 @@ export const getChatInfo = async (
     const response = await axiosGet<ChatInfoResponse>(requestUrl);
     return response.data;
   } catch (err) {
-    console.error(`[Push SDK] - API Error in ${getChatInfo.name}: `, err);
-    throw new Error(`[Push SDK] - API Error in ${getChatInfo.name}: ${err}`);
+    throw handleError(err, getChatInfo.name);
   }
 };
