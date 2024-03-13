@@ -3,6 +3,7 @@ import Constants, { ENV } from '../constants';
 import {  GroupMemberStatus } from '../types';
 import { getUserDID } from './helpers';
 import { axiosGet } from '../utils/axiosUtil';
+import { handleError } from '../errors/ValidationError';
 
 /**
  * GET /v1/chat/groups/:chatId/access/:did
@@ -36,12 +37,6 @@ export const getGroupMemberStatus = async (
     const response = await axiosGet<GroupMemberStatus>(requestUrl);
     return response.data;
   } catch (err) {
-    console.error(
-      `[Push SDK] - API - Error - API ${getGroupMemberStatus.name} -:  `,
-      err
-    );
-    throw Error(
-      `[Push SDK] - API - Error - API ${getGroupMemberStatus.name} -: ${err}`
-    );
+      throw handleError(err, getGroupMemberStatus.name);
   }
 };

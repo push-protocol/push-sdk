@@ -2,6 +2,7 @@ import { getAPIBaseUrls } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { GroupDTO } from '../types';
 import { axiosPost } from '../utils/axiosUtil';
+import { handleError } from '../errors/ValidationError';
 
 /**
  *  POST /v1/chat/groups/search
@@ -36,7 +37,6 @@ export const search = async (
 
     return response.data;
   } catch (err) {
-    console.error(`[Push SDK] - API  - Error - API ${search.name} -:  `, err);
-    throw Error(`[Push SDK] - API  - Error - API ${search.name} -: ${err}`);
+      throw handleError(err, search.name);
   }
 };

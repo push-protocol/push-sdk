@@ -12,6 +12,7 @@ import {
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
 import { axiosPut } from '../utils/axiosUtil';
+import { handleError } from '../errors/ValidationError';
 
 interface RejectRequestOptionsType extends EnvOptionsType {
   /**
@@ -85,7 +86,6 @@ export const reject = async (
       return response.data;
     })
     .catch((err) => {
-      console.error(`[Push SDK] - API ${reject.name}: `, err);
-      throw Error(`[Push SDK] - API ${reject.name}: ${err}`);
+      throw handleError(err, reject.name);
     });
 };

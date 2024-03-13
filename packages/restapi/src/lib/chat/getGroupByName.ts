@@ -4,6 +4,7 @@ import {
  GroupDTO
 } from '../types';
 import { axiosGet } from '../utils/axiosUtil';
+import { handleError } from '../errors/ValidationError';
 
 
 /**
@@ -32,7 +33,6 @@ export const getGroupByName = async (
         const response = await axiosGet<GroupDTO>(requestUrl);
         return response.data;
     } catch (err) {
-        console.error(`[Push SDK] - API  - Error - API ${getGroupByName.name} -:  `, err);
-        throw Error(`[Push SDK] - API  - Error - API ${getGroupByName.name} -: ${err}`);
+        throw handleError(err, getGroupByName.name);
     }
 };

@@ -283,10 +283,10 @@ export class Chat {
     });
   }
 
-  async info(chatId: string, address: string): Promise<ChatInfoResponse> {
+  async info(receipient: string): Promise<ChatInfoResponse> {
     const options: PUSH_CHAT.GetChatInfoType = {
-      chatId: chatId,
-      address: address,
+      receipient: receipient,
+      sender: this.account,
       env: this.env,
     };
 

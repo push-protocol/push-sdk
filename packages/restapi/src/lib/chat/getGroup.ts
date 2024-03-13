@@ -2,6 +2,7 @@ import { getAPIBaseUrls } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { GroupDTO } from '../types';
 import { axiosGet } from '../utils/axiosUtil';
+import { handleError } from '../errors/ValidationError';
 
 /**
  *  GET /v1/chat/groups/:chatId
@@ -24,7 +25,6 @@ export const getGroup = async (options: GetGroupType): Promise<GroupDTO> => {
     const response = await axiosGet<GroupDTO>(requestUrl);
     return response.data;
   } catch (err) {
-    console.error(`[Push SDK] - API  - Error - API ${getGroup.name} -:  `, err);
-    throw Error(`[Push SDK] - API  - Error - API ${getGroup.name} -: ${err}`);
+    throw handleError(err, getGroup.name);
   }
 };

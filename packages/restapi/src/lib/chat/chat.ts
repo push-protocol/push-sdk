@@ -3,6 +3,7 @@ import Constants, { ENV } from '../constants';
 import { IFeeds } from '../types';
 import { axiosGet } from '../utils/axiosUtil';
 import { PGPHelper, addDeprecatedInfo, getInboxLists, getUserDID } from './helpers';
+import { handleError } from '../errors/ValidationError';
 
 export const chat = async (options: {
   account: string;
@@ -41,7 +42,6 @@ export const chat = async (options: {
       return chat;
     }
   } catch (err) {
-    console.error(`[Push SDK] - API ${chat.name}: `, err);
-    throw Error(`[Push SDK] - API ${chat.name}: ${err}`);
+    throw handleError(err, chat.name);
   }
 };
