@@ -41,9 +41,9 @@ export const SettingsComponent: React.FC<ISettingsComponentProps> = (
 
   const handleToggleChange = (index: number) => {
     const updatedSettings = [...settings];
+    if(updatedSettings[index]?.userPreferance)
     updatedSettings[index].userPreferance!.enabled =
       !updatedSettings[index].userPreferance!.enabled;
-
     setSettings(updatedSettings);
   };
   return (
@@ -53,6 +53,7 @@ export const SettingsComponent: React.FC<ISettingsComponentProps> = (
       gap="15px"
       width="100%"
       maxHeight="200px"
+      justifyContent='start'
       overflow="hidden scroll"
     >
       {settings.map(

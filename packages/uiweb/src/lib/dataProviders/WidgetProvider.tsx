@@ -41,21 +41,24 @@ export const WidgetUIProvider = ({
   useEffect(() => {
     (async () => {
       //   resetStates();
+    
       setEnvVal(env);
-      if (Object.keys(signer || {}).length && !user) {
-        const address = await getAddressFromSigner(signer!);
-        setAccountVal(address);
-      } else if (!signer && user) {
-        const profile = await fetchUserProfile({ user });
-
-        setAccountVal(pCAIP10ToWallet(profile?.wallets));
-      } else {
-        setAccountVal(GUEST_MODE_ACCOUNT);
-      }
-      setSignerVal(signer);
-      setUserVal(user);
+      let address = null;
+        if (Object.keys(signer || {}).length && !user) {
+           address = await getAddressFromSigner(signer!);
+        } else if (!signer && user) {
+          const profile = await fetchUserProfile({user});
+          if(profile)
+          address = (pCAIP10ToWallet(profile?.wallets));
+        } 
+       console.debug(account)
+        setAccountVal(address || GUEST_MODE_ACCOUNT);
+        setSignerVal(signer);
+      
+        setUserVal(user);
     })();
   }, [env, account, signer, user]);
+  console.debug(accountVal,envVal,signerVal)
 
   useEffect(() => {
     (async () => {

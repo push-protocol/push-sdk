@@ -1,11 +1,6 @@
 import { EventEmitter } from 'events';
-import { ALPHA_FEATURE_CONFIG } from '../config';
+import { createSocketConnection } from './socketClient';
 import { ENV, PACKAGE_BUILD } from '../constants';
-import { pCAIP10ToWallet, walletToPCAIP10 } from '../helpers';
-import { ADDITIONAL_META_TYPE } from '../payloads';
-import { Chat } from '../pushapi/chat';
-import { ProgressHookType, SignerType } from '../types';
-import { DataModifier } from './DataModifier';
 import {
   GroupEventType,
   MessageEventType,
@@ -16,7 +11,12 @@ import {
   STREAM,
   EVENTS,
 } from './pushStreamTypes';
-import { createSocketConnection } from './socketClient';
+import { DataModifier } from './DataModifier';
+import { pCAIP10ToWallet, walletToPCAIP10 } from '../helpers';
+import { Chat } from '../pushapi/chat';
+import { ProgressHookType, SignerType } from '../types';
+import { ALPHA_FEATURE_CONFIG } from '../config';
+import { ADDITIONAL_META_TYPE } from '../payloads';
 
 export class PushStream extends EventEmitter {
   private pushChatSocket: any;
@@ -255,7 +255,8 @@ export class PushStream extends EventEmitter {
               data.eventType === GroupEventType.JoinGroup ||
               data.eventType === GroupEventType.LeaveGroup ||
               data.eventType === MessageEventType.Request ||
-              data.eventType === GroupEventType.Remove
+              data.eventType === GroupEventType.Remove ||
+              data.eventType === GroupEventType.RoleChange
             ) {
               if (shouldEmit(STREAM.CHAT)) {
                 this.emit(STREAM.CHAT, modifiedData);
@@ -326,7 +327,7 @@ export class PushStream extends EventEmitter {
               data.eventType === SpaceEventType.Join ||
               data.eventType === SpaceEventType.Leave ||
               data.eventType === MessageEventType.Request ||
-              data.eventType === SpaceEventType.Remove || 
+              data.eventType === SpaceEventType.Remove ||
               data.eventType === SpaceEventType.Start ||
               data.eventType === SpaceEventType.Stop
             ) {

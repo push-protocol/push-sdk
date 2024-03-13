@@ -12,6 +12,7 @@ import {
   JoinGroupEvent,
   RequestEvent,
   RemoveEvent,
+  RoleEvent,
   NotificationEvent,
   NotificationEventType,
   NotificationType,
@@ -21,7 +22,7 @@ import {
   SpaceRemoveEvent,
   VideoEventType,
   MessageOrigin,
-  VideoEvent
+  VideoEvent,
 } from './pushStreamTypes';
 import { VideoCallStatus, VideoPeerInfo } from '../types';
 import { VideoDataType } from '../video';
@@ -130,14 +131,16 @@ export class DataModifier {
 
   private static mapToRoleChangeEvent(data: any, includeRaw: boolean): any {
     // Whatever the structure of your RemoveEvent, modify accordingly
-    const eventData: RemoveEvent = {
+    const eventData: RoleEvent = {
       origin: data.messageOrigin,
       timestamp: data.timestamp,
       chatId: data.chatId,
       from: data.from,
       to: data.to,
-      event: GroupEventType.Remove,
+      newRole: data.newRole,
+      event: GroupEventType.RoleChange,
     };
+
     if (includeRaw) {
       eventData.raw = { verificationProof: data.verificationProof };
     }
@@ -223,7 +226,6 @@ export class DataModifier {
     includeRaw = false,
     eventType: MessageEventType
   ): MessageEvent {
-
     if (data.hasIntent === false && eventType === 'message') {
       eventType = MessageEventType.Request;
     }
@@ -396,6 +398,8 @@ export class DataModifier {
         return ProposedEventNames.UpdateGroup;
       case 'remove':
         return ProposedEventNames.Remove;
+      case 'roleChange':
+        return ProposedEventNames.RoleChange;
       default:
         throw new Error(`Unknown current event name: ${currentEventName}`);
     }

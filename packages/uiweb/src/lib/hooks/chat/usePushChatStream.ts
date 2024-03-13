@@ -19,13 +19,14 @@ export const usePushChatStream = () => {
   const [chatRejectStream, setChatRejectStream] = useState<any>({}); // to track any rejected request
 
   const [chatRequestStream, setChatRequestStream] = useState<any>({}); // any message in request
+  const [participantRoleChangeStream, setParticipantRoleChangeStream] = useState<any>({}); // to track if a participant role is changed in a  group
+
   const [participantRemoveStream, setParticipantRemoveStream] = useState<any>({}); // to track if a participant is removed from group
   const [participantLeaveStream, setParticipantLeaveStream] = useState<any>({}); // to track if a participant leaves a group
   const [participantJoinStream, setParticipantJoinStream] = useState<any>({}); // to track if a participant joins a group
   const [groupCreateStream, setGroupCreateStream] = useState<any>({}); // to track if group is created
 
   const [groupUpdateStream, setGroupUpdateStream] = useState<any>({}); //group updation stream
-console.debug('in stream')
   const attachListenersAndConnect = async (stream: any) => {
     stream?.on(CONSTANTS.STREAM.CONNECT, (err: Error) => {
         console.debug(' stream connected .........',err)
@@ -56,6 +57,9 @@ console.debug('in stream')
       else if (message.event === 'chat.group.participant.join') {
         setParticipantJoinStream(message);
       }
+      else if (message.event === 'chat.group.participant.role'){
+        setParticipantRoleChangeStream(message);
+      }
    
        else if (message.event === 'chat.message') {
         setChatStream(message);
@@ -64,13 +68,13 @@ console.debug('in stream')
 
     // Listen for group info
     stream?.on(CONSTANTS.STREAM.CHAT_OPS, (chatops: any) => {
-        console.debug(chatops)
          if (chatops.event === 'chat.group.update') {
           setGroupUpdateStream(chatops);
         }
         else if (chatops.event === 'chat.group.create') {
           setGroupCreateStream(chatops);
         }
+        
     });
 
     console.debug('stream listeners attached');
@@ -82,7 +86,6 @@ console.debug('in stream')
    *  - create a new connection object
    */
   useEffect(() => {
-    console.debug('in stream',user)
 
     if (!user) {
       return;
@@ -139,6 +142,7 @@ console.debug('in stream')
     participantRemoveStream,
     participantLeaveStream,
     participantJoinStream,
+    participantRoleChangeStream,
     groupCreateStream
   };
 };

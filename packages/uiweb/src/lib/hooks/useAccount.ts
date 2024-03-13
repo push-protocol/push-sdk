@@ -2,7 +2,7 @@ import { Env } from '@pushprotocol/restapi';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
 import { useMemo } from 'react';
-import { CoreContractChainId, CoreRPC } from '../config';
+import { CoreContractChainId, CoreRPC, GUEST_MODE_ACCOUNT } from '../config';
 
 interface useAccountParams {
   env:Env;
@@ -33,7 +33,7 @@ export const useAccount = ({env}:useAccountParams) => {
     setWalletModules,
     setPrimaryWallet,
     provider,
-    account: wallet && wallet.accounts.length > 0 ? ethers.utils.getAddress(wallet.accounts[0].address) : undefined,
+    account: wallet && wallet.accounts.length > 0 ? ethers.utils.getAddress(wallet.accounts[0].address) : GUEST_MODE_ACCOUNT,
     chainId: connectedChain ? Number(connectedChain.id) : CoreContractChainId[env],
     isActive,
     setChain,

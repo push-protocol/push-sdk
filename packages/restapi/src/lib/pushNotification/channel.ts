@@ -1,31 +1,37 @@
 import Constants, { ENV } from '../constants';
-import {
-  SignerType,
-  ProgressHookType,
-  ProgressHookTypeFunction,
-} from '../types';
-import {
-  ChannelInfoOptions,
-  ChannelSearchOptions,
-  NotificationOptions,
-  CreateChannelOptions,
-  NotificationSettings,
-  ChannelOptions
-} from './PushNotificationTypes';
-import * as config from '../config';
-import * as PUSH_PAYLOAD from '../payloads';
+
+import * as viem from 'viem';
 import * as PUSH_CHANNEL from '../channels';
+import * as config from '../config';
 import {
   getCAIPDetails,
-  validateCAIP,
   getFallbackETHCAIPAddress,
+  pCAIP10ToWallet,
+  validateCAIP,
 } from '../helpers';
+import * as PUSH_PAYLOAD from '../payloads';
 import PROGRESSHOOK from '../progressHook';
-import * as viem from 'viem';
+import {
+  ProgressHookType,
+  ProgressHookTypeFunction,
+  SignerType,
+} from '../types';
+import {
+  ChannelFeedsOptions,
+  ChannelInfoOptions,
+  ChannelListOptions,
+  ChannelListOrderType,
+  ChannelListSortType,
+  ChannelOptions,
+  ChannelSearchOptions,
+  CreateChannelOptions,
+  NotificationOptions,
+  NotificationSettings
+} from './PushNotificationTypes';
 
-import { PushNotificationBaseClass } from './pushNotificationBase';
-import { Delegate } from './delegate';
 import { Alias } from './alias';
+import { Delegate } from './delegate';
+import { PushNotificationBaseClass } from './pushNotificationBase';
 
 export class Channel extends PushNotificationBaseClass {
   public delegate!: Delegate;
@@ -410,4 +416,50 @@ export class Channel extends PushNotificationBaseClass {
       throw new Error(`Push SDK Error: Contract : channel::setting : ${error}`);
     }
   };
+
+  notifications = async(account: string, options?:ChannelFeedsOptions) => {
+    try{
+      const {
+        page,
+        limit,
+        filter = null,
+        raw = true
+      } = options || {}
+      if(account.split(":").length == 2){
+        account = pCAIP10ToWallet(account)
+      }
+      return await PUSH_CHANNEL.getChannelNotifications({
+        channel: account as string,
+        env: this.env,
+        filter,
+        raw,
+        page,
+        limit
+      })
+    } catch(error){
+      throw new Error(`Push SDK Error: Contract : channel::notifications : ${error}`);
+    }
+  }
+
+  list = async (options?: ChannelListOptions) => {
+    try{
+      const {
+        page,
+        limit,
+        sort = ChannelListSortType.SUBSCRIBER,
+        order = ChannelListOrderType.DESCENDING,
+      } = options || {}
+
+      return await PUSH_CHANNEL.getChannels({
+        env: this.env,
+        page,
+        limit,
+        sort,
+        order,
+      })
+
+    } catch(error){
+      throw new Error(`Push SDK Error: Contract : channel::list : ${error}`);
+    }
+  }
 }

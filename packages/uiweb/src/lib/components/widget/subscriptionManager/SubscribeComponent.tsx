@@ -54,9 +54,10 @@ export const SubscribeComponent: React.FC<ISubscribeComponentProps> = (
     return null;
   }, [channelInfo]));
 
-
+ 
 
   const handleSubscribe = async () => {
+ 
     try {
       const response = await subscribeToChannel({
         channelAddress: channelAddress,
@@ -77,7 +78,6 @@ export const SubscribeComponent: React.FC<ISubscribeComponentProps> = (
       }
     } catch (e) {
       console.debug(e);
-      console.debug('subscribe error')
       setSubscribeError(
         WidgetErrorCodes.NOTIFICATION_WIDGET_SUBSCRIBE_ERROR
       );
@@ -114,22 +114,27 @@ export const SubscribeComponent: React.FC<ISubscribeComponentProps> = (
           </Span>
         </Section>
         <ChannelDetailsComponent channelInfo={channelInfo}/>
-     {channelInfo && channelInfo?.channel_settings && <Section margin=' 0' width='100%'>
+     {channelInfo && channelInfo?.channel_settings && <Section margin=' 0' width='100%' >
       <SettingsComponent settings={modifiedSettings!} setSettings={setModifiedSettings}/>
       </Section>}
-   
-     {(user?.readmode()) && (
+      
+   {(user && !!user?.readmode)?
+   <>
+     {user?.readmode() && (
         <ConnectButtonComp
           autoconnect={autoconnect}
           setAccount={setAccount}
           setSigner={setSigner}
           signer={signer}
-        />
-      )}  
-      {!(user?.readmode()) &&  
+        />)}
+         
+       {!user?.readmode() &&  
       <Button onClick={handleSubscribe}>
         {subscribeLoading ? <Spinner color="#fff" size="24" /> : 'Subscribe'}
-      </Button> }
+      </Button>}
+      </>
+     :null
+    }
  
       <PoweredByPush />
     </Section>
