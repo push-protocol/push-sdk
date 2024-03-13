@@ -1,4 +1,5 @@
 import Constants, { ENV } from '../constants';
+import { handleError } from '../errors/ValidationError';
 import { getAPIBaseUrls } from '../helpers';
 import { axiosGet } from '../utils/axiosUtil';
 
@@ -33,6 +34,6 @@ export async function getCID(
     const message: Message = response.data;
     return message;
   } catch (err) {
-    throw Error(`[Push SDK] - API ${getCID.name}: ${err}`);
+    throw handleError(err, getCID.name);
   }
 }

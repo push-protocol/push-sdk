@@ -15,6 +15,7 @@ import {
   appendUniqueMessages,
   dateToFromNowDaily,
   pCAIP10ToWallet,
+  walletToPCAIP10,
 } from '../../../helpers';
 import {
   useChatData,
@@ -108,18 +109,16 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
      
     })();
   }, [chatId, user, account, env]);
-
   useEffect(() => {
     (async () => {
       let UserProfile, GroupProfile;
-      if (chatInfo && !chatInfo?.meta?.group) {
-        //change  chatId to user address, maybe it can be sent in chatInfo as members
-        // UserProfile = await fetchUserProfile({
-        //   profileId: chatId,
-        //   env,
-        //   user,
-        // });
-        // if (UserProfile) setUserInfo(UserProfile);
+      if (chatInfo && !chatInfo?.meta?.group && chatInfo?.participants && account) {
+        UserProfile = await fetchUserProfile({
+          profileId: pCAIP10ToWallet(chatInfo?.participants.find((address)=>address != walletToPCAIP10(account))!),
+          env,
+          user,
+        });
+        if (UserProfile) setUserInfo(UserProfile);
         setChatStatusText(ChatStatus.FIRST_CHAT);
       } else if (chatInfo && chatInfo?.meta?.group) {
         GroupProfile = await getGroupByIDnew({ groupId: chatId });

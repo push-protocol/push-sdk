@@ -103,6 +103,7 @@ export const CRITERIA_TYPE = {
     meta: {
       group: boolean;
     };
+    participants?: Array<string>;
     list: string;
   }
 export * from './tokenGatedGroupCreationType'

@@ -2,6 +2,7 @@ import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { ChatMemberCounts } from '../types';
+import { handleError } from '../errors/ValidationError';
 
 /**
  * GET /v1/chat/:chatId/members/count
@@ -30,12 +31,6 @@ export const getGroupMemberCount = async (
 
     return totalMembersCount;
   } catch (error) {
-    console.error(
-      `[Push SDK] - API - Error - API ${getGroupMemberCount.name} -: `,
-      error
-    );
-    throw new Error(
-      `[Push SDK] - API - Error - API ${getGroupMemberCount.name} -: ${error}`
-    );
+    throw handleError(error, getGroupMemberCount.name);
   }
 };

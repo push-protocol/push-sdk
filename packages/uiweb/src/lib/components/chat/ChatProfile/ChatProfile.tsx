@@ -26,7 +26,7 @@ import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../../../types';
 
 
 import { InfuraAPIKey, allowedNetworks, device } from '../../../config';
-import { resolveNewEns, shortenText } from '../../../helpers';
+import { pCAIP10ToWallet, resolveNewEns, shortenText, walletToPCAIP10 } from '../../../helpers';
 import { isValidETHAddress } from '../helpers/helper';
 import PublicChatIcon from '../../../icons/Public-Chat.svg';
 import GreyImage from '../../../icons/greyImage.png';
@@ -34,6 +34,8 @@ import InfoIcon from '../../../icons/infodark.svg';
 import VerticalEllipsisIcon from '../../../icons/VerticalEllipsis.svg';
 import { TokenGatedSvg } from '../../../icons/TokenGatedSvg';
 import useUserProfile from '../../../hooks/useUserProfile';
+import { ChatInfoResponse } from '../types';
+import useFetchChat from '../../../hooks/chat/useFetchChat';
 
 export const ChatProfile: React.FC<IChatProfile> = ({
   chatId,
@@ -49,7 +51,8 @@ export const ChatProfile: React.FC<IChatProfile> = ({
 
   // const [isGroup, setIsGroup] = useState<boolean>(false);
   const [options, setOptions] = useState(false);
-  const [chatInfo, setChatInfo] = useState<IUser | null>();
+  const [chatInfo, setChatInfo] = useState<ChatInfoResponse | null>(null);
+  const [userInfo, setUserInfo] = useState<IUser | null>();
   const [groupInfo, setGroupInfo] = useState<Group | null>();
   const [web3Name, setWeb3Name] = useState<string | null>(null);
   const isMobile = useMediaQuery(device.tablet);
@@ -57,6 +60,8 @@ export const ChatProfile: React.FC<IChatProfile> = ({
   const provider = new ethers.providers.InfuraProvider(l1ChainId, InfuraAPIKey);
   const DropdownRef = useRef(null);
   const [modal, setModal] = useState(false);
+  const { fetchChat } = useFetchChat();
+
 
   useClickAway(DropdownRef, () => {
     setOptions(false);
@@ -67,26 +72,28 @@ export const ChatProfile: React.FC<IChatProfile> = ({
   };
 
   const fetchProfileData = async () => {
-    if (isValidETHAddress(chatId)) {
-      const ChatProfile = await fetchUserProfile({ profileId: chatId, env,user });
-      const result = await resolveNewEns(chatId, provider, env);
-      setWeb3Name(result);
-      setChatInfo(ChatProfile);
-      setGroupInfo(null);
-      // setIsGroup(false);
-    } else {
-      const GroupProfile = await getGroupByIDnew({ groupId: chatId });
-      setGroupInfo(GroupProfile);
-      setChatInfo(null);
-      // setIsGroup(true);
-    }
+
+      if (chatInfo && !chatInfo?.meta?.group && chatInfo?.participants && account) {
+        const recipient = pCAIP10ToWallet(chatInfo?.participants.find((address)=>address != walletToPCAIP10(account))!);
+        const ChatProfile = await fetchUserProfile({ profileId: recipient, env,user });
+        const result = await resolveNewEns(recipient, provider, env);
+        setWeb3Name(result);
+        setUserInfo(ChatProfile);
+        setGroupInfo(null);
+      } else if (chatInfo && chatInfo?.meta?.group) {
+        const GroupProfile = await getGroupByIDnew({ groupId: chatId });
+        setGroupInfo(GroupProfile);
+        setUserInfo(null);
+      }
+   
+
   };
 
   const getImage = () => {
-    if (chatInfo || groupInfo) {
+    if (userInfo || groupInfo) {
       return Object.keys(groupInfo || {}).length
         ? groupInfo?.groupImage ?? GreyImage
-        : chatInfo?.profile?.picture ??
+        : userInfo?.profile?.picture ??
             createBlockie?.(chatId)?.toDataURL()?.toString();
     } else {
       return createBlockie?.(chatId)?.toDataURL()?.toString();
@@ -99,18 +106,33 @@ export const ChatProfile: React.FC<IChatProfile> = ({
       : web3Name
       ? `${web3Name} (${
           isMobile
-            ? shortenText(chatInfo?.did?.split(':')[1] ?? '', 4, true)
+            ? shortenText(userInfo?.did?.split(':')[1] ?? '', 4, true)
             : chatId
         })`
-      : chatInfo
-      ? shortenText(chatInfo.did?.split(':')[1] ?? '', 6, true)
+      : userInfo
+      ? shortenText(userInfo.did?.split(':')[1] ?? '', 6, true)
       : shortenText(chatId?.split(':')[1], 6, true);
   };
 
   useEffect(() => {
-    if (!chatId) return;
-    fetchProfileData();
+ 
+    (async () => {
+      if (!user) return;
+      if(chatId){
+        const chat = await fetchChat({ chatId: chatId });
+        if (Object.keys(chat || {}).length) {
+          setChatInfo(chat as ChatInfoResponse);
+        }
+  
+      }
+     
+    })();
   }, [chatId, account, user]);
+  useEffect(() => {
+    (async () => {
+     await   fetchProfileData(); 
+    })();
+  }, [chatInfo]);
 
   if (chatId) {
     return (

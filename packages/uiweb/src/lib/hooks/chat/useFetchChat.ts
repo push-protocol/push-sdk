@@ -17,8 +17,7 @@ const useFetchChat = () => {
       setLoading(true);
       try {
         
-        const chat = await user?.chat.info(chatId,account!);
-        console.debug(chat)
+        const chat = await user?.chat.info(chatId);
         return chat;
       } catch (error: Error | any) {
         setLoading(false);

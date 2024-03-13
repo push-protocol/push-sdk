@@ -16,6 +16,8 @@ import { getGroupMemberStatus } from './getGroupMemberStatus';
 import * as AES from '../chat/helpers/aes';
 import { getAllGroupMembersPublicKeys } from './getAllGroupMembersPublicKeys';
 import { ALPHA_FEATURE_CONFIG } from '../config';
+import { axiosPut } from '../utils/axiosUtil';
+import { handleError } from '../errors/ValidationError';
 
 export interface GroupMemberUpdateOptions extends EnvOptionsType {
   chatId: string;
@@ -148,23 +150,9 @@ export const updateGroupMembers = async (
       encryptedSecret,
       deltaVerificationProof,
     };
-    return axios
-      .put(apiEndpoint, body)
-      .then((response) => {
-        return response.data;
-      })
-      .catch((err) => {
-        if (err?.response?.data)
-          throw new Error(JSON.stringify(err.response.data));
-        throw new Error(err);
-      });
-  } catch (err) {
-    console.error(
-      `[Push SDK] - API  - Error - API ${updateGroupMembers.name} -:  `,
-      err
-    );
-    throw Error(
-      `[Push SDK] - API  - Error - API ${updateGroupMembers.name} -: ${err}`
-    );
+    const response = await axiosPut(apiEndpoint, body);
+    return response.data;
+  } catch (error) {
+    throw handleError(error, updateGroupMembers.name);
   }
 };

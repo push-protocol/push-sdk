@@ -3,6 +3,7 @@ import Constants, { ENV } from '../constants';
 import { IFeeds } from '../types';
 import { axiosGet } from '../utils/axiosUtil';
 import { IPGPHelper, PGPHelper, addDeprecatedInfo, getInboxLists, getUserDID } from './helpers';
+import { handleError } from '../errors/ValidationError';
 
 export type RequestOptionsType = {
   account: string;
@@ -67,7 +68,6 @@ export const requestsCore = async (
 
     return Feeds;
   } catch (err) {
-    console.error(`[Push SDK] - API ${requests.name}: `, err);
-    throw Error(`[Push SDK] - API ${requests.name}: ${err}`);
+      throw handleError(err, requests.name);
   }
 };

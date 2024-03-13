@@ -21,7 +21,7 @@ import { Modal, ModalHeader } from '../reusables/Modal';
 import { ConnectButtonComp } from '../ConnectButton';
 import useToast from '../reusables/NewToast';
 import { ConditionsInformation } from '../ChatProfile/GroupInfoModal';
-import { setAccessControl } from '../../../helpers';
+import { pCAIP10ToWallet, setAccessControl, walletToPCAIP10 } from '../../../helpers';
 import useFetchChat from '../../../hooks/chat/useFetchChat';
 import {
   useChatData,
@@ -47,6 +47,7 @@ import { PUBLIC_GOOGLE_TOKEN, device } from '../../../config';
 import { checkIfAccessVerifiedGroup } from '../helpers';
 import { InfoContainer } from '../reusables';
 import { ChatInfoResponse } from '../types';
+import useUserProfile from '../../../hooks/useUserProfile';
 
 /**
  * @interface IThemeProps
@@ -110,7 +111,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   } = usePushChatStream();
   const { getGroupByIDnew } = useGetGroupByIDnew();
   const [groupInfo, setGroupInfo] = useState<Group | null>(null);
-  const [userInfo, setUserInfo] = useState<IUser | null>(null);
 
   const [chatInfo, setChatInfo] = useState<ChatInfoResponse | null>(null);
   const theme = useContext(ThemeContext);
@@ -126,6 +126,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   } = useVerifyAccessControl();
   const { fetchMemberStatus, joinGroup, joinLoading, joinError } =
     useGroupMemberUtilities();
+    const { fetchUserProfile } = useUserProfile();
 
   const { account, env, signer, user } = useChatData();
   const { fetchChat } = useFetchChat();
@@ -177,16 +178,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   }, [chatId, verified, isMember, account, env, user]);
  
 
-  // useEffect(() => {
-  //   (async () => {
-  //     if (
-  //       Object.keys(acceptedRequestMessage || {}).length &&
-  //       Object.keys(chatFeed || {}).length
-  //     ) {
-  //       await updateChatFeed();
-  //     }
-  //   })();
-  // }, [acceptedRequestMessage]);
 
   useEffect(() => {
     (async () => {
@@ -203,16 +194,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({
 
   useEffect(() => {
     (async () => {
-      let UserProfile, GroupProfile;
-      if (chatInfo && !chatInfo?.meta?.group) {
-        //change  chatId to user address, maybe it can be sent in chatInfo as members
-        // UserProfile = await fetchUserProfile({
-        //   profileId: chatId,
-        //   env,
-        //   user,
-        // });
-        // if (UserProfile) setUserInfo(UserProfile);
-      } else if (chatInfo && chatInfo?.meta?.group) {
+      let GroupProfile;
+     if (chatInfo && chatInfo?.meta?.group) {
         GroupProfile = await getGroupByIDnew({ groupId: chatId });
         if (GroupProfile) setGroupInfo(GroupProfile);
       }

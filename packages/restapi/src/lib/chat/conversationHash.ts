@@ -1,4 +1,5 @@
 import Constants from '../constants';
+import { handleError } from '../errors/ValidationError';
 import { isValidETHAddress } from '../helpers';
 import { ConversationHashOptionsType } from '../types';
 import { getConversationHashService, getUserDID } from './helpers';
@@ -24,7 +25,6 @@ export const conversationHash = async(options: ConversationHashOptionsType) => {
     });
     return response;
   } catch (err) {
-    console.error(`[Push SDK] - Error - API ${conversationHash.name} - `, err);
-    throw Error(`[Push SDK] - Error - API ${conversationHash.name} - `);
+    throw handleError(err, conversationHash.name);
   }
 };
