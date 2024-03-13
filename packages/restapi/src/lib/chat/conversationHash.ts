@@ -1,5 +1,5 @@
 import Constants from '../constants';
-import { handleError } from '../errors/ValidationError';
+import { handleError } from '../errors/validationError';
 import { isValidETHAddress } from '../helpers';
 import { ConversationHashOptionsType } from '../types';
 import { getConversationHashService, getUserDID } from './helpers';

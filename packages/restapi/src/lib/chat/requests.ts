@@ -3,7 +3,7 @@ import Constants, { ENV } from '../constants';
 import { IFeeds } from '../types';
 import { axiosGet } from '../utils/axiosUtil';
 import { IPGPHelper, PGPHelper, addDeprecatedInfo, getInboxLists, getUserDID } from './helpers';
-import { handleError } from '../errors/ValidationError';
+import { handleError } from '../errors/validationError';
 
 export type RequestOptionsType = {
   account: string;

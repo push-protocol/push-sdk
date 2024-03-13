@@ -17,7 +17,7 @@ import {
 import * as CryptoJS from 'crypto-js';
 import { axiosPut } from '../utils/axiosUtil';
 import { getGroupInfo } from './getGroupInfo';
-import { handleError } from '../errors/ValidationError';
+import { handleError } from '../errors/validationError';
 
 export interface ChatUpdateGroupProfileType extends EnvOptionsType {
   account?: string | null;

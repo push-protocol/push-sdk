@@ -1,7 +1,7 @@
 import { getAPIBaseUrls } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { axiosGet } from '../utils/axiosUtil';
-import { handleError } from '../errors/ValidationError';
+import { handleError } from '../errors/validationError';
 import { getUserDID } from './helpers';
 
 /**

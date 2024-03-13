@@ -1,4 +1,4 @@
-import { HttpStatus } from './HttpStatus';
+import { HttpStatus } from "./httpStatus";
 
 export class ValidationError extends Error {
   status: HttpStatus;

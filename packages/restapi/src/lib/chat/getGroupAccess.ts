@@ -3,7 +3,7 @@ import Constants, { ENV } from '../constants';
 import { GroupAccess } from '../types';
 import {  getUserDID } from './helpers';
 import { axiosGet } from '../utils/axiosUtil';
-import { handleError } from '../errors/ValidationError';
+import { handleError } from '../errors/validationError';
 
 /**
  * GET /v1/chat/groups/:chatId/access/:did

@@ -2,7 +2,7 @@ import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { ChatMemberProfile } from '../types';
-import { handleError } from '../errors/ValidationError';
+import { handleError } from '../errors/validationError';
 
 /**
  * GET /v1/chat/:chatId/members

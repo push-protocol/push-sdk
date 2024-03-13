@@ -23,7 +23,7 @@ import { axiosPut } from '../utils/axiosUtil';
 import { getGroup } from './getGroup';
 import * as AES from '../chat/helpers/aes';
 import { getGroupMemberStatus } from './getGroupMemberStatus';
-import { handleError } from '../errors/ValidationError';
+import { handleError } from '../errors/validationError';
 
 export interface ChatUpdateGroupType extends EnvOptionsType {
   account?: string | null;

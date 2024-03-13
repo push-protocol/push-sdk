@@ -15,9 +15,9 @@ import {
   ValidationError,
   handleError,
   isErrorWithResponse,
-} from '../errors/ValidationError';
+} from '../errors/validationError';
 import { axiosPost } from '../utils/axiosUtil';
-import { HttpStatus } from '../errors/HttpStatus';
+import { HttpStatus } from '../errors/httpStatus';
 
 export interface ChatCreateGroupTypeV2 extends EnvOptionsType {
   account?: string | null;

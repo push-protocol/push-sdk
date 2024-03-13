@@ -3,7 +3,7 @@ import Constants, { ENV } from '../constants';
 import { IFeeds } from '../types';
 import { getInboxLists, getUserDID, addDeprecatedInfo, IPGPHelper, PGPHelper } from './helpers';
 import { axiosGet } from '../utils/axiosUtil';
-import { handleError } from '../errors/ValidationError';
+import { handleError } from '../errors/validationError';
 
 export type ChatsOptionsType = {
   account: string;
