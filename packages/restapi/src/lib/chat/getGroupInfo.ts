@@ -3,7 +3,7 @@ import { getAPIBaseUrls } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { GroupDTO, GroupInfoDTO } from '../types';
 import { GetGroupType } from './getGroup';
-import { handleError } from '../errors/ValidationError';
+import { handleError } from '../errors/validationError';
 
 /**
  *  GET /v2/chat/groups/:chatId

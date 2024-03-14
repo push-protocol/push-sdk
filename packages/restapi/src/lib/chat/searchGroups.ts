@@ -2,7 +2,7 @@ import { getAPIBaseUrls } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { GroupDTO } from '../types';
 import { axiosPost } from '../utils/axiosUtil';
-import { handleError } from '../errors/ValidationError';
+import { handleError } from '../errors/validationError';
 
 /**
  *  POST /v1/chat/groups/search

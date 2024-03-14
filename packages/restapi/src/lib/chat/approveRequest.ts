@@ -15,7 +15,7 @@ import * as AES from '../chat/helpers/aes';
 import { getGroupInfo } from './getGroupInfo';
 import { getAllGroupMembersPublicKeys } from './getAllGroupMembersPublicKeys';
 import { ALPHA_FEATURE_CONFIG } from '../config';
-import { handleError } from '../errors/ValidationError';
+import { handleError } from '../errors/validationError';
 
 export interface ApproveRequestOptionsType extends EnvOptionsType {
   /**

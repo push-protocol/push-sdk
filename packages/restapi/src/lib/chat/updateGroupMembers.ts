@@ -17,7 +17,7 @@ import * as AES from '../chat/helpers/aes';
 import { getAllGroupMembersPublicKeys } from './getAllGroupMembersPublicKeys';
 import { ALPHA_FEATURE_CONFIG } from '../config';
 import { axiosPut } from '../utils/axiosUtil';
-import { handleError } from '../errors/ValidationError';
+import { handleError } from '../errors/validationError';
 
 export interface GroupMemberUpdateOptions extends EnvOptionsType {
   chatId: string;

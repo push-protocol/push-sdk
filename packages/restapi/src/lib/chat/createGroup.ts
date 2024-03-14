@@ -14,7 +14,7 @@ import {
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
 import { axiosPost } from '../utils/axiosUtil';
-import { handleError } from '../errors/ValidationError';
+import { handleError } from '../errors/validationError';
 
 export interface ChatCreateGroupType extends EnvOptionsType {
   account?: string | null;

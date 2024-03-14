@@ -5,7 +5,7 @@ import { ChatStatus, EnvOptionsType, GroupInfoDTO, SignerType } from '../types';
 import { sign, getWallet, getConnectedUserV2 } from './helpers';
 import * as CryptoJS from 'crypto-js';
 import { axiosPut } from '../utils/axiosUtil';
-import { handleError } from '../errors/ValidationError';
+import { handleError } from '../errors/validationError';
 
 export interface ChatUpdateConfigProfileType extends EnvOptionsType {
   account?: string | null;

@@ -12,7 +12,7 @@ import {
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
 import { axiosPut } from '../utils/axiosUtil';
-import { handleError } from '../errors/ValidationError';
+import { handleError } from '../errors/validationError';
 
 interface RejectRequestOptionsType extends EnvOptionsType {
   /**

@@ -15,7 +15,7 @@ import { MessageObj } from '../types/messageTypes';
 import { validateMessageObj } from '../validations/messageObject';
 import { axiosPost } from '../utils/axiosUtil';
 import { getGroupInfo } from './getGroupInfo';
-import { handleError } from '../errors/ValidationError';
+import { handleError } from '../errors/validationError';
 
 /**
  * SENDS A PUSH CHAT MESSAGE
