@@ -1,5 +1,5 @@
 import Constants from '../constants';
-import { handleError } from '../errors/ValidationError';
+import { handleError } from '../errors/validationError';
 import { pCAIP10ToWallet } from '../helpers';
 import { AccountEnvOptionsType, IMessageIPFS } from '../types';
 import { get } from '../user';

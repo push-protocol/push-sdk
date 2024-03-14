@@ -19,7 +19,12 @@ import { Button, Section, Span, Spinner } from '../../reusables';
 import { ChatPreview } from '../ChatPreview';
 import useUserProfile from '../../../hooks/useUserProfile';
 
-import { getAddress, getNewChatUser, pCAIP10ToWallet } from '../../../helpers';
+import {
+  getAddress,
+  getNewChatUser,
+  pCAIP10ToWallet,
+  walletToPCAIP10,
+} from '../../../helpers';
 import {
   displayDefaultUser,
   generateRandomNonce,
@@ -28,6 +33,7 @@ import {
 } from '../helpers';
 import { IChatTheme } from '../theme';
 import { ThemeContext } from '../theme/ThemeProvider';
+import useFetchChat from '../../../hooks/chat/useFetchChat';
 
 // Define Interfaces
 /**
@@ -95,6 +101,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
   console.log(chatPreviewList);
   // set theme
   const theme = useContext(ThemeContext);
+  const { fetchChat } = useFetchChat();
 
   // set ref
   const listInnerRef = useRef<HTMLDivElement>(null);
@@ -609,92 +616,114 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     };
     //check if searchParamter is there
     try {
-      if (options?.searchParamter) {
-        let formattedChatId: string | null = options?.searchParamter;
-        let userProfile: IUser | undefined = undefined;
-        let groupProfile: Group;
+      if (options?.searchParamter)
+        if (options?.searchParamter) {
+          let formattedChatId: string | null = options?.searchParamter;
+          let userProfile: IUser | undefined = undefined;
+          let groupProfile: Group;
 
-        //check if ens then convert to address
-        if (formattedChatId.includes('.')) {
-          const address = await getAddress(formattedChatId, env)!;
-          if (address) formattedChatId = pCAIP10ToWallet(address);
-          else {
-            error = {
-              code: ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_INVALID_SEARCH_ERROR,
-              message: 'Invalid search',
-            };
-          }
-        }
-        if (!error) {
-          if (await ethers.utils.isAddress(formattedChatId)) {
-            //fetch  profile
-            userProfile = await getNewChatUser({
-              searchText: formattedChatId,
-              env,
-              fetchChatProfile: fetchUserProfile,
-              user,
-            });
-          } else {
-            //fetch group info
-            groupProfile = await getGroupByIDnew({ groupId: formattedChatId });
-          }
-          if (!userProfile && !groupProfile) {
-            error = {
-              code: ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_INVALID_SEARCH_ERROR,
-              message: 'Invalid search',
-            };
-          } else {
-            searchedChat = {
-              ...searchedChat,
-              chatId: formattedChatId!,
-              chatGroup: !!groupProfile,
-              chatPic:
-                (userProfile?.profile?.picture ?? groupProfile?.groupImage) ||
-                null,
-              chatParticipant: formattedChatId!,
-            };
-            //fetch latest chat
-            const latestMessage = await fetchLatestMessage({
-              chatId: formattedChatId,
-            });
-            if (latestMessage) {
-              searchedChat = {
-                ...searchedChat,
-                chatMsg: {
-                  messageType: latestMessage[0]?.messageType,
-                  messageContent: latestMessage[0]?.messageContent,
-                },
-                chatTimestamp: latestMessage[0]?.timestamp,
+          if (formattedChatId.includes('.')) {
+            const address = await getAddress(formattedChatId, env)!;
+            if (address) formattedChatId = pCAIP10ToWallet(address);
+            else {
+              error = {
+                code: ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_INVALID_SEARCH_ERROR,
+                message: 'Invalid search',
               };
             }
-
-            // return if nonce doesn't match or if page is not 1
-            if (
-              currentNonce !== chatPreviewList.nonce ||
-              chatPreviewList.page !== 1
-            ) {
-              return;
-            }
-            setChatPreviewList((prev) => ({
-              nonce: generateRandomNonce(),
-              items: [...[searchedChat]],
-              page: 1,
-              preloading: false,
-              loading: false,
-              loaded: false,
-              reset: false,
-              resume: false,
-              errored: false,
-              error: null,
-            }));
           }
+          if (pCAIP10ToWallet(formattedChatId) == pCAIP10ToWallet(account!)) {
+            error = {
+              code: ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_INVALID_SEARCH_ERROR,
+              message: 'Invalid search',
+            };
+          }
+
+          if (!error) {
+            const chatInfo = await fetchChat({ chatId: formattedChatId });
+
+            if (chatInfo && chatInfo?.meta?.group)
+              groupProfile = await getGroupByIDnew({
+                groupId: formattedChatId,
+              });
+            else if (account)
+              formattedChatId = pCAIP10ToWallet(
+                chatInfo?.participants.find(
+                  (address) => address != walletToPCAIP10(account)
+                ) || formattedChatId
+              );
+       
+
+            //fetch  profile
+            if (!groupProfile)
+            {
+              userProfile = await getNewChatUser({
+                searchText: formattedChatId,
+                env,
+                fetchChatProfile: fetchUserProfile,
+                user,
+              });
+              
+            }
+             
+
+            if (!userProfile && !groupProfile) {
+              error = {
+                code: ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_INVALID_SEARCH_ERROR,
+                message: 'Invalid search',
+              };
+            } else {
+              searchedChat = {
+                ...searchedChat,
+                chatId: chatInfo?.chatId || formattedChatId,
+                chatGroup: !!groupProfile,
+                chatPic:
+                  (userProfile?.profile?.picture ?? groupProfile?.groupImage) ||
+                  null,
+                chatParticipant: !!groupProfile?groupProfile?.groupName: formattedChatId!,
+              };
+              //fetch latest chat
+              const latestMessage = await fetchLatestMessage({
+                chatId: formattedChatId,
+              });
+              if (latestMessage) {
+                searchedChat = {
+                  ...searchedChat,
+                  chatMsg: {
+                    messageType: latestMessage[0]?.messageType,
+                    messageContent: latestMessage[0]?.messageContent,
+                  },
+                  chatTimestamp: latestMessage[0]?.timestamp,
+                };
+              }
+
+              // return if nonce doesn't match or if page is not 1
+              if (
+                currentNonce !== chatPreviewList.nonce ||
+                chatPreviewList.page !== 1
+              ) {
+                return;
+              }
+              setChatPreviewList((prev) => ({
+                nonce: generateRandomNonce(),
+                items: [...[searchedChat]],
+                page: 1,
+                preloading: false,
+                loading: false,
+                loaded: false,
+                reset: false,
+                resume: false,
+                errored: false,
+                error: null,
+              }));
+            }
+          }
+        } else {
+          error = {
+            code: ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_INSUFFICIENT_INPUT,
+            message: 'Insufficient input for search',
+          };
         }
-      } else {
-        error = {
-          code: ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_INSUFFICIENT_INPUT,
-          message: 'Insufficient input for search',
-        };
-      }
       if (error) {
         setChatPreviewList({
           nonce: generateRandomNonce(),
@@ -711,6 +740,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       }
     } catch (e) {
       // return if nonce doesn't match
+      console.debug(e)
       console.debug(
         `Errored: currentNonce: ${currentNonce}, chatPreviewList.nonce: ${chatPreviewList.nonce}`
       );
@@ -788,18 +818,17 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
             selected={
               options?.prefillChatPreviewList &&
               options?.prefillChatPreviewList[index].selected
-              ?
-              options?.prefillChatPreviewList[index].selected
-              :
-              chatPreviewListMeta.selectedChatId === item.chatId ? true : false
+                ? options?.prefillChatPreviewList[index].selected
+                : chatPreviewListMeta.selectedChatId === item.chatId
+                ? true
+                : false
             }
             setSelected={
               options?.prefillChatPreviewList &&
               options?.prefillChatPreviewList[index].setSelected
-              ?
-              options?.prefillChatPreviewList[index].setSelected
-              :
-              setSelectedBadge}
+                ? options?.prefillChatPreviewList[index].setSelected
+                : setSelectedBadge
+            }
           />
         );
       })}

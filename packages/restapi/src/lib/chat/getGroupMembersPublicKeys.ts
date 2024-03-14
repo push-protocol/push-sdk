@@ -3,7 +3,7 @@ import { getAPIBaseUrls } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { ChatMemberCounts, ChatMemberProfile } from '../types';
 import { FetchChatGroupInfoType } from './getGroupMembers';
-import { handleError } from '../errors/ValidationError';
+import { handleError } from '../errors/validationError';
 
 /**
  * GET /v1/chat/:chatId/members/public/keys

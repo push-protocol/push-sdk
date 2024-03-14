@@ -1,6 +1,6 @@
 import { ALPHA_FEATURE_CONFIG } from '../config';
 import Constants, { PACKAGE_BUILD } from '../constants';
-import { handleError } from '../errors/ValidationError';
+import { handleError } from '../errors/validationError';
 import { EnvOptionsType, SignerType, GroupInfoDTO } from '../types';
 import {
   GroupMemberUpdateOptions,

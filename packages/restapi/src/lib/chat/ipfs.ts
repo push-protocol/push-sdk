@@ -1,5 +1,5 @@
 import Constants, { ENV } from '../constants';
-import { handleError } from '../errors/ValidationError';
+import { handleError } from '../errors/validationError';
 import { getAPIBaseUrls } from '../helpers';
 import { axiosGet } from '../utils/axiosUtil';
 
