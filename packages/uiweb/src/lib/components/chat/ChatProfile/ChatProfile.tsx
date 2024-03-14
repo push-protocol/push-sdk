@@ -244,7 +244,7 @@ const DropDownBar = styled.div`
   color: rgb(101, 119, 149);
   background: ${(props) => props.theme.backgroundColor.modalBackground};
   border: ${(props) => props.theme.border.modalInnerComponents};
-  z-index: 99;
+  z-index: 10;
   border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
 `;
 
