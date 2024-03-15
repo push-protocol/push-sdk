@@ -591,6 +591,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       }
     }
   }, [chatRequestStream]);
+  console.debug(chatStream,'chat preview list chat stream event')
   useEffect(() => {
     if (
       Object.keys(chatAcceptStream).length > 0 &&

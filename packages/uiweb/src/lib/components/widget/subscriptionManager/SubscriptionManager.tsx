@@ -67,7 +67,7 @@ export const SubscriptionManager: React.FC<ISubscriptionManagerProps> = (
 
   const { fetchUserSubscriptions, userSubscriptionLoading,setUserSubscriptionLoading } =
     useManageSubscriptionsUtilities();
-
+console.debug(userSubscription)
   const handleNext = () => {
     if(activeComponent === SUBSCRIPTION_MANAGER_STEP_KEYS.MANAGE_NOTIFICATIONS)
     {

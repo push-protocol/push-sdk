@@ -40,7 +40,7 @@ export const usePushChatStream = () => {
 
     //Listen for chat messages, your message, request, accept, rejected,
     stream?.on(CONSTANTS.STREAM.CHAT, (message: any) => {
-      console.debug(message);
+      console.debug(message,'event received');
       if (message.event === 'chat.request') {
         setChatRequestStream(message);
       } else if (message.event === 'chat.accept') {
@@ -62,7 +62,7 @@ export const usePushChatStream = () => {
       }
    
        else if (message.event === 'chat.message') {
-        console.debug(message)
+        console.debug(message,'in chat.message condition')
         setChatStream(message);
       }
     });
@@ -82,8 +82,20 @@ export const usePushChatStream = () => {
   };
 
   useEffect(()=>{
-console.debug(chatStream)
+console.debug(chatStream,'in chat stream change useeffect')
+
+// return () => {
+//   setChatStream({});
+// };
   },[chatStream])
+
+  useEffect(()=>{
+    console.debug('resetting chatStream')
+    
+    return () => {
+      setChatStream({});
+    };
+      },[])
 
   /**
    * Whenever the requisite params to create a connection object change
@@ -137,7 +149,7 @@ console.debug(chatStream)
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, env, account]);
-console.debug(chatStream)
+console.debug(chatStream,'state is set')
   return {
     chatStream,
     chatRequestStream,

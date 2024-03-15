@@ -143,9 +143,9 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       setChatInfo(updatedChatInfo);
     }
   }, [chatAcceptStream]);
-  console.debug(chatStream)
+  console.debug(chatStream,'in chat view list ')
   useEffect(() => {
-    console.debug(chatStream)
+    console.debug(chatStream,'in chat view list use effetc')
     if (
       Object.keys(chatStream).length > 0 &&
       chatStream.constructor === Object
