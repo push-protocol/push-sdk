@@ -62,6 +62,7 @@ export const usePushChatStream = () => {
       }
    
        else if (message.event === 'chat.message') {
+        console.debug(message)
         setChatStream(message);
       }
     });
@@ -79,6 +80,10 @@ export const usePushChatStream = () => {
 
     console.debug('stream listeners attached');
   };
+
+  useEffect(()=>{
+console.debug(chatStream)
+  },[chatStream])
 
   /**
    * Whenever the requisite params to create a connection object change
@@ -132,7 +137,7 @@ export const usePushChatStream = () => {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, env, account]);
-
+console.debug(chatStream)
   return {
     chatStream,
     chatRequestStream,

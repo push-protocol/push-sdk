@@ -72,9 +72,8 @@ export const ChatProfile: React.FC<IChatProfile> = ({
   };
 
   const fetchProfileData = async () => {
-
       if (chatInfo && !chatInfo?.meta?.group && chatInfo?.participants && account) {
-        const recipient = pCAIP10ToWallet(chatInfo?.participants.find((address)=>address != walletToPCAIP10(account))!);
+        const recipient = pCAIP10ToWallet(chatInfo?.participants.find((address)=>address != walletToPCAIP10(account)) || chatId);
         const ChatProfile = await fetchUserProfile({ profileId: recipient, env,user });
         const result = await resolveNewEns(recipient, provider, env);
         setWeb3Name(result);
@@ -113,7 +112,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
       ? shortenText(userInfo.did?.split(':')[1] ?? '', 6, true)
       : shortenText(chatId?.split(':')[1], 6, true);
   };
-
+  
   useEffect(() => {
  
     (async () => {

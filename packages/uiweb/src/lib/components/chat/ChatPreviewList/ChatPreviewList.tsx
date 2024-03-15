@@ -680,7 +680,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
                 chatPic:
                   (userProfile?.profile?.picture ?? groupProfile?.groupImage) ||
                   null,
-                chatParticipant: !!groupProfile?groupProfile?.groupName: formattedChatId!,
+                chatParticipant: groupProfile?groupProfile?.groupName: formattedChatId!,
               };
               //fetch latest chat
               const latestMessage = await fetchLatestMessage({

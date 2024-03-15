@@ -114,7 +114,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       let UserProfile, GroupProfile;
       if (chatInfo && !chatInfo?.meta?.group && chatInfo?.participants && account) {
         UserProfile = await fetchUserProfile({
-          profileId: pCAIP10ToWallet(chatInfo?.participants.find((address)=>address != walletToPCAIP10(account))!),
+          profileId: pCAIP10ToWallet(chatInfo?.participants.find((address)=>address != walletToPCAIP10(account))|| chatId),
           env,
           user,
         });
@@ -143,8 +143,9 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       setChatInfo(updatedChatInfo);
     }
   }, [chatAcceptStream]);
-
+  console.debug(chatStream)
   useEffect(() => {
+    console.debug(chatStream)
     if (
       Object.keys(chatStream).length > 0 &&
       chatStream.constructor === Object
