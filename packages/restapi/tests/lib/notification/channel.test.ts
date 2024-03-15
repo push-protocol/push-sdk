@@ -14,6 +14,7 @@ import {
 } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import CONSTANTS from '../../../src/lib/constantsV2';
+import { inspect } from 'util';
 
 describe('PushAPI.channel functionality', () => {
   let userAlice: PushAPI;
@@ -63,7 +64,7 @@ describe('PushAPI.channel functionality', () => {
     // initialisation with signer and provider
     userKate = await PushAPI.initialize(signer2, { env: ENV.DEV });
     // initialisation with signer
-    userAlice = await PushAPI.initialize(signer2);
+    userAlice = await PushAPI.initialize(signer2, { env: ENV.DEV });
     // TODO: remove signer1 after chat makes signer as optional
     //initialisation without signer
     userBob = await PushAPI.initialize(signer1, { env: ENV.DEV });
@@ -91,7 +92,7 @@ describe('PushAPI.channel functionality', () => {
       const res = await userBob.channel.info(
         'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
         {
-          raw: false
+          raw: false,
         }
       );
       console.log(res.channel_settings);
@@ -128,7 +129,7 @@ describe('PushAPI.channel functionality', () => {
       const res = await userBob.channel.subscribers({
         channel: 'eip155:11155111:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
       });
-      console.log(res)
+      console.log(res);
       expect(res).not.null;
     });
 
@@ -175,7 +176,7 @@ describe('PushAPI.channel functionality', () => {
         limit: 10,
         setting: true,
       });
-      console.log(res)
+      console.log(res);
       expect(res).not.null;
     });
 
@@ -559,28 +560,37 @@ describe('PushAPI.channel functionality', () => {
           },
         },
       ]);
-        // console.log(res)
+      // console.log(res)
       expect(res).not.null;
     }, 10000000000);
   });
 
-  describe("notifications", async()=>{
-    it("Should fetch channel specific feeds", async()=>{
-      const res = await userAlice.channel.notifications("eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681",{raw: false})
-      console.log(res)
-      expect(res).not.null
-    })
+  describe('notifications', async () => {
+    it('Should fetch channel specific feeds', async () => {
+      const res = await userAlice.channel.notifications(
+        'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
+        { raw: false }
+      );
+      console.log(inspect(res, { depth: null }));
+      expect(res).not.null;
+    });
 
-    it("Should fetch channel specific feeds in raw fomrta", async()=>{
-      const res = await userAlice.channel.notifications("eip155:0xD8634C39BBFd4033c0d3289C4515275102423681",{raw: true})
-      console.log(res)
-      expect(res).not.null
-    })
+    it('Should fetch channel specific feeds in raw format', async () => {
+      const res = await userAlice.channel.notifications(
+        'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
+        { raw: true }
+      );
+      console.log(inspect(res, { depth: null }));
+      expect(res).not.null;
+    });
 
-    it("Should fetch channel specific feeds broadcast type", async()=>{
-      const res = await userAlice.channel.notifications("0xD8634C39BBFd4033c0d3289C4515275102423681",{raw: false, filter: CONSTANTS.NOTIFICATION.TYPE.TARGETTED})
-      console.log(res)
-      expect(res).not.null
-    })
-  })
+    it('Should fetch channel specific feeds broadcast type', async () => {
+      const res = await userAlice.channel.notifications(
+        '0xD8634C39BBFd4033c0d3289C4515275102423681',
+        { raw: false, filter: CONSTANTS.NOTIFICATION.TYPE.TARGETTED }
+      );
+      console.log(inspect(res, { depth: null }));
+      expect(res).not.null;
+    });
+  });
 });

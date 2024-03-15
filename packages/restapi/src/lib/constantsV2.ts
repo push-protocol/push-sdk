@@ -1,7 +1,15 @@
 import { ALPHA_FEATURES, ENCRYPTION_TYPE, ENV, MessageType } from './constants';
-import { ChannelListOrderType, ChannelListSortType, ChannelListType } from './pushNotification/PushNotificationTypes';
+import {
+  ChannelListOrderType,
+  ChannelListSortType,
+  ChannelListType,
+} from './pushNotification/PushNotificationTypes';
 import { ChatListType } from './pushapi/pushAPITypes';
-import { STREAM, SpaceEventType, VideoEventType } from './pushstream/pushStreamTypes';
+import {
+  STREAM,
+  SpaceEventType,
+  VideoEventType,
+} from './pushstream/pushStreamTypes';
 import { initSpaceData } from './space';
 import {
   ConditionType,
@@ -9,6 +17,7 @@ import {
   GROUP_RULES_CATEGORY,
   GROUP_RULES_PERMISSION,
   GROUP_RULES_SUB_CATEGORY,
+  NotifictaionType,
   VideoCallStatus,
 } from './types';
 import { initVideoCallData } from './video';
@@ -36,30 +45,27 @@ const CONSTANTS = {
   VIDEO: {
     EVENT: VideoEventType,
     STATUS: VideoCallStatus,
-    INITIAL_DATA: initVideoCallData
+    INITIAL_DATA: initVideoCallData,
   },
   SPACE: {
     EVENT: SpaceEventType,
-    INITIAL_DATA: initSpaceData
+    INITIAL_DATA: initSpaceData,
   },
   ALPHA_FEATURES: ALPHA_FEATURES,
   USER: { ENCRYPTION_TYPE: ENCRYPTION_TYPE },
   NOTIFICATION: {
-    TYPE: {
-      BROADCAST: 1,
-      SUBSET: 4,
-      TARGETTED: 3
-    },
+    TYPE: NotifictaionType,
     CHANNEL: {
       LIST_TYPE: ChannelListType,
-    }
+    },
   },
   FILTER: {
     CHANNEL_LIST: {
       SORT: ChannelListSortType,
-      ORDER: ChannelListOrderType
-    }
-  }
+      ORDER: ChannelListOrderType,
+    },
+    NOTIFICATION_TYPE: NotifictaionType,
+  },
 };
 
 export default CONSTANTS;
