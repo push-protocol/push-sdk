@@ -17,6 +17,7 @@ import type {
 import { pCAIP10ToWallet, walletToPCAIP10 } from '../address';
 import { getUdResolver } from '../udResolver';
 import { displayDefaultUser } from './user';
+import { createWeb3Name } from "@web3-name-sdk/core";
 
 export const getObjectsWithMatchingKeys = (
   obj: ChatFeedsType,
@@ -68,41 +69,47 @@ export const getNewChatUser = async ({
   let chatProfile: IUser | undefined;
   let address: string | null = null;
   address = await getAddress(searchText, env);
+  console.log('searchedTextttt', address);
   // const provider = new ethers.providers.InfuraProvider();
   // address = await provider.resolveName(searchText);
   // if (!address) {
   //   address = await getAddress(searchText, env);
   // }
   if (address) {
-    chatProfile = await fetchChatProfile({ profileId: address, env,user });
+    chatProfile = await fetchChatProfile({ profileId: address, env, user });
     if (!chatProfile)
       chatProfile = displayDefaultUser({ caip10: walletToPCAIP10(address) });
     return chatProfile;
   }
   return;
 };
-
+///
 export const getAddress = async (searchText: string, env: Env) => {
+  const web3Name = createWeb3Name();
+  console.log('searchText', searchText);
   const udResolver = getUdResolver(env);
   const provider = new ethers.providers.InfuraProvider(
     CoreContractChainId[env],
     InfuraAPIKey
   );
   let address: string | null = null;
+  let addresss: string | null = null;
   if (searchText.includes('.')) {
     try {
+      addresss = await web3Name.getAddress(searchText);
+      console.log('addresss', addresss);
       address = await udResolver.owner(searchText);
-  } catch (err) {
+    } catch (err) {
       try {
         address = await provider.resolveName(searchText);
       } catch (err) {
         console.debug(err);
       }
-   
-    console.debug(err);
-  }
 
-    return address || null;
+      console.debug(err);
+    }
+
+    return addresss || null;
   } else if (await ethers.utils.isAddress(pCAIP10ToWallet(searchText))) {
     return searchText;
   } else {

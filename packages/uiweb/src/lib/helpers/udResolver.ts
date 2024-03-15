@@ -2,8 +2,10 @@ import Resolution from '@unstoppabledomains/resolution';
 import { ethers } from 'ethers';
 import { allowedNetworks, InfuraAPIKey, NETWORK_DETAILS } from '../config';
 import type { Env } from '@pushprotocol/restapi';
+import {createWeb3Name} from "@web3-name-sdk/core";
 
 export const getUdResolver = (env:Env): Resolution => {
+  const web3Name = createWeb3Name();
   const l1ChainId = allowedNetworks[env].includes(1) ? 1 : 5;
   const l2ChainId = allowedNetworks[env].includes(137) ? 137 : 80001;
   // ToDo: Enable for sepolia chainId once UD supports it

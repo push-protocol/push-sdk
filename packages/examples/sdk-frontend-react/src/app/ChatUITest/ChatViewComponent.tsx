@@ -19,8 +19,9 @@ const ChatViewComponentTest = () => {
       {/* <CreateGroupModal onClose={()=>{console.log('in close')}}  modalBackground={MODAL_BACKGROUND_TYPE.OVERLAY} modalPositionType={MODAL_POSITION_TYPE.RELATIVE}/> */}
         <ChatView 
           onVerificationFail={() => console.log("Verification Failed")} 
-
-          chatId='0x56A734ba4C7c7b117774C9aAcCEf521eBE66d65b' 
+// 786f61c51d436d5a4a02ddb8553ebb4496d909a054eed87967e780531db7960f
+// 0xb4aB21716847F6181C4F72c1ad5c05Aa6B8702e1
+          chatId='0xfD8D06740291E7F2675Bc584fC6021d488B37c4f'
           chatProfileLeftHelperComponent={<img src={Img} onClick={()=>console.debug('clicked')}/>}
           chatProfileRightHelperComponent={<div>right component</div>}
 

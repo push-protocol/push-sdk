@@ -67,9 +67,12 @@ export const ChatProfile: React.FC<IChatProfile> = ({
   };
 
   const fetchProfileData = async () => {
+    console.log("in fetchchat profile data")
     if (isValidETHAddress(chatId)) {
+      console.log('chatId', chatId);
       const ChatProfile = await fetchUserProfile({ profileId: chatId, env,user });
       const result = await resolveNewEns(chatId, provider, env);
+      console.log('resultttt', result);
       setWeb3Name(result);
       setChatInfo(ChatProfile);
       setGroupInfo(null);

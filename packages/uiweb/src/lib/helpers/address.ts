@@ -2,6 +2,7 @@ import { ethers } from 'ethers';
 import type { Web3Provider, InfuraProvider } from '@ethersproject/providers';
 import { Env, SignerType } from '@pushprotocol/restapi';
 import { getUdResolver } from './udResolver';
+import { createWeb3Name } from '@web3-name-sdk/core';
 
 /**
  *
@@ -58,22 +59,28 @@ export const resolveEns = (address: string, provider: Web3Provider) => {
   //   );
   // }
 
+  console.log('enssss', address);
+
   provider.lookupAddress(checksumWallet).then((ens) => {
+    console.log('ens', ens);
     if (ens) {
+      console.log('ens', ens);
       return ens;
     } else {
       return null;
     }
   });
 };
-
+// isko change karna hai spaceId se
 export const resolveNewEns = async (
   address: string,
   provider: InfuraProvider,
-  env:Env
+  env: Env
 ) => {
   const walletLowercase = pCAIP10ToWallet(address).toLowerCase();
   const checksumWallet = ethers.utils.getAddress(walletLowercase);
+  const web3Name = createWeb3Name();
+  // const check
 
   // let provider = ethers.getDefaultProvider('mainnet');
   // if (
@@ -93,25 +100,33 @@ export const resolveNewEns = async (
   let result: string | null = null;
 
   try {
-   const ens =  await provider.lookupAddress(checksumWallet)
-      if (ens) {
-        result = ens;
-        // return ens;
-      } else {
-        try {
-          const udResolver = getUdResolver(env);
-    
-          // attempt reverse resolution on provided address
-          const udName = await udResolver.reverse(checksumWallet);
-          if (udName) {
-            result = udName
-          } else {
-            result = null;
-          }
-        } catch (err) {
-          console.debug(err);
-        }
+    const ens = await provider.lookupAddress(checksumWallet)
+    if (ens) {
+      result = ens;
+      // return ens;
+    } else {
+      try {
+        const udResolver = getUdResolver(env);
+
+        // attempt reverse resolution on provided address
+        // const udName = await udResolver.reverse(checksumWallet);
+        console.log(checksumWallet, "udName")
+        result = await web3Name.getDomainName({
+          address: checksumWallet,
+          rpcUrl: "https://mainnet.infura.io/v3/4bc7ff5f8f7f4e57b5011844d399bc47",
+          // queryTldList: ['bnb'],
+          queryChainIdList: [1, 137, 80001, 11155111, 97, 420, 56, 250, 128, 1287],
+        })
+        console.log(result, "newwww")
+        // if (udName) {
+        //   result = udName
+        // } else {
+        //   result = null;
+        // }
+      } catch (err) {
+        console.debug(err);
       }
+    }
 
   } catch (err) {
     console.debug(err);
