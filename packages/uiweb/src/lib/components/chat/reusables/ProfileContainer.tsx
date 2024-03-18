@@ -28,7 +28,9 @@ export const ProfileContainer = ({
   copy,
   customStyle,
 }: ProfileProps) => {
-  const [copyText, setCopyText] = useState<string>('Copy to clipboard');
+  const [copyText, setCopyText] = useState<string>();
+
+
 
   return (
     <Section justifyContent="flex-start">
@@ -48,7 +50,7 @@ export const ProfileContainer = ({
           src={member?.image}
         />
       </Section>
-      <Section flexDirection="column" alignItems="start" gap="5px">
+      <Section flexDirection="column" alignItems="start" gap="5px" >
         {!!member?.web3Name && (
           <Span
             fontSize={customStyle?.fontSize ?? '18px'}
@@ -61,41 +63,45 @@ export const ProfileContainer = ({
             {member?.web3Name}
           </Span>
         )}
-        <Section gap="5px">
-          <Span
-            fontSize={
-              member?.web3Name ? '14px' : customStyle?.fontSize ?? '18px'
-            }
-            fontWeight={
-              member?.web3Name ? '500' : customStyle?.fontWeight ?? '400'
-            }
-            color={
-              member?.web3Name
-                ? theme.textColor?.modalSubHeadingText
-                : customStyle?.textColor ?? theme.textColor?.modalSubHeadingText
-            }
-            position="relative"
+        <Tooltip content={copyText}>
+          <Section
+            gap="5px"
+       cursor='pointer'
+            onMouseEnter={() => {
+              setCopyText('Copy to clipboard');
+            }}
+            onMouseLeave={() => {
+              setCopyText('');
+            }}
+            onClick={() => {
+              copyToClipboard(member?.completeWallet || '');
+              setCopyText('copied');
+            }}
           >
-            {member.wallet}
-          </Span>
-          {!!copy && (
-            <Tooltip content={copyText}>
-              <Div
-                cursor="pointer"
-                onClick={() => {
-                  copyToClipboard(member?.completeWallet||'');
-                  setCopyText('copied');
-                  setTimeout(() => {
-                    setCopyText('Copy to clipboard')
-                  }, 5000);
-              
-                }}
-              >
+            <Span
+              fontSize={
+                member?.web3Name ? '14px' : customStyle?.fontSize ?? '18px'
+              }
+              fontWeight={
+                member?.web3Name ? '500' : customStyle?.fontWeight ?? '400'
+              }
+              color={
+                member?.web3Name
+                  ? theme.textColor?.modalSubHeadingText
+                  : customStyle?.textColor ??
+                    theme.textColor?.modalSubHeadingText
+              }
+              position="relative"
+            >
+              {member.wallet}
+            </Span>
+            {!!copy && copyText && (
+              <Div cursor="pointer" >
                 <CopySvg2 />
               </Div>
-            </Tooltip>
-          )}
-        </Section>
+            )}
+          </Section>
+        </Tooltip>
       </Section>
     </Section>
   );

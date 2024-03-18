@@ -5,7 +5,7 @@ import styled from 'styled-components';
 type TooltipPropType = {
   children: React.ReactNode;
   direction?: string;
-  content: string;
+  content?: string;
   delay?: number;
 };
 export const Tooltip: React.FC<TooltipPropType> = ({
@@ -33,10 +33,12 @@ export const Tooltip: React.FC<TooltipPropType> = ({
       // When to show the tooltip
       onMouseEnter={showTip}
       onMouseLeave={hideTip}
+      id='tooltip-span'
     >
       {/* Wrapping */}
       {children}
       {active && (
+       content && 
         <TooltipContent className={`${direction || 'top'}`}>
           {/* Content */}
           {content}
@@ -62,8 +64,8 @@ const TooltipWrapper = styled.div`
 const TooltipContent = styled.div`
   position: absolute;
   border-radius: 8px 8px 8px 4px;
-  // left: 50%;
-  transform: translateX(6%);
+  left: 50%;
+  transform: translateX(-50%);
   padding: 7px;
   color: #fff;
   background: #000;

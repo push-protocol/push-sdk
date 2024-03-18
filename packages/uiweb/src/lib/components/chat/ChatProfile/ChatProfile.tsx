@@ -108,12 +108,11 @@ export const ChatProfile: React.FC<IChatProfile> = ({
 
   const getProfileName = () => {
     return Object.keys(groupInfo || {}).length
-      ? groupInfo?.groupName
+      ? shortenText(groupInfo?.chatId || '', 6, true)
       : chatInfo
       ? shortenText(chatInfo.did?.split(':')[1] ?? '', 6, true)
       : shortenText(chatId?.split(':')[1], 6, true);
   };
-
   useEffect(() => {
     if (!chatId) return;
     fetchProfileData();
@@ -142,10 +141,10 @@ export const ChatProfile: React.FC<IChatProfile> = ({
             member={{
               wallet: getProfileName() as string,
               image: getImage(),
-              web3Name: web3Name,
-              completeWallet:chatInfo?chatInfo?.wallets:null
+              web3Name: web3Name?web3Name:groupInfo?.groupName,
+              completeWallet:chatInfo?.wallets??groupInfo?.chatId
             }}
-            copy={!!chatInfo}
+            copy={!!chatInfo|| !!groupInfo}
             customStyle={{
               fontSize: theme?.fontWeight?.chatProfileText,
               textColor: theme?.textColor?.chatProfileText,
