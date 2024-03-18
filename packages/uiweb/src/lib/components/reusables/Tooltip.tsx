@@ -61,30 +61,31 @@ const TooltipWrapper = styled.div`
 /* Absolute positioning */
 const TooltipContent = styled.div`
   position: absolute;
-  border-radius: 4px;
-  left: 50%;
-  transform: translateX(-50%);
+  border-radius: 8px 8px 8px 4px;
+  // left: 50%;
+  transform: translateX(6%);
   padding: 7px;
   color: #fff;
   background: #000;
-  font-size: 13px;
+  font-size: 12px;
+  font-weigth:400;
   font-family: sans-serif;
   line-height: 1;
   z-index: 100;
   white-space: nowrap;
 
-  /* CSS border triangles */
-  &::before {
-    content: ' ';
-    left: 50%;
-    border: solid transparent;
-    height: 0;
-    width: 0;
-    position: absolute;
-    pointer-events: none;
-    border-width: 6px;
-    margin-left: calc(6px * -1);
-  }
+  // /* CSS border triangles */
+  // &::before {
+  //   content: ' ';
+  //   left: 50%;
+  //   border: solid transparent;
+  //   height: 0;
+  //   width: 0;
+  //   position: absolute;
+  //   pointer-events: none;
+  //   border-width: 6px;
+  //   margin-left: calc(6px * -1);
+  // }
 
   &.top {
     top: calc(30px * -1);

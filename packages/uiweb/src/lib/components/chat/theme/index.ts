@@ -190,11 +190,11 @@ export const lightChatTheme: IChatTheme = {
     chatPreviewMessageText:'14px',
     chatPreviewDateText:'12px',
     chatPreviewBadgeText:'12px',
-    userProfileText:'17px'
+    userProfileText:'18px'
   },
 
   fontWeight: {
-    chatProfileText: '300',
+    chatProfileText: '500',
     messageInputText: '400',
     chatSentBubbleText: '400',
     chatReceivedBubbleText: '400',
@@ -209,7 +209,7 @@ export const lightChatTheme: IChatTheme = {
     chatPreviewMessageText:'400',
     chatPreviewDateText:'400',
     chatPreviewBadgeText:'600',
-    userProfileText:'400'
+    userProfileText:'500'
   },
 
   fontFamily: 'inherit',
@@ -312,11 +312,11 @@ export const darkChatTheme: IChatTheme = {
     chatPreviewMessageText:'14px',
     chatPreviewDateText:'12px',
     chatPreviewBadgeText:'12px',
-    userProfileText:'17px'
+    userProfileText:'18px'
   },
 
   fontWeight: {
-    chatProfileText: '300',
+    chatProfileText: '500',
     messageInputText: '400',
     chatSentBubbleText: '400',
     chatReceivedBubbleText: '400',
@@ -331,7 +331,7 @@ export const darkChatTheme: IChatTheme = {
     chatPreviewMessageText:'400',
     chatPreviewDateText:'400',
     chatPreviewBadgeText:'600',
-    userProfileText:'700'
+    userProfileText:'500'
   },
 
   fontFamily: 'inherit',
