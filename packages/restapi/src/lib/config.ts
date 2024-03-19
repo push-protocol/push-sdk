@@ -21,7 +21,7 @@ import {
 import { defineChain } from 'viem';
 const { ENV } = Constants;
 
-export const berachainTestnet = defineChain({
+const berachainTestnet = defineChain({
   id: 80085,
   name: 'Berachain Artio',
   network: 'berachain-testnet',
@@ -129,7 +129,7 @@ export const ALIAS_CHAIN_ID = {
     [ENV.STAGING]: 80085,
     [ENV.DEV]: 80085,
     [ENV.LOCAL]: 80085,
-  }
+  },
 };
 
 export const CHAIN_ID = {
@@ -160,7 +160,7 @@ export const CHAIN_NAME: { [key: number]: string } = {
   122: 'FUSE',
   123: 'FUSE',
   // berachain
-  80085: 'BERACHAIN'
+  80085: 'BERACHAIN',
 };
 export interface ConfigType {
   API_BASE_URL: string;
@@ -238,7 +238,7 @@ const CONFIG = {
     [BLOCKCHAIN_NETWORK.FUSE_MAINNET]: {
       API_BASE_URL: API_BASE_URL[ENV.PROD],
       EPNS_COMMUNICATOR_CONTRACT: '0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa',
-    }
+    },
   },
   [ENV.STAGING]: {
     [BLOCKCHAIN_NETWORK.ETH_SEPOLIA]: {
@@ -271,7 +271,7 @@ const CONFIG = {
     },
     [BLOCKCHAIN_NETWORK.BERACHAIN_TESTNET]: {
       API_BASE_URL: API_BASE_URL[ENV.STAGING],
-      EPNS_COMMUNICATOR_CONTRACT: '0xA1DF3E68D085aa6918bcc2506b24e499830Db0eB',
+      EPNS_COMMUNICATOR_CONTRACT: '0x7b9C405e261ba671f008c20D0321f62d08C140EC',
     },
   },
   [ENV.DEV]: {
@@ -453,7 +453,7 @@ export const VIEM_CONFIG = {
     [BLOCKCHAIN_NETWORK.BERACHAIN_TESTNET]: {
       NETWORK: berachainTestnet,
       API_BASE_URL: API_BASE_URL[ENV.STAGING],
-      EPNS_COMMUNICATOR_CONTRACT: '0xA1DF3E68D085aa6918bcc2506b24e499830Db0eB',
+      EPNS_COMMUNICATOR_CONTRACT: '0x7b9C405e261ba671f008c20D0321f62d08C140EC',
     },
   },
   [ENV.DEV]: {
