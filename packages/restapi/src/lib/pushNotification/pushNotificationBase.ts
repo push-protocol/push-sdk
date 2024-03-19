@@ -9,6 +9,8 @@ import {
 import * as config from '../config';
 import { getAccountAddress } from '../chat/helpers';
 import { IDENTITY_TYPE, NOTIFICATION_TYPE } from '../payloads/constants';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { ethers, Signer as EthersSigner } from 'ethers';
 import {
   createPublicClient,
@@ -457,7 +459,12 @@ export class PushNotificationBaseClass {
           throw new Error('viem signer is not provided');
         }
         const createChannelPromise = contract.write.createChannelWithPUSH({
-          args: [channelType, toHex(new Uint8Array(identityBytes)), fees, this.getTimeBound()],
+          args: [
+            channelType,
+            toHex(new Uint8Array(identityBytes)),
+            fees,
+            this.getTimeBound(),
+          ],
         });
         createChannelRes = await createChannelPromise;
       }

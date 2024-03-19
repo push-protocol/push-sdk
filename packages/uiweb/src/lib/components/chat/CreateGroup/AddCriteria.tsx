@@ -13,18 +13,18 @@ import {
 } from '../reusables';
 import { Section, Span, Spinner } from '../../reusables';
 import useMediaQuery from '../../../hooks/useMediaQuery';
-import {  ModalHeaderProps } from './CreateGroupModal';
+import { ModalHeaderProps } from './CreateGroupModal';
 import { useChatData } from '../../../hooks';
 import { QuantityInput } from '../reusables/QuantityInput';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { Checkbox } from '../reusables/Checkbox';
 import OptionButtons from '../reusables/OptionButtons';
-import BerachainSVG  from '../../../icons/berachain.svg';
+import BerachainSvg from '../../../icons/berachain.svg';
 import EthereumSvg from '../../../icons/ethereum.svg';
-import FuseSVG from '../../../icons/fuse.svg';
 import PolygonSvg from '../../../icons/polygon.svg';
 import ArbitrumSvg from '../../../icons/arbitrum.svg';
 import BSCSvg from '../../../icons/bsc.svg';
+import FuseSvg from '../../../icons/fuse.svg';
 
 import OptimismSvg from '../../../icons/optimisim.svg';
 import { BLOCKCHAIN_NETWORK, device } from '../../../config';
@@ -59,7 +59,7 @@ import {
 } from '../helpers';
 import { IChatTheme } from '../exportedTypes';
 
-const AddCriteria = ({ 
+const AddCriteria = ({
   handlePrevious,
   onClose,
   criteriaStateManager,
@@ -209,35 +209,38 @@ const AddCriteria = ({
   const dropdownChainsValues: Array<DropdownValueType> = [
     {
       id: 0,
-      value: BLOCKCHAIN_NETWORK[env].ETHEREUM,
+      value:
+        BLOCKCHAIN_NETWORK[env as keyof typeof BLOCKCHAIN_NETWORK].ETHEREUM,
       title: 'Ethereum',
       icon: EthereumSvg,
       function: () => setSelectedChainValue(0),
     },
     {
       id: 1,
-      value: BLOCKCHAIN_NETWORK[env].POLYGON,
+      value: BLOCKCHAIN_NETWORK[env as keyof typeof BLOCKCHAIN_NETWORK].POLYGON,
       title: 'Polygon',
       icon: PolygonSvg,
       function: () => setSelectedChainValue(1),
     },
     {
       id: 2,
-      value: BLOCKCHAIN_NETWORK[env].BSC,
+      value: BLOCKCHAIN_NETWORK[env as keyof typeof BLOCKCHAIN_NETWORK].BSC,
       title: 'BSC',
       icon: BSCSvg,
       function: () => setSelectedChainValue(2),
     },
     {
       id: 3,
-      value: BLOCKCHAIN_NETWORK[env].OPTIMISM,
+      value:
+        BLOCKCHAIN_NETWORK[env as keyof typeof BLOCKCHAIN_NETWORK].OPTIMISM,
       title: 'Optimism',
       icon: OptimismSvg,
       function: () => setSelectedChainValue(3),
     },
     {
       id: 4,
-      value: BLOCKCHAIN_NETWORK[env].ARBITRUM,
+      value:
+        BLOCKCHAIN_NETWORK[env as keyof typeof BLOCKCHAIN_NETWORK].ARBITRUM,
       title: 'Arbitrum',
       icon: ArbitrumSvg,
       function: () => setSelectedChainValue(4),
@@ -246,16 +249,16 @@ const AddCriteria = ({
       id: 5,
       value: BLOCKCHAIN_NETWORK[env].FUSE,
       title: 'Fuse',
-      icon: FuseSVG,
+      icon: FuseSvg,
       function: () => setSelectedChainValue(5),
     },
     {
       id: 6,
       value: BLOCKCHAIN_NETWORK[env].BERACHAIN,
       title: 'Berachain',
-      icon: BerachainSVG,
+      icon: BerachainSvg,
       function: () => setSelectedChainValue(46),
-    }
+    },
   ];
 
   const onQuantityChange = (e: any) => {
@@ -432,7 +435,7 @@ const AddCriteria = ({
       gap="12px"
       overflow="hidden scroll"
       justifyContent="start"
-      padding='0 2px 0 10px'
+      padding="0 2px 0 10px"
       width={isMobile ? '300px' : '400px'}
     >
       <Section margin="0 0 5px 0">
@@ -456,7 +459,7 @@ const AddCriteria = ({
         justifyContent="space-between"
         alignItems="center"
       >
-        <Section width="48%" zIndex='unset' >
+        <Section width="48%" zIndex="unset">
           {Array.isArray(
             getCategoryDropdownValues({
               dropdownCategoryValues,
@@ -646,7 +649,7 @@ const AddCriteria = ({
           <Section gap="10px" flexDirection="column" alignItems="start">
             <OptionButtons
               options={GUILD_COMPARISON_OPTIONS}
-              totalWidth={isMobile?'400px':'410px'}
+              totalWidth={isMobile ? '400px' : '410px'}
               selectedValue={guildComparison}
               error={!!validationErrors?.guildComparison}
               handleClick={(newEl: string) => {
@@ -678,7 +681,10 @@ const AddCriteria = ({
           (criteriaState.isUpdateCriteriaEnabled() ? 'Update' : 'Add')}
         {validationLoading && <Spinner size="20" color="#fff" />}
       </Button>
-      <InfoContainer label={'Learn more about access gating rules'} cta='https://push.org/docs/chat/build/conditional-rules-for-group/' />
+      <InfoContainer
+        label={'Learn more about access gating rules'}
+        cta="https://push.org/docs/chat/build/conditional-rules-for-group/"
+      />
     </ScrollSection>
   );
 };

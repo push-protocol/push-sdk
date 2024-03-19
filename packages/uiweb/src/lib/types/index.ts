@@ -37,7 +37,7 @@ export interface AccountEnvOptionsType {
   env?: ENV;
   account: string;
   signer: SignerType;
-  pushUser: PushAPI;
+  user: PushAPI;
 }
 
 export interface ITheme {
@@ -163,3 +163,20 @@ export interface IGroup {
   groupType?:string | undefined,
   rules?: Rules | null,
 }
+
+
+export const MODAL_BACKGROUND_TYPE = {
+  OVERLAY:'OVERLAY',
+  BLUR: 'BLUR',
+  TRANSPARENT: 'TRANSPARENT',
+
+  } as const;
+  
+  export type ModalBackgroundType = keyof typeof MODAL_BACKGROUND_TYPE;
+
+  export const MODAL_POSITION_TYPE = {
+    RELATIVE:'RELATIVE',
+    GLOBAL: 'GLOBAL',
+    } as const;
+    
+  export type ModalPositionType = keyof typeof MODAL_POSITION_TYPE;

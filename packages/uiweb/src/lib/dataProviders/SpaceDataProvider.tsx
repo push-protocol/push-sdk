@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { SignerType, SpaceDTO, SpaceIFeeds } from '@pushprotocol/restapi';
+import {  SpaceDTO, SpaceIFeeds } from '@pushprotocol/restapi';
 
 import { SpaceComponentWrapper } from './SpaceComponentsWrapper';
 import { SpacesUI } from '../components';
@@ -23,6 +23,7 @@ import {
 } from '@livepeer/react';
 import { isAccountsEqual, spaceChainId } from '../components/space/helpers/account';
 import { walletToPCAIP10, pCAIP10ToWallet } from '../helpers';
+import { SignerType } from '../types';
 
 export enum FeedTabs {
   ForYou = 'For You',
@@ -45,7 +46,7 @@ export const SpacesUIProvider = ({
   const [account, setAccount] = useState<string>(
     walletToPCAIP10(spaceUI.account)
   );
-  const [signer, setSigner] = useState<SignerType>(spaceUI.signer);
+  const [signer, setSigner] = useState<SignerType | undefined>(spaceUI.signer);
   const [pgpPrivateKey, setPgpPrivateKey] = useState<string>(
     spaceUI.pgpPrivateKey
   );
@@ -123,15 +124,18 @@ export const SpacesUIProvider = ({
   };
 
   const initSpaceObject = async (spaceId: string) => {
-    spacesObjectRef.current = new PushAPI.space.Space({
-      signer,
-      pgpPrivateKey,
-      address: account,
-      chainId: chainId,
-      env,
-      setSpaceData: setSpaceObjectData,
-    });
-    await spacesObjectRef.current.initialize({ spaceId });
+    if(signer){
+      spacesObjectRef.current = new PushAPI.space.Space({
+        signer,
+        pgpPrivateKey,
+        address: account,
+        chainId: chainId,
+        env,
+        setSpaceData: setSpaceObjectData,
+      });
+      await spacesObjectRef.current.initialize({ spaceId });
+    }
+   
   };
 
   const acceptSpaceRequest = async ({

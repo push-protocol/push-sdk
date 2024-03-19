@@ -11,6 +11,13 @@ import {
   getConnectedUserV2Core,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
+import {
+  ValidationError,
+  handleError,
+  isErrorWithResponse,
+} from '../errors/validationError';
+import { axiosPost } from '../utils/axiosUtil';
+import { HttpStatus } from '../errors/httpStatus';
 
 export interface ChatCreateGroupTypeV2 extends EnvOptionsType {
   account?: string | null;
@@ -22,7 +29,7 @@ export interface ChatCreateGroupTypeV2 extends EnvOptionsType {
   groupImage: string | null;
   rules: Rules | null;
   isPublic: boolean;
-  groupType: 'default' | 'space';
+  groupType: 'default' | 'spaces';
   config: {
     meta: string | null;
     scheduleAt: Date | null;
@@ -150,25 +157,10 @@ export const createGroupCoreV2 = async (
       admins: convertedAdmins,
       idempotentVerificationProof,
     };
-
-    return axios
-      .post(apiEndpoint, body)
-      .then((response) => {
-        return response.data;
-      })
-      .catch((err) => {
-        if (err?.response?.data)
-          throw new Error(JSON.stringify(err?.response?.data));
-        throw new Error(err);
-      });
-  } catch (err) {
-    console.error(
-      `[Push SDK] - API  - Error - API ${createGroupV2.name} -:  `,
-      err
-    );
-    throw Error(
-      `[Push SDK] - API  - Error - API ${createGroupV2.name} -: ${err}`
-    );
+    const response = await axiosPost(apiEndpoint, body);
+    return response.data;
+  } catch (error) {
+    throw handleError(error, createGroupV2.name);
   }
 };
 

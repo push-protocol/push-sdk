@@ -1,11 +1,11 @@
+import * as PushAPI from '@pushprotocol/restapi';
 import { createSocketConnection, EVENTS } from '@pushprotocol/socket';
 import { useCallback, useEffect, useState } from 'react';
 import { ENV } from '../../config';
-import * as PushAPI from '@pushprotocol/restapi';
 
-import { useChatData } from './useChatData';
 import { SOCKET_TYPE } from '../../types';
 import useGetChatProfile from '../useGetChatProfile';
+import { useChatData } from './useChatData';
 
 export type PushChatSocketHookOptions = {
   account?: string | null;
@@ -34,10 +34,7 @@ const {fetchChatProfile} = useGetChatProfile();
     setGroupInformationSinceLastConnection,
   ] = useState<any>({});
 
-  // useEffect(() => {
-  //   // console.log(pgpPrivateKey, "pgppppppppp")
-  //   // console.log(connectedProfile, "connectedProfileeeeeeeee")
-  // }, [pgpPrivateKey, connectedProfile])
+
 
   const addSocketEvents = useCallback(() => {
     console.log('addSocketEvents');
@@ -51,12 +48,13 @@ const {fetchChatProfile} = useGetChatProfile();
 
     pushChatSocket?.on(EVENTS.CHAT_RECEIVED_MESSAGE, async (chat: any) => {
    
-    
       if (!connectedProfile || !pgpPrivateKey) {
         return;
       }
       if (
-       ( chat.messageCategory === 'Request') &&
+      ( ( chat.messageCategory === 'Request') ||
+       (chat.messageCategory === 'Approve') ||
+       (chat.messageCategory === 'Reject') )&&
         (chat.messageContent === null) &&
         (chat.messageType === null)
       ) {

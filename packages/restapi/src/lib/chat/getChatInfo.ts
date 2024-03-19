@@ -1,6 +1,8 @@
 import { getAPIBaseUrls } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { axiosGet } from '../utils/axiosUtil';
+import { handleError } from '../errors/validationError';
+import { getUserDID } from './helpers';
 
 /**
  * Represents the response type for the chat status.
@@ -10,14 +12,16 @@ export interface ChatInfoResponse {
     group: boolean;
   };
   list: string;
+  participants: string[];
+  chatId: string
 }
 
 /**
  * Represents the input type for fetching chat status.
  */
 export interface GetChatInfoType {
-  chatId: string;
-  address: string; // Ethereum address or similar
+  receipient: string;
+  sender: string; // Ethereum address or similar
   env?: ENV;
 }
 
@@ -27,19 +31,21 @@ export interface GetChatInfoType {
 export const getChatInfo = async (
   options: GetChatInfoType
 ): Promise<ChatInfoResponse> => {
-  const { chatId, address, env = Constants.ENV.PROD } = options;
+  const { receipient, sender, env = Constants.ENV.PROD } = options;
 
   try {
-    if (!chatId || !address) {
-      throw new Error('chatId and address cannot be null or empty');
+    if (!receipient || !sender) {
+      throw new Error('receipient and sender cannot be null or empty');
     }
 
     const API_BASE_URL = getAPIBaseUrls(env);
-    const requestUrl = `${API_BASE_URL}/v1/chat/${chatId}/address/${address}`;
+    const requestUrl = `${API_BASE_URL}/v1/chat/${await getUserDID(
+      receipient,
+      env
+    )}/address/${await getUserDID(sender, env)}`;
     const response = await axiosGet<ChatInfoResponse>(requestUrl);
     return response.data;
   } catch (err) {
-    console.error(`[Push SDK] - API Error in ${getChatInfo.name}: `, err);
-    throw new Error(`[Push SDK] - API Error in ${getChatInfo.name}: ${err}`);
+    throw handleError(err, getChatInfo.name);
   }
 };
