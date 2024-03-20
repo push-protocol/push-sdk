@@ -39,6 +39,7 @@ export type chainNameType =
   | 'FUSE_TESTNET'
   | 'FUSE_MAINNET'
   | 'THE_GRAPH'
+  | 'BERACHAIN_TESTNET'
   | undefined;
 
 export type NotificationItemProps = {

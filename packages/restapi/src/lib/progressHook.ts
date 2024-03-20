@@ -15,6 +15,9 @@ const PROGRESSHOOK: Record<
       'This step is only done for first time users and might take a few seconds. PGP keys are getting generated to provide you with secure yet seamless web3 communication',
     level: 'INFO',
   },
+  /**
+   * @deprecated
+   */
   'PUSH-CREATE-02': {
     progressId: 'PUSH-CREATE-02',
     progressTitle: 'Signing Generated Profile',

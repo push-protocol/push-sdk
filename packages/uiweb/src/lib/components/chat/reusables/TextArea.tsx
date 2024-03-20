@@ -32,7 +32,7 @@ export const TextArea = (props: ITextAreaProps) => {
             <label>{props.labelName}</label>
             <CharCounter theme={theme}>{props.inputValue.length} / {props.charCount}</CharCounter>
         </LabelContainer>
-        <Input error={props.error || false} theme={theme} value={props.inputValue} onChange={handleChange} />
+        <Input   error={props.error || false} theme={theme} value={props.inputValue} onChange={handleChange} />
         </InputContainer>
     </ThemeProvider>
   )
@@ -61,7 +61,7 @@ const Input = styled.textarea<IChatTheme & {error:boolean}>`
     margin-top: 8px;
 
     // width: 330px;
-    height: 121px;
+    height: 100px;
     color: ${(props) => props.theme.textColor?.modalHeadingText ?? '#000'};
 
     background: ${(props) => props.theme.backgroundColor.modalInputBackground};

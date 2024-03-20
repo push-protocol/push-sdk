@@ -3,6 +3,7 @@ import { getAPIBaseUrls } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { GroupDTO, GroupInfoDTO } from '../types';
 import { GetGroupType } from './getGroup';
+import { handleError } from '../errors/validationError';
 
 /**
  *  GET /v2/chat/groups/:chatId
@@ -31,12 +32,6 @@ export const getGroupInfo = async (
         throw new Error(err);
       });
   } catch (err) {
-    console.error(
-      `[Push SDK] - API  - Error - API ${getGroupInfo.name} -:  `,
-      err
-    );
-    throw Error(
-      `[Push SDK] - API  - Error - API ${getGroupInfo.name} -: ${err}`
-    );
+    throw handleError(err, getGroupInfo.name);
   }
 };

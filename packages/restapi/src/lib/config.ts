@@ -18,7 +18,30 @@ import {
   fuse,
   fuseSparknet,
 } from 'viem/chains';
+import { defineChain } from 'viem';
 const { ENV } = Constants;
+
+const berachainTestnet = defineChain({
+  id: 80085,
+  name: 'Berachain Artio',
+  network: 'berachain-testnet',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'BERA Token',
+    symbol: 'BERA',
+  },
+  rpcUrls: {
+    default: { http: ['https://artio.rpc.berachain.com'] },
+    public: { http: ['https://artio.rpc.berachain.com'] },
+  },
+  blockExplorers: {
+    default: {
+      name: 'Berachain',
+      url: 'https://artio.beratrail.io',
+    },
+  },
+  testnet: true,
+});
 
 // for methods not needing the entire config
 export const API_BASE_URL = {
@@ -47,6 +70,7 @@ const BLOCKCHAIN_NETWORK = {
   ARBITRUMONE_MAINNET: 'eip155:42161',
   FUSE_TESTNET: 'eip155:123',
   FUSE_MAINNET: 'eip155:122',
+  BERACHAIN_TESTNET: 'eip155:80085',
 };
 
 export type ALIAS_CHAIN =
@@ -55,7 +79,8 @@ export type ALIAS_CHAIN =
   | 'OPTIMISM'
   | 'POLYGONZKEVM'
   | 'ARBITRUMONE'
-  | 'FUSE';
+  | 'FUSE'
+  | 'BERACHAIN';
 
 export const ETH_CHAIN_ID = {
   [ENV.PROD]: 1,
@@ -100,6 +125,11 @@ export const ALIAS_CHAIN_ID = {
     [ENV.DEV]: 123,
     [ENV.LOCAL]: 123,
   },
+  BERACHAIN: {
+    [ENV.STAGING]: 80085,
+    [ENV.DEV]: 80085,
+    [ENV.LOCAL]: 80085,
+  },
 };
 
 export const CHAIN_ID = {
@@ -129,6 +159,8 @@ export const CHAIN_NAME: { [key: number]: string } = {
   // fuse
   122: 'FUSE',
   123: 'FUSE',
+  // berachain
+  80085: 'BERACHAIN',
 };
 export interface ConfigType {
   API_BASE_URL: string;
@@ -237,6 +269,10 @@ const CONFIG = {
       API_BASE_URL: API_BASE_URL[ENV.STAGING],
       EPNS_COMMUNICATOR_CONTRACT: '0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa',
     },
+    [BLOCKCHAIN_NETWORK.BERACHAIN_TESTNET]: {
+      API_BASE_URL: API_BASE_URL[ENV.STAGING],
+      EPNS_COMMUNICATOR_CONTRACT: '0x7b9C405e261ba671f008c20D0321f62d08C140EC',
+    },
   },
   [ENV.DEV]: {
     [BLOCKCHAIN_NETWORK.ETH_SEPOLIA]: {
@@ -267,6 +303,10 @@ const CONFIG = {
       API_BASE_URL: API_BASE_URL[ENV.DEV],
       EPNS_COMMUNICATOR_CONTRACT: '0x7eBb54D86CF928115965DB596a3E600404dD8039',
     },
+    [BLOCKCHAIN_NETWORK.BERACHAIN_TESTNET]: {
+      API_BASE_URL: API_BASE_URL[ENV.DEV],
+      EPNS_COMMUNICATOR_CONTRACT: '0xA1DF3E68D085aa6918bcc2506b24e499830Db0eB',
+    },
   },
   [ENV.LOCAL]: {
     [BLOCKCHAIN_NETWORK.ETH_SEPOLIA]: {
@@ -296,6 +336,10 @@ const CONFIG = {
     [BLOCKCHAIN_NETWORK.FUSE_TESTNET]: {
       API_BASE_URL: API_BASE_URL[ENV.LOCAL],
       EPNS_COMMUNICATOR_CONTRACT: '0x7eBb54D86CF928115965DB596a3E600404dD8039',
+    },
+    [BLOCKCHAIN_NETWORK.BERACHAIN_TESTNET]: {
+      API_BASE_URL: API_BASE_URL[ENV.LOCAL],
+      EPNS_COMMUNICATOR_CONTRACT: '0xA1DF3E68D085aa6918bcc2506b24e499830Db0eB',
     },
   },
 };
@@ -406,6 +450,11 @@ export const VIEM_CONFIG = {
       API_BASE_URL: API_BASE_URL[ENV.STAGING],
       EPNS_COMMUNICATOR_CONTRACT: '0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa',
     },
+    [BLOCKCHAIN_NETWORK.BERACHAIN_TESTNET]: {
+      NETWORK: berachainTestnet,
+      API_BASE_URL: API_BASE_URL[ENV.STAGING],
+      EPNS_COMMUNICATOR_CONTRACT: '0x7b9C405e261ba671f008c20D0321f62d08C140EC',
+    },
   },
   [ENV.DEV]: {
     [BLOCKCHAIN_NETWORK.ETH_SEPOLIA]: {
@@ -442,6 +491,11 @@ export const VIEM_CONFIG = {
       NETWORK: fuseSparknet,
       API_BASE_URL: API_BASE_URL[ENV.DEV],
       EPNS_COMMUNICATOR_CONTRACT: '0x7eBb54D86CF928115965DB596a3E600404dD8039',
+    },
+    [BLOCKCHAIN_NETWORK.BERACHAIN_TESTNET]: {
+      NETWORK: berachainTestnet,
+      API_BASE_URL: API_BASE_URL[ENV.DEV],
+      EPNS_COMMUNICATOR_CONTRACT: '0xA1DF3E68D085aa6918bcc2506b24e499830Db0eB',
     },
   },
   [ENV.LOCAL]: {
@@ -480,9 +534,13 @@ export const VIEM_CONFIG = {
       API_BASE_URL: API_BASE_URL[ENV.LOCAL],
       EPNS_COMMUNICATOR_CONTRACT: '0x7eBb54D86CF928115965DB596a3E600404dD8039',
     },
+    [BLOCKCHAIN_NETWORK.BERACHAIN_TESTNET]: {
+      NETWORK: berachainTestnet,
+      API_BASE_URL: API_BASE_URL[ENV.LOCAL],
+      EPNS_COMMUNICATOR_CONTRACT: '0xA1DF3E68D085aa6918bcc2506b24e499830Db0eB',
+    },
   },
 };
-
 
 export const ALPHA_FEATURE_CONFIG = {
   STABLE: {
