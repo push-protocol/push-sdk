@@ -1,8 +1,8 @@
-import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
 import Constants, { ENV } from '../constants';
 import {  SpaceIFeeds } from '../types';
 import {  getSpaceInboxLists, getUserDID } from '../chat/helpers';
+import { axiosGet } from '../utils/axiosUtil';
 
 export type ChatsOptionsType = {
   account: string;
@@ -45,7 +45,7 @@ export const spaces = async (options: ChatsOptionsType): Promise<SpaceIFeeds[]> 
   const requestUrl = `${apiEndpoint}`;
   try {
     const toDecrypt = false;
-    const response = await axios.get(requestUrl);
+    const response = await axiosGet(requestUrl);
     const spaces: SpaceIFeeds[] = response.data.spaces;
     const feeds: SpaceIFeeds[] = await getSpaceInboxLists({
       lists: spaces,

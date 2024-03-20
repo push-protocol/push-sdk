@@ -1,9 +1,9 @@
-import axios from 'axios';
 import { IUser } from '../types';
 import { isValidETHAddress, walletToPCAIP10 } from '../helpers/address';
 import { getAPIBaseUrls, verifyProfileKeys } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { populateDeprecatedUser } from '../utils/populateIUser';
+import { axiosPost } from '../utils/axiosUtil';
 
 export interface GetBatchType {
   userIds: string[];
@@ -32,8 +32,7 @@ export const getBatch = async (options: GetBatchType): Promise<IUser> => {
   const pcaipUserIds = userIds.map(walletToPCAIP10);
   const requestBody = { userIds: pcaipUserIds };
 
-  return axios
-    .post(requestUrl, requestBody)
+  return axiosPost(requestUrl, requestBody)
     .then((response) => {
       response.data.users.forEach(async (user: any, index: number) => {
         response.data.users[index].publicKey = await verifyProfileKeys(

@@ -1,9 +1,9 @@
-import axios from 'axios';
 import {
   getCAIPAddress,
   getAPIBaseUrls
 } from '../helpers';
 import Constants, { ENV } from '../constants';
+import { axiosGet } from '../utils/axiosUtil';
 
 /**
  *  GET v1/channels/${channelAddressInCAIP}/delegates  
@@ -32,7 +32,7 @@ export const getDelegates = async (
   const apiEndpoint = `${API_BASE_URL}/v1/channels`;
   const requestUrl = `${apiEndpoint}/${_channel}/delegates`;
 
-  return await axios.get(requestUrl)
+  return await axiosGet(requestUrl)
     .then((response) => response.data?.delegates)
     .catch((err) => {
       console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);

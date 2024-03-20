@@ -1,10 +1,12 @@
-import { Rules } from '../types';
+import { Rules, VideoPeerInfo } from '../types';
 import { ENV } from '../constants';
 
 export type PushStreamInitializeProps = {
   filter?: {
     channels?: string[];
     chats?: string[];
+    spaces?: string[];
+    video?: string[];
   };
   connection?: {
     auto?: boolean;
@@ -22,6 +24,9 @@ export enum STREAM {
   NOTIF_OPS = 'STREAM.NOTIF_OPS',
   CHAT = 'STREAM.CHAT',
   CHAT_OPS = 'STREAM.CHAT_OPS',
+  SPACE = 'STREAM.SPACE',
+  SPACE_OPS = 'STREAM.SPACE_OPS',
+  VIDEO = 'STREAM.VIDEO',
   CONNECT = 'STREAM.CONNECT',
   DISCONNECT = 'STREAM.DISCONNECT',
 }
@@ -49,6 +54,28 @@ export enum GroupEventType {
   JoinGroup = 'joinGroup',
   LeaveGroup = 'leaveGroup',
   Remove = 'remove',
+  RoleChange = 'roleChange',
+}
+
+export enum SpaceEventType {
+  CreateSpace = 'createSpace',
+  UpdateSpace = 'updateSpace',
+  Join = 'joinSpace',
+  Leave = 'leaveSpace',
+  Remove = 'remove',
+  Stop = 'stop',
+  Start = 'start',
+}
+
+export enum VideoEventType {
+  REQUEST = 'video.request',
+  APPROVE = 'video.approve',
+  DENY = 'video.deny',
+  CONNECT = 'video.connect',
+  DISCONNECT = 'video.disconnect',
+  // retry events
+  RETRY_REQUEST = 'video.retry.request',
+  RETRY_APPROVE = 'video.retry.approve',
 }
 
 export enum ProposedEventNames {
@@ -61,6 +88,18 @@ export enum ProposedEventNames {
   CreateGroup = 'chat.group.create',
   UpdateGroup = 'chat.group.update',
   Remove = 'chat.group.participant.remove',
+  RoleChange = 'chat.group.participant.role',
+
+  CreateSpace = 'space.create',
+  UpdateSpace = 'space.update',
+  SpaceRequest = 'space.request',
+  SpaceAccept = 'space.accept',
+  SpaceReject = 'space.reject',
+  LeaveSpace = 'space.participant.leave',
+  JoinSpace = 'space.participant.join',
+  SpaceRemove = 'space.participant.remove',
+  StartSpace = 'space.start',
+  StopSpace = 'space.stop',
 }
 
 export interface Profile {
@@ -136,6 +175,37 @@ export interface RequestEvent extends GroupMemberEventBase {
 
 export interface RemoveEvent extends GroupMemberEventBase {
   event: GroupEventType.Remove;
+}
+
+export interface RoleEvent extends GroupMemberEventBase {
+  newRole: string;
+  event: GroupEventType.RoleChange;
+}
+
+export interface SpaceMemberEventBase {
+  event: SpaceEventType | MessageEventType;
+  origin: MessageOrigin;
+  timestamp: string;
+  spaceId: string;
+  from: string;
+  to: string[];
+  raw?: GroupEventRawData;
+}
+
+export interface JoinSpaceEvent extends SpaceMemberEventBase {
+  event: SpaceEventType.Join;
+}
+
+export interface LeaveSpaceEvent extends SpaceMemberEventBase {
+  event: SpaceEventType.Leave;
+}
+
+export interface SpaceRequestEvent extends SpaceMemberEventBase {
+  event: MessageEventType.Request;
+}
+
+export interface SpaceRemoveEvent extends SpaceMemberEventBase {
+  event: SpaceEventType.Remove;
 }
 
 export interface MessageEvent {
@@ -223,6 +293,14 @@ export interface MessageRawData {
   sigType: string;
   verificationProof: string;
   previousReference: string;
+}
+
+export interface VideoEvent {
+  event: VideoEventType;
+  origin: MessageOrigin;
+  timestamp: string;
+  peerInfo: VideoPeerInfo;
+  raw?: GroupEventRawData;
 }
 
 export enum EVENTS {

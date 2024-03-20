@@ -22,10 +22,12 @@ import { get as getUser } from '../../user';
 import { createUserService } from './service';
 import Constants, { ENV } from '../../constants';
 import { getDomainInformation, getTypeInformation } from './signature';
-import { IPGPHelper, pgpDecrypt, verifySignature } from './pgp';
+import { IPGPHelper } from './pgp';
 import { aesDecrypt } from './aes';
 import { getEncryptedSecret } from './getEncryptedSecret';
 import { getGroup } from '../getGroup';
+import { cache } from '../../helpers/cache';
+import { getCID } from '../ipfs';
 
 const SIG_TYPE_V2 = 'eip712v2';
 
@@ -42,7 +44,7 @@ interface IDecryptMessage {
   chainId: number;
   currentChat: IFeeds;
   inbox: IFeeds[];
-  pgpHelper:IPGPHelper;
+  pgpHelper: IPGPHelper;
 }
 
 export const encryptAndSign = async ({
@@ -158,35 +160,53 @@ export const decryptFeeds = async ({
   feeds: IFeeds[];
   connectedUser: IUser;
   pgpPrivateKey?: string;
-  pgpHelper: PGP.IPGPHelper
+  pgpHelper: PGP.IPGPHelper;
   env: ENV;
 }): Promise<IFeeds[]> => {
-  let otherPeer: IUser;
-  let signatureValidationPubliKey: string; // To do signature verification it depends on who has sent the message
-  for (const feed of feeds) {
-    let gotOtherPeer = false;
+  const validateAndDecryptFeed = async (feed: IFeeds) => {
+    if (!pgpPrivateKey) {
+      throw new Error('Decrypted private key is necessary');
+    }
+
     if (feed.msg.encType !== 'PlainText') {
-      if (!pgpPrivateKey) {
-        throw Error('Decrypted private key is necessary');
-      }
-      if (feed.msg.fromCAIP10 !== connectedUser.wallets.split(',')[0]) {
-        if (!gotOtherPeer) {
-          otherPeer = await getUser({ account: feed.msg.fromCAIP10, env });
-          gotOtherPeer = true;
+      const senderCAIP10 = feed.msg.fromCAIP10;
+      const isSenderConnectedUser =
+        senderCAIP10 === connectedUser.wallets.split(',')[0];
+      let publicKey: string;
+
+      if (!isSenderConnectedUser) {
+        /**
+         * CACHE
+         */
+        const cacheKey = `pgpPubKey-${senderCAIP10}`;
+        // Check if the pubkey is already in the cache
+        if (cache.has(cacheKey)) {
+          publicKey = cache.get(cacheKey);
+        } else {
+          // If not in cache, fetch from API
+          const otherPeer = await getUser({ account: senderCAIP10, env });
+          // Cache the pubkey data
+          cache.set(cacheKey, otherPeer.publicKey);
+          publicKey = otherPeer.publicKey;
         }
-        signatureValidationPubliKey = otherPeer!.publicKey!;
       } else {
-        signatureValidationPubliKey = connectedUser.publicKey!;
+        publicKey = connectedUser.publicKey;
       }
+
       feed.msg = await decryptAndVerifyMessage(
         feed.msg,
-        signatureValidationPubliKey,
+        publicKey,
         pgpPrivateKey,
         env,
         pgpHelper
       );
     }
+  };
+
+  for (const feed of feeds) {
+    await validateAndDecryptFeed(feed);
   }
+
   return feeds;
 };
 
@@ -481,7 +501,7 @@ export const decryptAndVerifyMessage = async (
     };
     const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
     const signature = message.verificationProof.split(':')[1];
-    await verifySignature({
+    await pgpHelper.verifySignature({
       messageContent: hash,
       signatureArmored: signature,
       publicKeyArmored: pgpPublicKey,
@@ -519,35 +539,71 @@ export const decryptAndVerifyMessage = async (
 
   /**
    * DECRYPTION
-   * 1. Decrypt AES Key
-   * 2. Decrypt messageObj.message, messageObj.meta , messageContent
+   * 1. Fetch encryptedSecret for given sessionKey ( if encType is pgpv1:group - v2 private group )
+   * 1. Decrypt encryptedSecret using pgpPrivateKey
+   * 2. Decrypt messageObj & messageContent using decryptedSecret
    */
   const decryptedMessage: IMessageIPFS | IMessageIPFSWithCID = { ...message };
   try {
-    /**
-     * Get encryptedSecret from Backend using sessionKey for this encryption type
-     */
+    let decryptedSecret: string;
     if (message.encType === 'pgpv1:group') {
-      message.encryptedSecret = await getEncryptedSecret({
-        sessionKey: message.sessionKey as string,
-        env,
+      /**
+       * CACHE [ sessionKey -> decryptedSecret ]
+       */
+      const cacheKey = `sessionKey-${message.sessionKey}`;
+      if (cache.has(cacheKey)) {
+        decryptedSecret = cache.get(cacheKey);
+      } else {
+        /**
+         * Get encryptedSecret from Backend using sessionKey for this encryption type
+         */
+        const encryptedSecret = await getEncryptedSecret({
+          sessionKey: message.sessionKey as string,
+          env,
+        });
+        decryptedSecret = await pgpHelper.pgpDecrypt({
+          cipherText: encryptedSecret,
+          toPrivateKeyArmored: pgpPrivateKey,
+        });
+        cache.set(cacheKey, decryptedSecret);
+      }
+    } else {
+      decryptedSecret = await pgpHelper.pgpDecrypt({
+        cipherText: message.encryptedSecret,
+        toPrivateKeyArmored: pgpPrivateKey,
       });
     }
-    const secretKey: string = await pgpHelper.pgpDecrypt({
-      cipherText: message.encryptedSecret,
-      toPrivateKeyArmored: pgpPrivateKey,
-    });
+
     decryptedMessage.messageContent = aesDecrypt({
       cipherText: message.messageContent,
-      secretKey,
+      secretKey: decryptedSecret,
     });
     if (message.messageObj) {
-      decryptedMessage.messageObj = JSON.parse(
-        aesDecrypt({
-          cipherText: message.messageObj as string,
-          secretKey,
-        })
-      );
+      const decryptedMessageObj = aesDecrypt({
+        cipherText: message.messageObj as string,
+        secretKey: decryptedSecret,
+      });
+      /**
+       * @dev - messageObj can be an invalid JSON string which needs to be handled
+       * @dev - swift sdk sends messageObj as invalid json string
+       */
+      try {
+        decryptedMessage.messageObj = JSON.parse(decryptedMessageObj);
+      } catch (err) {
+        decryptedMessage.messageObj = decryptedMessageObj;
+      }
+
+      try {
+        if ((decryptedMessage.messageObj as any).reference) {
+          const reference = (decryptedMessage.messageObj as any).reference;
+          if (reference && reference.split(':').length === 1) {
+            const message: any = await getCID(reference, { env });
+            (decryptedMessage.messageObj as any).reference = message.cid;
+          }
+        }
+      } catch (err) {
+        // Ignore Dangling Reference
+      }
     }
   } catch (err) {
     decryptedMessage.messageContent = decryptedMessage.messageObj =

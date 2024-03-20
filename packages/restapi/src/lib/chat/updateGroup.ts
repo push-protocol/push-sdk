@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
 import {
@@ -20,9 +19,11 @@ import {
   updateGroupRequestValidator,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
+import { axiosPut } from '../utils/axiosUtil';
 import { getGroup } from './getGroup';
 import * as AES from '../chat/helpers/aes';
 import { getGroupMemberStatus } from './getGroupMemberStatus';
+import { handleError } from '../errors/validationError';
 
 export interface ChatUpdateGroupType extends EnvOptionsType {
   account?: string | null;
@@ -182,23 +183,9 @@ export const updateGroupCore = async (
       rules
     );
 
-    return axios
-      .put(apiEndpoint, body)
-      .then((response) => {
-        return response.data;
-      })
-      .catch((err) => {
-        if (err?.response?.data)
-          throw new Error(JSON.stringify(err.response.data));
-        throw new Error(err);
-      });
+    const response = await axiosPut<GroupDTO>(apiEndpoint, body);
+    return response.data;
   } catch (err) {
-    console.error(
-      `[Push SDK] - API  - Error - API ${updateGroup.name} -:  `,
-      err
-    );
-    throw Error(
-      `[Push SDK] - API  - Error - API ${updateGroup.name} -: ${err}`
-    );
+    throw handleError(err, updateGroup.name);
   }
 };

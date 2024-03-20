@@ -1,4 +1,3 @@
-import axios from 'axios';
 import Constants, { ENV } from '../../constants';
 import {
   generateHash,
@@ -15,6 +14,7 @@ import {
 } from '../../types';
 import { getEip191Signature } from './crypto';
 import { populateDeprecatedUser } from '../../utils/populateIUser';
+import { axiosGet, axiosPost, axiosPut } from '../../utils/axiosUtil';
 
 type CreateUserOptionsType = {
   user: string;
@@ -62,8 +62,7 @@ export const createUserService = async (options: CreateUserOptionsType) => {
     ...signatureObj,
   };
 
-  return axios
-    .post(requestUrl, body)
+  return axiosPost(requestUrl, body)
     .then(async (response) => {
       if (response.data)
         response.data.publicKey = await verifyProfileKeys(
@@ -107,8 +106,7 @@ export const authUpdateUserService = async (options: CreateUserOptionsType) => {
   // Exclude the "did" property from the "body" object
   const { did, ...body } = { ...data, ...signatureObj };
 
-  return axios
-    .put(requestUrl, body)
+  return axiosPut(requestUrl, body)
     .then(async (response) => {
       if (response.data)
         response.data.publicKey = await verifyProfileKeys(
@@ -127,7 +125,7 @@ export const authUpdateUserService = async (options: CreateUserOptionsType) => {
 
 export const getConversationHashService = async (
   options: ConversationHashOptionsType
-): Promise<{ threadHash: string }> => {
+): Promise<{ threadHash: string, intent: boolean }> => {
   const { conversationId, account, env = Constants.ENV.PROD } = options || {};
 
   const API_BASE_URL = getAPIBaseUrls(env);
@@ -136,8 +134,7 @@ export const getConversationHashService = async (
     account
   )}/conversations/${conversationId}/hash`;
 
-  return axios
-    .get(requestUrl)
+  return axiosGet(requestUrl)
     .then((response) => {
       return response.data;
     })
@@ -163,8 +160,7 @@ export const getMessagesService = async (options: GetMessagesOptionsType) => {
 
   const requestUrl = `${apiEndpoint}?${getQueryParams(queryObj)}`;
 
-  return axios
-    .get(requestUrl)
+  return axiosGet(requestUrl)
     .then((response) => {
       return response.data;
     })

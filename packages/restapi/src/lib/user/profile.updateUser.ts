@@ -1,4 +1,3 @@
-import axios from 'axios';
 import * as CryptoJS from 'crypto-js';
 import { IPGPHelper, PGPHelper, getUserDID } from '../chat/helpers';
 import Constants, { ENV } from '../constants';
@@ -11,6 +10,7 @@ import { IUser, ProgressHookType, ProgressHookTypeFunction } from '../types';
 import { get } from './getUser';
 import { populateDeprecatedUser } from '../utils/populateIUser';
 import PROGRESSHOOK from '../progressHook';
+import { axiosPut } from '../utils/axiosUtil';
 
 export type ProfileUpdateProps = {
   /**
@@ -106,7 +106,7 @@ export const profileUpdateCore = async (
 
     // Report Progress
     progressHook?.(PROGRESSHOOK['PUSH-PROFILE-UPDATE-01'] as ProgressHookType);
-    const response = await axios.put(apiEndpoint, body);
+    const response = await axiosPut(apiEndpoint, body);
     if (response.data)
       response.data.publicKey = await verifyProfileKeys(
         response.data.encryptedPrivateKey,

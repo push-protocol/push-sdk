@@ -1,8 +1,8 @@
-import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { SpaceIFeeds } from '../types';
 import {  getSpaceInboxLists, getUserDID } from './../chat/helpers';
+import { axiosGet } from '../utils/axiosUtil';
 
 export const spaceFeed = async (options: {
   account: string;
@@ -24,7 +24,7 @@ export const spaceFeed = async (options: {
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/spaces/users/${user}/space/${recipientWallet}`;
   try {
-    const response = await axios.get(apiEndpoint);
+    const response = await axiosGet(apiEndpoint);
     // If no chat between users, then returns {}
     const space: SpaceIFeeds = response.data;
     if (Object.keys(space).length !== 0) {

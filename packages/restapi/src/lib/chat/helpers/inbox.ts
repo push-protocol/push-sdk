@@ -1,10 +1,11 @@
-import { IPGPHelper, PGPHelper } from '.';
+import * as PGP from './pgp';
 import Constants, { ENV } from '../../constants';
 import { isValidCAIP10NFTAddress, pCAIP10ToWallet } from '../../helpers';
 import { IFeeds, IMessageIPFS, IUser, SpaceIFeeds } from '../../types';
 import { get as getUser } from '../../user';
 import { getCID } from '../ipfs';
 import { decryptFeeds, decryptAndVerifyMessage } from './crypto';
+import { cache } from '../../helpers/cache';
 
 type InboxListsType = {
   lists: IFeeds[];
@@ -31,54 +32,35 @@ type DecryptConverationType = {
   messages: IMessageIPFS[];
   connectedUser: IUser; //caip10
   pgpPrivateKey?: string;
-  pgpHelper: IPGPHelper;
+  pgpHelper?: PGP.IPGPHelper;
   env?: ENV;
 };
 
 export const getInboxLists = async (
   options: InboxListsType,
-  pgpHelper:IPGPHelper=PGPHelper
+  pgpHelper = PGP.PGPHelper
 ): Promise<IFeeds[]> => {
   const {
-    lists,
+    lists: feeds,
     user,
     toDecrypt,
     pgpPrivateKey,
     env = Constants.ENV.PROD,
   } = options || {};
 
-  const connectedUser = await getUser({ account: pCAIP10ToWallet(user), env });
-  const feeds: IFeeds[] = [];
-  for (const list of lists) {
-    let message;
-    if (list.threadhash !== null) {
-      message = await getCID(list.threadhash, { env });
-    }
-    // This is for groups that are created without any message
-    else {
-      message = {
-        encType: 'PlainText',
-        encryptedSecret: '',
-        fromCAIP10: '',
-        fromDID: '',
-        link: '',
-        messageContent: '',
-        messageType: '',
-        sigType: '',
-        signature: '',
-        toCAIP10: '',
-        toDID: '',
-      };
-    }
-    feeds.push({
-      ...list,
-      msg: message,
-      groupInformation: list.groupInformation,
+  if (toDecrypt) {
+    const connectedUser = await getUser({
+      account: pCAIP10ToWallet(user),
+      env,
+    });
+    return decryptFeeds({
+      feeds,
+      connectedUser,
+      pgpPrivateKey,
+      pgpHelper,
+      env,
     });
   }
-
-  if (toDecrypt)
-    return decryptFeeds({ feeds, connectedUser, pgpPrivateKey, pgpHelper,  env });
   return feeds;
 };
 
@@ -123,7 +105,13 @@ export const getSpaceInboxLists = async (
   }
 
   if (toDecrypt)
-    return decryptFeeds({ feeds, connectedUser, pgpPrivateKey, pgpHelper:PGPHelper,  env });
+    return decryptFeeds({
+      feeds,
+      connectedUser,
+      pgpPrivateKey,
+      pgpHelper: PGP.PGPHelper,
+      env,
+    });
   return feeds;
 };
 
@@ -167,14 +155,12 @@ export const decryptConversation = async (options: DecryptConverationType) => {
     messages,
     connectedUser,
     pgpPrivateKey,
-    pgpHelper,
+    pgpHelper = PGP.PGPHelper,
     env = Constants.ENV.PROD,
   } = options || {};
-  let otherPeer: IUser;
   let signatureValidationPubliKey: string; // To do signature verification it depends on who has sent the message
   for (let i = 0; i < messages.length; i++) {
     const message = messages[i];
-    let gotOtherPeer = false;
     if (message.encType !== 'PlainText') {
       // check if message is already decrypted
       if (
@@ -187,11 +173,23 @@ export const decryptConversation = async (options: DecryptConverationType) => {
           throw Error('Decrypted private key is necessary');
         }
         if (message.fromCAIP10 !== connectedUser.wallets.split(',')[0]) {
-          if (!gotOtherPeer) {
-            otherPeer = await getUser({ account: message.fromCAIP10, env });
-            gotOtherPeer = true;
+          /**
+           * CACHE
+           */
+          const cacheKey = `pgpPubKey-${message.fromCAIP10}`;
+          // Check if the pubkey is already in the cache
+          if (cache.has(cacheKey)) {
+            signatureValidationPubliKey = cache.get(cacheKey);
+          } else {
+            // If not in cache, fetch from API
+            const otherPeer = await getUser({
+              account: message.fromCAIP10,
+              env,
+            });
+            // Cache the pubkey data
+            cache.set(cacheKey, otherPeer.publicKey);
+            signatureValidationPubliKey = otherPeer.publicKey;
           }
-          signatureValidationPubliKey = otherPeer!.publicKey;
         } else {
           signatureValidationPubliKey = connectedUser.publicKey;
         }
@@ -200,7 +198,7 @@ export const decryptConversation = async (options: DecryptConverationType) => {
           signatureValidationPubliKey,
           pgpPrivateKey,
           env,
-          pgpHelper,
+          pgpHelper
         );
       }
     }

@@ -37,7 +37,7 @@ export interface AccountEnvOptionsType {
   env?: ENV;
   account: string;
   signer: SignerType;
-  pushUser: PushAPI;
+  user: PushAPI;
 }
 
 export interface ITheme {
@@ -52,19 +52,30 @@ export interface ITheme {
   moduleColor?: string;
 }
 
-type ethersV5SignerType = {
+export type ethersV5SignerType = {
   _signTypedData: (
     domain: TypedDataDomain,
     types: Record<string, Array<TypedDataField>>,
     value: Record<string, any>
   ) => Promise<string>;
-  getChainId: () => Promise<number>;
   getAddress: () => Promise<string>;
-  signMessage: (message: Bytes | string) => Promise<string>;
+  signMessage: (message: Uint8Array | string) => Promise<string>;
   privateKey?: string;
-  provider?: providers.Provider;
+  provider?: any;
 };
-type viemSignerType = {
+
+export type ethersV6SignerType = {
+  signTypedData: (
+    domain: TypedDataDomain,
+    types: Record<string, Array<TypedDataField>>,
+    value: Record<string, any>
+  ) => Promise<string>;
+  getAddress: () => Promise<string>;
+  signMessage: (message: Uint8Array | string) => Promise<string>;
+  privateKey?: string;
+  provider?: any;
+};
+export type viemSignerType = {
   signTypedData: (args: {
     account: any;
     domain: any;
@@ -80,10 +91,10 @@ type viemSignerType = {
   }) => Promise<`0x${string}`>;
   account: { [key: string]: any };
   privateKey?: string;
-  provider?: providers.Provider;
+  provider?: any;
 };
 
-export type SignerType = ethersV5SignerType | viemSignerType;
+export type SignerType =  ethersV5SignerType| ethersV6SignerType| viemSignerType;;
 
 export type ParsedNotificationType = ParsedResponseType & {
   channel:string;
@@ -152,3 +163,20 @@ export interface IGroup {
   groupType?:string | undefined,
   rules?: Rules | null,
 }
+
+
+export const MODAL_BACKGROUND_TYPE = {
+  OVERLAY:'OVERLAY',
+  BLUR: 'BLUR',
+  TRANSPARENT: 'TRANSPARENT',
+
+  } as const;
+  
+  export type ModalBackgroundType = keyof typeof MODAL_BACKGROUND_TYPE;
+
+  export const MODAL_POSITION_TYPE = {
+    RELATIVE:'RELATIVE',
+    GLOBAL: 'GLOBAL',
+    } as const;
+    
+  export type ModalPositionType = keyof typeof MODAL_POSITION_TYPE;

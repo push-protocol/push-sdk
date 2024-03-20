@@ -12,9 +12,12 @@ const PROGRESSHOOK: Record<
     progressId: 'PUSH-CREATE-01',
     progressTitle: 'Generating Secure Profile Signature',
     progressInfo:
-      'This step is only done for first time users and might take a few seconds. PGP keys are getting generated to provide you with secure yet seamless chat',
+      'This step is only done for first time users and might take a few seconds. PGP keys are getting generated to provide you with secure yet seamless web3 communication',
     level: 'INFO',
   },
+  /**
+   * @deprecated
+   */
   'PUSH-CREATE-02': {
     progressId: 'PUSH-CREATE-02',
     progressTitle: 'Signing Generated Profile',
@@ -32,7 +35,7 @@ const PROGRESSHOOK: Record<
     progressId: 'PUSH-CREATE-04',
     progressTitle: 'Syncing Generated Profile',
     progressInfo:
-      'Please sign the message to continue. Steady lads, chat is almost ready!',
+      'Please sign the message to continue. Great job! You are almost fully onboarded to Push Protocol!',
     level: 'INFO',
   },
   'PUSH-CREATE-05': {
@@ -51,14 +54,14 @@ const PROGRESSHOOK: Record<
     progressId: 'PUSH-UPGRADE-01',
     progressTitle: 'Generating New Profile Signature',
     progressInfo:
-      'Trying to Upgrade Push Chat Keys to latest version. Please sign the message to continue.',
+      'Trying to Upgrade Push Keys to latest version. Please sign the message to continue.',
     level: 'INFO',
   },
   'PUSH-UPGRADE-02': {
     progressId: 'PUSH-UPGRADE-02',
     progressTitle: 'Decrypting Old Profile',
     progressInfo:
-      'Trying to Upgrade Push Chat Keys to latest version. Please sign the message to continue.',
+      'Trying to Upgrade Push Keys to latest version. Please sign the message to continue.',
     level: 'INFO',
   },
   /**
@@ -68,7 +71,7 @@ const PROGRESSHOOK: Record<
     progressId: 'PUSH-UPGRADE-03',
     progressTitle: 'Generating Encrypted New Profile',
     progressInfo:
-      'Trying to Upgrade Push Chat Keys to latest version. Encrypting Push Chat Keys with latest version. Please sign the message to continue.',
+      'Trying to Upgrade Push Keys to latest version. Encrypting Push Keys with latest version. Please sign the message to continue.',
     level: 'INFO',
   },
   /**
@@ -78,12 +81,12 @@ const PROGRESSHOOK: Record<
     progressId: 'PUSH-UPGRADE-04',
     progressTitle: 'Syncing New Profile',
     progressInfo:
-      'Please sign the message to continue. Steady lads, chat is almost ready!',
+      'Please sign the message to continue. Upgraded keys are almost ready!',
     level: 'INFO',
   },
   'PUSH-UPGRADE-05': {
     progressId: 'PUSH-UPGRADE-05',
-    progressTitle: 'Upgrade Completed, Welcome to Push Chat',
+    progressTitle: 'Upgrade Completed, Welcome to Push Protocol',
     progressInfo: '',
     level: 'SUCCESS',
   },
@@ -109,7 +112,7 @@ const PROGRESSHOOK: Record<
     return {
       progressId: 'PUSH-AUTH-UPDATE-01',
       progressTitle: 'Generating New Profile Signature',
-      progressInfo: `Trying to Update Push Chat Keys to ${pgpEncryptionVersion} version. Please sign the message to continue.`,
+      progressInfo: `Trying to Update Push Keys to ${pgpEncryptionVersion} version. Please sign the message to continue.`,
       level: 'INFO',
     };
   },
@@ -117,7 +120,7 @@ const PROGRESSHOOK: Record<
     return {
       progressId: 'PUSH-AUTH-UPDATE-02',
       progressTitle: 'Generating New Encrypted Profile',
-      progressInfo: `Encrypting Push Chat Keys with ${pgpEncryptionVersion} version. Please sign the message to continue.`,
+      progressInfo: `Encrypting Push Keys with ${pgpEncryptionVersion} version. Please sign the message to continue.`,
       level: 'INFO',
     };
   },
@@ -125,12 +128,12 @@ const PROGRESSHOOK: Record<
     progressId: 'PUSH-AUTH-UPDATE-03',
     progressTitle: 'Syncing Updated Profile',
     progressInfo:
-      'Please sign the message to continue. Steady lads, chat is almost ready!',
+      'Please sign the message to continue. Updated keys are almost ready!',
     level: 'INFO',
   },
   'PUSH-AUTH-UPDATE-04': {
     progressId: 'PUSH-AUTH-UPDATE-04',
-    progressTitle: 'Update Completed, Welcome to Push Chat',
+    progressTitle: 'Update Completed, Welcome to Push Protocol',
     progressInfo: '',
     level: 'SUCCESS',
   },
@@ -143,7 +146,7 @@ const PROGRESSHOOK: Record<
   'PUSH-AUTH-UPDATE-06': {
     progressId: 'PUSH-AUTH-UPDATE-06',
     progressTitle: 'Generating New Profile Signature',
-    progressInfo: `Encrypting Push Chat Keys with new creds. Please sign the message to continue.`,
+    progressInfo: `Encrypting Push Keys with new creds. Please sign the message to continue.`,
     level: 'INFO',
   },
   /**
@@ -172,7 +175,7 @@ const PROGRESSHOOK: Record<
   },
   'PUSH-PROFILE-UPDATE-02': {
     progressId: 'PUSH-PROFILE-UPDATE-02',
-    progressTitle: 'Profile Update Completed, Welcome to Push Chat',
+    progressTitle: 'Profile Update Completed, Welcome to Push Protocol',
     progressInfo: '',
     level: 'SUCCESS',
   },

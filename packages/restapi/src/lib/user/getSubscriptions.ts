@@ -1,11 +1,14 @@
-import axios from 'axios';
-import { getCAIPAddress, getAPIBaseUrls } from '../helpers';
-import Constants, {ENV} from '../constants';
+import { getCAIPAddress, getAPIBaseUrls, getQueryParams } from '../helpers';
+import Constants, { ENV } from '../constants';
+import { axiosGet } from '../utils/axiosUtil';
+import { parseSubscriptionsApiResponse } from '../utils/pasreSubscriptionAPI';
 
 export type UserSubscriptionsOptionsType = {
   user: string;
   env?: ENV;
-}
+  channel?: string | null;
+  raw?: boolean;
+};
 
 export const getSubscriptions = async (
   options: UserSubscriptionsOptionsType
@@ -13,16 +16,30 @@ export const getSubscriptions = async (
   const {
     user,
     env = Constants.ENV.PROD,
+    channel = null,
+    raw = true,
   } = options || {};
 
   const _user = await getCAIPAddress(env, user, 'User');
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/users/${_user}/subscriptions`;
-  const requestUrl = `${apiEndpoint}`;
+  const query = channel? getQueryParams({
+    channel: channel
+  }): ""
+  const requestUrl = `${apiEndpoint}?${query}`;
 
-  return axios.get(requestUrl)
-    .then((response) => response.data?.subscriptions || [])
+ 
+  return axiosGet(requestUrl)
+    .then((response) => {
+      if (raw) {
+        return response.data?.subscriptions || [];
+      } else {
+        return parseSubscriptionsApiResponse(
+          response.data?.subscriptions || []
+        );
+      }
+    })
     .catch((err) => {
       console.error(`[Push SDK] - API ${requestUrl}: `, err);
     });
-}
+};
