@@ -3,7 +3,7 @@ import { PushAPI } from '@pushprotocol/restapi';
 import { ChatIcon } from '../../icons/ChatIcon';
 import { Modal } from './Modal';
 import styled from 'styled-components';
-import { handleOnChatIconClick } from '../../helpers';
+import { getAddress, handleOnChatIconClick } from '../../helpers';
 import {
   SupportChatMainStateContext,
   SupportChatPropsContext,
@@ -12,20 +12,22 @@ import type { IMessageIPFS, ITheme, SignerType } from '../../types';
 import './index.css';
 import type { ENV} from '../../config';
 import { Constants, lightTheme } from '../../config';
-import { useSDKSocket } from '../../hooks/useSDKSocket';
+import { useSupportChatStream } from '../../hooks/useSupportChatStream';
 import { Div } from '../reusables/sharedStyling';
 import { getAddressFromSigner } from '../../helpers';
 import { sign } from 'crypto';
+
 export type ChatProps = {
-account?: string;
-  signer: SignerType;
-  supportAddress: string;
-  greetingMsg?: string;
-  modalTitle?: string;
-  theme?: ITheme;
-  apiKey?: string;
-  env?: ENV;
-};
+    account?: string | null;
+    signer?: SignerType | null;
+    supportAddress?: string;
+    greetingMsg?: string;
+    modalTitle?: string;
+    theme?: ITheme;
+    apiKey?: string;
+    env?: ENV;
+   user?: PushAPI | null
+  };
 
 export type ButtonStyleProps = {
   bgColor: string;
@@ -49,7 +51,8 @@ export type ButtonStyleProps = {
   const [toastType, setToastType] = useState<'error' | 'success'>();
   const [chats, setChats] = useState<IMessageIPFS[]>([]);
   const [accountadd, setAccountadd] = useState<string | null>(account)
-  const [pushUser, setPushUser] = useState<PushAPI | null>(null);
+  const [user, setUser] = useState<PushAPI | null>(null);
+  const [resolvedSupportAddress, setResolvedSupportAddress] = useState<string>('');
   const setChatsSorted = (chats: IMessageIPFS[]) => {
 
     const chatsWithNumericTimestamps = chats.map(item => ({
@@ -67,12 +70,11 @@ export type ButtonStyleProps = {
     });
     setChats(uniqueChats);
   };
-  const socketData = useSDKSocket({
+  const socketData = useSupportChatStream({
     account: accountadd,
     env,
-    apiKey,
-    pushUser: pushUser!,
-    supportAddress,
+    user: user!,
+    supportAddress: resolvedSupportAddress,
     signer
   });
 
@@ -80,8 +82,8 @@ export type ButtonStyleProps = {
   const chatPropsData = {
     account : accountadd,
     signer,
-    pushUser,
-    supportAddress,
+    user,
+    supportAddress : resolvedSupportAddress,
     greetingMsg,
     modalTitle,
     theme: { ...lightTheme, ...theme },
@@ -89,6 +91,18 @@ export type ButtonStyleProps = {
     env,
   };
 
+  useEffect(() => {
+
+    const getNewSupportAddress = async() => {
+       if(supportAddress!.includes(".")){
+          const newAddress = await getAddress(supportAddress!, env)
+          setResolvedSupportAddress(newAddress!);
+    }else{
+          setResolvedSupportAddress(supportAddress!);
+    }
+    }
+  getNewSupportAddress(); 
+  },[supportAddress, user, env])
 
 
   useEffect(() => {
@@ -113,7 +127,7 @@ export type ButtonStyleProps = {
     async() =>{
       if(Object.keys(signer || {}).length && accountadd){
     const pushUser = await PushAPI.initialize(signer!, {env: env , account:accountadd!});
-          setPushUser(pushUser)
+          setUser(pushUser)
   }
     }
   )()
@@ -176,6 +190,7 @@ const Container = styled.div`
   bottom: 0;
   right: 0;
   width: fit-content;
+  z-index: 999999;
   margin: 0 3rem 2rem 0;
   align-items: center;
   justify-content: center;

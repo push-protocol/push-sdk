@@ -1,4 +1,6 @@
-import { TypedDataDomain, TypedDataField } from 'ethers';
+// for namespace TYPES
+/* eslint-disable @typescript-eslint/no-namespace */
+import { ResolvedConfig } from 'viem';
 import {
   ADDITIONAL_META_TYPE,
   IDENTITY_TYPE,
@@ -12,7 +14,9 @@ import {
 import { ENV, MessageType } from '../constants';
 import { EthEncryptedData } from '@metamask/eth-sig-util';
 import { Message, MessageObj } from './messageTypes';
+import { SpaceMemberEventBase, VideoEvent } from '../pushstream/pushStreamTypes';
 export * from './messageTypes';
+export * from './videoTypes';
 
 export type Env = typeof ENV[keyof typeof ENV];
 
@@ -83,15 +87,44 @@ export type ParsedResponseType = {
   };
 };
 
-export interface VideNotificationRules {
+export type ApiSubscriptionType = {
+  channel: string;
+  user_settings: string | null;
+};
+
+export type NotificationSettingType = {
+  type: number;
+  default?: number | { upper: number; lower: number };
+  description: string;
+  data?: {
+    upper: number;
+    lower: number;
+    ticker?: number;
+  };
+  userPreferance?: {
+    value: number | { upper: number; lower: number };
+    enabled: boolean;
+  };
+};
+
+export type ApiSubscribersType = {
+  itemcount: number;
+  subscribers: {
+    subscriber: string;
+    settings: string | null;
+  }[];
+};
+export interface VideoNotificationRules {
   access: {
     type: VIDEO_NOTIFICATION_ACCESS_TYPE;
-    data: string;
+    data: {
+      chatId?: string;
+    };
   };
 }
 
 // SendNotificationRules can be extended in the future for other use cases
-export type SendNotificationRules = VideNotificationRules;
+export type SendNotificationRules = VideoNotificationRules;
 
 export interface ISendNotificationInputOptions {
   senderType?: 0 | 1;
@@ -395,6 +428,11 @@ export interface GroupAccess {
   rules?: Rules;
 }
 
+export interface SpaceAccess {
+  entry: boolean;
+  rules?: SpaceRules;
+}
+
 export interface GroupMemberStatus {
   isMember: boolean;
   isPending: boolean;
@@ -429,6 +467,13 @@ export interface GroupParticipantCounts {
 }
 
 export interface ChatMemberProfile {
+  address: string;
+  intent: boolean;
+  role: string;
+  userInfo: UserV2;
+}
+
+export interface SpaceMemberProfile {
   address: string;
   intent: boolean;
   role: string;
@@ -509,6 +554,23 @@ export interface GroupInfoDTO {
   meta?: string | null;
   sessionKey: string | null;
   encryptedSecret: string | null;
+}
+
+export interface SpaceInfoDTO {
+  spaceName: string;
+  spaceImage: string | null;
+  spaceDescription: string;
+  isPublic: boolean;
+  spaceCreator: string;
+  spaceId: string;
+  scheduleAt?: Date | null;
+  scheduleEnd?: Date | null;
+  status?: ChatStatus | null;
+  rules?: Rules | null;
+  meta?: string | null;
+  sessionKey: string | null;
+  encryptedSecret: string | null;
+  inviteeDetails?: { [key: string]: SPACE_INVITE_ROLES };
 }
 
 export interface SpaceDTO {
@@ -655,6 +717,19 @@ export interface UserInfo {
   isAdmin: boolean;
 }
 
+export type TypedDataField = {
+  name: string;
+  type: string;
+};
+
+export type TypedDataDomain = {
+  chainId?: number | undefined;
+  name?: string | undefined;
+  salt?: ResolvedConfig['BytesType']['outputs'] | undefined;
+  verifyingContract?: string | undefined;
+  version?: string | undefined;
+};
+
 export type ethersV5SignerType = {
   _signTypedData: (
     domain: TypedDataDomain,
@@ -778,6 +853,7 @@ export enum VideoCallStatus {
   RECEIVED,
   CONNECTED,
   DISCONNECTED,
+  ENDED,
   RETRY_INITIALIZED,
   RETRY_RECEIVED,
 }
@@ -824,7 +900,7 @@ export type VideoRequestInputOptions = {
   recipientAddress: string | string[];
   /** @deprecated - Use `rules` object instead */
   chatId?: string;
-  rules?: VideNotificationRules;
+  rules?: VideoNotificationRules;
   onReceiveMessage?: (message: string) => void;
   retry?: boolean;
   details?: {
@@ -839,7 +915,7 @@ export type VideoAcceptRequestInputOptions = {
   recipientAddress: string;
   /** @deprecated - Use `rules` object instead */
   chatId?: string;
-  rules?: VideNotificationRules;
+  rules?: VideoNotificationRules;
   onReceiveMessage?: (message: string) => void;
   retry?: boolean;
   details?: {
@@ -868,3 +944,24 @@ export type EnableVideoInputOptions = {
 export type EnableAudioInputOptions = {
   state: boolean;
 };
+
+/**
+ * The TYPES namespace is exported from the top level of the SDK and can be used by developers to add types corresponding to SDK classes, methods in their code.
+ * For example: TYPES.VIDEO.DATA for the video state data type.
+ */
+export namespace TYPES {
+  export namespace VIDEO {
+    export type DATA = VideoCallData;
+    export type EVENT = VideoEvent;
+  }
+  export namespace SPACE {
+    export type DATA = SpaceData;
+    export type EVENT = SpaceMemberEventBase;
+  }
+}
+
+export enum NotifictaionType  {
+  BROADCAT = 1,
+  TARGETTED = 3,
+  SUBSET = 4
+}

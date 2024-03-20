@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
 import Constants from '../constants';
 import { EnvOptionsType, SignerType } from '../types';
@@ -12,6 +11,8 @@ import {
   rejectRequestPayload,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
+import { axiosPut } from '../utils/axiosUtil';
+import { handleError } from '../errors/validationError';
 
 interface RejectRequestOptionsType extends EnvOptionsType {
   /**
@@ -80,13 +81,11 @@ export const reject = async (
     signature
   );
 
-  return axios
-    .put(apiEndpoint, body)
+  return axiosPut(apiEndpoint, body)
     .then((response) => {
       return response.data;
     })
     .catch((err) => {
-      console.error(`[Push SDK] - API ${reject.name}: `, err);
-      throw Error(`[Push SDK] - API ${reject.name}: ${err}`);
+      throw handleError(err, reject.name);
     });
 };

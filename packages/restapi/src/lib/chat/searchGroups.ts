@@ -1,7 +1,8 @@
-import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { GroupDTO } from '../types';
+import { axiosPost } from '../utils/axiosUtil';
+import { handleError } from '../errors/validationError';
 
 /**
  *  POST /v1/chat/groups/search
@@ -28,23 +29,14 @@ export const search = async (
     const API_BASE_URL = getAPIBaseUrls(env);
     const requestUrl = `${API_BASE_URL}/v1/chat/groups/search`;
 
-    return axios
-      .post(requestUrl, {
-        searchTerm,
-        pageNumber,
-        pageSize,
-      })
-      .then((response) => {
-        return response.data;
-      })
-      .catch((err) => {
-        if (err?.response?.data) {
-          throw new Error(err?.response?.data);
-        }
-        throw new Error(err);
-      });
+    const response = await axiosPost<GroupDTO[]>(requestUrl, {
+      searchTerm,
+      pageNumber,
+      pageSize,
+    });
+
+    return response.data;
   } catch (err) {
-    console.error(`[Push SDK] - API  - Error - API ${search.name} -:  `, err);
-    throw Error(`[Push SDK] - API  - Error - API ${search.name} -: ${err}`);
+      throw handleError(err, search.name);
   }
 };

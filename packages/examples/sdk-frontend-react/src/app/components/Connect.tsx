@@ -20,11 +20,14 @@ const NETWORK_MAPPING: NwMappingType = {
   1442: 'POLYGON_ZK_EVM_TESTNET',
   1101: 'POLYGON_ZK_EVM_MAINNET',
   421613: "ARBITRUM_TESTNET",
-  42161: "ARBITRUMONE_MAINNET"
+  42161: "ARBITRUMONE_MAINNET",
+  122: "FUSE_MAINNET",
+  123: "FUSE_TESTNET",
+  80085: "BERACHAIN_TESTNET",
 };
 
 const injected = new InjectedConnector({
-  supportedChainIds: [1, 3, 4, 11155111, 42, 137, 80001, 56, 97, 10, 420, 1442, 1101, 421613, 42161],
+  supportedChainIds: [1, 3, 4, 11155111, 42, 137, 80001, 56, 97, 10, 420, 1442, 1101, 421613, 42161, 122, 123,80085],
 })
 
 const ConnectWrapper = styled.div`

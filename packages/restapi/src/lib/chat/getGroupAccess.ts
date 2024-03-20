@@ -1,8 +1,9 @@
-import axios from 'axios';
 import { getAPIBaseUrls } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { GroupAccess } from '../types';
 import {  getUserDID } from './helpers';
+import { axiosGet } from '../utils/axiosUtil';
+import { handleError } from '../errors/validationError';
 
 /**
  * GET /v1/chat/groups/:chatId/access/:did
@@ -32,22 +33,9 @@ export const getGroupAccess = async (
 
     const API_BASE_URL = getAPIBaseUrls(env);
     const requestUrl = `${API_BASE_URL}/v1/chat/groups/${chatId}/access/${user}`;
-    return axios
-      .get(requestUrl)
-      .then((response) => {
-        return response.data;
-      })
-      .catch((err) => {
-        if (err?.response?.data) throw new Error(err?.response?.data);
-        throw new Error(err);
-      });
+    const response = await axiosGet<GroupAccess>(requestUrl);
+    return response.data;
   } catch (err) {
-    console.error(
-      `[Push SDK] - API - Error - API ${getGroupAccess.name} -:  `,
-      err
-    );
-    throw Error(
-      `[Push SDK] - API - Error - API ${getGroupAccess.name} -: ${err}`
-    );
+    throw handleError(err, getGroupAccess.name);
   }
 };

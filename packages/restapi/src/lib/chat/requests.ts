@@ -1,8 +1,9 @@
-import axios from 'axios';
 import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { IFeeds } from '../types';
+import { axiosGet } from '../utils/axiosUtil';
 import { IPGPHelper, PGPHelper, addDeprecatedInfo, getInboxLists, getUserDID } from './helpers';
+import { handleError } from '../errors/validationError';
 
 export type RequestOptionsType = {
   account: string;
@@ -54,7 +55,7 @@ export const requestsCore = async (
     if (!isValidETHAddress(user)) {
       throw new Error(`Invalid address!`);
     }
-    const response = await axios.get(apiEndpoint);
+    const response = await axiosGet(apiEndpoint);
     const requests: IFeeds[] = response.data.requests;
     const updatedRequests = addDeprecatedInfo(requests);
     const Feeds: IFeeds[] = await getInboxLists({
@@ -67,7 +68,6 @@ export const requestsCore = async (
 
     return Feeds;
   } catch (err) {
-    console.error(`[Push SDK] - API ${requests.name}: `, err);
-    throw Error(`[Push SDK] - API ${requests.name}: ${err}`);
+      throw handleError(err, requests.name);
   }
 };

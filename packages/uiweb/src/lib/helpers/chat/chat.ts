@@ -10,6 +10,7 @@ import type {
 import { ChatFeedsType } from '../../types';
 import type { Env, IConnectedUser, IFeeds, IUser } from '@pushprotocol/restapi';
 import { isPCAIP, pCAIP10ToWallet, walletToPCAIP10 } from '../address';
+import { Group } from '../../components';
 import { getData } from './localStorage';
 import { ethers } from 'ethers';
 import { PushAPI } from '@pushprotocol/restapi';
@@ -24,7 +25,7 @@ type HandleOnChatIconClickProps = {
 type GetChatsType = {
   pgpPrivateKey?: string;
   supportAddress: string;
-  pushUser: PushAPI;
+  user: PushAPI;
   limit: number;
   threadHash?: string;
   env?: Env;
@@ -41,10 +42,10 @@ export const handleOnChatIconClick = ({
 export const createUserIfNecessary = async (
   options: AccountEnvOptionsType
 ): Promise<IConnectedUser | undefined> => {
-  const { pushUser } = options || {};
+  const { user } = options || {};
   let connectedUser:IUser;
-  if(pushUser){
-    connectedUser = await pushUser.info();
+  if(Object.keys(user || {}).length){
+    connectedUser = await user.info();
     return { ...connectedUser, 
       privateKey: connectedUser!.encryptedPrivateKey,
      };
@@ -67,14 +68,14 @@ export const getChats = async (
     account,
     pgpPrivateKey,
     supportAddress,
-    pushUser,
+    user,
     threadHash = null,
     limit = 40,
     env = Constants.ENV.PROD,
   } = options || {};
   
 
-  const chats = await pushUser?.chat.history(
+  const chats = await user?.chat.history(
     supportAddress
    );
 
@@ -109,8 +110,7 @@ export const getDefaultFeedObject = ({
   groupInformation,
 }: {
   user?: IUser;
-  groupInformation?: IGroup;
-}): IFeeds => {
+  groupInformation?: IGroup;}): IFeeds => {
   const feed = {
     msg: {
       messageContent: '',
@@ -192,10 +192,10 @@ export const getChatId = ({
   msg: IMessageIPFS;
   account: string;
 }) => {
-  if (pCAIP10ToWallet(msg.fromDID).toLowerCase() === account.toLowerCase()) {
-    return msg.toDID;
+  if (pCAIP10ToWallet(msg.fromCAIP10).toLowerCase() === account.toLowerCase()) {
+    return msg.toCAIP10;
   }
-  return !isPCAIP(msg.toDID) ? msg.toDID : msg.fromDID;
+  return !isPCAIP(msg.toCAIP10) ? msg.toCAIP10 : msg.fromCAIP10;
 };
 
 export const appendUniqueMessages = (
@@ -223,14 +223,14 @@ export const checkIfSameChat = (
   account: string,
   chatId: string
 ) => {
-  if (ethers.utils.isAddress(chatId)) {
+  if (ethers.utils.isAddress(pCAIP10ToWallet(chatId))) {
     chatId = walletToPCAIP10(chatId);
     if (
       Object.keys(msg || {}).length &&
-      (((chatId.toLowerCase() === msg.fromCAIP10?.toLowerCase()) &&
+      (((chatId.toLowerCase() === (msg.fromCAIP10?.toLowerCase())) &&
        ( walletToPCAIP10(account!).toLowerCase() ===
           msg.toCAIP10?.toLowerCase())) ||
-        ((chatId.toLowerCase() === msg.toCAIP10?.toLowerCase()) &&
+        ((chatId.toLowerCase() === (msg.toCAIP10?.toLowerCase())) &&
           (walletToPCAIP10(account!).toLowerCase() ===
             msg.fromCAIP10?.toLowerCase())))
     ) {

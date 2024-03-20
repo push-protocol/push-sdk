@@ -34,6 +34,7 @@ import {
 import { User } from './user';
 import { updateGroupConfig } from '../chat/updateGroupConfig';
 import { PushAPI } from './PushAPI';
+import { ChatInfoResponse } from '../chat';
 
 export class Chat {
   private userInstance: User;
@@ -72,7 +73,7 @@ export class Chat {
       page: options?.page,
       limit: options?.limit,
       env: this.env,
-      toDecrypt: !!this.signer, // Set to false if signer is undefined or null,
+      toDecrypt: !!this.decryptedPgpPvtKey, // Set to false if signer is undefined or null,
     };
 
     switch (type) {
@@ -86,20 +87,22 @@ export class Chat {
   }
 
   async latest(target: string) {
-    const { threadHash } = await PUSH_CHAT.conversationHash({
+    const { threadHash, intent } = await PUSH_CHAT.conversationHash({
       conversationId: target,
       account: this.account,
       env: this.env,
     });
     if (!threadHash) return {};
 
-    return await PUSH_CHAT.latest({
+    const latestMessages = await PUSH_CHAT.latest({
       threadhash: threadHash,
-      toDecrypt: !!this.signer, // Set to false if signer is undefined or null,
+      toDecrypt: !!this.decryptedPgpPvtKey, // Set to false if signer is undefined or null,
       pgpPrivateKey: this.decryptedPgpPvtKey,
       account: this.account,
       env: this.env,
     });
+    const listType = intent ? 'CHATS' : 'REQUESTS';
+    return latestMessages.map((message) => ({ ...message, listType }));
   }
 
   async history(
@@ -110,13 +113,12 @@ export class Chat {
     }
   ) {
     let reference: string;
-
+    const { threadHash, intent } = await PUSH_CHAT.conversationHash({
+      conversationId: target,
+      account: this.account,
+      env: this.env,
+    });
     if (!options?.reference) {
-      const { threadHash } = await PUSH_CHAT.conversationHash({
-        conversationId: target,
-        account: this.account,
-        env: this.env,
-      });
       reference = threadHash;
     } else {
       reference = options.reference;
@@ -124,18 +126,21 @@ export class Chat {
 
     if (!reference) return [];
 
-    return await PUSH_CHAT.history({
+    const historyMessages = await PUSH_CHAT.history({
       account: this.account,
       env: this.env,
       threadhash: reference,
       pgpPrivateKey: this.decryptedPgpPvtKey,
-      toDecrypt: !!this.signer, // Set to false if signer is undefined or null,
+      toDecrypt: !!this.decryptedPgpPvtKey, // Set to false if signer is undefined or null,
       limit: options?.limit,
     });
+    const listType = intent ? 'CHATS' : 'REQUESTS';
+
+    return historyMessages.map((message: any) => ({ ...message, listType }));
   }
 
   async send(recipient: string, options: Message): Promise<MessageWithCID> {
-    if (!this.signer) {
+    if (!this.decryptedPgpPvtKey) {
       throw new Error(PushAPI.ensureSignerMessage());
     }
 
@@ -154,20 +159,20 @@ export class Chat {
   }
 
   async decrypt(messagePayloads: IMessageIPFS[]) {
-    if (!this.signer) {
+    if (!this.decryptedPgpPvtKey) {
       throw new Error(PushAPI.ensureSignerMessage());
     }
     return await PUSH_CHAT.decryptConversation({
       pgpPrivateKey: this.decryptedPgpPvtKey,
       env: this.env,
       messages: messagePayloads,
-      pgpHelper:PGPHelper,
+      pgpHelper: PGPHelper,
       connectedUser: await this.userInstance.info(),
     });
   }
 
   async accept(target: string): Promise<string> {
-    if (!this.signer) {
+    if (!this.decryptedPgpPvtKey) {
       throw new Error(PushAPI.ensureSignerMessage());
     }
     return await PUSH_CHAT.approve({
@@ -181,7 +186,7 @@ export class Chat {
   }
 
   async reject(target: string): Promise<void> {
-    if (!this.signer) {
+    if (!this.decryptedPgpPvtKey) {
       throw new Error(PushAPI.ensureSignerMessage());
     }
     await PUSH_CHAT.reject({
@@ -194,7 +199,7 @@ export class Chat {
   }
 
   async block(users: Array<string>): Promise<IUser> {
-    if (!this.signer || !this.decryptedPgpPvtKey) {
+    if (!this.decryptedPgpPvtKey) {
       throw new Error(PushAPI.ensureSignerMessage());
     }
     const user = await PUSH_USER.get({
@@ -235,7 +240,7 @@ export class Chat {
   }
 
   async unblock(users: Array<string>): Promise<IUser> {
-    if (!this.signer || !this.decryptedPgpPvtKey) {
+    if (!this.decryptedPgpPvtKey) {
       throw new Error(PushAPI.ensureSignerMessage());
     }
     const user = await PUSH_USER.get({
@@ -278,12 +283,28 @@ export class Chat {
     });
   }
 
+  async info(receipient: string): Promise<ChatInfoResponse> {
+    const options: PUSH_CHAT.GetChatInfoType = {
+      receipient: receipient,
+      sender: this.account,
+      env: this.env,
+    };
+
+    try {
+      const chatInfo = await PUSH_CHAT.getChatInfo(options);
+      return chatInfo;
+    } catch (error) {
+      console.error(`Error in Chat.info: `, error);
+      throw new Error(`Error fetching chat info: ${error}`);
+    }
+  }
+
   group = {
     create: async (
       name: string,
       options?: GroupCreationOptions
     ): Promise<GroupInfoDTO | GroupDTO> => {
-      if (!this.signer) {
+      if (!this.decryptedPgpPvtKey) {
         throw new Error(PushAPI.ensureSignerMessage());
       }
 
@@ -399,7 +420,7 @@ export class Chat {
       chatId: string,
       options: GroupUpdateOptions
     ): Promise<GroupInfoDTO | GroupDTO> => {
-      if (!this.signer) {
+      if (!this.decryptedPgpPvtKey) {
         throw new Error(PushAPI.ensureSignerMessage());
       }
 
@@ -414,10 +435,12 @@ export class Chat {
       const updateGroupProfileOptions: ChatUpdateGroupProfileType = {
         chatId: chatId,
         groupName: options.name ? options.name : group.groupName,
-        groupDescription: options.description
-          ? options.description
-          : group.groupDescription,
-        groupImage: options.image ? options.image : group.groupImage,
+        groupDescription:
+          options.description !== undefined
+            ? options.description
+            : group.groupDescription,
+        groupImage:
+          options.image !== undefined ? options.image : group.groupImage,
         rules: options.rules ? options.rules : group.rules,
         account: this.account,
         pgpPrivateKey: this.decryptedPgpPvtKey,
@@ -452,7 +475,7 @@ export class Chat {
       chatId: string,
       options: ManageGroupOptions
     ): Promise<GroupInfoDTO | GroupDTO> => {
-      if (!this.signer) {
+      if (!this.decryptedPgpPvtKey) {
         throw new Error(PushAPI.ensureSignerMessage());
       }
       const { role, accounts } = options;
@@ -511,7 +534,7 @@ export class Chat {
     ): Promise<GroupInfoDTO | GroupDTO> => {
       const { accounts } = options;
 
-      if (!this.signer) {
+      if (!this.decryptedPgpPvtKey) {
         throw new Error(PushAPI.ensureSignerMessage());
       }
 
@@ -569,7 +592,7 @@ export class Chat {
 
     modify: async (chatId: string, options: ManageGroupOptions) => {
       const { role, accounts } = options;
-      if (!this.signer) {
+      if (!this.decryptedPgpPvtKey) {
         throw new Error(PushAPI.ensureSignerMessage());
       }
       const validRoles = ['ADMIN', 'MEMBER'];
@@ -600,7 +623,7 @@ export class Chat {
     },
 
     join: async (target: string): Promise<GroupInfoDTO | GroupDTO> => {
-      if (!this.signer) {
+      if (!this.decryptedPgpPvtKey) {
         throw new Error(PushAPI.ensureSignerMessage());
       }
       const status = await PUSH_CHAT.getGroupMemberStatus({
@@ -633,7 +656,7 @@ export class Chat {
     },
 
     leave: async (target: string): Promise<GroupInfoDTO | GroupDTO> => {
-      if (!this.signer) {
+      if (!this.decryptedPgpPvtKey) {
         throw new Error(PushAPI.ensureSignerMessage());
       }
 
@@ -678,7 +701,7 @@ export class Chat {
     },
 
     reject: async (target: string): Promise<void> => {
-      if (!this.signer) {
+      if (!this.decryptedPgpPvtKey) {
         throw new Error(PushAPI.ensureSignerMessage());
       }
       await PUSH_CHAT.reject({

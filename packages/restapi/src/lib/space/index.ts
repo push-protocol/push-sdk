@@ -14,6 +14,7 @@ export * from './approve';
 export * from './requests';
 export * from './getAccess';
 export * from './search';
+export * from './createV2';
 
 export {spaceFeed as space} from './spaceFeed';
 export * from './Space'

@@ -49,12 +49,12 @@ describe('PushAPI.notification functionality', () => {
     // initialisation with signer and provider
     userKate = await PushAPI.initialize(signer2, { env: ENV.DEV });
     // initialisation with signer
-    userAlice = await PushAPI.initialize(signer1);
+    userAlice = await PushAPI.initialize(signer1, { env: ENV.DEV });
     // TODO: remove signer1 after signer becomes optional
     // initialisation without signer
-    userBob = await PushAPI.initialize(signer1);
+    userBob = await PushAPI.initialize(signer1, { env: ENV.DEV });
     // initialisation with viem
-    userViem = await PushAPI.initialize(viemSigner);
+    userViem = await PushAPI.initialize(viemSigner, { env: ENV.DEV });
   });
 
   describe('PushAPI.notification functionality', () => {
@@ -262,16 +262,36 @@ describe('PushAPI.notification functionality', () => {
       });
       // console.log(response);
       expect(response).not.null;
-      expect(response.lenth).not.equal(0);
+      expect(response.length).not.equal(0);
     });
 
     it('Signer with account: Should return response', async () => {
       const response = await userKate.notification.subscriptions({
         account: '0xD8634C39BBFd4033c0d3289C4515275102423681',
       });
-      // console.log(response);
+      // console.log(JSON.stringify(response));
       expect(response).not.null;
-      expect(response.lenth).not.equal(0);
+      expect(response.length).not.equal(0);
+    });
+
+    it('Signer with account: Should return response', async () => {
+      const response = await userKate.notification.subscriptions({
+        account: '0xD8634C39BBFd4033c0d3289C4515275102423681',
+      });
+      // console.log(JSON.stringify(response));
+      expect(response).not.null;
+      expect(response.length).not.equal(0);
+    });
+
+    it('Signer with account: Should return response', async () => {
+      const response = await userKate.notification.subscriptions({
+        account: '0xD8634C39BBFd4033c0d3289C4515275102423681',
+        raw: false,
+        channel: "0xD8634C39BBFd4033c0d3289C4515275102423681"
+      });
+      // console.log(JSON.stringify(response));
+      expect(response).not.null;
+      expect(response.length).not.equal(0);
     });
   });
 

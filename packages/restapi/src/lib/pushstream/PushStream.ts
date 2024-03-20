@@ -4,8 +4,10 @@ import { ENV, PACKAGE_BUILD } from '../constants';
 import {
   GroupEventType,
   MessageEventType,
+  MessageOrigin,
   NotificationEventType,
   PushStreamInitializeProps,
+  SpaceEventType,
   STREAM,
   EVENTS,
 } from './pushStreamTypes';
@@ -14,6 +16,7 @@ import { pCAIP10ToWallet, walletToPCAIP10 } from '../helpers';
 import { Chat } from '../pushapi/chat';
 import { ProgressHookType, SignerType } from '../types';
 import { ALPHA_FEATURE_CONFIG } from '../config';
+import { ADDITIONAL_META_TYPE } from '../payloads';
 
 export class PushStream extends EventEmitter {
   private pushChatSocket: any;
@@ -24,6 +27,7 @@ export class PushStream extends EventEmitter {
   private options: PushStreamInitializeProps;
   private chatInstance: Chat;
   private listen: STREAM[];
+  private disconnected: boolean;
 
   constructor(
     account: string,
@@ -40,7 +44,7 @@ export class PushStream extends EventEmitter {
     this.raw = options.raw ?? false;
     this.options = options;
     this.listen = _listen;
-
+    this.disconnected = false;
     this.chatInstance = new Chat(
       this.account,
       this.options.env as ENV,
@@ -93,17 +97,30 @@ export class PushStream extends EventEmitter {
     return stream;
   }
 
+  public async reinit(
+    listen: STREAM[],
+    newOptions: PushStreamInitializeProps
+  ): Promise<void> {
+    this.listen = listen;
+    this.options = { ...this.options, ...newOptions };
+    await this.disconnect();
+    await this.connect();
+  }
+
   public async connect(): Promise<void> {
     const shouldInitializeChatSocket =
       !this.listen ||
       this.listen.length === 0 ||
       this.listen.includes(STREAM.CHAT) ||
-      this.listen.includes(STREAM.CHAT_OPS);
+      this.listen.includes(STREAM.CHAT_OPS) ||
+      this.listen.includes(STREAM.SPACE) ||
+      this.listen.includes(STREAM.SPACE_OPS);
     const shouldInitializeNotifSocket =
       !this.listen ||
       this.listen.length === 0 ||
       this.listen.includes(STREAM.NOTIF) ||
-      this.listen.includes(STREAM.NOTIF_OPS);
+      this.listen.includes(STREAM.NOTIF_OPS) ||
+      this.listen.includes(STREAM.VIDEO);
 
     let isChatSocketConnected = false;
     let isNotifSocketConnected = false;
@@ -221,7 +238,6 @@ export class PushStream extends EventEmitter {
 
       this.pushChatSocket.on(EVENTS.DISCONNECT, async () => {
         await handleSocketDisconnection('chat');
-        //console.log(`Chat Socket Disconnected`);
       });
 
       this.pushChatSocket.on(EVENTS.CHAT_GROUPS, (data: any) => {
@@ -239,7 +255,8 @@ export class PushStream extends EventEmitter {
               data.eventType === GroupEventType.JoinGroup ||
               data.eventType === GroupEventType.LeaveGroup ||
               data.eventType === MessageEventType.Request ||
-              data.eventType === GroupEventType.Remove
+              data.eventType === GroupEventType.Remove ||
+              data.eventType === GroupEventType.RoleChange
             ) {
               if (shouldEmit(STREAM.CHAT)) {
                 this.emit(STREAM.CHAT, modifiedData);
@@ -269,7 +286,7 @@ export class PushStream extends EventEmitter {
               data.messageCategory == 'Request'
             ) {
               // Dont call this if read only mode ?
-              if (this.signer) {
+              if (this.decryptedPgpPvtKey) {
                 data = await this.chatInstance.decrypt([data]);
                 data = data[0];
               }
@@ -295,6 +312,57 @@ export class PushStream extends EventEmitter {
           }
         }
       );
+
+      this.pushChatSocket.on('SPACES', (data: any) => {
+        try {
+          const modifiedData = DataModifier.handleSpaceEvent(data, this.raw);
+          modifiedData.event = DataModifier.convertToProposedNameForSpace(
+            modifiedData.event
+          );
+
+          DataModifier.handleToField(modifiedData);
+
+          if (this.shouldEmitSpace(data.spaceId)) {
+            if (
+              data.eventType === SpaceEventType.Join ||
+              data.eventType === SpaceEventType.Leave ||
+              data.eventType === MessageEventType.Request ||
+              data.eventType === SpaceEventType.Remove ||
+              data.eventType === SpaceEventType.Start ||
+              data.eventType === SpaceEventType.Stop
+            ) {
+              if (shouldEmit(STREAM.SPACE)) {
+                this.emit(STREAM.SPACE, modifiedData);
+              }
+            } else {
+              if (shouldEmit(STREAM.SPACE_OPS)) {
+                this.emit(STREAM.SPACE_OPS, modifiedData);
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Error handling SPACES event:', error, 'Data:', data);
+        }
+      });
+
+      this.pushChatSocket.on('SPACES_MESSAGES', (data: any) => {
+        try {
+          const modifiedData = DataModifier.handleSpaceEvent(data, this.raw);
+          modifiedData.event = DataModifier.convertToProposedNameForSpace(
+            modifiedData.event
+          );
+
+          DataModifier.handleToField(modifiedData);
+
+          if (this.shouldEmitSpace(data.spaceId)) {
+            if (shouldEmit(STREAM.SPACE)) {
+              this.emit(STREAM.SPACE, modifiedData);
+            }
+          }
+        } catch (error) {
+          console.error('Error handling SPACES event:', error, 'Data:', data);
+        }
+      });
     }
 
     if (this.pushNotificationSocket) {
@@ -313,16 +381,35 @@ export class PushStream extends EventEmitter {
 
       this.pushNotificationSocket.on(EVENTS.USER_FEEDS, (data: any) => {
         try {
-          const modifiedData = DataModifier.mapToNotificationEvent(
-            data,
-            NotificationEventType.INBOX,
-            this.account === data.sender ? 'self' : 'other',
-            this.raw
-          );
+          if (
+            data.payload.data.additionalMeta?.type ===
+              `${ADDITIONAL_META_TYPE.PUSH_VIDEO}+1` &&
+            shouldEmit(STREAM.VIDEO) &&
+            this.shouldEmitVideo(data.sender)
+          ) {
+            // Video Notification
+            const modifiedData = DataModifier.mapToVideoEvent(
+              data,
+              this.account === data.sender
+                ? MessageOrigin.Self
+                : MessageOrigin.Other,
+              this.raw
+            );
 
-          if (this.shouldEmitChannel(modifiedData.from)) {
-            if (shouldEmit(STREAM.NOTIF)) {
-              this.emit(STREAM.NOTIF, modifiedData);
+            this.emit(STREAM.VIDEO, modifiedData);
+          } else {
+            // Channel Notification
+            const modifiedData = DataModifier.mapToNotificationEvent(
+              data,
+              NotificationEventType.INBOX,
+              this.account === data.sender ? 'self' : 'other',
+              this.raw
+            );
+
+            if (this.shouldEmitChannel(modifiedData.from)) {
+              if (shouldEmit(STREAM.NOTIF)) {
+                this.emit(STREAM.NOTIF, modifiedData);
+              }
             }
           }
         } catch (error) {
@@ -360,6 +447,15 @@ export class PushStream extends EventEmitter {
         }
       });
     }
+
+    this.disconnected = false;
+  }
+
+  public connected(): boolean {
+    return (
+      (this.pushNotificationSocket && this.pushNotificationSocket.connected) ||
+      (this.pushChatSocket && this.pushChatSocket.connected)
+    );
   }
 
   public async disconnect(): Promise<void> {
@@ -376,6 +472,13 @@ export class PushStream extends EventEmitter {
     }
   }
 
+  public info() {
+    return {
+      options: this.options,
+      listen: this.listen,
+    };
+  }
+
   private shouldEmitChat(dataChatId: string): boolean {
     if (
       !this.options.filter?.chats ||
@@ -387,6 +490,17 @@ export class PushStream extends EventEmitter {
     return this.options.filter.chats.includes(dataChatId);
   }
 
+  private shouldEmitSpace(dataSpaceId: string): boolean {
+    if (
+      !this.options.filter?.spaces ||
+      this.options.filter.spaces.length === 0 ||
+      this.options.filter.spaces.includes('*')
+    ) {
+      return true;
+    }
+    return this.options.filter.spaces.includes(dataSpaceId);
+  }
+
   private shouldEmitChannel(dataChannelId: string): boolean {
     if (
       !this.options.filter?.channels ||
@@ -396,5 +510,16 @@ export class PushStream extends EventEmitter {
       return true;
     }
     return this.options.filter.channels.includes(dataChannelId);
+  }
+
+  private shouldEmitVideo(dataVideoId: string): boolean {
+    if (
+      !this.options.filter?.video ||
+      this.options.filter.video.length === 0 ||
+      this.options.filter.video.includes('*')
+    ) {
+      return true;
+    }
+    return this.options.filter.video.includes(dataVideoId);
   }
 }

@@ -6,6 +6,7 @@ import { PushAPI } from '../../../src/lib/pushapi/PushAPI'; // Ensure correct im
 import { expect } from 'chai';
 import { ethers } from 'ethers';
 import CONSTANTS from '../../../src/lib/constantsV2';
+import { CHAT } from '../../../src/lib/types/messageTypes';
 
 describe('PushAPI.chat functionality', () => {
   let userAlice: PushAPI;
@@ -15,6 +16,7 @@ describe('PushAPI.chat functionality', () => {
   let signer2: any;
   let account2: string;
   const MESSAGE = 'Hey There!!!';
+  const env = CONSTANTS.ENV.DEV;
 
   beforeEach(async () => {
     const WALLET1 = ethers.Wallet.createRandom();
@@ -25,8 +27,8 @@ describe('PushAPI.chat functionality', () => {
     signer2 = new ethers.Wallet(WALLET2.privateKey);
     account2 = WALLET2.address;
 
-    userAlice = await PushAPI.initialize(signer1);
-    userBob = await PushAPI.initialize(signer2);
+    userAlice = await PushAPI.initialize(signer1, { env });
+    userBob = await PushAPI.initialize(signer2, { env });
   });
 
   it('Should list request ', async () => {
@@ -106,7 +108,6 @@ describe('PushAPI.chat functionality', () => {
       'Operation not allowed in read-only mode. Signer is required.'
     );
   });
-
   it('Should decrypt message ', async () => {
     await userAlice.chat.send(account2, {
       content: 'Hello',
@@ -117,5 +118,14 @@ describe('PushAPI.chat functionality', () => {
       messagePayloads
     );
     expect(decryptedMessagePayloads).to.be.an('array');
+  });
+  it.skip('Should be able to parse old reaction Messages', async () => {
+    const message = await userAlice.chat.send(account2, {
+      type: CONSTANTS.CHAT.MESSAGE_TYPE.REACTION,
+      content: CHAT.REACTION.CLAP,
+      reference: 'bafyreigxrhne5bitpww7hfxsx7u6mghxix4ehfwghtl4aofnbui255rslm',
+    });
+    const requests = await userBob.chat.list('REQUESTS');
+    console.log(requests[0].msg.messageObj);
   });
 });
