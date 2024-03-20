@@ -50,6 +50,13 @@ export const CoreRPC = {
   local: 'https://sepolia.infura.io/v3/5524d420b29f4f7a8d8d2f582a0d43f7',
 };
 
+export const BSC_RPC = {
+  dev: 'https://convincing-old-violet.bsc-testnet.quiknode.pro/473ebceb2d8570ac74ba8d2f82e9531d25a54db9',
+  prod: 'https://sly-practical-market.bsc.quiknode.pro/dbe75022456376761bf648cc0868b765e2f11cad',
+  staging: 'https://convincing-old-violet.bsc-testnet.quiknode.pro/473ebceb2d8570ac74ba8d2f82e9531d25a54db9',
+  local: 'https://convincing-old-violet.bsc-testnet.quiknode.pro/473ebceb2d8570ac74ba8d2f82e9531d25a54db9'
+}
+
 
 const TESTNET_NETWORK = {
   ETHEREUM: 'eip155:11155111',

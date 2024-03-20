@@ -21,7 +21,7 @@ const ChatViewComponentTest = () => {
           onVerificationFail={() => console.log("Verification Failed")} 
 // 786f61c51d436d5a4a02ddb8553ebb4496d909a054eed87967e780531db7960f
 // 0xb4aB21716847F6181C4F72c1ad5c05Aa6B8702e1
-          chatId='0xfD8D06740291E7F2675Bc584fC6021d488B37c4f'
+          chatId='786f61c51d436d5a4a02ddb8553ebb4496d909a054eed87967e780531db7960f'
           chatProfileLeftHelperComponent={<img src={Img} onClick={()=>console.debug('clicked')}/>}
           chatProfileRightHelperComponent={<div>right component</div>}
 

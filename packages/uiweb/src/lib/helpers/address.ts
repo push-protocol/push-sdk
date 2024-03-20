@@ -3,6 +3,7 @@ import type { Web3Provider, InfuraProvider } from '@ethersproject/providers';
 import { Env, SignerType } from '@pushprotocol/restapi';
 import { getUdResolver } from './udResolver';
 import { createWeb3Name } from '@web3-name-sdk/core';
+import { BSC_RPC } from '../config';
 
 /**
  *
@@ -103,26 +104,13 @@ export const resolveNewEns = async (
     const ens = await provider.lookupAddress(checksumWallet)
     if (ens) {
       result = ens;
-      // return ens;
     } else {
       try {
-        const udResolver = getUdResolver(env);
-
-        // attempt reverse resolution on provided address
-        // const udName = await udResolver.reverse(checksumWallet);
-        console.log(checksumWallet, "udName")
         result = await web3Name.getDomainName({
           address: checksumWallet,
-          rpcUrl: "https://mainnet.infura.io/v3/4bc7ff5f8f7f4e57b5011844d399bc47",
-          // queryTldList: ['bnb'],
-          queryChainIdList: [1, 137, 80001, 11155111, 97, 420, 56, 250, 128, 1287],
+          rpcUrl: BSC_RPC[env],
+          queryChainIdList: [137, 80001, 11155111, 97, 420, 56, 250, 128, 1287],
         })
-        console.log(result, "newwww")
-        // if (udName) {
-        //   result = udName
-        // } else {
-        //   result = null;
-        // }
       } catch (err) {
         console.debug(err);
       }
