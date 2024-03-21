@@ -7,7 +7,7 @@ export type SubscriptionOptions = {
   page?: number;
   limit?: number;
   channel?: string;
-  raw?: boolean
+  raw?: boolean;
 };
 export type ChannelInfoOptions = {
   channel?: string;
@@ -15,7 +15,7 @@ export type ChannelInfoOptions = {
   limit?: number;
   category?: number;
   setting?: boolean;
-  raw?: boolean
+  raw?: boolean;
 };
 
 export type SubscribeUnsubscribeOptions = {
@@ -26,7 +26,7 @@ export type SubscribeUnsubscribeOptions = {
 
 export type UserSetting = {
   enabled: boolean;
-  value?: number | {lower: number, upper: number};
+  value?: number | { lower: number; upper: number };
 };
 
 export type AliasOptions = Omit<GetAliasInfoOptionsType, 'env'>;
@@ -121,11 +121,11 @@ export type ChannelFeedsOptions = {
   page?: number;
   limit?: number;
   raw?: boolean;
-  filter?: NotifictaionType
+  filter?: NotifictaionType;
 };
 export type ChannelOptions = {
-  raw: boolean
-}
+  raw: boolean;
+};
 
 export type ChannelListOptions = {
   page?: number;
@@ -138,13 +138,13 @@ export enum ChannelListType {
   ALL = 'all',
   VERIFIED = 'verified',
   UNVERIFIED = 'unverified',
-};
+}
 
 export enum ChannelListSortType {
   SUBSCRIBER = 'subscribers',
-};
+}
 
 export enum ChannelListOrderType {
   ASCENDING = 'asc',
   DESCENDING = 'desc',
-};
+}

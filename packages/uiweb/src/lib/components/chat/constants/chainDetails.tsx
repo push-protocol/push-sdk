@@ -9,6 +9,7 @@ import { PolygonzkevmSvg } from "../../../icons/PolygonzkevmSvg";
 import { ArbitrumSvg } from "../../../icons/ArbitrumSvg"
 import { FuseSvg } from "../../../icons/FuseSvg"
 import React from "react";
+import { BerachainSVG } from "../../../icons/BerachainSVG";
 
 const createSVGIcon = (element:any, chainName: string) => {
   return (
@@ -75,5 +76,9 @@ export const NETWORK_ICON_DETAILS =  {
   122 : {
     label: 'FUSE MAINNET',
     icon: createSVGIcon(<FuseSvg/>, 'Fuse Mainnet'),
-  }
+  },
+  80085 : {
+    label: 'BERACHAIN TESTNET',
+    icon: createSVGIcon(<BerachainSVG/>, 'Berachain Testnet'),
+  },
 };
