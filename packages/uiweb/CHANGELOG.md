@@ -2,192 +2,236 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
-## [0.0.1-alpha.45](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.44...uiweb-0.0.1-alpha.45) (2024-03-07)
+## [1.2.7](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.2.6...uiweb-1.2.7) (2024-03-11)
+
+
+
+## [1.2.6](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.2.5...uiweb-1.2.6) (2024-03-08)
 
 
 ### Bug Fixes
 
-* added prefillChatList ([#1122](https://github.com/ethereum-push-notification-service/push-sdk/issues/1122)) ([8b00609](https://github.com/ethereum-push-notification-service/push-sdk/commit/8b006090d414c19f75a13ca782cde5dab0569b91))
-* fixed build issues ([f68a1ed](https://github.com/ethereum-push-notification-service/push-sdk/commit/f68a1edad6aa0b4c43511cd3f25cb08888f2a235))
-* fixed chat bugs ([f4cdbda](https://github.com/ethereum-push-notification-service/push-sdk/commit/f4cdbdac6088cfc31b2b555038838bd5bb795f0c))
-* fixed chatpreview ([25184de](https://github.com/ethereum-push-notification-service/push-sdk/commit/25184de7d505d72b1603e37b630d9ed205d479f5))
-* fixed chatpreview and widget issues ([ff6b576](https://github.com/ethereum-push-notification-service/push-sdk/commit/ff6b576ed969b328c29806966daee57b397f83a2))
-* fixed gues mode user profile ([f08725e](https://github.com/ethereum-push-notification-service/push-sdk/commit/f08725e27e5e6257cdaccd0634d706d4ce4de8b2))
-* fixed merge conflicts ([db2fd58](https://github.com/ethereum-push-notification-service/push-sdk/commit/db2fd5860ced139b5d5cc269e1cd518e52e4e180))
-* fixed minor bugs ([2b02a65](https://github.com/ethereum-push-notification-service/push-sdk/commit/2b02a65907659cecfbcdbf03e78b20b60a9021c1))
-* fixed minor issue ([841a2b7](https://github.com/ethereum-push-notification-service/push-sdk/commit/841a2b79e504af904aa99fc07b1d73c9e4f56b22))
-* fixed subscription error ([5431ff8](https://github.com/ethereum-push-notification-service/push-sdk/commit/5431ff849d7c01cbbb2511ebc9473d3d8548b2b3))
-* fixed support chat issues ([c63cbb8](https://github.com/ethereum-push-notification-service/push-sdk/commit/c63cbb8b64c20c2b84046beae7e3b6135ca9332e))
-* pulled alpha ([8d33691](https://github.com/ethereum-push-notification-service/push-sdk/commit/8d336911012e39bb0c4360820754230fa9b28a55))
-* stream connection support chat + pushUser to user fix ([#1066](https://github.com/ethereum-push-notification-service/push-sdk/issues/1066)) ([0ea4e02](https://github.com/ethereum-push-notification-service/push-sdk/commit/0ea4e026bceb38d3b37267b43709614cb1740472))
-* troubleshoot ([815c59a](https://github.com/ethereum-push-notification-service/push-sdk/commit/815c59a87deba30c8323a4d7d68f48bcedbbe730))
+* added modify stream ([#1159](https://github.com/ethereum-push-notification-service/push-sdk/issues/1159)) ([15a3771](https://github.com/ethereum-push-notification-service/push-sdk/commit/15a3771e44c1abd923aee221422e943d1dae421e))
+* merge main ([25b30c8](https://github.com/ethereum-push-notification-service/push-sdk/commit/25b30c810062aba091e1ec7a8dc0ded659511405))
 
 
 
-## [0.0.1-alpha.44](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.36...uiweb-0.0.1-alpha.44) (2024-02-13)
-
-
-
-## [0.0.1-alpha.36](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.35...uiweb-0.0.1-alpha.36) (2024-02-13)
+## [1.2.5](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.2.4...uiweb-1.2.5) (2024-01-30)
 
 
 ### Bug Fixes
 
-* added a dynamic component for no chatId ([#1042](https://github.com/ethereum-push-notification-service/push-sdk/issues/1042)) ([85d862f](https://github.com/ethereum-push-notification-service/push-sdk/commit/85d862fc2f91a1904425f2d55d983bc0eb3a2cc5))
-* added notification widget layout ([#1076](https://github.com/ethereum-push-notification-service/push-sdk/issues/1076)) ([c695c18](https://github.com/ethereum-push-notification-service/push-sdk/commit/c695c185c14ef23669c2d0836a6aa9c597ce525c)), closes [#1051](https://github.com/ethereum-push-notification-service/push-sdk/issues/1051) [#1062](https://github.com/ethereum-push-notification-service/push-sdk/issues/1062) [#1070](https://github.com/ethereum-push-notification-service/push-sdk/issues/1070) [#1073](https://github.com/ethereum-push-notification-service/push-sdk/issues/1073) [#1069](https://github.com/ethereum-push-notification-service/push-sdk/issues/1069) [#1053](https://github.com/ethereum-push-notification-service/push-sdk/issues/1053) [#1074](https://github.com/ethereum-push-notification-service/push-sdk/issues/1074) [#1081](https://github.com/ethereum-push-notification-service/push-sdk/issues/1081) [#1088](https://github.com/ethereum-push-notification-service/push-sdk/issues/1088) [#1089](https://github.com/ethereum-push-notification-service/push-sdk/issues/1089) [#1099](https://github.com/ethereum-push-notification-service/push-sdk/issues/1099) [#1102](https://github.com/ethereum-push-notification-service/push-sdk/issues/1102) [#1107](https://github.com/ethereum-push-notification-service/push-sdk/issues/1107)
-* changed pushUser to user ([#1058](https://github.com/ethereum-push-notification-service/push-sdk/issues/1058)) ([8046688](https://github.com/ethereum-push-notification-service/push-sdk/commit/80466884921448e296a1b47d345426152530907a))
-* changed stream type to any ([fe2a3c5](https://github.com/ethereum-push-notification-service/push-sdk/commit/fe2a3c5e333c2b47e5af9d95c9bba4ac1a42a9da))
-* fixed build issues ([cdee5c6](https://github.com/ethereum-push-notification-service/push-sdk/commit/cdee5c60118406c8f2cd94e2888e3f56db5ff3dc))
-* fixed chat preview stream issues ([#1085](https://github.com/ethereum-push-notification-service/push-sdk/issues/1085)) ([abbc6ad](https://github.com/ethereum-push-notification-service/push-sdk/commit/abbc6adfb18a66a6761f3411d2bb7fd5f004f7c1))
-* fixed issues on chatpreviewlist ([#1044](https://github.com/ethereum-push-notification-service/push-sdk/issues/1044)) ([15c8488](https://github.com/ethereum-push-notification-service/push-sdk/commit/15c848860ad920e24a282b17e27ab8d5ad825965))
-* fixed length issue in test ([7be33d9](https://github.com/ethereum-push-notification-service/push-sdk/commit/7be33d910d7a42fa440de62685590b4c49ba9911))
-* fixed minor limit bug ([#1065](https://github.com/ethereum-push-notification-service/push-sdk/issues/1065)) ([d1cbafb](https://github.com/ethereum-push-notification-service/push-sdk/commit/d1cbafba2dcba24a0cf3c7d5dddf07917418cdf6))
-* fixed pagination bug ([fdf8e13](https://github.com/ethereum-push-notification-service/push-sdk/commit/fdf8e134c1cc7262f66f5c284aa978e623f96f5a))
-* fixed preview bugs ([#1078](https://github.com/ethereum-push-notification-service/push-sdk/issues/1078)) ([9961ab7](https://github.com/ethereum-push-notification-service/push-sdk/commit/9961ab74af9f5c75d866d44eb4dee3c971f13ea9))
-* for requests for receivers ([49d6bfc](https://github.com/ethereum-push-notification-service/push-sdk/commit/49d6bfce5f121250816cb5c107761aaa782b3c28))
-* media emoji added ([a193560](https://github.com/ethereum-push-notification-service/push-sdk/commit/a193560504697450a5fab523087f1f2502c09715))
-* Merge alpha ([be6cac0](https://github.com/ethereum-push-notification-service/push-sdk/commit/be6cac001715da4f51e3a1d061c0d2c274d82def))
-* Merge branch 'alpha' into alpha-deployment ([2c0a4b9](https://github.com/ethereum-push-notification-service/push-sdk/commit/2c0a4b914155b663a738870434085677446e3a9d))
-* Merge branch 'alpha' into alpha-deployment ([e80f2f8](https://github.com/ethereum-push-notification-service/push-sdk/commit/e80f2f85f0d8b9e747a0566c64edcee8a9bb4375))
-* Merge branch 'alpha' into alpha-deployment ([e3d08bb](https://github.com/ethereum-push-notification-service/push-sdk/commit/e3d08bbefa688107bfc7cdbc8d0e2e360ffedbab))
-* Merge branch 'alpha' into alpha-deployment ([e7d53ca](https://github.com/ethereum-push-notification-service/push-sdk/commit/e7d53cac52eb1485a8b9ea144cb7ffd875761c75))
-* Merge branch 'alpha' into alpha-deployment ([12179ab](https://github.com/ethereum-push-notification-service/push-sdk/commit/12179ab61824a5475f329d9475b92bf9e89d0e51))
-* removed console ([78483d6](https://github.com/ethereum-push-notification-service/push-sdk/commit/78483d64e0fbaf4e46ee5f18b06c5575e14aa7c6))
-* sending first message now shows in the inbox ([1d4622c](https://github.com/ethereum-push-notification-service/push-sdk/commit/1d4622c2561f8c794234941971b8c2131f5b46e8))
-* the messages disappearing on scroll ([#1077](https://github.com/ethereum-push-notification-service/push-sdk/issues/1077)) ([a8332fc](https://github.com/ethereum-push-notification-service/push-sdk/commit/a8332fcbce6f6613c61e1b501126a1bcfe41a1cc))
+* fixed signer bug ([#1073](https://github.com/ethereum-push-notification-service/push-sdk/issues/1073)) ([0d3fd91](https://github.com/ethereum-push-notification-service/push-sdk/commit/0d3fd9124ce94d77efee86783f90de6aadbaea68))
+* Merge branch 'main' into deployment ([ac17311](https://github.com/ethereum-push-notification-service/push-sdk/commit/ac17311533575610335256f0483ae245cbc4f47b))
 
 
 
-## [0.0.1-alpha.43](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.42...uiweb-0.0.1-alpha.43) (2024-02-09)
+## [1.2.4](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.2.3...uiweb-1.2.4) (2024-01-16)
 
 
 ### Bug Fixes
 
-* for requests for receivers ([49d6bfc](https://github.com/ethereum-push-notification-service/push-sdk/commit/49d6bfce5f121250816cb5c107761aaa782b3c28))
-* media emoji added ([a193560](https://github.com/ethereum-push-notification-service/push-sdk/commit/a193560504697450a5fab523087f1f2502c09715))
-* Merge branch 'alpha' into alpha-deployment ([2c0a4b9](https://github.com/ethereum-push-notification-service/push-sdk/commit/2c0a4b914155b663a738870434085677446e3a9d))
-* sending first message now shows in the inbox ([1d4622c](https://github.com/ethereum-push-notification-service/push-sdk/commit/1d4622c2561f8c794234941971b8c2131f5b46e8))
+* Merge branch 'main' into deployment ([8f02dcf](https://github.com/ethereum-push-notification-service/push-sdk/commit/8f02dcf0f3314899f4ff825f4727b03706975939))
 
 
 
-## [0.0.1-alpha.42](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.41...uiweb-0.0.1-alpha.42) (2024-02-08)
+## [1.2.3](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.2.2...uiweb-1.2.3) (2024-01-16)
 
 
 ### Bug Fixes
 
-* fixed chat preview stream issues ([#1085](https://github.com/ethereum-push-notification-service/push-sdk/issues/1085)) ([abbc6ad](https://github.com/ethereum-push-notification-service/push-sdk/commit/abbc6adfb18a66a6761f3411d2bb7fd5f004f7c1))
-* fixed pagination bug ([fdf8e13](https://github.com/ethereum-push-notification-service/push-sdk/commit/fdf8e134c1cc7262f66f5c284aa978e623f96f5a))
-* Merge branch 'alpha' into alpha-deployment ([e80f2f8](https://github.com/ethereum-push-notification-service/push-sdk/commit/e80f2f85f0d8b9e747a0566c64edcee8a9bb4375))
-* the messages disappearing on scroll ([#1077](https://github.com/ethereum-push-notification-service/push-sdk/issues/1077)) ([a8332fc](https://github.com/ethereum-push-notification-service/push-sdk/commit/a8332fcbce6f6613c61e1b501126a1bcfe41a1cc))
+* added fuse network ([62a1381](https://github.com/ethereum-push-notification-service/push-sdk/commit/62a1381a8db13c6b8f0392771867a0bc9c147b4e))
+* added pushUser and stream ([#1023](https://github.com/ethereum-push-notification-service/push-sdk/issues/1023)) ([a6f518f](https://github.com/ethereum-push-notification-service/push-sdk/commit/a6f518feb51b0737dec4e43dc35ae16a2fbe6def))
+* alpha to main ([76a8d84](https://github.com/ethereum-push-notification-service/push-sdk/commit/76a8d849e689793590cf096c794016267503df3d))
+* case sensative file inclusion ([#1024](https://github.com/ethereum-push-notification-service/push-sdk/issues/1024)) ([ac7f441](https://github.com/ethereum-push-notification-service/push-sdk/commit/ac7f4417d1c8ce84cee9e1ee84046d2a080b2171))
+* Merge branch 'main' into deployment ([6c421dd](https://github.com/ethereum-push-notification-service/push-sdk/commit/6c421dda92e6ce52d680573a7d3f5abfbc2ea8dd))
+* Merge branch 'main' into deployment ([a640714](https://github.com/ethereum-push-notification-service/push-sdk/commit/a640714cf47bbd56d628a6b04de19287ce2f6ded))
+* merge main ([cbf296b](https://github.com/ethereum-push-notification-service/push-sdk/commit/cbf296bbe24916dcdeb679b315f56f37b6062527))
+* merge main ([61ea59b](https://github.com/ethereum-push-notification-service/push-sdk/commit/61ea59bd1ccc1223c8887343c92751efe67c3c86))
+* merge main ([16dd007](https://github.com/ethereum-push-notification-service/push-sdk/commit/16dd007772a4c5104e336eef318f0056de7a5cfb))
+* merged main ([e3f2760](https://github.com/ethereum-push-notification-service/push-sdk/commit/e3f276067ebaf565511dfe22b1748546e37c0c80))
+* merged main ([fa85b3e](https://github.com/ethereum-push-notification-service/push-sdk/commit/fa85b3e91deb8dac37961608cf3a761213a6cc24))
+* merged main ([65ac33c](https://github.com/ethereum-push-notification-service/push-sdk/commit/65ac33c329fe71fa5f2328559a4a966952888def))
+* merged main ([5373d60](https://github.com/ethereum-push-notification-service/push-sdk/commit/5373d60e6ded8e398301d534e176013c28413f18))
+* merged main ([f7bc7af](https://github.com/ethereum-push-notification-service/push-sdk/commit/f7bc7af8c6e160697a485d8c2d708f30f73ea81c))
+* minor fix on conditioning ([484096d](https://github.com/ethereum-push-notification-service/push-sdk/commit/484096d363a4b0faf965086d75e85492a96f8148))
 
 
 
-## [0.0.1-alpha.41](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.40...uiweb-0.0.1-alpha.41) (2024-02-01)
-
-
-### Bug Fixes
-
-* fixed length issue in test ([7be33d9](https://github.com/ethereum-push-notification-service/push-sdk/commit/7be33d910d7a42fa440de62685590b4c49ba9911))
-* fixed preview bugs ([#1078](https://github.com/ethereum-push-notification-service/push-sdk/issues/1078)) ([9961ab7](https://github.com/ethereum-push-notification-service/push-sdk/commit/9961ab74af9f5c75d866d44eb4dee3c971f13ea9))
-* Merge branch 'alpha' into alpha-deployment ([e3d08bb](https://github.com/ethereum-push-notification-service/push-sdk/commit/e3d08bbefa688107bfc7cdbc8d0e2e360ffedbab))
-* removed console ([78483d6](https://github.com/ethereum-push-notification-service/push-sdk/commit/78483d64e0fbaf4e46ee5f18b06c5575e14aa7c6))
-
-
-
-## [0.0.1-alpha.40](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.39...uiweb-0.0.1-alpha.40) (2024-01-29)
-
-
-### Bug Fixes
-
-* Merge branch 'alpha' into alpha-deployment ([e7d53ca](https://github.com/ethereum-push-notification-service/push-sdk/commit/e7d53cac52eb1485a8b9ea144cb7ffd875761c75))
-
-
-
-## [0.0.1-alpha.39](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.38...uiweb-0.0.1-alpha.39) (2024-01-25)
+## [0.0.1-alpha.15](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.14...uiweb-0.0.1-alpha.15) (2023-09-25)
 
 
 ### Bug Fixes
 
-* fixed minor limit bug ([#1065](https://github.com/ethereum-push-notification-service/push-sdk/issues/1065)) ([d1cbafb](https://github.com/ethereum-push-notification-service/push-sdk/commit/d1cbafba2dcba24a0cf3c7d5dddf07917418cdf6))
-* Merge branch 'alpha' into alpha-deployment ([12179ab](https://github.com/ethereum-push-notification-service/push-sdk/commit/12179ab61824a5475f329d9475b92bf9e89d0e51))
+* Merge branch 'alpha' into alpha-deployment ([eef6b18](https://github.com/ethereum-push-notification-service/push-sdk/commit/eef6b18d87a27c59930029b9933540333fb36bc6))
 
 
 
-## [0.0.1-alpha.39](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.38...uiweb-0.0.1-alpha.39) (2024-01-25)
-
-
-### Bug Fixes
-
-* fixed minor limit bug ([#1065](https://github.com/ethereum-push-notification-service/push-sdk/issues/1065)) ([d1cbafb](https://github.com/ethereum-push-notification-service/push-sdk/commit/d1cbafba2dcba24a0cf3c7d5dddf07917418cdf6))
-* Merge branch 'alpha' into alpha-deployment ([12179ab](https://github.com/ethereum-push-notification-service/push-sdk/commit/12179ab61824a5475f329d9475b92bf9e89d0e51))
-
-
-
-## [0.0.1-alpha.38](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.37...uiweb-0.0.1-alpha.38) (2024-01-25)
+## [0.0.1-alpha.14](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.13...uiweb-0.0.1-alpha.14) (2023-09-25)
 
 
 ### Bug Fixes
 
-* added a dynamic component for no chatId ([#1042](https://github.com/ethereum-push-notification-service/push-sdk/issues/1042)) ([85d862f](https://github.com/ethereum-push-notification-service/push-sdk/commit/85d862fc2f91a1904425f2d55d983bc0eb3a2cc5))
-* changed pushUser to user ([#1058](https://github.com/ethereum-push-notification-service/push-sdk/issues/1058)) ([8046688](https://github.com/ethereum-push-notification-service/push-sdk/commit/80466884921448e296a1b47d345426152530907a))
+* Merge branch 'alpha' into alpha-deployment ([7efc3ab](https://github.com/ethereum-push-notification-service/push-sdk/commit/7efc3ab1c3a409a29166c9644c94708b0ac37417))
 
 
 
-## [0.0.1-alpha.37](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.36...uiweb-0.0.1-alpha.37) (2024-01-19)
-
-
-### Bug Fixes
-
-* changed stream type to any ([fe2a3c5](https://github.com/ethereum-push-notification-service/push-sdk/commit/fe2a3c5e333c2b47e5af9d95c9bba4ac1a42a9da))
-* fixed issues on chatpreviewlist ([#1044](https://github.com/ethereum-push-notification-service/push-sdk/issues/1044)) ([15c8488](https://github.com/ethereum-push-notification-service/push-sdk/commit/15c848860ad920e24a282b17e27ab8d5ad825965))
-* Merge branch 'alpha' into alpha-deployment ([bb3bdf5](https://github.com/ethereum-push-notification-service/push-sdk/commit/bb3bdf5157f0dab959c2b16b7138a07803f31f70))
-
-
-
-## [0.0.1-alpha.36](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.35...uiweb-0.0.1-alpha.36) (2024-01-18)
+## [0.0.1-alpha.13](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.12...uiweb-0.0.1-alpha.13) (2023-09-21)
 
 
 ### Bug Fixes
 
-* minor fix ([3034c2c](https://github.com/ethereum-push-notification-service/push-sdk/commit/3034c2cb64116d7e9721da79bdbac180712342d3))
+* Merge branch 'alpha' into alpha-deployment ([fed5d89](https://github.com/ethereum-push-notification-service/push-sdk/commit/fed5d8940aaa20f6f68f6ec3dad6d4dd90afdda0))
 
 
 
-## [0.0.1-alpha.17](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.16...uiweb-0.0.1-alpha.17) (2024-01-18)
+## [0.0.1-alpha.12](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.11...uiweb-0.0.1-alpha.12) (2023-09-20)
 
 
 ### Bug Fixes
 
-* minor change ([d75a862](https://github.com/ethereum-push-notification-service/push-sdk/commit/d75a862fba20ffc91b15271468596ad0ceccf400))
+* added condition while showing tokengatedIcon ([#715](https://github.com/ethereum-push-notification-service/push-sdk/issues/715)) ([8ae0f49](https://github.com/ethereum-push-notification-service/push-sdk/commit/8ae0f49fcd385dfdcad197de2f89c58a074f681e))
+* added disconnect for wallet ([#721](https://github.com/ethereum-push-notification-service/push-sdk/issues/721)) ([4e30c36](https://github.com/ethereum-push-notification-service/push-sdk/commit/4e30c36532a55abd440f779c98b31f52bfb9e107))
+* Merge branch 'alpha' into alpha-deployment ([a3b4ead](https://github.com/ethereum-push-notification-service/push-sdk/commit/a3b4ead84601329e36afd8555011a5088dba6983))
+* Merge branch 'alpha' into alpha-deployment ([a356f4b](https://github.com/ethereum-push-notification-service/push-sdk/commit/a356f4b8497252e75c8f70fd6f6bf533a6980c0a))
+* Merge branch 'alpha' into alpha-deployment ([1a4c5ac](https://github.com/ethereum-push-notification-service/push-sdk/commit/1a4c5ac8f704cc5bfeed1ba4eb688e4742acfd9e))
 
 
 
-## [0.0.1-alpha.16](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.14...uiweb-0.0.1-alpha.16) (2024-01-18)
+## [0.0.1-alpha.11](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.10...uiweb-0.0.1-alpha.11) (2023-09-15)
+
+
+
+## [0.0.1-alpha.10](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.9...uiweb-0.0.1-alpha.10) (2023-09-09)
+
+
+### Bug Fixes
+
+* Merge branch 'alpha' into alpha-deployment ([f410046](https://github.com/ethereum-push-notification-service/push-sdk/commit/f410046d871bb34f3ec7a7eecd9f500d50fc0fbf))
+
+
+
+## [0.0.1-alpha.9](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.8...uiweb-0.0.1-alpha.9) (2023-09-08)
+
+
+### Bug Fixes
+
+* Merge branch 'alpha' into alpha-deployment ([699706b](https://github.com/ethereum-push-notification-service/push-sdk/commit/699706bc0c2b05eebb11624f7b16411d4111a5cb))
+* merge main ([5f37942](https://github.com/ethereum-push-notification-service/push-sdk/commit/5f379427e8a517089758de776eab9f2409aa61f8))
+
+
+
+## [0.0.1-alpha.8](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.7...uiweb-0.0.1-alpha.8) (2023-08-29)
+
+
+### Bug Fixes
+
+* fixed msg bubble width ([#691](https://github.com/ethereum-push-notification-service/push-sdk/issues/691)) ([c24a9e1](https://github.com/ethereum-push-notification-service/push-sdk/commit/c24a9e144110ad3c67decbc1364b5dd610f5f58a))
+* Merge branch 'alpha' into alpha-deployment ([a825667](https://github.com/ethereum-push-notification-service/push-sdk/commit/a825667be9380ec6e5b457f5751a8b6b6b5a6b23))
+
+
+
+## [0.0.1-alpha.7](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.6...uiweb-0.0.1-alpha.7) (2023-08-26)
+
+
+### Bug Fixes
+
+* Merge branch 'alpha' into alpha-deployment ([45e6489](https://github.com/ethereum-push-notification-service/push-sdk/commit/45e6489eca403160d512f30fa6617c980e16a244))
+
+
+
+## [0.0.1-alpha.6](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.5...uiweb-0.0.1-alpha.6) (2023-08-25)
+
+
+### Bug Fixes
+
+* fixed ([#689](https://github.com/ethereum-push-notification-service/push-sdk/issues/689)) ([a7ed3c0](https://github.com/ethereum-push-notification-service/push-sdk/commit/a7ed3c0955316da00739f114afe1a3d3a958c66e))
+* Merge branch 'alpha' into alpha-deployment ([af5a4a7](https://github.com/ethereum-push-notification-service/push-sdk/commit/af5a4a75bde324ef8552fb8a3d404e8c57f59f1c))
+
+
+
+## [0.0.1-alpha.5](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.4...uiweb-0.0.1-alpha.5) (2023-08-25)
+
+
+### Bug Fixes
+
+* Merge branch 'alpha' into alpha-deployment ([292a8f9](https://github.com/ethereum-push-notification-service/push-sdk/commit/292a8f94fbe1c13c49aa2b07c633e10cad1f02bc))
+
+
+
+## [0.0.1-alpha.4](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.3...uiweb-0.0.1-alpha.4) (2023-08-25)
+
+
+### Bug Fixes
+
+* Merge branch 'alpha' into alpha-deployment ([7a0d87e](https://github.com/ethereum-push-notification-service/push-sdk/commit/7a0d87eb35a77cad6898be54af5431eb5335c80d))
+
+
+
+## [0.0.1-alpha.3](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.13...uiweb-0.0.1-alpha.3) (2023-08-25)
+
+
+
+## [0.0.1-alpha.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.12...uiweb-0.0.1-alpha.2) (2023-08-23)
+
+
+### Bug Fixes
+
+* merge alpha ([1783d45](https://github.com/ethereum-push-notification-service/push-sdk/commit/1783d45bb3ceab1cce3c6bb19dfbda38c3662a3e))
+* Merge branch 'alpha' into alpha-deployment ([8b50b53](https://github.com/ethereum-push-notification-service/push-sdk/commit/8b50b53eae51729ab9c5202b1750d70c444be829))
+* merge main ([9efdbe8](https://github.com/ethereum-push-notification-service/push-sdk/commit/9efdbe8c6f86eeb859075af493797575728cf902))
+* merge main ([f338fd4](https://github.com/ethereum-push-notification-service/push-sdk/commit/f338fd49707933c65bdcc7736cdd08d6784625ba))
+
+
+
+## [0.0.1-alpha.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.9...uiweb-0.0.1-alpha.1) (2023-08-10)
+
+
+
+## [0.0.1-alpha.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.8...uiweb-0.0.1-alpha.0) (2023-08-09)
+
+
+### Bug Fixes
+
+* add alpha support to UI web ([8ecf5d9](https://github.com/ethereum-push-notification-service/push-sdk/commit/8ecf5d92cc1b5c25562ba0d6d1ae1137877a5be7))
+* merged main ([c5533f8](https://github.com/ethereum-push-notification-service/push-sdk/commit/c5533f8dce7b88cb1f14aa72f83579a8e01dcf36))
+* signer compatibility with viem ([3df201c](https://github.com/ethereum-push-notification-service/push-sdk/commit/3df201c7474b88d270d6e868bc516f223539e74c))
+* signer compatibility with viem and ethers ([1edea43](https://github.com/ethereum-push-notification-service/push-sdk/commit/1edea431ccf7f19cc0430deb2ce7a5c61390d99f))
+
+
+
+## [1.2.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.2.1...uiweb-1.2.2) (2024-01-15)
 
 
 ### Bug Fixes
 
 * Added ethersV6SignerType in uiweb signer types ([#1018](https://github.com/ethereum-push-notification-service/push-sdk/issues/1018)) ([76710d4](https://github.com/ethereum-push-notification-service/push-sdk/commit/76710d40c688aa7a21113a36e3404e806c82cbb0))
-* added fuse network ([62a1381](https://github.com/ethereum-push-notification-service/push-sdk/commit/62a1381a8db13c6b8f0392771867a0bc9c147b4e))
-* added pushUser and stream ([#1023](https://github.com/ethereum-push-notification-service/push-sdk/issues/1023)) ([a6f518f](https://github.com/ethereum-push-notification-service/push-sdk/commit/a6f518feb51b0737dec4e43dc35ae16a2fbe6def))
-* added styling for the component in chat profile ([d2985ae](https://github.com/ethereum-push-notification-service/push-sdk/commit/d2985aee6f1ae56892b88ad371d08333e22b4880))
+* Merge branch 'main' into deployment ([798f355](https://github.com/ethereum-push-notification-service/push-sdk/commit/798f35561a0cec08fb89d8121b7751ea2ed3553a))
+
+
+
+## [1.2.1](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.2.0...uiweb-1.2.1) (2024-01-15)
+
+
+### Bug Fixes
+
 * added support for ens ([#1008](https://github.com/ethereum-push-notification-service/push-sdk/issues/1008)) ([8e2cec9](https://github.com/ethereum-push-notification-service/push-sdk/commit/8e2cec9ecf34548f5cfb262450de4ef29ced4c80))
-* case sensative file inclusion ([#1024](https://github.com/ethereum-push-notification-service/push-sdk/issues/1024)) ([ac7f441](https://github.com/ethereum-push-notification-service/push-sdk/commit/ac7f4417d1c8ce84cee9e1ee84046d2a080b2171))
-* changed component type and how it is rendered ([de355a9](https://github.com/ethereum-push-notification-service/push-sdk/commit/de355a91e5cc6f91e5e07cf3d68efd7f7f5e4a76))
-* changed stream type to any ([e597fe5](https://github.com/ethereum-push-notification-service/push-sdk/commit/e597fe54f5ae5f89b54839b8f3a9b5f42b79183e))
-* fixed build for uiweb ([#854](https://github.com/ethereum-push-notification-service/push-sdk/issues/854)) ([7e28d59](https://github.com/ethereum-push-notification-service/push-sdk/commit/7e28d5936899544c5f115c9ff6053c2328964b12))
 * fixed chats not updating in real time for w2w ([b698948](https://github.com/ethereum-push-notification-service/push-sdk/commit/b6989485546867bdf493172e1e6a2fce27a7701e))
-* fixed create group btn not disabling and added minimum member requirement ([ea1a3a8](https://github.com/ethereum-push-notification-service/push-sdk/commit/ea1a3a848f646606ffebec50bf4e29b08946f946))
-* fixed font awesome ([#799](https://github.com/ethereum-push-notification-service/push-sdk/issues/799)) ([282dc1c](https://github.com/ethereum-push-notification-service/push-sdk/commit/282dc1cf0e52627c2e854912d6b15acc5716ccaa))
-* fixed hardcoded msg for group rules in msg input ([#925](https://github.com/ethereum-push-notification-service/push-sdk/issues/925)) ([4e7000c](https://github.com/ethereum-push-notification-service/push-sdk/commit/4e7000c9cb60f644291b11e99826b0e79d7e0058))
-* fixed sepolia for gated group condition ([#855](https://github.com/ethereum-push-notification-service/push-sdk/issues/855)) ([33e0ca9](https://github.com/ethereum-push-notification-service/push-sdk/commit/33e0ca9476d73eff333efa73350c359108a42db9))
-* fixed sepolia ud issues ([#851](https://github.com/ethereum-push-notification-service/push-sdk/issues/851)) ([61979e5](https://github.com/ethereum-push-notification-service/push-sdk/commit/61979e55ac2bc50c4a7674ada0cc5035ff848087))
 * focus back to message input after sending the message ([#1014](https://github.com/ethereum-push-notification-service/push-sdk/issues/1014)) ([3a8218e](https://github.com/ethereum-push-notification-service/push-sdk/commit/3a8218e9716a7168a3c650c7caec89fb464c8ae5))
-* merged main ([e3f2760](https://github.com/ethereum-push-notification-service/push-sdk/commit/e3f276067ebaf565511dfe22b1748546e37c0c80))
-* merged main ([fa85b3e](https://github.com/ethereum-push-notification-service/push-sdk/commit/fa85b3e91deb8dac37961608cf3a761213a6cc24))
-* scroll to bottom, loading the feed without message ([#910](https://github.com/ethereum-push-notification-service/push-sdk/issues/910)) ([0393cdf](https://github.com/ethereum-push-notification-service/push-sdk/commit/0393cdfb81a61f04eb0ab04e5f880470ea276296))
-* shift testnet env to sepolia ([#473](https://github.com/ethereum-push-notification-service/push-sdk/issues/473)) ([12f1392](https://github.com/ethereum-push-notification-service/push-sdk/commit/12f1392a4f4e800f720a0c2c34822bf502f15dac))
-* workaround for socket response ([#924](https://github.com/ethereum-push-notification-service/push-sdk/issues/924)) ([f765f51](https://github.com/ethereum-push-notification-service/push-sdk/commit/f765f510e86fd038adc9353bec56cd5e0b7ef0ee))
+* Merge branch 'main' into deployment ([a1852d4](https://github.com/ethereum-push-notification-service/push-sdk/commit/a1852d4085007810d03c9dae6f74531124a35538))
+* Merge branch 'main' into deployment ([d82102c](https://github.com/ethereum-push-notification-service/push-sdk/commit/d82102c4ec62e3716af6979e32564709da75ef75))
+
+
+
+# [1.2.0](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.23...uiweb-1.2.0) (2023-12-26)
+
+
+### Bug Fixes
+
+* added styling for the component in chat profile ([d2985ae](https://github.com/ethereum-push-notification-service/push-sdk/commit/d2985aee6f1ae56892b88ad371d08333e22b4880))
+* changed component type and how it is rendered ([de355a9](https://github.com/ethereum-push-notification-service/push-sdk/commit/de355a91e5cc6f91e5e07cf3d68efd7f7f5e4a76))
+* fixed create group btn not disabling and added minimum member requirement ([ea1a3a8](https://github.com/ethereum-push-notification-service/push-sdk/commit/ea1a3a848f646606ffebec50bf4e29b08946f946))
+* Merge branch 'main' into deployment ([af23f82](https://github.com/ethereum-push-notification-service/push-sdk/commit/af23f8282252d18bce1e335a995c750951a970bd))
 
 
 ### Features
@@ -196,23 +240,89 @@ This file was generated using [@jscutlery/semver](https://github.com/jscutlery/s
 
 
 
-## [0.0.1-alpha.30](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.29...uiweb-0.0.1-alpha.30) (2023-11-13)
+## [1.1.23](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.22...uiweb-1.1.23) (2023-12-20)
 
 
 ### Bug Fixes
 
-* added alias for chatview ([#820](https://github.com/ethereum-push-notification-service/push-sdk/issues/820)) ([2940242](https://github.com/ethereum-push-notification-service/push-sdk/commit/2940242425b5bdd41901135419efe2e917f167b9))
-* fixed font awesome ([#799](https://github.com/ethereum-push-notification-service/push-sdk/issues/799)) ([282dc1c](https://github.com/ethereum-push-notification-service/push-sdk/commit/282dc1cf0e52627c2e854912d6b15acc5716ccaa))
-* fixed merge conflicts with main ([040cd67](https://github.com/ethereum-push-notification-service/push-sdk/commit/040cd6798da69ed6bf5c8de2e068788606b4a385))
-
-
-### Features
-
-* added default link markdown support in default patterns ([#825](https://github.com/ethereum-push-notification-service/push-sdk/issues/825)) ([54f6ee4](https://github.com/ethereum-push-notification-service/push-sdk/commit/54f6ee49abdc038e5bb58bdebc93f3c6f71f6887))
+* fixed create group btn not disabling and added minimum member requirement ([#941](https://github.com/ethereum-push-notification-service/push-sdk/issues/941)) ([9c41c8d](https://github.com/ethereum-push-notification-service/push-sdk/commit/9c41c8d557ff6b8651ac8fa91d2fc6129fad66b8))
+* Merge branch 'main' into deployment ([7adb464](https://github.com/ethereum-push-notification-service/push-sdk/commit/7adb464f1d9a39d95f7292f2636eb1ee5a0642e3))
 
 
 
-## [0.0.1-alpha.29](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-0.0.1-alpha.28...uiweb-0.0.1-alpha.29) (2023-11-07)
+## [1.1.22](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.21...uiweb-1.1.22) (2023-12-05)
+
+
+### Bug Fixes
+
+* fixed hardcoded msg for group rules in msg input ([#925](https://github.com/ethereum-push-notification-service/push-sdk/issues/925)) ([4e7000c](https://github.com/ethereum-push-notification-service/push-sdk/commit/4e7000c9cb60f644291b11e99826b0e79d7e0058))
+* Merge branch 'main' into deployment ([c87581c](https://github.com/ethereum-push-notification-service/push-sdk/commit/c87581cbbf825300a86c3cfadb6d0f2157ba3499))
+
+
+
+## [1.1.21](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.20...uiweb-1.1.21) (2023-12-04)
+
+
+### Bug Fixes
+
+* Merge branch 'main' into deployment ([39f597b](https://github.com/ethereum-push-notification-service/push-sdk/commit/39f597bb82368fce4e8b669d0d74ec113414a60e))
+* workaround for socket response ([#924](https://github.com/ethereum-push-notification-service/push-sdk/issues/924)) ([f765f51](https://github.com/ethereum-push-notification-service/push-sdk/commit/f765f510e86fd038adc9353bec56cd5e0b7ef0ee))
+
+
+
+## [1.1.20](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.19...uiweb-1.1.20) (2023-12-01)
+
+
+### Bug Fixes
+
+* Merge branch 'main' into deployment ([9cf6169](https://github.com/ethereum-push-notification-service/push-sdk/commit/9cf6169de0cd40f75c7e6d5eec98f1dd553bd98e))
+* merge main ([b696884](https://github.com/ethereum-push-notification-service/push-sdk/commit/b696884b0b8f42ff69fc8e135654e6530afaad2b))
+* scroll to bottom, loading the feed without message ([#910](https://github.com/ethereum-push-notification-service/push-sdk/issues/910)) ([0393cdf](https://github.com/ethereum-push-notification-service/push-sdk/commit/0393cdfb81a61f04eb0ab04e5f880470ea276296))
+
+
+
+## [1.1.19](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.18...uiweb-1.1.19) (2023-11-17)
+
+
+### Bug Fixes
+
+* fixed sepolia for gated group condition ([#855](https://github.com/ethereum-push-notification-service/push-sdk/issues/855)) ([33e0ca9](https://github.com/ethereum-push-notification-service/push-sdk/commit/33e0ca9476d73eff333efa73350c359108a42db9))
+* Merge branch 'main' into deployment ([5baacc7](https://github.com/ethereum-push-notification-service/push-sdk/commit/5baacc705c20d5e92aeac4cd5f1b4fe65cc75827))
+
+
+
+## [1.1.19](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.18...uiweb-1.1.19) (2023-11-17)
+
+
+### Bug Fixes
+
+* fixed sepolia for gated group condition ([#855](https://github.com/ethereum-push-notification-service/push-sdk/issues/855)) ([33e0ca9](https://github.com/ethereum-push-notification-service/push-sdk/commit/33e0ca9476d73eff333efa73350c359108a42db9))
+* Merge branch 'main' into deployment ([5baacc7](https://github.com/ethereum-push-notification-service/push-sdk/commit/5baacc705c20d5e92aeac4cd5f1b4fe65cc75827))
+
+
+
+## [1.1.18](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.17...uiweb-1.1.18) (2023-11-16)
+
+
+### Bug Fixes
+
+* fixed build for uiweb ([#854](https://github.com/ethereum-push-notification-service/push-sdk/issues/854)) ([7e28d59](https://github.com/ethereum-push-notification-service/push-sdk/commit/7e28d5936899544c5f115c9ff6053c2328964b12))
+* fixed sepolia ud issues ([#851](https://github.com/ethereum-push-notification-service/push-sdk/issues/851)) ([61979e5](https://github.com/ethereum-push-notification-service/push-sdk/commit/61979e55ac2bc50c4a7674ada0cc5035ff848087))
+* Merge branch 'main' into deployment ([4e6ee96](https://github.com/ethereum-push-notification-service/push-sdk/commit/4e6ee96dc7661dee49e76eb6c37f428bc8f6e1c6))
+* Merge branch 'main' into deployment ([1c146be](https://github.com/ethereum-push-notification-service/push-sdk/commit/1c146bea79c0b9ac96da253fbf78a69a448372b8))
+
+
+
+## [1.1.17](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.16...uiweb-1.1.17) (2023-11-15)
+
+
+### Bug Fixes
+
+* shift testnet env to sepolia ([#473](https://github.com/ethereum-push-notification-service/push-sdk/issues/473)) ([12f1392](https://github.com/ethereum-push-notification-service/push-sdk/commit/12f1392a4f4e800f720a0c2c34822bf502f15dac))
+
+
+
+## [1.1.16](https://github.com/ethereum-push-notification-service/push-sdk/compare/uiweb-1.1.15...uiweb-1.1.16) (2023-11-09)
 
 
 ### Bug Fixes

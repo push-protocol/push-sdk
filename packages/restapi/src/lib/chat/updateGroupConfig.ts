@@ -4,6 +4,8 @@ import Constants from '../constants';
 import { ChatStatus, EnvOptionsType, GroupInfoDTO, SignerType } from '../types';
 import { sign, getWallet, getConnectedUserV2 } from './helpers';
 import * as CryptoJS from 'crypto-js';
+import { axiosPut } from '../utils/axiosUtil';
+import { handleError } from '../errors/validationError';
 
 export interface ChatUpdateConfigProfileType extends EnvOptionsType {
   account?: string | null;
@@ -73,23 +75,9 @@ export const updateGroupConfig = async (
     const body = bodyToBeHashed;
     (body as any).configVerificationProof = configVerificationProof;
 
-    return axios
-      .put(apiEndpoint, body)
-      .then((response) => {
-        return response.data;
-      })
-      .catch((err) => {
-        if (err?.response?.data)
-          throw new Error(JSON.stringify(err?.response?.data));
-        throw new Error(err);
-      });
+     const response = await axiosPut(apiEndpoint, body);
+     return response.data;
   } catch (err) {
-    console.error(
-      `[Push SDK] - API  - Error - API ${updateGroupConfig.name} -:  `,
-      err
-    );
-    throw Error(
-      `[Push SDK] - API  - Error - API ${updateGroupConfig.name} -: ${err}`
-    );
+    throw handleError(err, updateGroupConfig.name);
   }
 };

@@ -15,6 +15,7 @@ import { MessageObj } from '../types/messageTypes';
 import { validateMessageObj } from '../validations/messageObject';
 import { axiosPost } from '../utils/axiosUtil';
 import { getGroupInfo } from './getGroupInfo';
+import { handleError } from '../errors/validationError';
 
 /**
  * SENDS A PUSH CHAT MESSAGE
@@ -100,8 +101,7 @@ export const sendCore = async (
     const response = await axiosPost<MessageWithCID>(apiEndpoint, body);
     return response.data;
   } catch (err) {
-    console.error(`[Push SDK] - API  - Error - API ${send.name} -:  `, err);
-    throw Error(`[Push SDK] - API  - Error - API ${send.name} -: ${err}`);
+    throw handleError(err, send.name);
   }
 };
 

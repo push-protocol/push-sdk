@@ -1,4 +1,5 @@
 import Constants from '../constants';
+import { handleError } from '../errors/validationError';
 import { pCAIP10ToWallet } from '../helpers';
 import { AccountEnvOptionsType, IMessageIPFS } from '../types';
 import { get } from '../user';
@@ -30,9 +31,9 @@ export interface HistoricalMessagesOptionsType extends AccountEnvOptionsType {
  * Get all the messages exchanged between users after the threadhash.
  */
 
-export const history = async(options: HistoricalMessagesOptionsType) => {
+export const history = async (options: HistoricalMessagesOptionsType) => {
   return await historyCore(options, PGPHelper);
-}
+};
 
 export const historyCore = async (
   options: HistoricalMessagesOptionsType,
@@ -69,7 +70,6 @@ export const historyCore = async (
     }
     return messages;
   } catch (err) {
-    console.error(`[Push SDK] - API ${history.name} -: `, err);
-    throw Error(`[Push SDK] - API ${history.name} -: ${err}`);
+    throw handleError(err, history.name);
   }
 };

@@ -13,7 +13,7 @@ export interface UpdateUserProfileParams {
 }
 
 const useUserInfoUtilities = () => {
-  const { user } = useChatData();
+  const { user ,account,env} = useChatData();
   const [updateProfileLoading, setUpdateProfileLoading] = useState<boolean>(false);
 
   const fetchEncryptionInfo = useCallback(
@@ -27,7 +27,7 @@ const useUserInfoUtilities = () => {
         return;
       }
     },
-    []
+    [user,account,env]
   );
   const updateUserProfile = useCallback(
     async ({ userProfileDetails }: UpdateUserProfileParams): Promise<any> => {
@@ -47,7 +47,7 @@ const useUserInfoUtilities = () => {
         return error.message;
       }
     },
-    []
+    [user,account,env]
   );
   return { fetchEncryptionInfo,updateUserProfile,updateProfileLoading };
 };
