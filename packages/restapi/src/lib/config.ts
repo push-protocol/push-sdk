@@ -1,4 +1,4 @@
-import Constants from './constants';
+import Constants, { ENV } from './constants';
 import { coreABI } from './abis/core';
 import { commABI } from './abis/comm';
 import { tokenABI } from './abis/token';
@@ -19,7 +19,6 @@ import {
   fuseSparknet,
 } from 'viem/chains';
 import { defineChain } from 'viem';
-const { ENV } = Constants;
 
 const berachainTestnet = defineChain({
   id: 80085,
@@ -88,7 +87,9 @@ export const ETH_CHAIN_ID = {
   [ENV.DEV]: 11155111,
   [ENV.LOCAL]: 11155111,
 };
-export const ALIAS_CHAIN_ID = {
+export const ALIAS_CHAIN_ID: {
+  [key: string]: { [key in ENV]: number };
+} = {
   POLYGON: {
     [ENV.PROD]: 137,
     [ENV.STAGING]: 80001,
@@ -126,6 +127,7 @@ export const ALIAS_CHAIN_ID = {
     [ENV.LOCAL]: 123,
   },
   BERACHAIN: {
+    [ENV.PROD]: 0, // TODO: update this
     [ENV.STAGING]: 80085,
     [ENV.DEV]: 80085,
     [ENV.LOCAL]: 80085,
