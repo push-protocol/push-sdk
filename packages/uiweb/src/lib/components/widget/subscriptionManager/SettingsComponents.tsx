@@ -67,9 +67,9 @@ export const SettingsComponent: React.FC<ISettingsComponentProps> = (
             {(setting.type == 2 || setting.type == 1) && (
               <ToggleInput
                 id={`toggle${setting.type}${index}`}
-                labelHeading={`${
-                  setting.type == 1 ? 'Boolean' : 'Range'
-                } Setting`}
+                labelHeading={`${setting?.description ||
+                 ( setting.type == 1 ? 'Boolean Setting' : 'Range Setting' )
+                } `}
                 checked={setting?.userPreferance?.enabled || false}
                 onToggle={() => {
                   handleToggleChange(index);
