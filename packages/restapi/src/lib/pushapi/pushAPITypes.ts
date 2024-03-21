@@ -1,4 +1,5 @@
 import Constants, { ENV } from '../constants';
+import type { PushStream } from '../pushstream/PushStream';
 import {
   ChatStatus,
   ProgressHookType,
@@ -6,7 +7,6 @@ import {
   SpaceData,
   SpaceRules,
 } from '../types';
-import type { PushStream } from '../pushstream/PushStream';
 
 export enum ChatListType {
   CHATS = 'CHATS',
