@@ -17,17 +17,17 @@ import useMediaQuery from '../../../hooks/useMediaQuery';
 import { createBlockie } from '../../space/helpers/blockies';
 import { ProfileContainer } from '../reusables';
 import 'react-toastify/dist/ReactToastify.min.css';
-import {
-  Group,
-  IChatProfile,
-
-} from '../exportedTypes';
+import { Group, IChatProfile } from '../exportedTypes';
 import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../../../types';
 
-
-import { InfuraAPIKey, allowedNetworks, device } from '../../../config';
-import { resolveNewEns, shortenText } from '../../../helpers';
-import { isValidETHAddress } from '../helpers/helper';
+import {
+  CoreContractChainId,
+  InfuraAPIKey,
+  allowedNetworks,
+  device,
+} from '../../../config';
+import { getAddress, resolveNewEns, shortenText } from '../../../helpers';
+import { formatAddress, isValidETHAddress } from '../helpers/helper';
 import PublicChatIcon from '../../../icons/Public-Chat.svg';
 import GreyImage from '../../../icons/greyImage.png';
 import InfoIcon from '../../../icons/infodark.svg';
@@ -53,8 +53,10 @@ export const ChatProfile: React.FC<IChatProfile> = ({
   const [groupInfo, setGroupInfo] = useState<Group | null>();
   const [web3Name, setWeb3Name] = useState<string | null>(null);
   const isMobile = useMediaQuery(device.tablet);
-  const l1ChainId = allowedNetworks[env].includes(1) ? 1 : 5;
-  const provider = new ethers.providers.InfuraProvider(l1ChainId, InfuraAPIKey);
+  const provider = new ethers.providers.InfuraProvider(
+    CoreContractChainId[env],
+    InfuraAPIKey
+  );
   const DropdownRef = useRef(null);
   const [modal, setModal] = useState(false);
 
@@ -67,17 +69,28 @@ export const ChatProfile: React.FC<IChatProfile> = ({
   };
 
   const fetchProfileData = async () => {
-    if (isValidETHAddress(chatId)) {
-      const ChatProfile = await fetchUserProfile({ profileId: chatId, env,user });
-      const result = await resolveNewEns(chatId, provider, env);
+    let formattedChatId;
+    if (chatId.includes('eip155:')) {
+      formattedChatId = chatId.replace('eip155:', '');
+    } else if (chatId.includes('.')) {
+      formattedChatId = (await getAddress(chatId, env))!;
+    } else formattedChatId = chatId;
+    if (isValidETHAddress(formattedChatId)) {
+      const ChatProfile = await fetchUserProfile({
+        profileId: formattedChatId,
+        env,
+        user,
+      });
+      const result = await resolveNewEns(formattedChatId, provider, env);
       setWeb3Name(result);
       setChatInfo(ChatProfile);
       setGroupInfo(null);
       // setIsGroup(false);
     } else {
-      const GroupProfile = await getGroupByIDnew({ groupId: chatId });
+      const GroupProfile = await getGroupByIDnew({ groupId: formattedChatId });
       setGroupInfo(GroupProfile);
       setChatInfo(null);
+      setWeb3Name(null);
       // setIsGroup(true);
     }
   };
@@ -95,18 +108,11 @@ export const ChatProfile: React.FC<IChatProfile> = ({
 
   const getProfileName = () => {
     return Object.keys(groupInfo || {}).length
-      ? groupInfo?.groupName
-      : web3Name
-      ? `${web3Name} (${
-          isMobile
-            ? shortenText(chatInfo?.did?.split(':')[1] ?? '', 4, true)
-            : chatId
-        })`
+      ? shortenText(groupInfo?.chatId || '', 6, true)
       : chatInfo
       ? shortenText(chatInfo.did?.split(':')[1] ?? '', 6, true)
       : shortenText(chatId?.split(':')[1], 6, true);
   };
-
   useEffect(() => {
     if (!chatId) return;
     fetchProfileData();
@@ -124,7 +130,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
               maxWidth="1.75rem"
               minWidth="1.75rem"
               overflow="hidden"
-              justifyContent='center'
+              justifyContent="center"
               alignSelf="center"
             >
               {chatProfileLeftHelperComponent}
@@ -132,8 +138,18 @@ export const ChatProfile: React.FC<IChatProfile> = ({
           )}
           <ProfileContainer
             theme={theme}
-            member={{ wallet: getProfileName() as string, image: getImage() }}
-            customStyle={{ fontSize: '17px' }}
+            member={{
+              wallet: getProfileName() as string,
+              image: getImage(),
+              web3Name: web3Name?web3Name:groupInfo?.groupName,
+              completeWallet:chatInfo?.wallets??groupInfo?.chatId
+            }}
+            copy={!!chatInfo|| !!groupInfo}
+            customStyle={{
+              fontSize: theme?.fontWeight?.chatProfileText,
+              textColor: theme?.textColor?.chatProfileText,
+            }}
+            
           />
         </Section>
         <Section
@@ -142,7 +158,6 @@ export const ChatProfile: React.FC<IChatProfile> = ({
           gap="10px"
           margin="0 20px 0 auto"
           alignSelf="center"
-          
         >
           {chatProfileRightHelperComponent && !groupInfo && (
             <Section
@@ -151,7 +166,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
               width="1.75rem"
               maxWidth="1.75rem"
               minWidth="1.75rem"
-              overflow='hidden'
+              overflow="hidden"
             >
               {chatProfileRightHelperComponent}
             </Section>

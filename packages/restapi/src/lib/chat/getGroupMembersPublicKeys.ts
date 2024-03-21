@@ -3,6 +3,7 @@ import { getAPIBaseUrls } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { ChatMemberCounts, ChatMemberProfile } from '../types';
 import { FetchChatGroupInfoType } from './getGroupMembers';
+import { handleError } from '../errors/validationError';
 
 /**
  * GET /v1/chat/:chatId/members/public/keys
@@ -24,12 +25,6 @@ export const getGroupMembersPublicKeys = async (
     const response = await axios.get(requestUrl);
     return response.data;
   } catch (error) {
-    console.error(
-      `[Push SDK] - API - Error - API ${getGroupMembersPublicKeys.name} -: `,
-      error
-    );
-    throw new Error(
-      `[Push SDK] - API - Error - API ${getGroupMembersPublicKeys.name} -: ${error}`
-    );
+    throw handleError(error, getGroupMembersPublicKeys.name);
   }
 };

@@ -1,6 +1,6 @@
 {
   "name": "@pushprotocol/socket",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "type": "commonjs",
   "deprecated": "This package will be deprecated in future releases. Please migrate to @pushprotocol/restapi (https://www.npmjs.com/package/@pushprotocol/restapi).",
   "publishConfig": {

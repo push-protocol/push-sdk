@@ -17,6 +17,7 @@ import {
 import * as CryptoJS from 'crypto-js';
 import { axiosPut } from '../utils/axiosUtil';
 import { getGroupInfo } from './getGroupInfo';
+import { handleError } from '../errors/validationError';
 
 export interface ChatUpdateGroupProfileType extends EnvOptionsType {
   account?: string | null;
@@ -109,12 +110,6 @@ export const updateGroupProfile = async (
     const response = await axiosPut<GroupInfoDTO>(apiEndpoint, body);
     return response.data;
   } catch (err) {
-    console.error(
-      `[Push SDK] - API  - Error - API ${updateGroupProfile.name} -:  `,
-      err
-    );
-    throw Error(
-      `[Push SDK] - API  - Error - API ${updateGroupProfile.name} -: ${err}`
-    );
+      throw handleError(err, updateGroupProfile.name);
   }
 };

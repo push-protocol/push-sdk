@@ -1,24 +1,26 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { IChatTheme, UserProfileProps } from '../exportedTypes';
-import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../../../types';
+
+import { ethers } from 'ethers';
+import styled from 'styled-components';
+import { ToastContainer } from 'react-toastify';
+import { IUser } from '@pushprotocol/restapi';
 
 import { Section, Span, Image } from '../../reusables';
-import { ProfilePicture, device } from '../../../config';
-
 import { ThemeContext } from '../theme/ThemeProvider';
 import { useChatData } from '../../../hooks/chat/useChatData';
-import styled from 'styled-components';
 import useMediaQuery from '../../../hooks/useMediaQuery';
-import { shortenText } from '../../../helpers';
-
-import VerticalEllipsisIcon from '../../../icons/VerticalEllipsis.svg';
-import UserProfileIcon from '../../../icons/userCircleGear.svg';
+import { resolveNewEns, shortenText } from '../../../helpers';
 import { ProfileContainer } from '../reusables';
-import { IUser } from '@pushprotocol/restapi';
 import useChatProfile from '../../../hooks/chat/useChatProfile';
 import { useClickAway } from '../../../hooks';
 import { UpdateUserProfileModal } from './UpdateUserProfileModal';
-import { ToastContainer } from 'react-toastify';
+
+import { CoreContractChainId, InfuraAPIKey, ProfilePicture, device } from '../../../config';
+import VerticalEllipsisIcon from '../../../icons/VerticalEllipsis.svg';
+import UserProfileIcon from '../../../icons/userCircleGear.svg';
+import { IChatTheme, UserProfileProps } from '../exportedTypes';
+import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../../../types';
+
 
 /**
  * @interface IThemeProps
@@ -32,11 +34,17 @@ export const UserProfile : React.FC<UserProfileProps> = ({
   updateUserProfileModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
   updateUserProfileModalPositionType = MODAL_POSITION_TYPE.GLOBAL
 }) => {
-  const {  account, user } = useChatData();
+  const {  account, user ,env} = useChatData();
   const [userProfile, setUserProfile] = useState<IUser>();
+  const [web3Name,setWeb3Name] = useState<string|null>(null);
   const [options, setOptions] = useState<boolean>();
   const [showUpdateUserProfileModal,setShowUpdateUserProfileModal] = useState<boolean>(false);
   const DropdownRef = useRef(null);
+  const provider = new ethers.providers.InfuraProvider(
+    CoreContractChainId[env],
+    InfuraAPIKey
+  );
+
 
   const theme = useContext(ThemeContext);
   const { fetchChatProfile } = useChatProfile();
@@ -47,11 +55,13 @@ export const UserProfile : React.FC<UserProfileProps> = ({
     (async () => {
       const fetchedUser = await fetchChatProfile({user});
       if (fetchedUser) {
+        const result = await resolveNewEns(fetchedUser?.wallets, provider, env);
+        setWeb3Name(result);
         setUserProfile(fetchedUser);
+        
       }
     })();
   }, [account, user]);
-
   useClickAway(DropdownRef, () => {
     setOptions(false);
   });
@@ -73,7 +83,10 @@ export const UserProfile : React.FC<UserProfileProps> = ({
         member={{
           wallet: shortenText(account || '', 8, true) as string,
           image: userProfile?.profile?.picture || ProfilePicture,
+          web3Name: web3Name ,
+          completeWallet:account
         }}
+        copy={true}
         customStyle={{ fontSize: theme?.fontSize?.userProfileText,
           fontWeight: theme?.fontWeight?.userProfileText,
            textColor: theme?.textColor?.userProfileText}}
