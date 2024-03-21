@@ -523,14 +523,14 @@ export const GroupInfoModal = ({
   //stream listeners
   useEffect(() => {
     if (
-      Object.keys(chatAcceptStream).length > 0 &&
+      Object.keys(chatAcceptStream || {}).length > 0 &&
       chatAcceptStream.constructor === Object
     ) 
     transformAcceptedRequest(chatAcceptStream);
   }, [chatAcceptStream]);
   useEffect(() => {
     if (
-      Object.keys(chatRejectStream).length > 0 &&
+      Object.keys(chatRejectStream || {}).length > 0 &&
       chatRejectStream.constructor === Object
     ) 
     transformRejectedRequest(chatRejectStream);
@@ -538,14 +538,14 @@ export const GroupInfoModal = ({
 
   useEffect(() => {
     if (
-      Object.keys(participantRemoveStream).length > 0 &&
+      Object.keys(participantRemoveStream || {}).length > 0 &&
       participantRemoveStream.constructor === Object
     ) 
     transformParticipantRemove(participantRemoveStream);
   }, [participantRemoveStream]);
   useEffect(() => {
     if (
-      Object.keys(participantLeaveStream).length > 0 &&
+      Object.keys(participantLeaveStream || {}).length > 0 &&
       participantLeaveStream.constructor === Object
     ) 
     transformParticipantLeave(participantLeaveStream);
@@ -554,16 +554,17 @@ export const GroupInfoModal = ({
   useEffect(() => {
     (async () => {
       if (
-        Object.keys(participantJoinStream).length > 0 &&
+        Object.keys(participantJoinStream || {}).length > 0 &&
         participantJoinStream.constructor === Object
       ) 
      await transformParticipantJoin(participantJoinStream);
     })();
    
   }, [participantJoinStream]);
+  
   useEffect(() => {
     if (
-      Object.keys(groupUpdateStream).length > 0 &&
+      Object.keys(groupUpdateStream || {}).length > 0 &&
       groupUpdateStream.constructor === Object
     ) 
     transformGroupDetails(groupUpdateStream);
@@ -571,7 +572,7 @@ export const GroupInfoModal = ({
 
   useEffect(() => {
     if (
-      Object.keys(participantRoleChangeStream).length > 0 &&
+      Object.keys(participantRoleChangeStream || {}).length > 0 &&
       participantRoleChangeStream.constructor === Object
     ) 
     transformRoleChange(participantRoleChangeStream);

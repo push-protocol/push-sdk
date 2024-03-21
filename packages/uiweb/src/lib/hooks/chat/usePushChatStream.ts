@@ -27,6 +27,7 @@ export const usePushChatStream = () => {
   const [groupCreateStream, setGroupCreateStream] = useState<any>({}); // to track if group is created
 
   const [groupUpdateStream, setGroupUpdateStream] = useState<any>({}); //group updation stream
+
   const attachListenersAndConnect = async (stream: any) => {
     stream?.on(CONSTANTS.STREAM.CONNECT, (err: Error) => {
         console.debug(' stream connected .........',err)
@@ -41,6 +42,8 @@ export const usePushChatStream = () => {
     //Listen for chat messages, your message, request, accept, rejected,
     stream?.on(CONSTANTS.STREAM.CHAT, (message: any) => {
       console.debug(message,'event received');
+      console.debug('chatstream at the start',chatStream)
+
       if (message.event === 'chat.request') {
         setChatRequestStream(message);
       } else if (message.event === 'chat.accept') {
@@ -89,13 +92,13 @@ console.debug(chatStream,'in chat stream change useeffect')
 // };
   },[chatStream])
 
-  useEffect(()=>{
-    console.debug('resetting chatStream')
+  // useEffect(()=>{
+  //   console.debug('resetting chatStream')
     
-    return () => {
-      setChatStream({});
-    };
-      },[])
+  //   return () => {
+  //     setChatStream(null);
+  //   };
+  //     },[])
 
   /**
    * Whenever the requisite params to create a connection object change
@@ -149,7 +152,7 @@ console.debug(chatStream,'in chat stream change useeffect')
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, env, account]);
-console.debug(chatStream,'state is set')
+console.debug(chatStream,chatAcceptStream,chatRequestStream,'state is set')
   return {
     chatStream,
     chatRequestStream,

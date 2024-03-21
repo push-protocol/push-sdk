@@ -135,7 +135,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   //moniters stream changes
   useEffect(() => {
     if (
-      Object.keys(chatAcceptStream).length > 0 &&
+      Object.keys(chatAcceptStream || {}).length > 0 &&
       chatAcceptStream.constructor === Object
     ) {
       const updatedChatInfo = {...chatInfo as ChatInfoResponse};
@@ -143,13 +143,13 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       setChatInfo(updatedChatInfo);
     }
   }, [chatAcceptStream]);
-  console.debug(chatStream,'in chat view list ')
+
   useEffect(() => {
-    console.debug(chatStream,'in chat view list use effetc')
     if (
-      Object.keys(chatStream).length > 0 &&
+      Object.keys(chatStream||{}).length > 0 &&
       chatStream.constructor === Object
     ) {
+
       transformSteamMessage(chatStream);
       setChatStatusText('');
       scrollToBottom();
@@ -158,19 +158,18 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
 
   useEffect(() => {
     if (
-      Object.keys(groupUpdateStream).length > 0 &&
+      Object.keys(groupUpdateStream || {}).length > 0 &&
       groupUpdateStream.constructor === Object
     )
       transformGroupDetails(groupUpdateStream);
   }, [groupUpdateStream]);
-
+  
   const transformSteamMessage = (item: any) => {
     if (!user) {
       return;
     }
-    if (item?.chatId == chatId){
+    if ( chatInfo && (item?.chatId == chatInfo?.chatId)){
       const transformedMessage = transformStreamToIMessageIPFSWithCID(item);
-
       if (messages && messages.length) {
         const newChatViewList = appendUniqueMessages(
           messages,

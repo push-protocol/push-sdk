@@ -208,7 +208,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
 //moniter stream changes
   useEffect(() => {
     if (
-      Object.keys(groupUpdateStream).length > 0 &&
+      Object.keys(groupUpdateStream || {}).length > 0 &&
       groupUpdateStream.constructor === Object
     )
       transformGroupDetails(groupUpdateStream);

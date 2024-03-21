@@ -565,7 +565,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
   // Define stream objects
   useEffect(() => {
     if (
-      Object.keys(chatStream).length > 0 &&
+      Object.keys(chatStream ||{}).length > 0 &&
       chatStream.constructor === Object
     ) {
       if (options.listType === CONSTANTS.CHAT.LIST_TYPE.CHATS) {
@@ -575,7 +575,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
   }, [chatStream]);
   useEffect(() => {
     if (
-      Object.keys(chatRequestStream).length > 0 &&
+      Object.keys(chatRequestStream || {}).length > 0 &&
       chatRequestStream.constructor === Object
     ) {
       if (
@@ -594,7 +594,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
   console.debug(chatStream,'chat preview list chat stream event')
   useEffect(() => {
     if (
-      Object.keys(chatAcceptStream).length > 0 &&
+      Object.keys(chatAcceptStream || {}).length > 0 &&
       chatAcceptStream.constructor === Object
     ) {
       transformAcceptedRequest(chatAcceptStream);
