@@ -5,17 +5,17 @@ import { ethers } from 'ethers';
 import { PushAPI } from '../../../src';
 import { ENV } from '../../../src/lib/constants';
 
-describe('BERACHAIN ALIAS functionality', () => {
+describe('OPTIMISM ALIAS functionality', () => {
   let userAlice: PushAPI;
   let userBob: PushAPI;
   let account: string;
   let account2: string;
   before(async () => {
     const provider = new ethers.providers.JsonRpcProvider(
-      'https://artio.rpc.berachain.com' // berachain artio Provider
+      'https://sepolia.optimism.io'
     );
     const signer = new ethers.Wallet(
-      `0x${process.env['BERACHAIN_CHANNEL_PRIVATE_KEY']}`,
+      `0x${process.env['OPTIMISM_CHANNEL_PRIVATE_KEY']}`,
       provider
     );
     account = signer.address;
@@ -36,7 +36,7 @@ describe('BERACHAIN ALIAS functionality', () => {
       description: 'Testing using sdk',
       url: 'https://push.org',
       icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAz0lEQVR4AcXBsU0EQQyG0e+saWJ7oACiKYDMEZVs6GgSpC2BIhzRwAS0sgk9HKn3gpFOAv3v3V4/3+4U4Z1q5KTy42Ql940qvFONnFSGmCFmiN2+fj7uCBlihpgh1ngwcvKfwjuVIWaIGWKNB+GdauSk8uNkJfeNKryzYogZYoZY40m5b/wlQ8wQM8TayMlKeKcaOVkJ71QjJyuGmCFmiDUe+HFy4VyEd57hx0mV+0ZliBlihlgL71w4FyMnVXhnZeSkiu93qheuDDFDzBD7BcCyMAOfy204AAAAAElFTkSuQmCC',
-      alias: `eip155:80085:${account}`,
+      alias: `eip155:11155420:${account}`,
       progressHook: (progress: any) => console.log(progress),
     });
     console.log(res);
@@ -54,7 +54,7 @@ describe('BERACHAIN ALIAS functionality', () => {
         cta: 'https://google.com/',
         embed: 'https://avatars.githubusercontent.com/u/64157541?s=200&v=4',
       },
-      channel: `eip155:80085:${account}`,
+      channel: `eip155:11155420:${account}`,
     });
   });
 
@@ -74,7 +74,7 @@ describe('BERACHAIN ALIAS functionality', () => {
         cta: 'https://google.com/',
         embed: 'https://avatars.githubusercontent.com/u/64157541?s=200&v=4',
       },
-      channel: `eip155:80085:${account}`,
+      channel: `eip155:11155420:${account}`,
     });
   });
 
