@@ -9,6 +9,7 @@ import { PolygonzkevmSvg } from "../../../icons/PolygonzkevmSvg";
 import { ArbitrumSvg } from "../../../icons/ArbitrumSvg"
 import { FuseSvg } from "../../../icons/FuseSvg"
 import React from "react";
+import { BerachainSVG } from "../../../icons/BerachainSVG";
 
 const createSVGIcon = (element:any, chainName: string) => {
   return (
@@ -43,7 +44,7 @@ export const NETWORK_ICON_DETAILS =  {
     label: 'BSC MAINNET',
     icon: createSVGIcon(<BSCSvg/>, 'Bsc Mainnet'),
   },
-  420: {
+  11155420: {
     label: 'OPTIMISM TESTNET',
     icon: createSVGIcon(<OptimismSvg/>, 'Optimism Testnet'),
   },
@@ -64,7 +65,7 @@ export const NETWORK_ICON_DETAILS =  {
     label: 'ARBITRUMONE MAINNET',
     icon: createSVGIcon(<ArbitrumSvg/>, 'Arbitrum Mainnet'),
   },
-  421613: {
+  421614: {
     label: 'ARBITRUM TESTNET',
     icon: createSVGIcon(<ArbitrumSvg/>, 'Arbitrum Testnet'),
   },
@@ -75,5 +76,9 @@ export const NETWORK_ICON_DETAILS =  {
   122 : {
     label: 'FUSE MAINNET',
     icon: createSVGIcon(<FuseSvg/>, 'Fuse Mainnet'),
-  }
+  },
+  80085 : {
+    label: 'BERACHAIN TESTNET',
+    icon: createSVGIcon(<BerachainSVG/>, 'Berachain Testnet'),
+  },
 };
