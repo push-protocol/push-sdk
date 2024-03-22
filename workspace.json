@@ -8,6 +8,8 @@
     "restapi": "packages/restapi",
     "socket": "packages/socket",
     "uiembed": "packages/uiembed",
-    "uiweb": "packages/uiweb"
+    "uiweb": "packages/uiweb",
+    "react-native-sdk": "packages/reactnative",
+    "uireactnative": "packages/uireactnative"
   }
 }
