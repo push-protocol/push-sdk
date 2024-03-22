@@ -1,12 +1,11 @@
 {
-  "name": "@push/react-native-sdk",
+  "name": "@pushprotocol/react-native-sdk",
   "version": "0.1.0",
   "description": "test",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
   "types": "lib/typescript/index.d.ts",
   "react-native": {
-    "lib/commonjs/index": "src/index",
     "crypto": "react-native-crypto",
     "net": "react-native-tcp",
     "http": "@tradle/react-native-http",
@@ -20,13 +19,13 @@
     "_stream_passthrough": "readable-stream/passthrough",
     "stream": "stream-browserify"
   },
-  "source": "src/index",
   "files": [
-    "src",
     "lib",
+    "patches",
     "android",
     "ios",
     "cpp",
+    "shim.js",
     "*.podspec",
     "!lib/typescript/example",
     "!ios/build",
@@ -44,10 +43,9 @@
     "test": "jest",
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
-    "prepack": "bob build",
+    "prepare": "bob build",
     "release": "release-it",
-    "example": "yarn --cwd example",
-    "bootstrap": "yarn example && yarn install",
+    "bootstrap": "yarn install",
     "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build",
     "postinstall": "node_modules/.bin/rn-nodeify --install crypto,assert,url,stream,events,http,https,os,url,net,fs --hack && npx patch-package"
   },
@@ -67,7 +65,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
-    "@kalashshah/restapi": "0.1.2",
+    "@pushprotocol/restapi": "1.6.3",
     "@tradle/react-native-http": "^2.0.1",
     "assert": "^1.5.0",
     "axios": "^0.27.2",
@@ -84,7 +82,7 @@
     "react-native-os": "^1.2.6",
     "react-native-randombytes": "^3.6.1",
     "react-native-tcp": "^3.3.2",
-    "react-native-webview": "^13.2.2",
+    "react-native-webview": "13.2.2",
     "react-native-webview-crypto": "^0.0.25",
     "readable-stream": "^1.0.33",
     "rn-nodeify": "^10.3.0",
@@ -92,8 +90,7 @@
     "stream-browserify": "^1.0.0",
     "text-encoding": "0.7.0",
     "url": "^0.10.3",
-    "uuid": "^9.0.0",
-    "viem": "^1.3.0"
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^17.0.2",
@@ -101,8 +98,8 @@
     "@react-native-community/eslint-config": "^3.0.2",
     "@release-it/conventional-changelog": "^5.0.0",
     "@types/jest": "^28.1.2",
-    "@types/react": "~17.0.21",
-    "@types/react-native": "0.70.0",
+    "@types/react": "~18.2.25",
+    "@types/react-native": "0.72.6",
     "commitlint": "^17.0.2",
     "del-cli": "^5.0.0",
     "eslint": "^8.4.1",
@@ -113,14 +110,12 @@
     "pod-install": "^0.1.0",
     "postinstall-postinstall": "^2.1.0",
     "prettier": "^2.0.5",
-    "react": "18.2.0",
-    "react-native": "0.71.11",
     "react-native-builder-bob": "^0.20.4",
     "release-it": "^15.0.0",
-    "typescript": "^4.5.2"
+    "typescript": "^5.1.3"
   },
   "resolutions": {
-    "@types/react": "17.0.21"
+    "@types/react": "18.2.25"
   },
   "peerDependencies": {
     "react": "*",
@@ -205,7 +200,6 @@
     ]
   },
   "browser": {
-    "lib/commonjs/index": "src/index",
     "crypto": "react-native-crypto",
     "net": "react-native-tcp",
     "http": "@tradle/react-native-http",
