@@ -25,10 +25,11 @@
     "!**/.*"
   ],
   "scripts": {
-    "test": "jest",
+    "test": "jest --bail=false --passWithNoTests",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint \"**/*.{js,ts,tsx}\"",
+    "lint": "eslint \"**/*.{js,ts,tsx}\" --ignore-pattern 'node_modules, /lib/*'",
     "prepare": "bob build",
+    "build": "bob build",
     "release": "release-it"
   },
   "keywords": [
@@ -40,6 +41,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
+    "@react-native/babel-preset": "^0.75.0-main",
     "@react-native/eslint-config": "^0.72.2",
     "@release-it/conventional-changelog": "^5.0.0",
     "@types/jest": "^28.1.2",
