@@ -1,4 +1,1 @@
-import { PushApi } from '../index';
-it('write a test', async () => {
-  console.log(PushApi);
-});
+it('todo: write a test', async () => {});

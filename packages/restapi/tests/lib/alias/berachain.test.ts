@@ -1,13 +1,11 @@
 import * as path from 'path';
 import * as dotenv from 'dotenv';
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
-import * as PUSH_CHANNELS from '../../../src/lib/channels';
-import { expect } from 'chai';
 import { ethers } from 'ethers';
-import { PushAPI, user } from '../../../src';
+import { PushAPI } from '../../../src';
 import { ENV } from '../../../src/lib/constants';
 
-describe('ALIAS functionality', () => {
+describe('BERACHAIN ALIAS functionality', () => {
   let userAlice: PushAPI;
   let userBob: PushAPI;
   let account: string;
