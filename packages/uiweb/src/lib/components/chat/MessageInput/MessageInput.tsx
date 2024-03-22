@@ -21,13 +21,18 @@ import { Modal, ModalHeader } from '../reusables/Modal';
 import { ConnectButtonComp } from '../ConnectButton';
 import useToast from '../reusables/NewToast';
 import { ConditionsInformation } from '../ChatProfile/GroupInfoModal';
-import { pCAIP10ToWallet, setAccessControl, walletToPCAIP10 } from '../../../helpers';
+import {
+  pCAIP10ToWallet,
+  setAccessControl,
+  walletToPCAIP10,
+} from '../../../helpers';
 import useFetchChat from '../../../hooks/chat/useFetchChat';
 import {
   useChatData,
   useClickAway,
   useDeviceWidthCheck,
   usePushChatStream,
+  // usePushChatStream,
 } from '../../../hooks';
 import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
 import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities';
@@ -101,14 +106,15 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   const [fileUploading, setFileUploading] = useState<boolean>(false);
   const [isRules, setIsRules] = useState<boolean>(false);
   const [isMember, setIsMember] = useState<boolean>(false);
+  //hack for stream not working
+  const [chatAcceptStream, setChatAcceptStream] = useState<any>({}); // to track any new messages
+  const [participantRemoveStream, setParticipantRemoveStream] = useState<any>(
+    {}
+  ); // to track if a participant is removed from group
+  const [participantLeaveStream, setParticipantLeaveStream] = useState<any>({}); // to track if a participant leaves a group
+  const [participantJoinStream, setParticipantJoinStream] = useState<any>({}); // to track if a participant joins a group
 
-  const {
-    chatAcceptStream,
-    groupUpdateStream,
-    participantJoinStream,
-    participantLeaveStream,
-    participantRemoveStream,
-  } = usePushChatStream();
+  const [groupUpdateStream, setGroupUpdateStream] = useState<any>({});
 
   const { getGroupByIDnew } = useGetGroupByIDnew();
   const [groupInfo, setGroupInfo] = useState<Group | null>(null);
@@ -127,12 +133,30 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   } = useVerifyAccessControl();
   const { fetchMemberStatus, joinGroup, joinLoading, joinError } =
     useGroupMemberUtilities();
-    const { fetchUserProfile } = useUserProfile();
+  const { fetchUserProfile } = useUserProfile();
 
   const { account, env, signer, user } = useChatData();
   const { fetchChat } = useFetchChat();
   const statusToast = useToast();
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
+  //event listners
+  usePushChatStream();
+  window.addEventListener('chatAcceptStream', (e: any) =>
+    setChatAcceptStream(e.detail)
+  );
+  window.addEventListener('participantRemoveStream', (e: any) =>
+    setParticipantRemoveStream(e.detail)
+  );
+  window.addEventListener('participantLeaveStream', (e: any) =>
+    setParticipantLeaveStream(e.detail)
+  );
+  window.addEventListener('participantJoinStream', (e: any) =>
+    setParticipantJoinStream(e.detail)
+  );
+  window.addEventListener('groupUpdateStream', (e: any) =>
+    setGroupUpdateStream(e.detail)
+  );
 
   const onChangeTypedMessage = (val: string) => {
     setTypedMessage(val);
@@ -177,35 +201,30 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       }
     }
   }, [chatId, verified, isMember, account, env, user]);
- 
-
 
   useEffect(() => {
     (async () => {
       if (!user) return;
-      if(chatId){
+      if (chatId) {
         const chat = await fetchChat({ chatId: chatId });
         if (Object.keys(chat || {}).length) {
           setChatInfo(chat as ChatInfoResponse);
         }
       }
-    
     })();
   }, [chatId, user, account, env]);
 
   useEffect(() => {
     (async () => {
       let GroupProfile;
-     if (chatInfo && chatInfo?.meta?.group) {
+      if (chatInfo && chatInfo?.meta?.group) {
         GroupProfile = await getGroupByIDnew({ groupId: chatId });
         if (GroupProfile) setGroupInfo(GroupProfile);
       }
     })();
   }, [chatInfo]);
-  
- 
 
-//moniter stream changes
+  //moniter stream changes
   useEffect(() => {
     if (
       Object.keys(groupUpdateStream || {}).length > 0 &&
@@ -245,7 +264,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       setIsRules(checkIfAccessVerifiedGroup(groupInfo));
     }
   }, [chatId, groupInfo, user, account, env]);
-
 
   const transformGroupDetails = (item: any): void => {
     if (groupInfo?.chatId === item?.chatId) {

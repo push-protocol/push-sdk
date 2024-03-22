@@ -17,10 +17,7 @@ import {
   pCAIP10ToWallet,
   walletToPCAIP10,
 } from '../../../helpers';
-import {
-  useChatData,
-  usePushChatStream,
-} from '../../../hooks';
+import { useChatData, usePushChatStream } from '../../../hooks';
 import useFetchMessageUtilities from '../../../hooks/chat/useFetchMessageUtilities';
 import { Section, Span, Spinner } from '../../reusables';
 import { ChatViewBubble } from '../ChatViewBubble';
@@ -37,7 +34,6 @@ import useUserProfile from '../../../hooks/useUserProfile';
 import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
 import useToast from '../reusables/NewToast';
 import { transformStreamToIMessageIPFSWithCID } from '../helpers';
-
 
 /**
  * @interface IThemeProps
@@ -74,20 +70,41 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   const { fetchMemberStatus } = useGroupMemberUtilities();
   const chatViewListToast = useToast();
 
-  const {
-    chatStream,
-    groupUpdateStream,
-    chatAcceptStream,
-    participantJoinStream,
-    participantLeaveStream,
-    participantRemoveStream,
-  } = usePushChatStream();
+  //hack for stream not working
+  const [chatStream, setChatStream] = useState<any>({}); // to track any new messages
+  const [chatAcceptStream, setChatAcceptStream] = useState<any>({}); // to track any new messages
+  const [participantRemoveStream, setParticipantRemoveStream] = useState<any>(
+    {}
+  ); // to track if a participant is removed from group
+  const [participantLeaveStream, setParticipantLeaveStream] = useState<any>({}); // to track if a participant leaves a group
+  const [participantJoinStream, setParticipantJoinStream] = useState<any>({}); // to track if a participant joins a group
+
+  const [groupUpdateStream, setGroupUpdateStream] = useState<any>({});
+  // const {
+  //   chatStream,
+  //   groupUpdateStream,
+  //   chatAcceptStream,
+  //   participantJoinStream,
+  //   participantLeaveStream,
+  //   participantRemoveStream,
+  // } = usePushChatStream();
+
+  //event listeners
+  usePushChatStream();
+  window.addEventListener('chatStream', (e: any) => setChatStream(e.detail));
+  window.addEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
+  window.addEventListener('participantRemoveStream', (e: any) => setParticipantRemoveStream(e.detail));
+  window.addEventListener('participantLeaveStream', (e: any) => setParticipantLeaveStream(e.detail));
+  window.addEventListener('participantJoinStream', (e: any) => setParticipantJoinStream(e.detail));
+  window.addEventListener('groupUpdateStream', (e: any) => setGroupUpdateStream(e.detail));
+
+
   const theme = useContext(ThemeContext);
   const dates = new Set();
   const { env } = useChatData();
   useEffect(() => {
     setChatStatusText('');
-  }, [chatId, account, env,user]);
+  }, [chatId, account, env, user]);
 
   useEffect(() => {
     setChatInfo(null);
@@ -98,23 +115,31 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   useEffect(() => {
     (async () => {
       if (!user) return;
-      if(chatId){
+      if (chatId) {
         const chat = await fetchChat({ chatId: chatId });
         if (Object.keys(chat || {}).length) {
           setChatInfo(chat as ChatInfoResponse);
         }
-  
+
         setLoading(false);
       }
-     
     })();
   }, [chatId, user, account, env]);
   useEffect(() => {
     (async () => {
       let UserProfile, GroupProfile;
-      if (chatInfo && !chatInfo?.meta?.group && chatInfo?.participants && account) {
+      if (
+        chatInfo &&
+        !chatInfo?.meta?.group &&
+        chatInfo?.participants &&
+        account
+      ) {
         UserProfile = await fetchUserProfile({
-          profileId: pCAIP10ToWallet(chatInfo?.participants.find((address)=>address != walletToPCAIP10(account))|| chatId),
+          profileId: pCAIP10ToWallet(
+            chatInfo?.participants.find(
+              (address) => address != walletToPCAIP10(account)
+            ) || chatId
+          ),
           env,
           user,
         });
@@ -123,12 +148,10 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       } else if (chatInfo && chatInfo?.meta?.group) {
         GroupProfile = await getGroupByIDnew({ groupId: chatId });
         if (GroupProfile) setGroupInfo(GroupProfile);
-        else{
+        else {
           setChatStatusText(ChatStatus.INVALID_CHAT);
-
         }
       }
-   
     })();
   }, [chatInfo]);
 
@@ -138,7 +161,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       Object.keys(chatAcceptStream || {}).length > 0 &&
       chatAcceptStream.constructor === Object
     ) {
-      const updatedChatInfo = {...chatInfo as ChatInfoResponse};
+      const updatedChatInfo = { ...(chatInfo as ChatInfoResponse) };
       if (updatedChatInfo) updatedChatInfo.list = 'CHATS';
       setChatInfo(updatedChatInfo);
     }
@@ -146,10 +169,9 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
 
   useEffect(() => {
     if (
-      Object.keys(chatStream||{}).length > 0 &&
+      Object.keys(chatStream || {}).length > 0 &&
       chatStream.constructor === Object
     ) {
-
       transformSteamMessage(chatStream);
       setChatStatusText('');
       scrollToBottom();
@@ -163,12 +185,12 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     )
       transformGroupDetails(groupUpdateStream);
   }, [groupUpdateStream]);
-  
+
   const transformSteamMessage = (item: any) => {
     if (!user) {
       return;
     }
-    if ( chatInfo && (item?.chatId == chatInfo?.chatId)){
+    if (chatInfo && item?.chatId == chatInfo?.chatId) {
       const transformedMessage = transformStreamToIMessageIPFSWithCID(item);
       if (messages && messages.length) {
         const newChatViewList = appendUniqueMessages(
@@ -181,7 +203,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
         setFilteredMessages([transformedMessage]);
       }
     }
-   
   };
   const transformGroupDetails = (item: any): void => {
     if (groupInfo?.chatId === item?.chatId) {
@@ -269,7 +290,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     }
   };
 
-
   const getMessagesCall = async () => {
     let reference = null;
     if (messages && messages?.length) {
@@ -309,10 +329,9 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   const ifBlurChat = () => {
     return !!(
       user &&
-      ((groupInfo&&!groupInfo?.isPublic && !isMember ) || user?.readmode())
+      ((groupInfo && !groupInfo?.isPublic && !isMember) || user?.readmode())
     );
   };
-
 
   type RenderDataType = {
     chat: IMessageIPFS;
@@ -339,13 +358,12 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       flexDirection="column"
       ref={listInnerRef}
       width="100%"
-      height='100%'
+      height="100%"
       justifyContent="start"
       padding="0 2px"
       theme={theme}
       blur={ifBlurChat()}
       onScroll={(e) => {
-
         e.stopPropagation();
         onScroll();
       }}
@@ -419,8 +437,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
           }
         </>
       )}
-              <ToastContainer />
-
+      <ToastContainer />
     </ChatViewListCard>
   );
 };

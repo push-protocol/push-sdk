@@ -98,16 +98,26 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       badges: {},
     });
 
-  console.log(chatPreviewList);
+  //hack to fix stream
+  const [chatStream, setChatStream] = useState<any>({}); // to track any new messages
+  const [chatAcceptStream, setChatAcceptStream] = useState<any>({}); // to track any new messages
+  const [chatRequestStream, setChatRequestStream] = useState<any>({}); // any message in request
+
   // set theme
   const theme = useContext(ThemeContext);
   const { fetchChat } = useFetchChat();
 
   // set ref
   const listInnerRef = useRef<HTMLDivElement>(null);
+  // const {  chatRequestStream, chatAcceptStream } =
+  //   usePushChatStream();
 
-  const { chatStream, chatRequestStream, chatAcceptStream } =
-    usePushChatStream();
+  //event listeners
+  usePushChatStream();
+  window.addEventListener('chatStream', (e: any) => setChatStream(e.detail));
+  window.addEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
+  window.addEventListener('chatRequestStream', (e: any) => setChatRequestStream(e.detail));
+
   // Helper Functions
 
   // Add to chat items
@@ -565,7 +575,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
   // Define stream objects
   useEffect(() => {
     if (
-      Object.keys(chatStream ||{}).length > 0 &&
+      Object.keys(chatStream || {}).length > 0 &&
       chatStream.constructor === Object
     ) {
       if (options.listType === CONSTANTS.CHAT.LIST_TYPE.CHATS) {
@@ -591,7 +601,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       }
     }
   }, [chatRequestStream]);
-  console.debug(chatStream,'chat preview list chat stream event')
+  console.debug(chatStream, 'chat preview list chat stream event');
   useEffect(() => {
     if (
       Object.keys(chatAcceptStream || {}).length > 0 &&
@@ -653,20 +663,16 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
                   (address) => address != walletToPCAIP10(account)
                 ) || formattedChatId
               );
-       
 
             //fetch  profile
-            if (!groupProfile)
-            {
+            if (!groupProfile) {
               userProfile = await getNewChatUser({
                 searchText: formattedChatId,
                 env,
                 fetchChatProfile: fetchUserProfile,
                 user,
               });
-              
             }
-             
 
             if (!userProfile && !groupProfile) {
               error = {
@@ -681,7 +687,9 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
                 chatPic:
                   (userProfile?.profile?.picture ?? groupProfile?.groupImage) ||
                   null,
-                chatParticipant: groupProfile?groupProfile?.groupName: formattedChatId!,
+                chatParticipant: groupProfile
+                  ? groupProfile?.groupName
+                  : formattedChatId!,
               };
               //fetch latest chat
               const latestMessage = await fetchLatestMessage({
@@ -741,7 +749,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       }
     } catch (e) {
       // return if nonce doesn't match
-      console.debug(e)
+      console.debug(e);
       console.debug(
         `Errored: currentNonce: ${currentNonce}, chatPreviewList.nonce: ${chatPreviewList.nonce}`
       );
