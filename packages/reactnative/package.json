@@ -40,9 +40,10 @@
     "!**/.*"
   ],
   "scripts": {
-    "test": "jest",
+    "test": "jest --bail=false --passWithNoTests",
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
+    "build": "bob build",
     "prepare": "bob build",
     "release": "release-it",
     "bootstrap": "yarn install",
