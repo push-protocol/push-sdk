@@ -43,10 +43,10 @@ export const handleUserCreate = async () => {
     env: PushAPI.CONSTANTS.ENV.DEV,
   };
 
-  console.log('create user', account);
+  console.log('creating user with account: ', account, '...');
 
   const res = await PushAPI.user.create(options);
-  console.log('success', res.did);
+  console.log('✅ successfully created user: ', res.did);
 };
 
 export const handleLatestMsg = async () => {
@@ -83,7 +83,7 @@ export const handleLatestMsg = async () => {
     pgpPrivateKey: pgpDecryptedPvtKey,
   });
 
-  console.log('Latest message: ', msg);
+  console.log('✅ Got Latest message: ', msg);
 };
 
 export const handleCreateGroup = async () => {
@@ -109,7 +109,7 @@ export const handleCreateGroup = async () => {
     isPublic: true,
     env: PushAPI.CONSTANTS.ENV.DEV,
   });
-  console.log(res, 'res');
+  console.log('✅ successfully created group: ', res);
 
   return {
     chatId: res.chatId,
@@ -138,7 +138,7 @@ export const handleUpdateGroup = async () => {
     ],
     env: PushAPI.CONSTANTS.ENV.DEV,
   });
-  console.log(res, 'ress');
+  console.log('✅ successfully updated group: ', res);
 };
 
 export const handleGetUser = async () => {
@@ -148,7 +148,7 @@ export const handleGetUser = async () => {
   };
 
   const res = await PushAPI.user.get(options);
-  console.log('successfully got user', res);
+  console.log('✅ successfully got user', res);
 };
 
 export const handleProfileUpdate = async () => {
@@ -184,7 +184,7 @@ export const handleProfileUpdate = async () => {
       desc: 'Updated Desc',
     },
   });
-  console.log('successfully updated profile');
+  console.log('✅ successfully updated profile');
 };
 
 export const handleProfileUpgrade = async () => {
@@ -211,7 +211,7 @@ export const handleProfileUpgrade = async () => {
     },
   });
 
-  console.log('successfully upgraded profile', upgradedProfile);
+  console.log('✅ successfully upgraded profile', upgradedProfile);
   return upgradedProfile;
 };
 
@@ -246,9 +246,9 @@ export const handleInbox = async () => {
     env: PushAPI.CONSTANTS.ENV.DEV,
   });
 
-  console.log('CHATS: ', chatList);
+  console.log('✅ Got chats: ', chatList);
   console.log('-'.repeat(30));
-  console.log('REQUESTS: ', requestList);
+  console.log('✅ Got requests: ', requestList);
 };
 
 export const handleSend = async () => {
@@ -281,7 +281,7 @@ export const handleSend = async () => {
     pgpPrivateKey: pgpDecryptedPvtKey,
   });
 
-  console.log('message sent: ', messageSent);
+  console.log('✅ successfully sent message: ', messageSent);
 };
 
 export const handleApproveRequest = async () => {
@@ -312,7 +312,7 @@ export const handleApproveRequest = async () => {
     status: 'Approved',
   });
 
-  console.log('request approved: ', res);
+  console.log('✅ successfully approved request: ', res);
 };
 
 export const handleConversationHash = async () => {
@@ -327,5 +327,5 @@ export const handleConversationHash = async () => {
       'b353220b812bdb707bd93529aac6fac893438e5db791d7c9e6aab6773aaff90b',
     env: PushAPI.CONSTANTS.ENV.STAGING,
   });
-  console.log('conversation hash: ', hash);
+  console.log('✅ successfully got conversation hash: ', hash);
 };
