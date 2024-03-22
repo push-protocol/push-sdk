@@ -91,13 +91,44 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
 
   //event listeners
   usePushChatStream();
-  window.addEventListener('chatStream', (e: any) => setChatStream(e.detail));
-  window.addEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
-  window.addEventListener('participantRemoveStream', (e: any) => setParticipantRemoveStream(e.detail));
-  window.addEventListener('participantLeaveStream', (e: any) => setParticipantLeaveStream(e.detail));
-  window.addEventListener('participantJoinStream', (e: any) => setParticipantJoinStream(e.detail));
-  window.addEventListener('groupUpdateStream', (e: any) => setGroupUpdateStream(e.detail));
-
+  useEffect(() => {
+    window.addEventListener('chatStream', (e: any) => setChatStream(e.detail));
+    window.addEventListener('chatAcceptStream', (e: any) =>
+      setChatAcceptStream(e.detail)
+    );
+    window.addEventListener('participantRemoveStream', (e: any) =>
+      setParticipantRemoveStream(e.detail)
+    );
+    window.addEventListener('participantLeaveStream', (e: any) =>
+      setParticipantLeaveStream(e.detail)
+    );
+    window.addEventListener('participantJoinStream', (e: any) =>
+      setParticipantJoinStream(e.detail)
+    );
+    window.addEventListener('groupUpdateStream', (e: any) =>
+      setGroupUpdateStream(e.detail)
+    );
+    return () => {
+      window.addEventListener('chatStream', (e: any) =>
+        setChatStream(e.detail)
+      );
+      window.addEventListener('chatAcceptStream', (e: any) =>
+        setChatAcceptStream(e.detail)
+      );
+      window.addEventListener('participantRemoveStream', (e: any) =>
+        setParticipantRemoveStream(e.detail)
+      );
+      window.addEventListener('participantLeaveStream', (e: any) =>
+        setParticipantLeaveStream(e.detail)
+      );
+      window.addEventListener('participantJoinStream', (e: any) =>
+        setParticipantJoinStream(e.detail)
+      );
+      window.addEventListener('groupUpdateStream', (e: any) =>
+        setGroupUpdateStream(e.detail)
+      );
+    };
+  }, []);
 
   const theme = useContext(ThemeContext);
   const dates = new Set();

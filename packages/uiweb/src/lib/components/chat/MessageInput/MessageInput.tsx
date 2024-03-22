@@ -142,21 +142,40 @@ export const MessageInput: React.FC<MessageInputProps> = ({
 
   //event listners
   usePushChatStream();
-  window.addEventListener('chatAcceptStream', (e: any) =>
-    setChatAcceptStream(e.detail)
-  );
-  window.addEventListener('participantRemoveStream', (e: any) =>
-    setParticipantRemoveStream(e.detail)
-  );
-  window.addEventListener('participantLeaveStream', (e: any) =>
-    setParticipantLeaveStream(e.detail)
-  );
-  window.addEventListener('participantJoinStream', (e: any) =>
-    setParticipantJoinStream(e.detail)
-  );
-  window.addEventListener('groupUpdateStream', (e: any) =>
-    setGroupUpdateStream(e.detail)
-  );
+  useEffect(() => {
+    window.addEventListener('chatAcceptStream', (e: any) =>
+      setChatAcceptStream(e.detail)
+    );
+    window.addEventListener('participantRemoveStream', (e: any) =>
+      setParticipantRemoveStream(e.detail)
+    );
+    window.addEventListener('participantLeaveStream', (e: any) =>
+      setParticipantLeaveStream(e.detail)
+    );
+    window.addEventListener('participantJoinStream', (e: any) =>
+      setParticipantJoinStream(e.detail)
+    );
+    window.addEventListener('groupUpdateStream', (e: any) =>
+      setGroupUpdateStream(e.detail)
+    );
+    return () => {
+      window.addEventListener('chatAcceptStream', (e: any) =>
+        setChatAcceptStream(e.detail)
+      );
+      window.addEventListener('participantRemoveStream', (e: any) =>
+        setParticipantRemoveStream(e.detail)
+      );
+      window.addEventListener('participantLeaveStream', (e: any) =>
+        setParticipantLeaveStream(e.detail)
+      );
+      window.addEventListener('participantJoinStream', (e: any) =>
+        setParticipantJoinStream(e.detail)
+      );
+      window.addEventListener('groupUpdateStream', (e: any) =>
+        setGroupUpdateStream(e.detail)
+      );
+    };
+  }, []);
 
   const onChangeTypedMessage = (val: string) => {
     setTypedMessage(val);

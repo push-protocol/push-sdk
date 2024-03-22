@@ -114,9 +114,18 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
 
   //event listeners
   usePushChatStream();
-  window.addEventListener('chatStream', (e: any) => setChatStream(e.detail));
-  window.addEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
-  window.addEventListener('chatRequestStream', (e: any) => setChatRequestStream(e.detail));
+
+  useEffect(()=>{
+    window.addEventListener('chatStream', (e: any) => setChatStream(e.detail));
+    window.addEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
+    window.addEventListener('chatRequestStream', (e: any) => setChatRequestStream(e.detail));
+    return () => {
+      window.addEventListener('chatStream', (e: any) => setChatStream(e.detail));
+      window.addEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
+      window.addEventListener('chatRequestStream', (e: any) => setChatRequestStream(e.detail));
+    };
+  },[])
+ 
 
   // Helper Functions
 
