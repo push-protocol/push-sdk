@@ -151,7 +151,22 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     });
   };
 
-  //Transform 
+  //Transform group creation stream
+  const transformGroupCreationStream: (item: any) => void = async (item: any) => {
+    const transformedItem: IChatPreviewPayload = {
+      chatId:item?.chatId,
+      chatPic: item?.meta.image,
+      chatParticipant: item?.meta.name,
+      chatGroup: true,
+      chatTimestamp:  undefined,
+      chatMsg: {
+        messageType: '',
+        messageContent: '',
+      }
+    }
+    addChatItems([transformedItem]);
+  }
+
 
   // Transform stream message
   const transformStreamMessage: (item: any) => void = async (item: any) => {
@@ -575,10 +590,10 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       groupCreateStream.constructor === Object
     ) {
       if (options.listType === CONSTANTS.CHAT.LIST_TYPE.CHATS) {
-        // transformStreamMessage(groupCreateStream);
+        transformGroupCreationStream(groupCreateStream);
       }
     }
-  }, [chatStream]);
+  }, [groupCreateStream]);
 
   useEffect(() => {
     if (
