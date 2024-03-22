@@ -8,6 +8,7 @@ import { PolygonzkevmSvg } from '../../icons/PolygonzkevmSvg';
 import { TheGraphSvg } from '../../icons/TheGraphSvg';
 import { ArbitrumSvg } from '../../icons/ArbitrumSvg';
 import { FuseSvg } from '../../icons/FuseSvg';
+import { BerachainSVG } from '../../icons/BerachainSVG';
 const createSVGIcon = (element: any, chainName: string) => {
   return (
     <Tooltip tooltipContent={`Delivered by ${chainName}`}>{element}</Tooltip>
@@ -77,5 +78,9 @@ export default {
   THE_GRAPH: {
     label: 'THE GRAPH',
     icon: createSVGIcon(<TheGraphSvg />, 'The Graph'),
+  },
+  BERACHAIN_TESTNET: {
+    label: 'BERACHAIN TESTNET',
+    icon: createSVGIcon(<BerachainSVG />, 'Berachain Testnet'),
   },
 };

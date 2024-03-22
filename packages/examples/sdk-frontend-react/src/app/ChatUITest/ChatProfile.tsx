@@ -7,8 +7,8 @@ export const ChatProfileTest = () => {
             <ChatProfile 
                 chatProfileLeftHelperComponent={<div>left component</div>}
                 chatProfileRightHelperComponent={<div>right component</div>}
-                // chatId='0xf8250D363BD1F25f52F10C21188fe82c68C049c4'
-chatId='d9c2d6fa7132d49ea6d1b570f0ebd2bcc45c1ecac726eab993ad91c574fbe3c6'
+                chatId='monalisha.wallet'
+// chatId='d9c2d6fa7132d49ea6d1b570f0ebd2bcc45c1ecac726eab993ad91c574fbe3c6'
             />
         </div>
     )

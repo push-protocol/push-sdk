@@ -9,17 +9,20 @@ export enum ENV {
   LOCAL = 'local',
 }
 const Constants = {
-    ENV,
-    PAGINATION: {
-      INITIAL_PAGE: 1,
-      LIMIT: 10,
-      LIMIT_MIN: 1,
-      LIMIT_MAX: 50
-    },
-    DEFAULT_CHAIN_ID: 11155111,
-    DEV_CHAIN_ID: 99999,
-    NON_ETH_CHAINS: [137, 80001, 56, 97, 10, 420, 1442, 1101, 421613, 42161, 122, 123],
-    ETH_CHAINS: [1, 11155111]
+  ENV,
+  PAGINATION: {
+    INITIAL_PAGE: 1,
+    LIMIT: 10,
+    LIMIT_MIN: 1,
+    LIMIT_MAX: 50,
+  },
+  DEFAULT_CHAIN_ID: 11155111,
+  DEV_CHAIN_ID: 99999,
+  NON_ETH_CHAINS: [
+    137, 80001, 56, 97, 10, 11155420, 1442, 1101, 421614, 42161, 122, 123,
+    80085,
+  ],
+  ETH_CHAINS: [1, 11155111],
 };
 
 export interface AddressValidatorsType {

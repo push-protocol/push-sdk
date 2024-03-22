@@ -1,17 +1,7 @@
 import { getCAIPAddress, getAPIBaseUrls, getQueryParams } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { axiosGet } from '../utils/axiosUtil';
-import { parseApiResponse } from '../utils';
-
-/**
- *  GET /v1/channels/{addressinCAIP}
- */
-
-enum NotifictaionType  {
-    BROADCAT = 1,
-    TARGETTED = 3,
-    SUBSET = 4
-  }
+import { NotifictaionType } from '../types';
 
 type GetChannelOptionsType = {
   channel: string;
@@ -36,28 +26,23 @@ export const getChannelNotifications = async (
 
   const _channel = await getCAIPAddress(env, channel, 'Channel');
   const API_BASE_URL = getAPIBaseUrls(env);
-  const apiEndpoint = `${API_BASE_URL}/v1/channels`;
+  const apiEndpoint = `${API_BASE_URL}/v2/channels`;
   const query = getQueryParams(
     filter
       ? {
           page,
           limit,
           notificationType: filter,
+          raw,
         }
       : {
           page,
           limit,
+          raw,
         }
   );
   const requestUrl = `${apiEndpoint}/${_channel}/notifications?${query}`;
-  return await axiosGet(requestUrl)
-    .then((response) => {
-      if (raw) return {feeds: response.data?.feeds ?? [], itemcount:response.data?.itemcount} ;
-      else
-        return  { feeds: parseApiResponse(response.data?.feeds?? []), itemcount: response.data?.itemcount}
-          ;
-    })
-    .catch((err) => {
-      console.error(`[Push SDK] - API ${requestUrl}: `, err);
-    });
+  return await axiosGet(requestUrl).then((response) => {
+    return response.data;
+  });
 };

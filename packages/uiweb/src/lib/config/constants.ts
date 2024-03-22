@@ -32,7 +32,8 @@ export const NETWORK_DETAILS = {
     network: 'polygon-mainnet',
   },
   97: {},
-  420: {},
+  11155420: {},
+  80085: {},
 };
 
 //todo: need to change o sepolia
@@ -45,20 +46,20 @@ export const CoreContractChainId = {
 
 export const CoreRPC = {
   prod: 'https://mainnet.infura.io/v3/4ff53a5254144d988a8318210b56f47a',
-  dev:  'https://sepolia.infura.io/v3/5524d420b29f4f7a8d8d2f582a0d43f7',
+  dev: 'https://sepolia.infura.io/v3/5524d420b29f4f7a8d8d2f582a0d43f7',
   staging: 'https://sepolia.infura.io/v3/49f638cc25a94ddb86b7aefd612f11ab',
   local: 'https://sepolia.infura.io/v3/5524d420b29f4f7a8d8d2f582a0d43f7',
 };
-
 
 const TESTNET_NETWORK = {
   ETHEREUM: 'eip155:11155111',
   POLYGON: 'eip155:80001',
   BSC: 'eip155:97',
-  OPTIMISM: 'eip155:420',
+  OPTIMISM: 'eip155:11155420',
   POLYGON_ZK_EVM: 'eip155:1442',
-  ARBITRUM:'eip155:421613',
-  FUSE: 'eip155:123'
+  ARBITRUM: 'eip155:421614',
+  FUSE: 'eip155:123',
+  BERACHAIN: 'eip155:80085',
 };
 const MAINET_NETWORK = {
   ETHEREUM: 'eip155:1',
@@ -66,8 +67,8 @@ const MAINET_NETWORK = {
   BSC: 'eip155:56',
   OPTIMISM: 'eip155:10',
   POLYGON_ZK_EVM: 'eip155:1101',
-  ARBITRUM:'eip155:42161',
-  FUSE: 'eip155:122'
+  ARBITRUM: 'eip155:42161',
+  FUSE: 'eip155:122',
 };
 
 export const BLOCKCHAIN_NETWORK = {
@@ -84,34 +85,37 @@ export const allowedNetworks = {
     56, // for bnb mainnet
     10, // for optimism mainnet
     42161, // for arbitrum mainnet
-    122 // for fuse mainnet
+    122, // for fuse mainnet
   ],
   dev: [
     11155111, // for eth sepolia
     80001, //for mumbai polygon
     97, // bnb testnet
-    420, // optimism goerli testnet
-    421613, // for arbitrum testnet
-    123 // for fuse testnet
+    11155420, // optimism sepolia testnet
+    421614, // for arbitrum testnet
+    123, // for fuse testnet
+    80085, // for berachain testnet
   ],
   staging: [
     // 42, //for kovan
     11155111, // for sepolia
     80001, //for mumbai polygon
     97, // bnb testnet
-    420, // optimism goerli testnet
-    421613, // for arbitrum testnet
-    123 // for fuse testnet
+    11155420, // optimism sepolia testnet
+    421614, // for arbitrum testnet
+    123, // for fuse testnet
+    80085, // for berachain testnet
   ],
   local: [
     11155111, // for eth sepolia
     80001, //for mumbai polygon
     97, // bnb testnet
-    420, // optimism goerli testnet
-    421613, // for arbitrum testnet
-    123 // for fuse testnet
-  ]
-}
+    11155420, // optimism sepolia testnet
+    421614, // for arbitrum testnet
+    123, // for fuse testnet
+    80085, // for berachain testnet
+  ],
+};
 
 export const BLOCKNATIVE_PROJECT_ID = '64a44a0fb537407bfe97d24330e4109c';
 
@@ -138,7 +142,9 @@ export const FILE_ICON = (extension: string) =>
   `https://cdn.jsdelivr.net/gh/napthedev/file-icons/file/${extension}.svg`;
 
 // Livekit Server URLs
-export const LIVEKIT_SERVER_URL = "https://spacev2-demo-17wvllxz.livekit.cloud";
-export const LIVEKIT_SERVER_WEBSOCKET_URL = "wss://spacev2-demo-17wvllxz.livekit.cloud";
-export const LIVEKIT_TOKEN_GENERATOR_SERVER_URL = "https://ms-lk-server.onrender.com";
+export const LIVEKIT_SERVER_URL = 'https://spacev2-demo-17wvllxz.livekit.cloud';
+export const LIVEKIT_SERVER_WEBSOCKET_URL =
+  'wss://spacev2-demo-17wvllxz.livekit.cloud';
+export const LIVEKIT_TOKEN_GENERATOR_SERVER_URL =
+  'https://ms-lk-server.onrender.com';
 export const GUEST_MODE_ACCOUNT = '0x0000000000000000000000000000000000000001';
