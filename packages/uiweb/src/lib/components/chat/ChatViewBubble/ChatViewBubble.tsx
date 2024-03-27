@@ -125,6 +125,7 @@ const FrameRenderer = ({ url, account }: { url: string; account: string }) => {
   const { env, user } = useChatData();
   const { chainId, switchChain, provider } = useAccount({ env });
   const frameRenderer = useToast();
+  const proxyServer = 'https://cors-m0l8.onrender.com';
   const [metaTags, setMetaTags] = useState<FrameDetails>({
     image: '',
     siteURL: '',
@@ -138,8 +139,12 @@ const FrameRenderer = ({ url, account }: { url: string; account: string }) => {
   useEffect(() => {
     const fetchMetaTags = async (url: string) => {
       try {
-        const response = await fetch(url, {
+        const response = await fetch(`${proxyServer}/${url}`, {
           method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Origin: window.location.origin,
+          },
         });
 
         const htmlText = await response.text();
@@ -280,12 +285,6 @@ const FrameRenderer = ({ url, account }: { url: string; account: string }) => {
 
   // Function to trigger a transaction
   const TriggerTx = async (data: any, provider: any) => {
-    console.log(allowedNetworks[env]);
-    console.log(
-      allowedNetworks[env].some(
-        (chain) => chain === Number(data.chainId.slice(7))
-      )
-    );
     if (chainId !== Number(data.chainId.slice(7))) {
       if (
         allowedNetworks[env].some(
@@ -357,10 +356,11 @@ const FrameRenderer = ({ url, account }: { url: string; account: string }) => {
 
     // If the button action is tx, triggers a transaction and then makes a POST call to the Frame server
     if (button.action === 'tx' && button.target) {
-      const response = await fetch(`http://localhost:5004/${button.target}`, {
+      const response = await fetch(`${proxyServer}/${button.target}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Origin: window.location.origin,
         },
         body: JSON.stringify({
           clientProtocol: 'push',
@@ -390,16 +390,16 @@ const FrameRenderer = ({ url, account }: { url: string; account: string }) => {
         ? button.target
         : metaTags.postURL;
     if (!post_url) return;
-    const response = await fetch(`http://localhost:5004/${post_url}`, {
+    const response = await fetch(`${proxyServer}/${post_url}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        origin: 'http://localhost:4200',
+        Origin: window.location.origin,
       },
       body: JSON.stringify({
         clientProtocol: 'push',
         untrustedData: {
-          url: window.location.hostname,
+          url: window.location.href,
           unixTimestamp: Date.now(),
           buttonIndex: Number(button.index),
           inputText: inputText,
