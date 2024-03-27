@@ -29,7 +29,7 @@ export const Modal: React.FC = () => {
   const [lastThreadHashFetched, setLastThreadHashFetched] = useState<
     string | null
   >(null);
-  const [wasLastListPresent, setWasLastListPresent] = useState<boolean>(false);
+  const [wasLastListPresent, setWasLastListPresent] = useState<boolean>(true);
   const { supportAddress, user, env, account, signer, greetingMsg, theme } =
     useContext<any>(SupportChatPropsContext);
   const {
@@ -61,6 +61,7 @@ export const Modal: React.FC = () => {
     icon: <HandWaveSvg fill={theme.btnColorPrimary} />,
   };
   const onScroll = async () => {
+    if (!wasLastListPresent) return;
     if (listInnerRef.current) {
       const { scrollTop } = listInnerRef.current;
       if (scrollTop === 0) {
@@ -85,7 +86,7 @@ export const Modal: React.FC = () => {
 
   const getChatCall = async () => {
     if (!connectedUser) return;
-    if (wasLastListPresent && !lastThreadHashFetched) return;
+    if (!wasLastListPresent && !lastThreadHashFetched) return;
     setLoading(true);
     const { chatsResponse, lastThreadHash, lastListPresent } = await getChats({
       account,
