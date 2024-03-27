@@ -33,7 +33,7 @@ import { ChatInfoResponse } from '../types';
 import useUserProfile from '../../../hooks/useUserProfile';
 import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
 import useToast from '../reusables/NewToast';
-import { transformStreamToIMessageIPFSWithCID } from '../helpers';
+import { checkIfNewRequest, transformStreamToIMessageIPFSWithCID } from '../helpers';
 
 /**
  * @interface IThemeProps
@@ -72,6 +72,8 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
 
   //hack for stream not working
   const [chatStream, setChatStream] = useState<any>({}); // to track any new messages
+  const [chatRequestStream, setChatRequestStream] = useState<any>({}); // to track any new messages
+
   const [chatAcceptStream, setChatAcceptStream] = useState<any>({}); // to track any new messages
   const [participantRemoveStream, setParticipantRemoveStream] = useState<any>(
     {}
@@ -93,6 +95,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   usePushChatStream();
   useEffect(() => {
     window.addEventListener('chatStream', (e: any) => setChatStream(e.detail));
+    window.addEventListener('chatRequestStream', (e: any) => setChatRequestStream(e.detail));
     window.addEventListener('chatAcceptStream', (e: any) =>
       setChatAcceptStream(e.detail)
     );
@@ -109,22 +112,24 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       setGroupUpdateStream(e.detail)
     );
     return () => {
-      window.addEventListener('chatStream', (e: any) =>
+      window.removeEventListener('chatStream', (e: any) =>
         setChatStream(e.detail)
       );
-      window.addEventListener('chatAcceptStream', (e: any) =>
+      window.removeEventListener('chatRequestStream', (e: any) => setChatRequestStream(e.detail));
+
+      window.removeEventListener('chatAcceptStream', (e: any) =>
         setChatAcceptStream(e.detail)
       );
-      window.addEventListener('participantRemoveStream', (e: any) =>
+      window.removeEventListener('participantRemoveStream', (e: any) =>
         setParticipantRemoveStream(e.detail)
       );
-      window.addEventListener('participantLeaveStream', (e: any) =>
+      window.removeEventListener('participantLeaveStream', (e: any) =>
         setParticipantLeaveStream(e.detail)
       );
-      window.addEventListener('participantJoinStream', (e: any) =>
+      window.removeEventListener('participantJoinStream', (e: any) =>
         setParticipantJoinStream(e.detail)
       );
-      window.addEventListener('groupUpdateStream', (e: any) =>
+      window.removeEventListener('groupUpdateStream', (e: any) =>
         setGroupUpdateStream(e.detail)
       );
     };
@@ -197,7 +202,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       setChatInfo(updatedChatInfo);
     }
   }, [chatAcceptStream]);
-
   useEffect(() => {
     if (
       Object.keys(chatStream || {}).length > 0 &&
@@ -211,17 +215,29 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
 
   useEffect(() => {
     if (
+      Object.keys(chatRequestStream || {}).length > 0 &&
+      chatRequestStream.constructor === Object
+    ) {
+      transformSteamMessage(chatRequestStream);
+      setChatStatusText('');
+      scrollToBottom();
+    }
+  }, [chatRequestStream]);
+
+  useEffect(() => {
+    if (
       Object.keys(groupUpdateStream || {}).length > 0 &&
       groupUpdateStream.constructor === Object
     )
       transformGroupDetails(groupUpdateStream);
   }, [groupUpdateStream]);
 
+ 
   const transformSteamMessage = (item: any) => {
     if (!user) {
       return;
     }
-    if (chatInfo && item?.chatId == chatInfo?.chatId) {
+    if (chatInfo && ((item?.chatId == chatInfo?.chatId) || checkIfNewRequest(item,chatId))) {
       const transformedMessage = transformStreamToIMessageIPFSWithCID(item);
       if (messages && messages.length) {
         const newChatViewList = appendUniqueMessages(

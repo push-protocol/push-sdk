@@ -120,9 +120,9 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     window.addEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
     window.addEventListener('chatRequestStream', (e: any) => setChatRequestStream(e.detail));
     return () => {
-      window.addEventListener('chatStream', (e: any) => setChatStream(e.detail));
-      window.addEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
-      window.addEventListener('chatRequestStream', (e: any) => setChatRequestStream(e.detail));
+      window.removeEventListener('chatStream', (e: any) => setChatStream(e.detail));
+      window.removeEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
+      window.removeEventListener('chatRequestStream', (e: any) => setChatRequestStream(e.detail));
     };
   },[])
  

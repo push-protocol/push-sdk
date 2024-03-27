@@ -209,7 +209,7 @@ export const generateRandomNonce: () => string = () => {
       chatPic: null, // for now, we don't have a way to get pfp from stream
       chatParticipant: item.meta.group
         ? null // we take from fetching info
-        : (item?.event === 'chat.request')? item.from: item.to[0],
+        : (item?.event === 'chat.request')?item?.origin == 'self'?item.to[0] :item.from: item.to[0],
       chatGroup: item.meta.group,
       chatTimestamp: Number(item.timestamp),
       chatMsg: {
@@ -221,6 +221,13 @@ export const generateRandomNonce: () => string = () => {
     return transformedItem;
   };
 
+  export const checkIfNewRequest = (item:any,chatId:string) => {
+    if(item?.origin == 'self')
+     return (walletToPCAIP10(chatId) === walletToPCAIP10(item?.to[0]));
+     if(item?.origin == 'other')
+     return (walletToPCAIP10(chatId) === walletToPCAIP10(item?.from));
+    return false;
+  }
 
   export  const transformStreamToIMessageIPFSWithCID: (
     item: any

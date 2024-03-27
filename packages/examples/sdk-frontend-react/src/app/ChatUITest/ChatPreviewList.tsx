@@ -151,7 +151,7 @@ const ChatPreviewListTest = () => {
 
       <div style={{background: "#ffeded", border: "1px solid rgb(226,8,128)", height: "28.5vh"}}>
         <ChatPreviewList 
-          listType={chatRequests ? "REQUESTS" : "CHATS"}
+          listType={"REQUESTS"}
           overrideAccount={address ? address : undefined}
          onChatSelected={(chatid,chatParticipant) => { console.log("Chat id: ", chatid,chatParticipant) }}
             onUnreadCountChange={(count) => { console.log("Count is: ", count) }}

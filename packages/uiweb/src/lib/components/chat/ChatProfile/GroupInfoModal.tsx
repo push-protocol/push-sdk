@@ -556,25 +556,25 @@ export const GroupInfoModal = ({
       setGroupUpdateStream(e.detail)
     );
     return () => {
-      window.addEventListener('chatAcceptStream', (e: any) =>
+      window.removeEventListener('chatAcceptStream', (e: any) =>
         setChatAcceptStream(e.detail)
       );
-      window.addEventListener('chatRejectStream', (e: any) =>
+      window.removeEventListener('chatRejectStream', (e: any) =>
         setChatRejectStream(e.detail)
       );
-      window.addEventListener('participantRoleChangeStream', (e: any) =>
+      window.removeEventListener('participantRoleChangeStream', (e: any) =>
         setParticipantRoleChangeStream(e.detail)
       );
-      window.addEventListener('participantRemoveStream', (e: any) =>
+      window.removeEventListener('participantRemoveStream', (e: any) =>
         setParticipantRemoveStream(e.detail)
       );
-      window.addEventListener('participantLeaveStream', (e: any) =>
+      window.removeEventListener('participantLeaveStream', (e: any) =>
         setParticipantLeaveStream(e.detail)
       );
-      window.addEventListener('participantJoinStream', (e: any) =>
+      window.removeEventListener('participantJoinStream', (e: any) =>
         setParticipantJoinStream(e.detail)
       );
-      window.addEventListener('groupUpdateStream', (e: any) =>
+      window.removeEventListener('groupUpdateStream', (e: any) =>
         setGroupUpdateStream(e.detail)
       );
     };

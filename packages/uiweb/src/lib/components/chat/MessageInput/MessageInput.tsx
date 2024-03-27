@@ -159,19 +159,19 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       setGroupUpdateStream(e.detail)
     );
     return () => {
-      window.addEventListener('chatAcceptStream', (e: any) =>
+      window.removeEventListener('chatAcceptStream', (e: any) =>
         setChatAcceptStream(e.detail)
       );
-      window.addEventListener('participantRemoveStream', (e: any) =>
+      window.removeEventListener('participantRemoveStream', (e: any) =>
         setParticipantRemoveStream(e.detail)
       );
-      window.addEventListener('participantLeaveStream', (e: any) =>
+      window.removeEventListener('participantLeaveStream', (e: any) =>
         setParticipantLeaveStream(e.detail)
       );
-      window.addEventListener('participantJoinStream', (e: any) =>
+      window.removeEventListener('participantJoinStream', (e: any) =>
         setParticipantJoinStream(e.detail)
       );
-      window.addEventListener('groupUpdateStream', (e: any) =>
+      window.removeEventListener('groupUpdateStream', (e: any) =>
         setGroupUpdateStream(e.detail)
       );
     };
