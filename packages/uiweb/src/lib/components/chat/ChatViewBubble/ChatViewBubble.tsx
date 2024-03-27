@@ -33,7 +33,7 @@ import {
 } from '../../../utilities';
 import { Button, TextInput } from '../reusables';
 import { MdError, MdOpenInNew } from 'react-icons/md';
-import { FaBell, FaLink } from 'react-icons/fa';
+import { FaBell, FaLink, FaRegThumbsUp } from 'react-icons/fa';
 import { BsLightning } from 'react-icons/bs';
 
 const SenderMessageAddress = ({ chat }: { chat: IMessagePayload }) => {
@@ -257,7 +257,15 @@ const FrameRenderer = ({ url, account }: { url: string; account: string }) => {
         `eip155:${desiredChain}:${channel}`
       );
       if (response.status === 204)
-        return { status: 'success', message: 'Subscribed' };
+        frameRenderer.showMessageToast({
+          toastTitle: 'Success',
+          toastMessage: 'Subscribed Successfully',
+          toastType: 'SUCCESS',
+          getToastIcon: (size: any) => (
+            <FaRegThumbsUp size={size} color="green" />
+          ),
+        });
+      return { status: 'success', message: 'Subscribed' };
     } catch (error) {
       frameRenderer.showMessageToast({
         toastTitle: 'Error',
@@ -393,7 +401,7 @@ const FrameRenderer = ({ url, account }: { url: string; account: string }) => {
         untrustedData: {
           url: window.location.hostname,
           unixTimestamp: Date.now(),
-          buttonIndex: button.index,
+          buttonIndex: Number(button.index),
           inputText: inputText,
           state: metaTags.state,
           transactionId: hash,
