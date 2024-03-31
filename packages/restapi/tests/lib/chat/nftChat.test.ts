@@ -1,5 +1,3 @@
-import * as path from 'path';
-import * as dotenv from 'dotenv';
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI';
 import { ethers } from 'ethers';
 import CONSTANTS from '../../../src/lib/constantsV2';
@@ -10,8 +8,6 @@ import {
   uniqueNamesGenerator,
 } from 'unique-names-generator';
 import { PushStream } from '../../../src/lib/pushstream/PushStream';
-
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const env = CONSTANTS.ENV.DEV;
 const showAPIResponse = false;

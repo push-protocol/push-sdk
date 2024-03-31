@@ -1,6 +1,3 @@
-import * as path from 'path';
-import * as dotenv from 'dotenv';
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 import { expect } from 'chai'; // Assuming you're using chai for assertions
 import { ethers } from 'ethers';
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI';

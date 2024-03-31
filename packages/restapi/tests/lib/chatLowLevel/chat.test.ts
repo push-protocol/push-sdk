@@ -1,6 +1,3 @@
-import * as path from 'path';
-import * as dotenv from 'dotenv';
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 import { chat } from '../../../src/lib/chat/chat';
 import { ethers } from 'ethers';
 import { expect } from 'chai';

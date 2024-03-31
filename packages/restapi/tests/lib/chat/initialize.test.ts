@@ -1,6 +1,3 @@
-import * as path from 'path';
-import * as dotenv from 'dotenv';
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 import { ProgressHookType } from '../../../src/lib/types';
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI'; // Ensure correct import path
 import { expect } from 'chai';
@@ -69,6 +66,7 @@ describe('PushAPI.initialize functionality', () => {
     for (let i = 0; i < progressInfo.length; i++) {
       expect(progressInfo[i].progressId).to.deep.equal(expectedHooks[i]);
     }
+    console.log(process.env['NFT_HOLDER_WALLET_PRIVATE_KEY_1'])
   });
   it('Should upgrade user on initialize', async () => {
     // Create V1 User
