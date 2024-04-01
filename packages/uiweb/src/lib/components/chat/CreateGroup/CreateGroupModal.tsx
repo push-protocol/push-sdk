@@ -29,14 +29,8 @@ import { ProfilePicture, device } from '../../../config';
 import { CriteriaValidationErrorType } from '../types';
 
 import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../../../types';
-import {
-  CreateGroupModalProps,
-  IChatTheme,
-
-} from '../exportedTypes';
+import { CreateGroupModalProps, IChatTheme } from '../exportedTypes';
 import AutoImageClipper from '../reusables/AutoImageClipper';
-
-
 
 export const CREATE_GROUP_STEP_KEYS = {
   INPUT_DETAILS: 1,
@@ -61,6 +55,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   onClose,
   modalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
   modalPositionType = MODAL_POSITION_TYPE.GLOBAL,
+  onSuccess,
 }) => {
   const [activeComponent, setActiveComponent] = useState<CreateGroupStepKeys>(
     // replace it with info one
@@ -107,7 +102,6 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
     });
   const [isImageUploaded, setIsImageUploaded] = useState<boolean>(false);
 
-
   const showError = (errorMessage: string) => {
     groupInfoToast.showMessageToast({
       toastTitle: 'Error',
@@ -118,7 +112,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   };
 
   const getEncryptionType = () => {
-    console.debug(groupInputDetails.groupEncryptionType, "encryptionTypeee");
+    console.debug(groupInputDetails.groupEncryptionType, 'encryptionTypeee');
     if (groupInputDetails.groupEncryptionType === 'encrypted') {
       return false;
     }
@@ -139,8 +133,10 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
         .map((member: any) => member.wallets),
     };
     const rules: any = checked ? criteriaStateManager.generateRule() : {};
-    const isSuccess = await createGatedGroup(groupInfo, rules);
-    if (isSuccess === true) {
+    const { success: isGroupCreated, data: APIResponse } =
+      await createGatedGroup(groupInfo, rules);
+    if (isGroupCreated === true) {
+      onSuccess && onSuccess(APIResponse);
       groupInfoToast.showMessageToast({
         toastTitle: 'Success',
         toastMessage: 'Group created successfully',
@@ -211,7 +207,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
             onClose={onClose}
           />
         );
-        
+
       case CREATE_GROUP_STEP_KEYS.ADD_MEMBERS:
         return (
           <AddGroupMembers
@@ -219,14 +215,15 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
             onClose={onClose}
             handlePrevious={handlePreviousfromAddWallets}
             memberList={groupInputDetails.groupMembers}
-            handleMemberList={(members: any)=>{
-              setGroupInputDetails(
-              (prev: GroupInputDetailsType) => ({ ...prev, groupMembers: members})
-            )}}
+            handleMemberList={(members: any) => {
+              setGroupInputDetails((prev: GroupInputDetailsType) => ({
+                ...prev,
+                groupMembers: members,
+              }));
+            }}
             isLoading={loading}
             isPublic={getEncryptionType()}
           />
-         
         );
       default:
         return (
@@ -264,7 +261,9 @@ export interface ModalHeaderProps {
   handleAddWallets?: () => void;
   isImageUploaded?: boolean;
   setIsImageUploaded?: React.Dispatch<React.SetStateAction<boolean>>;
-  setGroupInputDetails?: React.Dispatch<React.SetStateAction<GroupInputDetailsType>>;
+  setGroupInputDetails?: React.Dispatch<
+    React.SetStateAction<GroupInputDetailsType>
+  >;
   groupInputDetails?: GroupInputDetailsType;
 }
 
