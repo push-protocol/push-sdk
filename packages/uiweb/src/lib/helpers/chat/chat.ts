@@ -199,7 +199,7 @@ export const appendUniqueMessages = (
       return f.cid !== el.cid;
     });
   });
-  let appendedArray = infront
+  const appendedArray = infront
     ? [...newlist, ...filteredList]
     : [...filteredList, ...newlist];
    
