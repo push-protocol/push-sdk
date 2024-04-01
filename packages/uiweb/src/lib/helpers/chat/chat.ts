@@ -1,13 +1,15 @@
 // import * as PushAPI from '@pushprotocol/restapi';
 import type { ENV } from '../../config';
 import { Constants } from '../../config';
-import type {
-  AccountEnvOptionsType,
-  IGroup,
-  IMessageIPFS,
-} from '../../types';
+import type { AccountEnvOptionsType, IGroup, IMessageIPFS } from '../../types';
 import { ChatFeedsType } from '../../types';
-import type { Env, IConnectedUser, IFeeds, IMessageIPFSWithCID, IUser } from '@pushprotocol/restapi';
+import type {
+  Env,
+  IConnectedUser,
+  IFeeds,
+  IMessageIPFSWithCID,
+  IUser,
+} from '@pushprotocol/restapi';
 import { isPCAIP, pCAIP10ToWallet, walletToPCAIP10 } from '../address';
 import { Group } from '../../components';
 import { getData } from './localStorage';
@@ -17,9 +19,6 @@ type HandleOnChatIconClickProps = {
   isModalOpen: boolean;
   setIsModalOpen: (isModalOpen: boolean) => void;
 };
-
-
-
 
 type GetChatsType = {
   pgpPrivateKey?: string;
@@ -42,16 +41,12 @@ export const createUserIfNecessary = async (
   options: AccountEnvOptionsType
 ): Promise<IConnectedUser | undefined> => {
   const { user } = options || {};
-  let connectedUser:IUser;
-  if(Object.keys(user || {}).length){
+  let connectedUser: IUser;
+  if (Object.keys(user || {}).length) {
     connectedUser = await user.info();
-    return { ...connectedUser, 
-      privateKey: connectedUser!.encryptedPrivateKey,
-     };
+    return { ...connectedUser, privateKey: connectedUser!.encryptedPrivateKey };
   }
   return;
-
- 
 };
 
 type GetChatsResponseType = {
@@ -72,16 +67,12 @@ export const getChats = async (
     limit = 40,
     env = Constants.ENV.PROD,
   } = options || {};
-  
 
-  const chats = await user?.chat.history(
-    supportAddress
-   );
+  const chats = await user?.chat.history(supportAddress);
 
-    const lastThreadHash = chats[chats.length - 1]?.link;
-    const lastListPresent = chats.length > 0 ? true : false;
-    return { chatsResponse: chats, lastThreadHash, lastListPresent };
-  
+  const lastThreadHash = chats[chats.length - 1]?.link;
+  const lastListPresent = chats.length > 0 ? true : false;
+  return { chatsResponse: chats, lastThreadHash, lastListPresent };
 };
 
 type DecrypteChatType = {
@@ -89,7 +80,6 @@ type DecrypteChatType = {
   connectedUser: IConnectedUser;
   env: ENV;
 };
-
 
 export const copyToClipboard = (address: string): void => {
   if (navigator && navigator.clipboard) {
@@ -109,7 +99,8 @@ export const getDefaultFeedObject = ({
   groupInformation,
 }: {
   user?: IUser;
-  groupInformation?: IGroup;}): IFeeds => {
+  groupInformation?: IGroup;
+}): IFeeds => {
   const feed = {
     msg: {
       messageContent: '',
@@ -198,23 +189,30 @@ export const getChatId = ({
 };
 
 export const appendUniqueMessages = (
-  parentList: IMessageIPFSWithCID[],
-  newlist: IMessageIPFSWithCID[],
+  parentList: any[],
+  newlist: any[],
   infront: boolean
 ) => {
   const uniqueMap: { [timestamp: number]: IMessageIPFSWithCID } = {};
-  const appendedArray = infront
-    ? [...newlist, ...parentList]
-    : [...parentList, ...newlist];
-  const newMessageList = Object.values(
-    appendedArray.reduce((uniqueMap, message) => {
-      if (message.timestamp && !uniqueMap[message.timestamp]) {
-        uniqueMap[message.timestamp] = message;
-      }
-      return uniqueMap;
-    }, uniqueMap)
-  );
-  return newMessageList;
+  const filteredList = parentList.filter( el => {
+    return newlist.some( f => {
+      return f.cid !== el.cid;
+    });
+  });
+  let appendedArray = infront
+    ? [...newlist, ...filteredList]
+    : [...filteredList, ...newlist];
+   
+  // appendedArray = appendedArray.filter(
+  //   (item, index, self) => index === self.findIndex((t) => t.cid === item.reference)
+  // );
+  // const newMessageList = Object.values(
+  //   appendedArray.reduce((uniqueMap, message) => {
+  //     if (message.timestamp && !uniqueMap[message.timestamp]) {
+  //       uniqueMap[message.timestamp] = message;
+  //     }
+  //     return uniqueMap;
+  //   }, uniqueMap)
+  // );
+  return appendedArray;
 };
-
-

@@ -231,7 +231,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     )
       transformGroupDetails(groupUpdateStream);
   }, [groupUpdateStream]);
-
+console.debug(chatStream)
  
   const transformSteamMessage = (item: any) => {
     if (!user) {
@@ -455,7 +455,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
                   messages?.map((chat: IMessageIPFS, index: number) => {
                     const dateNum = moment(chat.timestamp).format('L');
                     const position =
-                      pCAIP10ToWallet(chat.fromDID).toLowerCase() !==
+                      pCAIP10ToWallet(chat.fromDID)?.toLowerCase() !==
                       account?.toLowerCase()
                         ? 0
                         : 1;
