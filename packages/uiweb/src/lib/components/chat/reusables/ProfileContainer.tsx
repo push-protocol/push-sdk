@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { copyToClipboard } from '../../../helpers';
+import { copyToClipboard, pCAIP10ToWallet } from '../../../helpers';
 import { CopySvg2 } from '../../../icons/CopySvg2';
 import { Section, Span, Image, Div, Tooltip } from '../../reusables';
 import { IChatTheme } from '../theme';
@@ -74,7 +74,7 @@ export const ProfileContainer = ({
               setCopyText('');
             }}
             onClick={() => {
-              copyToClipboard(member?.completeWallet || '');
+              copyToClipboard(pCAIP10ToWallet(member?.completeWallet || ''));
               setCopyText('copied');
             }}
           >
