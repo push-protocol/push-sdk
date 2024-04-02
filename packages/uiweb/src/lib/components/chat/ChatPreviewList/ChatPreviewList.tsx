@@ -116,26 +116,40 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
   //event listeners
   usePushChatStream();
 
-  useEffect(()=>{
+  useEffect(() => {
     window.addEventListener('chatStream', (e: any) => setChatStream(e.detail));
-    window.addEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
-    window.addEventListener('chatRequestStream', (e: any) => setChatRequestStream(e.detail));
-    window.addEventListener('groupCreateStream', (e: any) => setGroupCreateStream(e.detail));
+    window.addEventListener('chatAcceptStream', (e: any) =>
+      setChatAcceptStream(e.detail)
+    );
+    window.addEventListener('chatRequestStream', (e: any) =>
+      setChatRequestStream(e.detail)
+    );
+    window.addEventListener('groupCreateStream', (e: any) =>
+      setGroupCreateStream(e.detail)
+    );
     return () => {
-      window.removeEventListener('chatStream', (e: any) => setChatStream(e.detail));
-      window.removeEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
-      window.removeEventListener('chatRequestStream', (e: any) => setChatRequestStream(e.detail));
-      window.removeEventListener('groupCreateStream', (e: any) => setGroupCreateStream(e.detail));
-
+      window.removeEventListener('chatStream', (e: any) =>
+        setChatStream(e.detail)
+      );
+      window.removeEventListener('chatAcceptStream', (e: any) =>
+        setChatAcceptStream(e.detail)
+      );
+      window.removeEventListener('chatRequestStream', (e: any) =>
+        setChatRequestStream(e.detail)
+      );
+      window.removeEventListener('groupCreateStream', (e: any) =>
+        setGroupCreateStream(e.detail)
+      );
     };
-  },[])
- 
+  }, []);
+
   // Helper Functions
 
   // Add to chat items
-  const addChatItems: (items: IChatPreviewPayload[]) => void = (
-    items: IChatPreviewPayload[]
-  ) => {
+  const addChatItems: (
+    items: IChatPreviewPayload[],
+    incrementBadge?: boolean
+  ) => void = (items: IChatPreviewPayload[], incrementBadge?:boolean) => {
     const combinedItems: IChatPreviewPayload[] = [
       ...items,
       ...chatPreviewList.items,
@@ -148,19 +162,21 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       ...prev,
       items: [...combinedItems],
     }));
-
-    // increment badge for each item
-    items.forEach((item) => {
-      // only increment if not selected
-      if (chatPreviewListMeta.selectedChatId !== item.chatId) {
-        setBadge(
-          item.chatId!,
-          chatPreviewListMeta.badges[item.chatId!]
-            ? chatPreviewListMeta.badges[item.chatId!] + 1
-            : 1
-        );
-      }
-    });
+    if (incrementBadge) {
+      // increment badge for each item
+      items.forEach((item) => {
+        // only increment if not selected
+        if (chatPreviewListMeta.selectedChatId !== item.chatId) {
+        
+          setBadge(
+            item.chatId!,
+            chatPreviewListMeta.badges[item.chatId!]
+              ? chatPreviewListMeta.badges[item.chatId!] + 1
+              : 1
+          );
+        }
+      });
+    }
   };
 
   // Remove from chat items
@@ -181,21 +197,22 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
   };
 
   //Transform group creation stream
-  const transformGroupCreationStream: (item: any) => void = async (item: any) => {
+  const transformGroupCreationStream: (item: any) => void = async (
+    item: any
+  ) => {
     const transformedItem: IChatPreviewPayload = {
-      chatId:item?.chatId,
+      chatId: item?.chatId,
       chatPic: item?.meta.image,
       chatParticipant: item?.meta.name,
       chatGroup: true,
-      chatTimestamp:  undefined,
+      chatTimestamp: undefined,
       chatMsg: {
         messageType: '',
         messageContent: '',
-      }
-    }
-    addChatItems([transformedItem]);
-  }
-
+      },
+    };
+    addChatItems([transformedItem],false);
+  };
 
   // Transform stream message
   const transformStreamMessage: (item: any) => void = async (item: any) => {
@@ -231,7 +248,8 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       }
     }
     // modify the chat items
-    addChatItems([modItem]);
+    console.debug('calling twice')
+    addChatItems([modItem],true);
   };
 
   // Transform accepted request
@@ -619,17 +637,16 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       groupCreateStream.constructor === Object
     ) {
       if (
-        (options.listType === CONSTANTS.CHAT.LIST_TYPE.CHATS) &&
-        (groupCreateStream.origin === 'self')
+        options.listType === CONSTANTS.CHAT.LIST_TYPE.CHATS &&
+        groupCreateStream.origin === 'self'
       ) {
         transformGroupCreationStream(groupCreateStream);
       } else if (
-        (options.listType === CONSTANTS.CHAT.LIST_TYPE.REQUESTS) &&
-        (groupCreateStream.origin === 'other')
+        options.listType === CONSTANTS.CHAT.LIST_TYPE.REQUESTS &&
+        groupCreateStream.origin === 'other'
       ) {
         transformGroupCreationStream(groupCreateStream);
       }
-    
     }
   }, [groupCreateStream]);
 
@@ -639,13 +656,13 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       chatRequestStream.constructor === Object
     ) {
       if (
-        (options.listType === CONSTANTS.CHAT.LIST_TYPE.CHATS) &&
-        (chatRequestStream.origin === 'self')
+        options.listType === CONSTANTS.CHAT.LIST_TYPE.CHATS &&
+        chatRequestStream.origin === 'self'
       ) {
         transformStreamMessage(chatRequestStream);
       } else if (
-        (options.listType === CONSTANTS.CHAT.LIST_TYPE.REQUESTS) &&
-        (chatRequestStream.origin === 'other')
+        options.listType === CONSTANTS.CHAT.LIST_TYPE.REQUESTS &&
+        chatRequestStream.origin === 'other'
       ) {
         transformStreamMessage(chatRequestStream);
       }
