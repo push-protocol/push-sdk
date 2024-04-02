@@ -2,6 +2,17 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.7.3](https://github.com/push-protocol/push-sdk/compare/restapi-1.7.2...restapi-1.7.3) (2024-04-02)
+
+
+### Bug Fixes
+
+* fix build ([#1176](https://github.com/push-protocol/push-sdk/issues/1176)) ([fefdf91](https://github.com/push-protocol/push-sdk/commit/fefdf912df6110cebbbaf8fbd47989ba727679b4))
+* fix channel notifications response ([#1166](https://github.com/push-protocol/push-sdk/issues/1166)) ([c01798a](https://github.com/push-protocol/push-sdk/commit/c01798af23f4f8cc2215fa9a529145d0c3bf349d))
+* **migrate goerli to sepolia:** migrate goerli to sepolia ([#1149](https://github.com/push-protocol/push-sdk/issues/1149)) ([490b104](https://github.com/push-protocol/push-sdk/commit/490b104902b9a509c6a8c68d5c5f33446e91e113))
+
+
+
 ## [1.7.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.7.1...restapi-1.7.2) (2024-03-13)
 
 
