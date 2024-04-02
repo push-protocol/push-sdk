@@ -1,0 +1,156 @@
+diff --git a/node_modules/@pushprotocol/restapi/src/lib/chat/helpers/pgp.js b/node_modules/@pushprotocol/restapi/src/lib/chat/helpers/pgp.js
+index 161c76b..beca4e6 100644
+--- a/node_modules/@pushprotocol/restapi/src/lib/chat/helpers/pgp.js
++++ b/node_modules/@pushprotocol/restapi/src/lib/chat/helpers/pgp.js
+@@ -2,135 +2,45 @@
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.pgpDecrypt = exports.verifySignature = exports.sign = exports.pgpEncrypt = exports.generateKeyPair = exports.PGPHelper = void 0;
+ const tslib_1 = require("tslib");
+-const openpgp = require("openpgp");
++const openpgp = require("react-native-fast-openpgp");
+ const PGPHelper = {
+     generateKeyPair() {
+         return tslib_1.__awaiter(this, void 0, void 0, function* () {
+-            const keys = yield openpgp.generateKey({
+-                type: 'rsa',
+-                rsaBits: 2048,
+-                userIDs: [{ name: '', email: '' }]
+-            });
++            const keys = yield openpgp.default.generate({keyOptions: {rsaBits: 2048}});
+             return {
+                 privateKeyArmored: keys.privateKey,
+-                publicKeyArmored: keys.publicKey
++                publicKeyArmored: keys.publicKey,
+             };
+         });
+     },
+     sign({ message, signingKey }) {
+         return tslib_1.__awaiter(this, void 0, void 0, function* () {
+-            const messageObject = yield openpgp.createMessage({ text: message });
+-            const privateKey = yield openpgp.readPrivateKey({ armoredKey: signingKey });
+-            return yield openpgp.sign({ message: messageObject, signingKeys: privateKey, detached: true });
++            const signature = yield openpgp.default.sign(message, signingKey, '');
++            return signature.replace('\nVersion: openpgp-mobile', '');
+         });
+     },
+     pgpEncrypt({ plainText, keys }) {
+         return tslib_1.__awaiter(this, void 0, void 0, function* () {
+-            const pgpKeys = [];
+-            for (let i = 0; i < keys.length; i++) {
+-                pgpKeys.push(yield openpgp.readKey({ armoredKey: keys[i] }));
+-            }
+-            const message = yield openpgp.createMessage({ text: plainText });
+-            const encrypted = yield openpgp.encrypt({
+-                message: message,
+-                encryptionKeys: pgpKeys,
+-            });
+-            return encrypted;
++            return yield openpgp.default.encrypt(plainText, keys.join('\n'));
+         });
+     },
+     pgpDecrypt({ cipherText, toPrivateKeyArmored }) {
+         return tslib_1.__awaiter(this, void 0, void 0, function* () {
+-            const message = yield openpgp.readMessage({ armoredMessage: cipherText });
+-            const privateKey = yield openpgp.readPrivateKey({ armoredKey: toPrivateKeyArmored });
+-            const { data: decrypted } = yield openpgp.decrypt({
+-                message,
+-                decryptionKeys: privateKey
+-            });
+-            return decrypted;
++            return yield openpgp.default.decrypt(cipherText, toPrivateKeyArmored, '');
+         });
+     },
+     verifySignature({ messageContent, signatureArmored, publicKeyArmored, }) {
+         return tslib_1.__awaiter(this, void 0, void 0, function* () {
+-            const message = yield openpgp.createMessage({ text: messageContent });
+-            const signature = yield openpgp.readSignature({
+-                armoredSignature: signatureArmored
+-            });
+-            const publicKey = yield openpgp.readKey({ armoredKey: publicKeyArmored });
+-            const verificationResult = yield openpgp.verify({
+-                message,
+-                signature,
+-                verificationKeys: publicKey
+-            });
+-            const { verified } = verificationResult.signatures[0];
+-            try {
+-                yield verified;
+-            }
+-            catch (e) {
+-                throw new Error('Signature could not be verified: ' + e);
+-            }
++            const verified = yield openpgp.default.verify(signatureArmored, messageContent, publicKeyArmored);
++            if(!verified) throw new Error('Signature could not be verified');
+         });
+     }
+ };
+ exports.PGPHelper = PGPHelper;
+-const generateKeyPair = () => tslib_1.__awaiter(void 0, void 0, void 0, function* () {
+-    const keys = yield openpgp.generateKey({
+-        type: 'rsa',
+-        rsaBits: 2048,
+-        userIDs: [{ name: '', email: '' }]
+-    });
+-    return {
+-        privateKeyArmored: keys.privateKey,
+-        publicKeyArmored: keys.publicKey
+-    };
+-});
+-exports.generateKeyPair = generateKeyPair;
+-const pgpEncrypt = ({ plainText, keys, }) => tslib_1.__awaiter(void 0, void 0, void 0, function* () {
+-    const pgpKeys = [];
+-    for (let i = 0; i < keys.length; i++) {
+-        pgpKeys.push(yield openpgp.readKey({ armoredKey: keys[i] }));
+-    }
+-    const message = yield openpgp.createMessage({ text: plainText });
+-    const encrypted = yield openpgp.encrypt({
+-        message: message,
+-        encryptionKeys: pgpKeys
+-    });
+-    return encrypted;
+-});
+-exports.pgpEncrypt = pgpEncrypt;
+-const sign = ({ message, signingKey }) => tslib_1.__awaiter(void 0, void 0, void 0, function* () {
+-    const messageObject = yield openpgp.createMessage({ text: message });
+-    const privateKey = yield openpgp.readPrivateKey({ armoredKey: signingKey });
+-    return yield openpgp.sign({ message: messageObject, signingKeys: privateKey, detached: true });
+-});
+-exports.sign = sign;
+-const verifySignature = ({ messageContent, signatureArmored, publicKeyArmored, }) => tslib_1.__awaiter(void 0, void 0, void 0, function* () {
+-    const message = yield openpgp.createMessage({ text: messageContent });
+-    const signature = yield openpgp.readSignature({
+-        armoredSignature: signatureArmored
+-    });
+-    const publicKey = yield openpgp.readKey({ armoredKey: publicKeyArmored });
+-    const verificationResult = yield openpgp.verify({
+-        message,
+-        signature,
+-        verificationKeys: publicKey
+-    });
+-    const { verified } = verificationResult.signatures[0];
+-    try {
+-        yield verified;
+-    }
+-    catch (e) {
+-        throw new Error('Signature could not be verified: ' + e);
+-    }
+-});
+-exports.verifySignature = verifySignature;
+-const pgpDecrypt = ({ cipherText, toPrivateKeyArmored }) => tslib_1.__awaiter(void 0, void 0, void 0, function* () {
+-    const message = yield openpgp.readMessage({ armoredMessage: cipherText });
+-    const privateKey = yield openpgp.readPrivateKey({ armoredKey: toPrivateKeyArmored });
+-    const { data: decrypted } = yield openpgp.decrypt({
+-        message,
+-        decryptionKeys: privateKey
+-    });
+-    return decrypted;
+-});
+-exports.pgpDecrypt = pgpDecrypt;
++
++exports.generateKeyPair = PGPHelper.generateKeyPair;
++exports.pgpEncrypt = PGPHelper.pgpEncrypt;
++exports.sign = PGPHelper.sign;
++exports.verifySignature = PGPHelper.verifySignature;
++exports.pgpDecrypt = PGPHelper.pgpDecrypt;
+ //# sourceMappingURL=pgp.js.map
+\ No newline at end of file
