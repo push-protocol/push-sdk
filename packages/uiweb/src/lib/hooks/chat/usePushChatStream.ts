@@ -8,8 +8,6 @@ export const usePushChatStream = () => {
   
   const {
     account,
-    pushChatStream,
-    setPushChatStream,
     setIsPushChatStreamConnected,
     env,
     user,
@@ -49,9 +47,7 @@ export const usePushChatStream = () => {
     //Listen for chat messages, your message, request, accept, rejected,
     stream?.on(CONSTANTS.STREAM.CHAT, (message: any) => {
 
-      // if(stream?.decryptedPgpPvtKey == pgpPrivateKey){
 
-console.debug(message,'from stream')
       if (message.event === 'chat.request') {
         dispatchEvent(
           new CustomEvent('chatRequestStream', { detail: message })
@@ -87,12 +83,10 @@ console.debug(message,'from stream')
         dispatchEvent(new CustomEvent('chatStream', { detail: message }));
         setChatStream(message);
       }
-    // }
     });
 
     // Listen for group info
     stream?.on(CONSTANTS.STREAM.CHAT_OPS, (chatops: any) => {
-      console.debug(chatops,'chatops')
       if (chatops.event === 'chat.group.update') {
         dispatchEvent(
           new CustomEvent('groupUpdateStream', { detail: chatops })
@@ -110,20 +104,9 @@ console.debug(message,'from stream')
   
   };
 
-  //   useEffect(()=>{
+ 
 
-  // // return () => {
-  // //   setChatStream({});
-  // // };
-  //   },[chatStream])
-
-  // useEffect(()=>{
-  //   console.debug('resetting chatStream')
-
-  //   return () => {
-  //     setChatStream(null);
-  //   };
-  //     },[])
+ 
 
   /**
    * Whenever the requisite params to create a connection object change
@@ -138,6 +121,7 @@ console.debug(message,'from stream')
     const initUser = async () => {
       let stream;
       if (user.stream) {
+        if(!user?.readmode()){
         stream = await user.stream?.reinit(
           [
             CONSTANTS.STREAM.CHAT,
@@ -152,14 +136,11 @@ console.debug(message,'from stream')
             raw: true,
           }
         );
+        
         await attachListenersAndConnect(user?.stream);
+        }
       }
-      // if(!user?.readmode()){
-      //   console.debug(user,'user in write mode')
-      // if(user?.stream)
-      // }
-
-
+  
       // create a new connection object
       if (!user.stream) {
         stream = await user?.initStream(
@@ -179,6 +160,7 @@ console.debug(message,'from stream')
         console.debug(stream);
 
         // attach listeneres
+        if(!user?.readmode())
         await attachListenersAndConnect(stream);
 
       }

@@ -25,7 +25,7 @@ const ChatViewListTest = () => {
       {/* <Loader show={isLoading} /> */}
   
       <ChatViewListCard>
-        <ChatViewList chatId='0x99A08ac6254dcf7ccc37CeC662aeba8eFA666666' limit={10} />
+        <ChatViewList chatId='0x7a76FD2749d12f66F9e4d9A3a80bdeD5291425cF' limit={10} />
 
       </ChatViewListCard>
       {/* <MessageInput chatId='196f58cbe07c7eb5716d939e0a3be1f15b22b2334d5179c601566600016860ac' isConnected={true} /> */}

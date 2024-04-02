@@ -134,7 +134,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       );
     };
   }, []);
-
   const theme = useContext(ThemeContext);
   const dates = new Set();
   const { env } = useChatData();
@@ -231,7 +230,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     )
       transformGroupDetails(groupUpdateStream);
   }, [groupUpdateStream]);
-console.debug(chatStream)
  
   const transformSteamMessage = (item: any) => {
     if (!user) {

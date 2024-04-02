@@ -234,21 +234,21 @@ export const generateRandomNonce: () => string = () => {
   ) => IMessageIPFSWithCID = (item: any) =>{
 
     const transformedItem :IMessageIPFSWithCID = {
-      fromCAIP10: item?.raw?.fromCAIP10,
-      toCAIP10: item?.raw?.toCAIP10,
-      fromDID: item?.raw?.fromDID,
-      toDID: item?.raw?.toDID,
+      fromCAIP10: item?.from,
+      toCAIP10: item?.to[0],
+      fromDID: item?.from,
+      toDID: item?.to[0],
       messageType: item?.message?.type,
       messageObj: {content:item?.message?.content},
-      sigType: item?.raw?.sigType,
-      link:  item?.raw?.previousReference,
+      sigType: item?.raw?.sigType || '',
+      link:  `previous:v2${item?.reference}`,
       timestamp: parseInt(item?.timestamp),
-      encType: item?.raw?.encType,
-      encryptedSecret: item?.raw?.encryptedSecret,
+      encType: item?.raw?.encType || '',
+      encryptedSecret: item?.raw?.encryptedSecret || '',
       cid: item?.reference,
       messageContent:  item?.message?.content,
-      signature: item?.raw?.signature,
-      verificationProof:  item?.raw?.verificationProof,
+      signature: item?.raw?.signature || '',
+      verificationProof:  item?.raw?.verificationProof || '',
     }
     return transformedItem;
 

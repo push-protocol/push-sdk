@@ -632,7 +632,6 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     
     }
   }, [groupCreateStream]);
-  console.debug(chatRequestStream,chatStream,groupCreateStream,options.listType,'chatRequestStream');
 
   useEffect(() => {
     if (
