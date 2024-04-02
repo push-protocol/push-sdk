@@ -213,8 +213,8 @@ export const generateRandomNonce: () => string = () => {
       chatGroup: item.meta.group,
       chatTimestamp: Number(item.timestamp),
       chatMsg: {
-        messageType: item.message.type,
-        messageContent: item.message.content,
+        messageType: item?.message?.type ,
+        messageContent: item?.message?.content,
       },
     };
 

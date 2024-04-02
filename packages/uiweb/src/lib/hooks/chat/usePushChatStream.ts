@@ -51,7 +51,7 @@ export const usePushChatStream = () => {
 
       // if(stream?.decryptedPgpPvtKey == pgpPrivateKey){
 
-
+console.debug(message,'from stream')
       if (message.event === 'chat.request') {
         dispatchEvent(
           new CustomEvent('chatRequestStream', { detail: message })
@@ -92,6 +92,7 @@ export const usePushChatStream = () => {
 
     // Listen for group info
     stream?.on(CONSTANTS.STREAM.CHAT_OPS, (chatops: any) => {
+      console.debug(chatops,'chatops')
       if (chatops.event === 'chat.group.update') {
         dispatchEvent(
           new CustomEvent('groupUpdateStream', { detail: chatops })

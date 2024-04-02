@@ -63,16 +63,22 @@ export const getChats = async (
     pgpPrivateKey,
     supportAddress,
     user,
-    threadHash = null,
-    limit = 40,
+    threadHash,
+    limit = 10,
     env = Constants.ENV.PROD,
   } = options || {};
 
-  const chats = await user?.chat.history(supportAddress);
+  const chats = await user?.chat.history(
+    supportAddress, {
+      limit:limit,
+      reference :threadHash
+    }
+   );
 
-  const lastThreadHash = chats[chats.length - 1]?.link;
-  const lastListPresent = chats.length > 0 ? true : false;
-  return { chatsResponse: chats, lastThreadHash, lastListPresent };
+    const lastThreadHash = chats[chats.length - 1]?.link;
+    const lastListPresent = chats.length < limit ? false : true;
+    return { chatsResponse: chats, lastThreadHash, lastListPresent };
+  
 };
 
 type DecrypteChatType = {
