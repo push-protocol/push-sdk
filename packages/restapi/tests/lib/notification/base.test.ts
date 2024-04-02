@@ -11,16 +11,8 @@ import {
 import { abi } from './tokenABI';
 import { goerli, polygonMumbai } from 'viem/chains';
 import { ethers } from 'ethers';
+import { ENV } from '../../../src/lib/constants';
 
-enum ENV {
-  PROD = 'prod',
-  STAGING = 'staging',
-  DEV = 'dev',
-  /**
-   * **This is for local development only**
-   */
-  LOCAL = 'local',
-}
 describe('test', () => {
   // const signer = createWalletClient({
   //   account: privateKeyToAccount(`0x${process.env['WALLET_PRIVATE_KEY']}`),

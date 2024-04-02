@@ -1,6 +1,7 @@
 import * as PUSH_PAYLOAD from '../../../src/lib/payloads';
 import { expect } from 'chai';
 import { ethers } from 'ethers';
+import { ENV } from '../../../src/lib/constants';
 
 describe('PUSH_PAYLOAD.sendNotification functionality', () => {
   let signer1: any;
@@ -33,17 +34,13 @@ describe('PUSH_PAYLOAD.sendNotification functionality', () => {
       SUBSET = 4,
     }
 
-    enum ENV {
-      PROD = 'prod',
-      STAGING = 'staging',
-      DEV = 'dev',
-      /**
-       * **This is for local development only**
-       */
-      LOCAL = 'local',
-    }
+    // accessing env dynamically using process.env
+    type EnvStrings = keyof typeof ENV;
+    const envMode = process.env.ENV as EnvStrings;
+    const _env = ENV[envMode];
+
     const res = await PUSH_PAYLOAD.sendNotification({
-      env: ENV.DEV,
+      env: _env,
       signer: signer1,
       type: NOTIFICATION_TYPE.BROADCAST,
       identityType: IDENTITY_TYPE.DIRECT_PAYLOAD,

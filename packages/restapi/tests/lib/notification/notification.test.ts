@@ -4,6 +4,8 @@ import { ethers } from 'ethers';
 import { createWalletClient, http } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { sepolia } from 'viem/chains';
+import { ENV } from '../../../src/lib/constants';
+
 // import tokenABI from './tokenABI';
 describe('PushAPI.notification functionality', () => {
   let userAlice: PushAPI;
@@ -33,24 +35,21 @@ describe('PushAPI.notification functionality', () => {
       chain: sepolia,
       transport: http(),
     });
-    enum ENV {
-      PROD = 'prod',
-      STAGING = 'staging',
-      DEV = 'dev',
-      /**
-       * **This is for local development only**
-       */
-      LOCAL = 'local',
-    }
+
+    // accessing env dynamically using process.env
+    type EnvStrings = keyof typeof ENV;
+    const envMode = process.env.ENV as EnvStrings;
+    const _env = ENV[envMode];
+
     // initialisation with signer and provider
-    userKate = await PushAPI.initialize(signer2, { env: ENV.DEV });
+    userKate = await PushAPI.initialize(signer2, { env: _env });
     // initialisation with signer
-    userAlice = await PushAPI.initialize(signer1, { env: ENV.DEV });
+    userAlice = await PushAPI.initialize(signer1, { env: _env });
     // TODO: remove signer1 after signer becomes optional
     // initialisation without signer
-    userBob = await PushAPI.initialize(signer1, { env: ENV.DEV });
+    userBob = await PushAPI.initialize(signer1, { env: _env });
     // initialisation with viem
-    userViem = await PushAPI.initialize(viemSigner, { env: ENV.DEV });
+    userViem = await PushAPI.initialize(viemSigner, { env: _env });
   });
 
   describe('PushAPI.notification functionality', () => {

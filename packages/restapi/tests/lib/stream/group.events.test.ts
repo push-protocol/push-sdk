@@ -4,7 +4,12 @@ import CONSTANTS from '../../../src/lib/constantsV2';
 import { PushStream } from '../../../src/lib/pushstream/PushStream';
 
 describe('Push Chat Group Events functionality', () => {
-  const env = CONSTANTS.ENV.DEV;
+
+  // accessing env dynamically using process.env
+  type EnvStrings = keyof typeof CONSTANTS.ENV;
+  const envMode = process.env.ENV as EnvStrings;
+  const _env = CONSTANTS.ENV[envMode];
+
   let userAlice: PushAPI;
   let userBob: PushAPI;
   let userbobAddress: string;
@@ -16,14 +21,14 @@ describe('Push Chat Group Events functionality', () => {
     const WALLET = ethers.Wallet.createRandom();
     const signer = new ethers.Wallet(WALLET.privateKey);
     userAlice = await PushAPI.initialize(signer, {
-      env: CONSTANTS.ENV.DEV,
+      env: _env,
     });
 
     const WALLET2 = ethers.Wallet.createRandom();
     userbobAddress = WALLET2.address;
     const signer2 = new ethers.Wallet(WALLET2.privateKey);
     userBob = await PushAPI.initialize(signer2, {
-      env: CONSTANTS.ENV.DEV,
+      env: _env,
     });
 
     const WALLET3 = ethers.Wallet.createRandom();

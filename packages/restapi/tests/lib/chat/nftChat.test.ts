@@ -9,7 +9,11 @@ import {
 } from 'unique-names-generator';
 import { PushStream } from '../../../src/lib/pushstream/PushStream';
 
-const env = CONSTANTS.ENV.DEV;
+// accessing env dynamically using process.env
+type EnvStrings = keyof typeof CONSTANTS.ENV;
+const envMode = process.env.ENV as EnvStrings;
+const env = CONSTANTS.ENV[envMode];
+
 const showAPIResponse = false;
 
 describe('PushAPI.chat functionality For NFT Profile', () => {

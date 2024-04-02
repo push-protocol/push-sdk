@@ -9,7 +9,11 @@ import CONSTANTS from '../../../src/lib/constantsV2';
 chai.use(chaiAsPromised);
 
 describe('Create Push Profile', () => {
-  const _env = CONSTANTS.ENV.DEV;
+  // accessing env dynamically using process.env
+  type EnvStrings = keyof typeof CONSTANTS.ENV;
+  const envMode = process.env.ENV as EnvStrings;
+  const _env = CONSTANTS.ENV[envMode];
+
   let provider = ethers.getDefaultProvider(5);
   let _signer: any;
   let walletAddress: string;

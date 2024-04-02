@@ -9,6 +9,11 @@ describe('PUSH_CHANNEL.subscribeV2 functionality', () => {
   let signer2: any;
   let account2: string;
 
+  // accessing env dynamically using process.env
+  type EnvStrings = keyof typeof CONSTANTS.ENV;
+  const envMode = process.env.ENV as EnvStrings;
+  const _env = CONSTANTS.ENV[envMode];
+
   beforeEach(async () => {
     const WALLET1 = ethers.Wallet.createRandom();
     signer1 = new ethers.Wallet(WALLET1.privateKey);
@@ -24,7 +29,7 @@ describe('PUSH_CHANNEL.subscribeV2 functionality', () => {
       signer: signer1,
       channelAddress: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
       userAddress: `eip155:11155111:${account1}`,
-      env: CONSTANTS.ENV.STAGING,
+      env: _env,
     });
     expect(res.status).to.be.equal(204);
   });
@@ -34,7 +39,7 @@ describe('PUSH_CHANNEL.subscribeV2 functionality', () => {
       signer: signer1,
       channelAddress: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
       userAddress: `eip155:11155111:${account1}`,
-      env: CONSTANTS.ENV.STAGING,
+      env: _env,
     });
     // console.log(res)
     expect(res.status).to.be.equal(204);

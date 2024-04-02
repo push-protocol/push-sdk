@@ -66,7 +66,6 @@ describe('PushAPI.initialize functionality', () => {
     for (let i = 0; i < progressInfo.length; i++) {
       expect(progressInfo[i].progressId).to.deep.equal(expectedHooks[i]);
     }
-    console.log(process.env['NFT_HOLDER_WALLET_PRIVATE_KEY_1'])
   });
   it('Should upgrade user on initialize', async () => {
     // Create V1 User
