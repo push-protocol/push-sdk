@@ -25,6 +25,8 @@ import {
   getPfp,
   pCAIP10ToWallet,
   shortenText,
+  sign,
+  toSerialisedHexString,
 } from '../../../helpers';
 import {
   extractWebLink,
@@ -35,6 +37,10 @@ import { Button, TextInput } from '../reusables';
 import { MdError, MdOpenInNew } from 'react-icons/md';
 import { FaBell, FaLink, FaRegThumbsUp } from 'react-icons/fa';
 import { BsLightning } from 'react-icons/bs';
+import {
+  ChatMainStateContext,
+  ChatMainStateContextType,
+} from '../../../context/chatAndNotification/chat/chatMainStateContext';
 
 const SenderMessageAddress = ({ chat }: { chat: IMessagePayload }) => {
   const { account } = useContext(ChatDataContext);
@@ -121,9 +127,19 @@ const MessageWrapper = ({
     </Section>
   );
 };
-const FrameRenderer = ({ url, account }: { url: string; account: string }) => {
-  const { env, user } = useChatData();
+const FrameRenderer = ({
+  url,
+  account,
+  messageId,
+}: {
+  url: string;
+  account: string;
+  messageId: string;
+}) => {
+  const { env, user, pgpPrivateKey } = useChatData();
   const { chainId, switchChain, provider } = useAccount({ env });
+  const { selectedChatId } =
+    useContext<ChatMainStateContextType>(ChatMainStateContext);
   const frameRenderer = useToast();
   const proxyServer = 'https://cors-m0l8.onrender.com';
   const [metaTags, setMetaTags] = useState<FrameDetails>({
@@ -338,6 +354,25 @@ const FrameRenderer = ({ url, account }: { url: string; account: string }) => {
     if (button.action === 'mint') return;
     let hash;
 
+    const serializedProtoMessage = await toSerialisedHexString({
+      url: url,
+      unixTimestamp: Date.now(),
+      buttonIndex: Number(button.index),
+      inputText: inputText ?? 'undefined',
+      state: metaTags.state ?? 'undefined',
+      transactionId: hash ?? 'undefined',
+      address: account,
+      messageId: messageId,
+      chatId: window.location.href.split('/').pop() ?? 'null',
+      clientProtocol: 'push',
+    });
+    const signedMessage = await sign({
+      message: serializedProtoMessage,
+      signingKey: pgpPrivateKey!,
+    });
+
+    console.log(signedMessage);
+
     // If the button action is post_redirect or link, opens the link in a new tab
     if (button.action === 'post_redirect' || button.action === 'link') {
       window.open(button.target!, '_blank');
@@ -365,12 +400,19 @@ const FrameRenderer = ({ url, account }: { url: string; account: string }) => {
         body: JSON.stringify({
           clientProtocol: 'push',
           untrustedData: {
-            url: window.location.hostname,
+            url: url,
             unixTimestamp: Date.now(),
             buttonIndex: Number(button.index),
-            inputText: inputText,
-            state: metaTags.state,
+            inputText: inputText ?? 'undefined',
+            state: metaTags.state ?? 'undefined',
+            transactionId: hash ?? 'undefined',
             address: account,
+            messageId: messageId,
+            chatId: selectedChatId ?? 'null',
+          },
+          trustedData: {
+            messageBytes: serializedProtoMessage,
+            pgpSignature: signedMessage,
           },
         }),
       });
@@ -399,12 +441,19 @@ const FrameRenderer = ({ url, account }: { url: string; account: string }) => {
       body: JSON.stringify({
         clientProtocol: 'push',
         untrustedData: {
-          url: window.location.href,
+          url: url,
           unixTimestamp: Date.now(),
           buttonIndex: Number(button.index),
-          inputText: inputText,
-          state: metaTags.state,
-          transactionId: hash,
+          inputText: inputText ?? 'undefined',
+          state: metaTags.state ?? 'undefined',
+          transactionId: hash ?? 'undefined',
+          address: account,
+          messageId: messageId,
+          chatId: selectedChatId ?? 'null',
+        },
+        trustedData: {
+          messageBytes: serializedProtoMessage,
+          pgpSignature: signedMessage,
         },
       }),
     });
@@ -532,6 +581,7 @@ const MessageCard = ({
           <FrameRenderer
             url={extractWebLink(chat.messageContent) ?? ''}
             account={account}
+            messageId={chat.link ?? 'null'}
           />
         )}
       </Section>
