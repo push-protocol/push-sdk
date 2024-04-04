@@ -252,7 +252,6 @@ describe('PushAPI.notification functionality', () => {
 
     it('Signer with no account: Should return response', async () => {
       const response = await userAlice.notification.subscriptions();
-      console.log(response);
       expect(response).not.null;
     });
 
@@ -260,7 +259,6 @@ describe('PushAPI.notification functionality', () => {
       const response = await userAlice.notification.subscriptions({
         account: 'eip155:80001:0xD8634C39BBFd4033c0d3289C4515275102423681',
       });
-      // console.log(response);
       expect(response).not.null;
       expect(response.length).not.equal(0);
     });
@@ -287,7 +285,7 @@ describe('PushAPI.notification functionality', () => {
       const response = await userKate.notification.subscriptions({
         account: '0xD8634C39BBFd4033c0d3289C4515275102423681',
         raw: false,
-        channel: "0xD8634C39BBFd4033c0d3289C4515275102423681"
+        channel: '0xD8634C39BBFd4033c0d3289C4515275102423681',
       });
       // console.log(JSON.stringify(response));
       expect(response).not.null;

@@ -105,20 +105,7 @@ describe('PushAPI.delegate functionality', () => {
     });
 
     it('With viem signer: Should add delegate', async () => {
-      // create polygon mumbai provider
-      const provider = (ethers as any).providers
-        ? new (ethers as any).providers.JsonRpcProvider(
-            'https://rpc-mumbai.maticvigil.com/v1'
-          )
-        : new (ethers as any).JsonRpcProvider(
-            'https://rpc-mumbai.maticvigil.com/v1'
-          );
-      signer2 = new ethers.Wallet(
-        `0x${process.env['WALLET_PRIVATE_KEY']}`,
-        provider
-      );
-      userKate = await PushAPI.initialize(signer2);
-      const res = await userKate.channel.delegate.add(
+      const res = await viemUser.channel.delegate.add(
         '0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
       );
       console.log(res);
@@ -126,44 +113,8 @@ describe('PushAPI.delegate functionality', () => {
     }, 10000000);
 
     it('With viem signer: Should add delegate', async () => {
-      // create polygon mumbai provider
-      const provider = (ethers as any).providers
-        ? new (ethers as any).providers.JsonRpcProvider(
-            'https://rpc-mumbai.maticvigil.com/v1'
-          )
-        : new (ethers as any).JsonRpcProvider(
-            'https://rpc-mumbai.maticvigil.com/v1'
-          );
-
-      signer2 = new ethers.Wallet(
-        `0x${process.env['WALLET_PRIVATE_KEY']}`,
-        provider
-      );
-      userKate = await PushAPI.initialize(signer2);
-      const res = await userKate.channel.delegate.add(
-        '0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
-      );
-      console.log(res);
-      expect(res).not.null;
-    }, 10000000);
-
-    it('With viem signer: Should add delegate', async () => {
-      // create polygon mumbai provider
-      const provider = (ethers as any).providers
-        ? new (ethers as any).providers.JsonRpcProvider(
-            'https://rpc-mumbai.maticvigil.com/v1'
-          )
-        : new (ethers as any).JsonRpcProvider(
-            'https://rpc-mumbai.maticvigil.com/v1'
-          );
-
-      signer2 = new ethers.Wallet(
-        `0x${process.env['WALLET_PRIVATE_KEY']}`,
-        provider
-      );
-      userKate = await PushAPI.initialize(signer2);
-      const res = await userKate.channel.delegate.add(
-        'eip155:80001:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
+      const res = await viemUser.channel.delegate.add(
+        'eip155:11155111:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
       );
       // console.log(res);
       expect(res).not.null;
@@ -205,21 +156,8 @@ describe('PushAPI.delegate functionality', () => {
     });
 
     it('With viem signer: Should remove delegate', async () => {
-      // create polygon mumbai provider
-      const provider = (ethers as any).providers
-        ? new (ethers as any).providers.JsonRpcProvider(
-            'https://rpc-mumbai.maticvigil.com/v1'
-          )
-        : new (ethers as any).JsonRpcProvider(
-            'https://rpc-mumbai.maticvigil.com/v1'
-          );
-      signer2 = new ethers.Wallet(
-        `0x${process.env['WALLET_PRIVATE_KEY']}`,
-        provider
-      );
-      userKate = await PushAPI.initialize(signer2);
-      const res = await userKate.channel.delegate.remove(
-        'eip155:80001:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
+      const res = await viemUser.channel.delegate.remove(
+        'eip155:11155111:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
       );
       // console.log(res);
       expect(res).not.null;

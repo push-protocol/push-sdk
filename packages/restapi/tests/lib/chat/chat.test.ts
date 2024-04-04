@@ -48,6 +48,7 @@ describe('PushAPI.chat functionality', () => {
 
     const userBobReadOnly = await PushAPI.initialize({
       account: account,
+      env,
     });
 
     const response = await userBobReadOnly.chat.list('REQUESTS', {

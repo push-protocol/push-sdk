@@ -154,10 +154,9 @@ export interface FileMessageContent {
   type: string;
   size: number;
 }
-export type Messagetype = {
-  messages: IMessageIPFS[];
-  lastThreadHash: string | null;
-};
+
+// export type Messagetype = { messages: IMessageIPFS[]; lastThreadHash: string | null };
+
 
 export interface IGroup {
   members: {
