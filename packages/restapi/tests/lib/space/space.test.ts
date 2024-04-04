@@ -54,6 +54,9 @@ describe('PushAPI.space', () => {
         participants: { listeners: [], speakers: [] },
         schedule: {
           start: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
+          end: new Date(
+            new Date().getTime() + 24 * 60 * 60 * 1000 + 60 * 60 * 1000
+          ),
         },
         private: false,
       });
@@ -69,6 +72,9 @@ describe('PushAPI.space', () => {
         participants: { listeners: [], speakers: [] },
         schedule: {
           start: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
+          end: new Date(
+            new Date().getTime() + 24 * 60 * 60 * 1000 + 60 * 60 * 1000
+          ),
         },
         private: false,
       });
@@ -95,6 +101,9 @@ describe('PushAPI.space', () => {
         participants: { listeners: [], speakers: [] },
         schedule: {
           start: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
+          end: new Date(
+            new Date().getTime() + 24 * 60 * 60 * 1000 + 60 * 60 * 1000
+          ),
         },
         private: false,
       });
@@ -123,6 +132,9 @@ describe('PushAPI.space', () => {
         participants: { listeners: [], speakers: [] },
         schedule: {
           start: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
+          end: new Date(
+            new Date().getTime() + 24 * 60 * 60 * 1000 + 60 * 60 * 1000
+          ),
         },
         private: false,
       });
@@ -150,6 +162,9 @@ describe('PushAPI.space', () => {
         participants: { listeners: [], speakers: [] },
         schedule: {
           start: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
+          end: new Date(
+            new Date().getTime() + 24 * 60 * 60 * 1000 + 60 * 60 * 1000
+          ),
         },
         private: false,
       });
@@ -182,6 +197,9 @@ describe('PushAPI.space', () => {
         participants: { listeners: [], speakers: [] },
         schedule: {
           start: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
+          end: new Date(
+            new Date().getTime() + 24 * 60 * 60 * 1000 + 60 * 60 * 1000
+          ),
         },
         private: false,
       });
@@ -216,6 +234,9 @@ describe('PushAPI.space', () => {
         participants: { listeners: [], speakers: [] },
         schedule: {
           start: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
+          end: new Date(
+            new Date().getTime() + 24 * 60 * 60 * 1000 + 60 * 60 * 1000
+          ),
         },
         private: false,
       });
