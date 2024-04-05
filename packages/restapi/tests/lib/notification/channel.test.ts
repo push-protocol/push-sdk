@@ -1,7 +1,3 @@
-import * as path from 'path';
-import * as dotenv from 'dotenv';
-dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
-
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI';
 import { expect } from 'chai';
 import { ethers } from 'ethers';
@@ -15,6 +11,7 @@ import {
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import CONSTANTS from '../../../src/lib/constantsV2';
 import { inspect } from 'util';
+import { ENV } from '../../../src/lib/constants';
 
 describe('PushAPI.channel functionality', () => {
   let userAlice: PushAPI;
@@ -52,22 +49,19 @@ describe('PushAPI.channel functionality', () => {
       chain: sepolia,
       transport: http(),
     });
-    enum ENV {
-      PROD = 'prod',
-      STAGING = 'staging',
-      DEV = 'dev',
-      /**
-       * **This is for local development only**
-       */
-      LOCAL = 'local',
-    }
+
+    // accessing env dynamically using process.env
+    type EnvStrings = keyof typeof ENV;
+    const envMode = process.env.ENV as EnvStrings;
+    const _env = ENV[envMode];
+
     // initialisation with signer and provider
-    userKate = await PushAPI.initialize(signer2, { env: ENV.DEV });
+    userKate = await PushAPI.initialize(signer2, { env: _env });
     // initialisation with signer
-    userAlice = await PushAPI.initialize(signer2, { env: ENV.DEV });
+    userAlice = await PushAPI.initialize(signer2, { env: _env });
     // TODO: remove signer1 after chat makes signer as optional
     //initialisation without signer
-    userBob = await PushAPI.initialize(signer1, { env: ENV.DEV });
+    userBob = await PushAPI.initialize(signer1, { env: _env });
     // initialisation with a signer that has no channel
     userNoChannel = await PushAPI.initialize(noChannelSigner);
     // viem signer

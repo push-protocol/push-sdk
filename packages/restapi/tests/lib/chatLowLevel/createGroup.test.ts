@@ -9,7 +9,12 @@ import {
   colors,
   uniqueNamesGenerator,
 } from 'unique-names-generator';
-const _env = CONSTANTS.ENV.DEV;
+
+// accessing env dynamically using process.env
+type EnvStrings = keyof typeof CONSTANTS.ENV;
+const envMode = process.env.ENV as EnvStrings;
+const _env = CONSTANTS.ENV[envMode];
+
 let account: string;
 let signer: any;
 let groupName: string;
