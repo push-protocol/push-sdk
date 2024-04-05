@@ -17,7 +17,12 @@ import { ChatDataContext } from '../../../context';
 import { useAccount, useChatData } from '../../../hooks';
 import { ThemeContext } from '../theme/ThemeProvider';
 
-import { FileMessageContent, FrameDetails } from '../../../types';
+import {
+  FileMessageContent,
+  FrameButton,
+  FrameDetails,
+  IFrame,
+} from '../../../types';
 import { IMessagePayload, TwitterFeedReturnType } from '../exportedTypes';
 import { allowedNetworks, ENV, FILE_ICON } from '../../../config';
 import {
@@ -142,14 +147,9 @@ const FrameRenderer = ({
     useContext<ChatMainStateContextType>(ChatMainStateContext);
   const frameRenderer = useToast();
   const proxyServer = 'https://cors-m0l8.onrender.com';
-  const [metaTags, setMetaTags] = useState<FrameDetails>({
-    image: '',
-    siteURL: '',
-    postURL: '',
-    buttons: [],
-    input: { name: '', content: '' },
-  });
+  const [FrameData, setFrameData] = useState<IFrame>({} as IFrame);
   const [inputText, setInputText] = useState<undefined | string>(undefined);
+  const [imageLoadingError, setImageLoadingError] = useState<boolean>(false);
   // Fetches the metadata for the URL to fetch the Frame
 
   useEffect(() => {
@@ -165,9 +165,9 @@ const FrameRenderer = ({
 
         const htmlText = await response.text();
 
-        const frameDetails: FrameDetails = getFormattedMetadata(url, htmlText);
+        const frameDetails: IFrame = getFormattedMetadata(url, htmlText);
 
-        setMetaTags(frameDetails);
+        setFrameData(frameDetails);
       } catch (err) {
         console.error('Error fetching meta tags for rendering frame:', err);
       }
@@ -177,11 +177,8 @@ const FrameRenderer = ({
       fetchMetaTags(url);
     }
   }, [url]);
-  const getButtonIconContent = (
-    buttonAction: string,
-    buttonContent: string
-  ) => {
-    switch (buttonAction) {
+  const getButtonIconContent = (button: FrameButton) => {
+    switch (button.action) {
       case 'link':
         return (
           <span
@@ -191,9 +188,14 @@ const FrameRenderer = ({
               gap: '4px',
               alignItems: 'center',
               justifyContent: 'center',
+              padding: '0 4px',
+              width: '90%',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
             }}
           >
-            {buttonContent} <FaLink />
+            <FaLink /> {button.content}
           </span>
         );
 
@@ -206,9 +208,14 @@ const FrameRenderer = ({
               gap: '4px',
               alignItems: 'center',
               justifyContent: 'center',
+              padding: '0 4px',
+              width: '90%',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
             }}
           >
-            {buttonContent} <MdOpenInNew />
+            <MdOpenInNew /> {button.content}
           </span>
         );
       case 'tx':
@@ -220,13 +227,18 @@ const FrameRenderer = ({
               gap: '4px',
               alignItems: 'center',
               justifyContent: 'center',
+              padding: '0 4px',
+              width: '90%',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
             }}
           >
-            {buttonContent} <BsLightning />
+            <BsLightning /> {button.content}
           </span>
         );
 
-      case buttonAction.includes('subscribe') && 'subscribe':
+      case button?.action?.includes('subscribe') && 'subscribe':
         return (
           <span
             style={{
@@ -235,9 +247,14 @@ const FrameRenderer = ({
               gap: '4px',
               alignItems: 'center',
               justifyContent: 'center',
+              padding: '0 4px',
+              width: '90%',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
             }}
           >
-            {buttonContent} <FaBell />
+            <FaBell /> {button.content}
           </span>
         );
       default:
@@ -249,9 +266,14 @@ const FrameRenderer = ({
               gap: '4px',
               alignItems: 'center',
               justifyContent: 'center',
+              padding: '0 4px',
+              width: '100%',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
             }}
           >
-            {buttonContent}
+            {button.content}
           </span>
         );
     }
@@ -346,32 +368,36 @@ const FrameRenderer = ({
   };
 
   // Function to handle button click on a frame button
-  const onButtonClick = async (button: {
-    index: string;
-    action?: string;
-    target?: string;
-  }) => {
-    if (button.action === 'mint') return;
+  const onButtonClick = async (button: FrameButton) => {
+    if (!FrameData.isValidFrame) return;
+    if (button.action === 'mint') {
+      frameRenderer.showMessageToast({
+        toastTitle: 'Error',
+        toastMessage: 'Mint Action is not supported',
+        toastType: 'ERROR',
+        getToastIcon: (size: any) => <MdError size={size} color="red" />,
+      });
+      return;
+    }
     let hash;
 
     const serializedProtoMessage = await toSerialisedHexString({
       url: url,
-      unixTimestamp: Date.now(),
+      unixTimestamp: Date.now().toString(),
       buttonIndex: Number(button.index),
       inputText: inputText ?? 'undefined',
-      state: metaTags.state ?? 'undefined',
+      state: FrameData.frameDetails?.state ?? 'undefined',
       transactionId: hash ?? 'undefined',
       address: account,
       messageId: messageId,
       chatId: window.location.href.split('/').pop() ?? 'null',
       clientProtocol: 'push',
+      env: env,
     });
     const signedMessage = await sign({
       message: serializedProtoMessage,
       signingKey: pgpPrivateKey!,
     });
-
-    console.log(signedMessage);
 
     // If the button action is post_redirect or link, opens the link in a new tab
     if (button.action === 'post_redirect' || button.action === 'link') {
@@ -404,7 +430,7 @@ const FrameRenderer = ({
             unixTimestamp: Date.now(),
             buttonIndex: Number(button.index),
             inputText: inputText ?? 'undefined',
-            state: metaTags.state ?? 'undefined',
+            state: FrameData.frameDetails?.state ?? 'undefined',
             transactionId: hash ?? 'undefined',
             address: account,
             messageId: messageId,
@@ -425,12 +451,16 @@ const FrameRenderer = ({
     }
 
     // Makes a POST call to the Frame server after the action has been performed
-    const post_url =
-      button.action === 'tx'
-        ? metaTags.postURL
-        : button?.target!.startsWith('http')
-        ? button.target
-        : metaTags.postURL;
+
+    let post_url = button.post_url ?? FrameData.frameDetails?.postURL ?? url;
+
+    if (button.action === 'post') {
+      post_url =
+        button.target ??
+        button.post_url ??
+        FrameData.frameDetails?.postURL ??
+        url;
+    }
     if (!post_url) return;
     const response = await fetch(`${proxyServer}/${post_url}`, {
       method: 'POST',
@@ -445,7 +475,7 @@ const FrameRenderer = ({
           unixTimestamp: Date.now(),
           buttonIndex: Number(button.index),
           inputText: inputText ?? 'undefined',
-          state: metaTags.state ?? 'undefined',
+          state: FrameData.frameDetails?.state ?? 'undefined',
           transactionId: hash ?? 'undefined',
           address: account,
           messageId: messageId,
@@ -460,14 +490,14 @@ const FrameRenderer = ({
 
     const data = await response.text();
 
-    const frameDetails: FrameDetails = getFormattedMetadata(url, data);
+    const frameDetails: IFrame = getFormattedMetadata(url, data);
     setInputText('');
 
-    setMetaTags(frameDetails);
+    setFrameData(frameDetails);
   };
   return (
     <div>
-      {metaTags.image && (
+      {FrameData.isValidFrame && (
         <div
           style={{
             width: '32rem',
@@ -486,22 +516,43 @@ const FrameRenderer = ({
         >
           <a href={url} target="blank">
             <img
-              src={metaTags.image}
-              alt="frame"
+              src={
+                FrameData.frameDetails?.image ?? FrameData.frameDetails?.ogImage
+              }
+              alt="Frame Fallback"
               style={{
                 borderRadius: '12px 12px 0px 0px',
                 width: '100%',
               }}
+              onError={() => {
+                setImageLoadingError(true);
+              }}
             />
+            {imageLoadingError && (
+              <div
+                style={{
+                  borderRadius: '12px 12px 0px 0px',
+                  width: '100%',
+                  height: '300px', // Set the height to match the image height
+                  backgroundColor: '#f0f0f0', // Background color for the div
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  color: '#333', // Text color for the message
+                }}
+              >
+                Image cannot be loaded
+              </div>
+            )}
           </a>
-          {metaTags?.input?.name && metaTags?.input?.content.length > 0 && (
+          {FrameData.frameDetails?.inputText && (
             <div style={{ width: '95%', margin: 'auto', color: 'black' }}>
               <TextInput
                 onInputChange={(e: any) => {
                   setInputText(e.target.value);
                 }}
                 inputValue={inputText as string}
-                placeholder={metaTags.input.content}
+                placeholder={FrameData.frameDetails?.inputText}
               />
             </div>
           )}
@@ -515,27 +566,31 @@ const FrameRenderer = ({
               margin: 'auto',
             }}
           >
-            {metaTags.buttons.map((button) => (
-              <div
-                style={{
-                  width: '100%',
-                }}
-              >
-                <Button
-                  width="98%"
-                  customStyle={{
-                    maxHeight: '12px',
-                    padding: '12px 6px',
-                  }}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onButtonClick(button);
+            {FrameData.frameDetails &&
+              FrameData.frameDetails.buttons.map((button) => (
+                <div
+                  style={{
+                    width: '100%',
                   }}
                 >
-                  {getButtonIconContent(button.action!, button.content)}
-                </Button>
-              </div>
-            ))}
+                  <Button
+                    width="98%"
+                    customStyle={{
+                      maxHeight: '12px',
+                      padding: '12px 6px',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      onButtonClick(button);
+                    }}
+                  >
+                    {getButtonIconContent(button)}
+                  </Button>
+                </div>
+              ))}
           </div>
           <div
             style={{

@@ -201,17 +201,28 @@ export const MODAL_POSITION_TYPE = {
 } as const;
 
 export type ModalPositionType = keyof typeof MODAL_POSITION_TYPE;
-
+export interface FrameButton {
+  index: string;
+  content: string;
+  action?: string;
+  target?: string;
+  post_url?: string;
+}
 export interface FrameDetails {
+  version: string;
   image: string;
+  ogImage: string;
   siteURL: string;
   postURL: string;
-  buttons: {
-    index: string;
-    content: string;
-    action?: string;
-    target?: string;
-  }[];
-  input?: { name: string; content: string };
+  buttons: FrameButton[];
+  inputText?: string;
   state?: string;
+  ofProtocolIdentifier?: string;
+}
+
+export interface IFrame {
+  isValidFrame: boolean;
+  frameType: string;
+  frameDetails?: FrameDetails;
+  message?: string;
 }

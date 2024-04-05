@@ -2,7 +2,7 @@ import * as openpgp from 'openpgp';
 import * as protobuf from 'protobufjs';
 export const toSerialisedHexString = async (data: {
   url: string;
-  unixTimestamp: number;
+  unixTimestamp: string;
   buttonIndex: number;
   inputText: string;
   state: string;
@@ -11,13 +11,14 @@ export const toSerialisedHexString = async (data: {
   messageId: string;
   chatId: string;
   clientProtocol: string;
+  env: string;
 }) => {
   const protoDefinition = `
             syntax = "proto3";
 
             message ChatMessage {
               string url = 1;
-              int64 unixTimestamp = 2;
+              string unixTimestamp = 2;
               int32 buttonIndex = 3;
               string inputText = 4;
               string state = 5;
@@ -26,6 +27,7 @@ export const toSerialisedHexString = async (data: {
               string messageId = 8;
               string chatId = 9;
               string clientProtocol = 10;
+              string env = 11;
             }
         `;
 
