@@ -20,10 +20,13 @@ const useChatProfile = () => {
     }: FetchProfileParams): Promise<any> => {
       try {
         let userReadOnly;
-        if(profileId && user)
-         userReadOnly = await user!.info({ overrideAccount: profileId });
-        else
-         userReadOnly = await user!.info();
+        if(user){
+          if(profileId)
+          userReadOnly = await user!.info({ overrideAccount: profileId });
+         else
+          userReadOnly = await user!.info();
+        }
+     
         return userReadOnly;
       } catch (error) {
         console.log(error);

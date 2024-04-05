@@ -12,5 +12,5 @@ jobs:
     steps:
       - uses: actions/add-to-project@v0.5.0
         with:
-          project-url: https://github.com/orgs/ethereum-push-notification-service/projects/10
+          project-url: https://github.com/orgs/push-protocol/projects/10
           github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}

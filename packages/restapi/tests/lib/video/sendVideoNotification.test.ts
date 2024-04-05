@@ -35,7 +35,7 @@ enum ENV {
   LOCAL = 'local',
 }
 
-const env = ENV.LOCAL;
+const env = ENV.DEV;
 
 // Test suite for sendNotification functionality for video calls
 describe('sendNotification functionality for video calls', () => {

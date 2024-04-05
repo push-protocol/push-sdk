@@ -20,14 +20,14 @@ describe('PushStream.initialize functionality', () => {
     const signer = new ethers.Wallet(WALLET.privateKey, provider);
 
     const userAlice = await PushAPI.initialize(signer, {
-      env: CONSTANTS.ENV.LOCAL,
+      env: CONSTANTS.ENV.DEV,
     });
 
     const WALLET2 = ethers.Wallet.createRandom();
     const signer2 = new ethers.Wallet(WALLET2.privateKey);
     const account2 = `eip155:${signer2.address}`;
     const userBob = await PushAPI.initialize(signer2, {
-      env: CONSTANTS.ENV.LOCAL,
+      env: CONSTANTS.ENV.DEV,
     });
 
     const userAliceStream = await userAlice.initStream(
@@ -59,6 +59,9 @@ describe('PushStream.initialize functionality', () => {
       participants: { listeners: [], speakers: [] },
       schedule: {
         start: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
+        end: new Date(
+          new Date().getTime() + 24 * 60 * 60 * 1000 + 60 * 60 * 1000
+        ),
       },
       private: false,
     };
