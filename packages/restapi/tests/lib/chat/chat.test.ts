@@ -1,7 +1,3 @@
-import * as path from 'path';
-import * as dotenv from 'dotenv';
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
-
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI'; // Ensure correct import path
 import { expect } from 'chai';
 import { ethers } from 'ethers';
@@ -16,7 +12,11 @@ describe('PushAPI.chat functionality', () => {
   let signer2: any;
   let account2: string;
   const MESSAGE = 'Hey There!!!';
-  const env = CONSTANTS.ENV.DEV;
+
+  // accessing env dynamically using process.env
+  type EnvStrings = keyof typeof CONSTANTS.ENV;
+  const envMode = process.env.ENV as EnvStrings;
+  const env = CONSTANTS.ENV[envMode];
 
   beforeEach(async () => {
     const WALLET1 = ethers.Wallet.createRandom();

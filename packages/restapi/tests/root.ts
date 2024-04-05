@@ -1,11 +1,12 @@
 import * as dotenv from 'dotenv';
+import * as path from 'path';
 
 export const mochaHooks = {
   // This file is needed to end the test suite.
     beforeAll: [
       async function () {
-      const envFound = dotenv.config()
-
+      // Load .env file
+      const envFound = dotenv.config({ path: path.resolve(__dirname, './.env')})
       // check if .env exists
       if (!envFound) {
         console.log('     .env NOT FOUND     ');

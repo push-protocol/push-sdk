@@ -11,7 +11,11 @@ import {
 } from 'unique-names-generator';
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI'; // Ensure correct import path
 
-const _env = Constants.ENV.DEV;
+// accessing env dynamically using process.env
+type EnvStrings = keyof typeof Constants.ENV;
+const envMode = process.env.ENV as EnvStrings;
+const _env = Constants.ENV[envMode];
+
 let groupName: string;
 let groupDescription: string;
 const groupImage =

@@ -1,6 +1,3 @@
-import * as path from 'path';
-import * as dotenv from 'dotenv';
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 import { expect } from 'chai';
 import { ethers } from 'ethers';
 
@@ -14,6 +11,7 @@ import {
   VIDEO_NOTIFICATION_ACCESS_TYPE,
 } from '../../../src/lib/payloads/constants';
 import { VideoCallStatus } from '../../../src';
+import { ENV } from '../../../src/lib/constants';
 
 enum IDENTITY_TYPE {
   MINIMAL = 0,
@@ -28,14 +26,10 @@ enum NOTIFICATION_TYPE {
   SUBSET = 4,
 }
 
-enum ENV {
-  PROD = 'prod',
-  STAGING = 'staging',
-  DEV = 'dev',
-  LOCAL = 'local',
-}
-
-const env = ENV.DEV;
+// accessing env dynamically using process.env
+type EnvStrings = keyof typeof ENV;
+const envMode = process.env.ENV as EnvStrings;
+const env = ENV[envMode];
 
 // Test suite for sendNotification functionality for video calls
 describe('sendNotification functionality for video calls', () => {

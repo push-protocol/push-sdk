@@ -1,6 +1,3 @@
-import * as path from 'path';
-import * as dotenv from 'dotenv';
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 import * as chai from 'chai';
 import { expect } from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
@@ -17,7 +14,12 @@ import { profileUpdate } from '../../../src/lib/user/profile.updateUser';
 import { authUpdate } from '../../../src/lib/user/auth.updateUser';
 
 describe('ProgressHook Tests', () => {
-  const _env = CONSTANTS.ENV.DEV;
+  
+  // accessing env dynamically using process.env
+  type EnvStrings = keyof typeof CONSTANTS.ENV;
+  const envMode = process.env.ENV as EnvStrings;
+  const _env = CONSTANTS.ENV[envMode];
+
   let provider = ethers.getDefaultProvider(11155111);
   let _signer: any;
   let walletAddress: string;
