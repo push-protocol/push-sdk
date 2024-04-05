@@ -49,7 +49,6 @@ export function getFormattedMetadata(URL: string, data: any) {
 
   if (
     ofTags.includes('of:version') &&
-    ofTags.includes('og:image') &&
     ofTags.includes('of:image') &&
     ofTags.includes('of:accepts:push')
   ) {
@@ -97,7 +96,7 @@ export function getFormattedMetadata(URL: string, data: any) {
                 index,
                 content: '',
                 action: '',
-                target: '',
+                target: undefined,
               });
               if (type === index) type = 'content';
               frameDetails.buttons[frameDetails.buttons.length - 1][type] =
@@ -110,15 +109,13 @@ export function getFormattedMetadata(URL: string, data: any) {
         }
       }
     });
-  } else if (
-    fcTags.includes('fc:frame') &&
-    fcTags.includes('fc:frame:image') &&
-    fcTags.includes('og:image')
-  ) {
+  } else if (fcTags.includes('fc:frame') && fcTags.includes('fc:frame:image')) {
     frameType = 'fc';
+
     metaElements.forEach((element) => {
       const name =
         element.getAttribute('name') || element.getAttribute('property');
+
       const content = element.getAttribute('content');
       if (name === 'og:image') {
         frameDetails.ogImage = content as string;
@@ -160,7 +157,7 @@ export function getFormattedMetadata(URL: string, data: any) {
                 index,
                 content: '',
                 action: '',
-                target: '',
+                target: undefined,
                 post_url: undefined,
               });
 
