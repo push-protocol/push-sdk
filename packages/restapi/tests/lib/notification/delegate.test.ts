@@ -1,15 +1,12 @@
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI'; // Ensure correct import path
 import { expect } from 'chai';
 import { ethers } from 'ethers';
-import { goerli, polygonMumbai, sepolia } from 'viem/chains';
-import {
-  createWalletClient,
-  http,
-  getContract,
-  createPublicClient,
-} from 'viem';
-import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
+import { sepolia } from 'viem/chains';
+import { createWalletClient, http } from 'viem';
+import { privateKeyToAccount } from 'viem/accounts';
 // import tokenABI from './tokenABI';
+import { ENV } from '../../../src/lib/constants';
+
 describe('PushAPI.delegate functionality', () => {
   let userAlice: PushAPI;
   let userBob: PushAPI;
@@ -19,6 +16,11 @@ describe('PushAPI.delegate functionality', () => {
   let signer2: any;
   let viemUser: any;
   let account2: string;
+
+  // accessing env dynamically using process.env
+  type EnvStrings = keyof typeof ENV;
+  const envMode = process.env.ENV as EnvStrings;
+  const _env = ENV[envMode];
 
   beforeEach(async () => {
     signer1 = new ethers.Wallet(`0x${process.env['WALLET_PRIVATE_KEY']}`);
@@ -41,13 +43,13 @@ describe('PushAPI.delegate functionality', () => {
     account2 = await signer2.getAddress();
 
     // initialisation with signer and provider
-    userKate = await PushAPI.initialize(signer2);
+    userKate = await PushAPI.initialize(signer2, { env: _env });
     // initialisation with signer
-    userAlice = await PushAPI.initialize(signer1);
+    userAlice = await PushAPI.initialize(signer1, { env: _env });
     // initialisation without signer
-    userBob = await PushAPI.initialize(signer1);
+    userBob = await PushAPI.initialize(signer1, { env: _env });
     // initalisation with viem
-    viemUser = await PushAPI.initialize(signer3);
+    viemUser = await PushAPI.initialize(signer3, { env: _env });
   });
 
   describe('delegate :: add', () => {

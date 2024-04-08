@@ -8,7 +8,6 @@ import CONSTANTS from '../../../src/lib/constantsV2';
 import * as util from 'util';
 
 describe('PushStream.initialize functionality', () => {
-
   // accessing env dynamically using process.env
   type EnvStrings = keyof typeof CONSTANTS.ENV;
   const envMode = process.env.ENV as EnvStrings;
@@ -585,6 +584,7 @@ describe('PushStream.initialize functionality', () => {
 
     const userAliceReadOnly = await PushAPI.initialize({
       account: account,
+      env: _env,
     });
 
     // This will be the wallet address of the recipient
