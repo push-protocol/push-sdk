@@ -146,9 +146,9 @@ const FrameRenderer = ({
   const { selectedChatId } =
     useContext<ChatMainStateContextType>(ChatMainStateContext);
   const frameRenderer = useToast();
-  const proxyServer = 'https://cors-m0l8.onrender.com';
+  const proxyServer = 'http://localhost:5004/';
   const [FrameData, setFrameData] = useState<IFrame>({} as IFrame);
-  const [inputText, setInputText] = useState<undefined | string>(undefined);
+  const [inputText, setInputText] = useState<string>('');
   const [imageLoadingError, setImageLoadingError] = useState<boolean>(false);
   // Fetches the metadata for the URL to fetch the Frame
 
@@ -167,6 +167,7 @@ const FrameRenderer = ({
 
         const frameDetails: IFrame = getFormattedMetadata(url, htmlText);
 
+        console.log('Frame Details:', FrameData);
         setFrameData(frameDetails);
       } catch (err) {
         console.error('Error fetching meta tags for rendering frame:', err);
@@ -385,7 +386,7 @@ const FrameRenderer = ({
       url: url,
       unixTimestamp: Date.now().toString(),
       buttonIndex: Number(button.index),
-      inputText: inputText ?? 'undefined',
+      inputText: FrameData.frameDetails?.inputText ? inputText : 'undefined',
       state: FrameData.frameDetails?.state ?? 'undefined',
       transactionId: hash ?? '',
       address: account,
@@ -427,14 +428,18 @@ const FrameRenderer = ({
           clientProtocol: 'push',
           untrustedData: {
             url: url,
-            unixTimestamp: Date.now(),
+            unixTimestamp: Date.now().toString(),
             buttonIndex: Number(button.index),
-            inputText: inputText ?? 'undefined',
+            inputText: FrameData.frameDetails?.inputText
+              ? inputText
+              : 'undefined',
             state: FrameData.frameDetails?.state ?? 'undefined',
-            transactionId: hash ?? 'undefined',
+            transactionId: hash ?? '',
             address: account,
             messageId: messageId,
-            chatId: selectedChatId ?? 'null',
+            chatId: window.location.href.split('/').pop() ?? 'null',
+            clientProtocol: 'push',
+            env: env,
           },
           trustedData: {
             messageBytes: serializedProtoMessage,
@@ -472,14 +477,18 @@ const FrameRenderer = ({
         clientProtocol: 'push',
         untrustedData: {
           url: url,
-          unixTimestamp: Date.now(),
+          unixTimestamp: Date.now().toString(),
           buttonIndex: Number(button.index),
-          inputText: inputText ?? 'undefined',
-          state: FrameData.frameDetails?.state ?? '',
-          transactionId: hash ?? 'undefined',
+          inputText: FrameData.frameDetails?.inputText
+            ? inputText
+            : 'undefined',
+          state: FrameData.frameDetails?.state ?? 'undefined',
+          transactionId: hash ?? '',
           address: account,
           messageId: messageId,
-          chatId: selectedChatId ?? 'null',
+          chatId: window.location.href.split('/').pop() ?? 'null',
+          clientProtocol: 'push',
+          env: env,
         },
         trustedData: {
           messageBytes: serializedProtoMessage,
