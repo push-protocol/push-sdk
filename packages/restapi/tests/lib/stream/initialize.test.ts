@@ -1,6 +1,3 @@
-import * as path from 'path';
-import * as dotenv from 'dotenv';
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 import { expect } from 'chai'; // Assuming you're using chai for assertions
 import { ethers } from 'ethers';
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI';
@@ -11,6 +8,12 @@ import CONSTANTS from '../../../src/lib/constantsV2';
 import * as util from 'util';
 
 describe('PushStream.initialize functionality', () => {
+
+  // accessing env dynamically using process.env
+  type EnvStrings = keyof typeof CONSTANTS.ENV;
+  const envMode = process.env.ENV as EnvStrings;
+  const _env = CONSTANTS.ENV[envMode];
+
   it('Should initialize new stream and listen to events', async () => {
     const MESSAGE = 'Hey There!!!';
 
@@ -21,25 +24,25 @@ describe('PushStream.initialize functionality', () => {
     const WALLET = ethers.Wallet.createRandom();
     const signer = new ethers.Wallet(WALLET.privateKey, provider);
     const user = await PushAPI.initialize(signer, {
-      env: CONSTANTS.ENV.DEV,
+      env: _env,
     });
 
     const WALLET2 = ethers.Wallet.createRandom();
     const signer2 = new ethers.Wallet(WALLET2.privateKey, provider);
     const user2 = await PushAPI.initialize(signer2, {
-      env: CONSTANTS.ENV.DEV,
+      env: _env,
     });
 
     const WALLET3 = ethers.Wallet.createRandom();
     const signer3 = new ethers.Wallet(WALLET3.privateKey, provider);
     const user3 = await PushAPI.initialize(signer3, {
-      env: CONSTANTS.ENV.DEV,
+      env: _env,
     });
 
     const WALLET4 = ethers.Wallet.createRandom();
     const signer4 = new ethers.Wallet(WALLET4.privateKey, provider);
     const user4 = await PushAPI.initialize(signer4, {
-      env: CONSTANTS.ENV.DEV,
+      env: _env,
     });
 
     const GROUP_RULES = {
@@ -146,7 +149,7 @@ describe('PushStream.initialize functionality', () => {
 
     // Initialize wallet user, pass 'prod' instead of 'staging' for mainnet apps
     const userAlice = await PushAPI.initialize(signer, {
-      env: CONSTANTS.ENV.STAGING,
+      env: _env,
     });
 
     // This will be the wallet address of the recipient
@@ -450,25 +453,25 @@ describe('PushStream.initialize functionality', () => {
     const WALLET = ethers.Wallet.createRandom();
     const signer = new ethers.Wallet(WALLET.privateKey, provider);
     const user = await PushAPI.initialize(signer, {
-      env: CONSTANTS.ENV.DEV,
+      env: _env,
     });
 
     const WALLET2 = ethers.Wallet.createRandom();
     const signer2 = new ethers.Wallet(WALLET2.privateKey, provider);
     const user2 = await PushAPI.initialize(signer2, {
-      env: CONSTANTS.ENV.DEV,
+      env: _env,
     });
 
     const WALLET3 = ethers.Wallet.createRandom();
     const signer3 = new ethers.Wallet(WALLET3.privateKey, provider);
     const user3 = await PushAPI.initialize(signer3, {
-      env: CONSTANTS.ENV.DEV,
+      env: _env,
     });
 
     const WALLET4 = ethers.Wallet.createRandom();
     const signer4 = new ethers.Wallet(WALLET4.privateKey, provider);
     const user4 = await PushAPI.initialize(signer4, {
-      env: CONSTANTS.ENV.DEV,
+      env: _env,
     });
 
     const GROUP_RULES = {
@@ -575,7 +578,7 @@ describe('PushStream.initialize functionality', () => {
 
     // Initialize wallet user, pass 'prod' instead of 'staging' for mainnet apps
     const userAlice = await PushAPI.initialize(signer, {
-      env: CONSTANTS.ENV.STAGING,
+      env: _env,
     });
 
     const account = (await userAlice.info()).did;

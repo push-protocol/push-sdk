@@ -3,7 +3,10 @@ import Constants from '../../../src/lib/constants';
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI';
 import { users } from './data/did';
 
-const _env = Constants.ENV.LOCAL;
+// accessing env dynamically using process.env
+type EnvStrings = keyof typeof Constants.ENV;
+const envMode = process.env.ENV as EnvStrings;
+const _env = Constants.ENV[envMode];
 
 /**
  * THIS TEST GROUP IS FOR BENCHMARKING PUBLIC GROUP
