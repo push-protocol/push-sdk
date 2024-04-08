@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { copyToClipboard } from '../../../helpers';
+import { copyToClipboard, pCAIP10ToWallet } from '../../../helpers';
 import { CopySvg2 } from '../../../icons/CopySvg2';
 import { Section, Span, Image, Div, Tooltip } from '../../reusables';
 import { IChatTheme } from '../theme';
@@ -50,7 +50,7 @@ export const ProfileContainer = ({
           src={member?.image}
         />
       </Section>
-      <Section flexDirection="column" alignItems="start" gap="5px" >
+      <Section flexDirection="column" alignItems="start" gap="5px"  whiteSpace='nowrap' >
         {!!member?.web3Name && (
           <Span
             fontSize={customStyle?.fontSize ?? '18px'}
@@ -74,7 +74,7 @@ export const ProfileContainer = ({
               setCopyText('');
             }}
             onClick={() => {
-              copyToClipboard(member?.completeWallet || '');
+              copyToClipboard(pCAIP10ToWallet(member?.completeWallet || ''));
               setCopyText('copied');
             }}
           >
@@ -92,6 +92,7 @@ export const ProfileContainer = ({
                     theme.textColor?.modalSubHeadingText
               }
               position="relative"
+              whiteSpace='nowrap'
             >
               {member.wallet}
             </Span>

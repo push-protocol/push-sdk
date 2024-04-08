@@ -123,7 +123,7 @@ export const ChatUIProvider = ({
       }
     })();
   }, [account, env, pgpPrivateKey]);
-
+console.debug('userval',userVal)
   const value: IChatDataContextValues = {
     account: accountVal,
     signer: signerVal,

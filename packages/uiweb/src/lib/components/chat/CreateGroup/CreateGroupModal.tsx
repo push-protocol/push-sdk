@@ -331,11 +331,23 @@ const CreateGroupDetail = ({
         });
         return;
       }
+      if (groupName.trim().length <3) {
+        setValidationErrors({
+          groupName: 'Group name should have minimum 3 character',
+        });
+        return;
+      }
 
       // verify description
       if (groupDescription.trim().length === 0) {
         setValidationErrors({
           groupDescription: 'Group Description is empty',
+        });
+        return;
+      }
+      if (groupDescription.trim().length <3) {
+        setValidationErrors({
+          groupDescription: 'Group Description should have minimum 3 character',
         });
         return;
       }
@@ -403,7 +415,7 @@ const CreateGroupDetail = ({
       <Section gap="10px" flexDirection="column" alignItems="start">
         <TextInput
           labelName="Group Name"
-          charCount={30}
+          charCount={100}
           inputValue={groupName}
           onInputChange={(e: any) =>
             setGroupInputDetails((prev: GroupInputDetailsType) => ({
@@ -420,7 +432,7 @@ const CreateGroupDetail = ({
       <Section gap="10px" flexDirection="column" alignItems="start">
         <TextArea
           labelName="Group Description"
-          charCount={80}
+          charCount={150}
           inputValue={groupDescription}
           onInputChange={(e: any) =>
             setGroupInputDetails((prev: GroupInputDetailsType) => ({
