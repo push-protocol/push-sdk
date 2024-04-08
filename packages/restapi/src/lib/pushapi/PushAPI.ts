@@ -126,29 +126,40 @@ export class PushAPI {
     try {
       let signer: SignerType | undefined;
       let options: PushAPIInitializeProps | undefined;
+      let decryptedPGPPrivateKey: string | undefined;
 
-      if (
-        args.length === 1 &&
-        typeof args[0] === 'object' &&
-        'account' in args[0] &&
-        typeof args[0].account === 'string'
-      ) {
-        // Single options object provided
-        options = args[0];
-      } else if (args.length === 1) {
-        // Only signer provided
-        [signer] = args;
+      if (args.length === 1 && typeof args[0] === 'object') {
+        // This branch handles both the single options object and the single signer scenario.
+        if ('account' in args[0] && typeof args[0].account === 'string') {
+          // Single options object provided.
+          options = args[0];
+        } else {
+          // Only signer provided.
+          [signer] = args;
+        }
       } else if (args.length === 2) {
-        // Separate signer and options arguments provided
+        // Separate signer and options arguments provided.
         [signer, options] = args;
       } else {
-        // Handle other cases or throw an error
+        // Handle other cases or throw an error.
         throw new Error('Invalid arguments provided to initialize method.');
+      }
+
+      // Check for decryptedPGPPrivateKey in options, regardless of how options was assigned.
+      if (
+        options &&
+        'decryptedPGPPrivateKey' in options &&
+        typeof options.decryptedPGPPrivateKey === 'string'
+      ) {
+        decryptedPGPPrivateKey = options.decryptedPGPPrivateKey;
       }
 
       if (!signer && !options?.account) {
         throw new Error("Either 'signer' or 'account' must be provided.");
       }
+
+      // Determine readMode based on the presence of signer and decryptedPGPPrivateKey
+      let readMode = !signer && !decryptedPGPPrivateKey;
 
       // Default options
       const defaultOptions: PushAPIInitializeProps = {
@@ -175,7 +186,6 @@ export class PushAPI {
             : ALPHA_FEATURE_CONFIG[PACKAGE_BUILD],
       };
 
-      let readMode = !signer;
       const initializationErrors: {
         type: 'WARN' | 'ERROR';
         message: string;
@@ -200,7 +210,6 @@ export class PushAPI {
         throw new Error('Account could not be derived.');
       }
 
-      let decryptedPGPPrivateKey: string | undefined;
       let pgpPublicKey: string | undefined;
 
       /**
@@ -220,14 +229,16 @@ export class PushAPI {
       if (!readMode) {
         try {
           if (user && user.encryptedPrivateKey) {
-            decryptedPGPPrivateKey = await PUSH_CHAT.decryptPGPKey({
-              encryptedPGPPrivateKey: user.encryptedPrivateKey,
-              signer: signer,
-              toUpgrade: settings.autoUpgrade,
-              additionalMeta: settings.versionMeta,
-              progressHook: settings.progressHook,
-              env: settings.env,
-            });
+            if (!decryptedPGPPrivateKey) {
+              decryptedPGPPrivateKey = await PUSH_CHAT.decryptPGPKey({
+                encryptedPGPPrivateKey: user.encryptedPrivateKey,
+                signer: signer,
+                toUpgrade: settings.autoUpgrade,
+                additionalMeta: settings.versionMeta,
+                progressHook: settings.progressHook,
+                env: settings.env,
+              });
+            }
           } else {
             const newUser = await PUSH_USER.create({
               env: settings.env,

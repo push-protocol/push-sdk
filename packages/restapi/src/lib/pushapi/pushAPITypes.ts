@@ -29,6 +29,7 @@ export interface PushAPIInitializeProps {
   alpha?: {
     feature: string[];
   };
+  decryptedPGPPrivateKey?: string | null;
 }
 
 export interface GroupCreationOptions {
