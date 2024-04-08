@@ -68,7 +68,8 @@ export const getConnectedUser = async (
     const decryptedPrivateKey = await getDecryptedPrivateKey(
       wallet,
       newUser,
-      address
+      address,
+      env
     );
     return { ...newUser, privateKey: decryptedPrivateKey };
   }
@@ -86,7 +87,7 @@ export const getConnectedUserV2Core = async (
   wallet: walletType,
   privateKey: string | null,
   env: ENV,
-  pgpHelper: IPGPHelper,
+  pgpHelper: IPGPHelper
 ): Promise<IConnectedUser> => {
   const address = await getAccountAddress(wallet);
   const user = await get({ account: address, env: env || Constants.ENV.PROD });
@@ -100,7 +101,8 @@ export const getConnectedUserV2Core = async (
       const decryptedPrivateKey = await getDecryptedPrivateKey(
         wallet,
         user,
-        address
+        address,
+        env
       );
       return { ...user, privateKey: decryptedPrivateKey };
     }
@@ -124,7 +126,8 @@ export const getConnectedUserV2Core = async (
     const decryptedPrivateKey = await getDecryptedPrivateKey(
       wallet,
       newUser,
-      address
+      address,
+      env
     );
     return { ...newUser, privateKey: decryptedPrivateKey };
   }

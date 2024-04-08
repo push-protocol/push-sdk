@@ -30,7 +30,9 @@ describe('PUSH_CHANNELS.sendNotification functionality', () => {
         channel: '0xD8634C39BBFd4033c0d3289C4515275102423681',
         env: _env,
       });
-      console.log(res);
+      expect(res).to.be.an('object');
+      expect(res.notifications).to.be.an('array');
+      expect(res.total).to.be.a('number');
     });
     it('Should should fetch notifications of a channel based on filter', async () => {
       const res = await PUSH_CHANNELS.getChannelNotifications({
@@ -38,7 +40,9 @@ describe('PUSH_CHANNELS.sendNotification functionality', () => {
         env: _env,
         filter: 1,
       });
-      console.log(res);
+      expect(res).to.be.an('object');
+      expect(res.notifications).to.be.an('array');
+      expect(res.total).to.be.a('number');
     });
     it('Should should fetch notifications of a channel based on filter and in standard format', async () => {
       const res = await PUSH_CHANNELS.getChannelNotifications({
@@ -47,18 +51,22 @@ describe('PUSH_CHANNELS.sendNotification functionality', () => {
         filter: 1,
         raw: false,
       });
-      console.log(res);
+      expect(res).to.be.an('object');
+      expect(res.notifications).to.be.an('array');
+      expect(res.total).to.be.a('number');
     });
     it('Should should fetch notifications of a channel based on filter and in standard format', async () => {
-        const res = await PUSH_CHANNELS.getChannelNotifications({
-          channel: '0xD8634C39BBFd4033c0d3289C4515275102423681',
-          env: _env,
-          filter: 1,
-          raw: false,
-          page: 1,
-          limit: 20
-        });
-        console.log(res);
+      const res = await PUSH_CHANNELS.getChannelNotifications({
+        channel: '0xD8634C39BBFd4033c0d3289C4515275102423681',
+        env: _env,
+        filter: 1,
+        raw: false,
+        page: 1,
+        limit: 20,
       });
+      expect(res).to.be.an('object');
+      expect(res.notifications).to.be.an('array');
+      expect(res.total).to.be.a('number');
+    });
   });
 });

@@ -14,7 +14,10 @@ import {
 import { ENV, MessageType } from '../constants';
 import { EthEncryptedData } from '@metamask/eth-sig-util';
 import { Message, MessageObj } from './messageTypes';
-import { SpaceMemberEventBase, VideoEvent } from '../pushstream/pushStreamTypes';
+import {
+  SpaceMemberEventBase,
+  VideoEvent,
+} from '../pushstream/pushStreamTypes';
 export * from './messageTypes';
 export * from './videoTypes';
 
@@ -184,6 +187,7 @@ export interface ISendNotificationInputOptions {
   chatId?: string;
   rules?: SendNotificationRules;
   pgpPrivateKey?: string;
+  channelFound?: boolean;
 }
 
 export interface INotificationPayload {
@@ -960,8 +964,8 @@ export namespace TYPES {
   }
 }
 
-export enum NotifictaionType  {
+export enum NotifictaionType {
   BROADCAT = 1,
   TARGETTED = 3,
-  SUBSET = 4
+  SUBSET = 4,
 }

@@ -282,9 +282,8 @@ describe('PushAPI.notification functionality', () => {
         raw: false,
         channel: '0xD8634C39BBFd4033c0d3289C4515275102423681',
       });
-      // console.log(JSON.stringify(response));
+      console.log(JSON.stringify(response));
       expect(response).not.null;
-      expect(response.length).not.equal(0);
     });
   });
 

@@ -70,6 +70,7 @@ describe('PushAPI.chat functionality', () => {
     const account = (await userAlice.info()).did;
 
     const userAliceReadOnly = await PushAPI.initialize({
+      env,
       account: account,
     });
 
@@ -90,6 +91,7 @@ describe('PushAPI.chat functionality', () => {
     const account = (await userAlice.info()).did;
 
     const userAliceReadOnly = await PushAPI.initialize({
+      env,
       account: account,
     });
 
