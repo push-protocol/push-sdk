@@ -1,10 +1,4 @@
-import {
-  ReactElement,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import { ReactNode, useContext, useEffect, useState } from 'react';
 
 import moment from 'moment';
 import styled from 'styled-components';
@@ -14,17 +8,12 @@ import { Section, Span, Image } from '../../reusables';
 import useToast from '../reusables/NewToast';
 import { checkTwitterUrl } from '../helpers/twitter';
 import { ChatDataContext } from '../../../context';
-import { useAccount, useChatData } from '../../../hooks';
+import { useChatData } from '../../../hooks';
 import { ThemeContext } from '../theme/ThemeProvider';
 
-import {
-  FileMessageContent,
-  FrameButton,
-  FrameDetails,
-  IFrame,
-} from '../../../types';
+import { FileMessageContent, FrameButton, IFrame } from '../../../types';
 import { IMessagePayload, TwitterFeedReturnType } from '../exportedTypes';
-import { allowedNetworks, ENV, FILE_ICON } from '../../../config';
+import { allowedNetworks, FILE_ICON } from '../../../config';
 import {
   formatFileSize,
   getPfp,
@@ -46,6 +35,8 @@ import {
   ChatMainStateContext,
   ChatMainStateContextType,
 } from '../../../context/chatAndNotification/chat/chatMainStateContext';
+import { ethers } from 'ethers';
+import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 
 const SenderMessageAddress = ({ chat }: { chat: IMessagePayload }) => {
   const { account } = useContext(ChatDataContext);
@@ -142,11 +133,14 @@ const FrameRenderer = ({
   messageId: string;
 }) => {
   const { env, user, pgpPrivateKey } = useChatData();
-  const { chainId, switchChain, provider } = useAccount({ env });
+
+  const [{ wallet }] = useConnectWallet();
+  const [{ connectedChain }, setChain] = useSetChain();
+
   const { selectedChatId } =
     useContext<ChatMainStateContextType>(ChatMainStateContext);
   const frameRenderer = useToast();
-  const proxyServer = 'http://localhost:5004/';
+  const proxyServer = 'https://proxy.push.org';
   const [FrameData, setFrameData] = useState<IFrame>({} as IFrame);
   const [inputText, setInputText] = useState<string>('');
   const [imageLoadingError, setImageLoadingError] = useState<boolean>(false);
@@ -167,7 +161,6 @@ const FrameRenderer = ({
 
         const frameDetails: IFrame = getFormattedMetadata(url, htmlText);
 
-        console.log('Frame Details:', FrameData);
         setFrameData(frameDetails);
       } catch (err) {
         console.error('Error fetching meta tags for rendering frame:', err);
@@ -279,14 +272,19 @@ const FrameRenderer = ({
         );
     }
   };
-  // Function to subscribe to a channel
-  const subscribeToChannel = async (channel: string, desiredChain: any) => {
-    if (!user) return { status: 'failure', message: 'User not initialised' };
 
-    if (chainId !== Number(desiredChain)) {
-      if (allowedNetworks[env].some((chain) => chain === Number(desiredChain)))
-        switchChain(Number(desiredChain));
-      else {
+  const handleChainChange = async (desiredChainId: string) => {
+    if (Number(connectedChain?.id) !== Number(desiredChainId.slice(7))) {
+      if (
+        allowedNetworks[env].some(
+          (chain) => chain === Number(desiredChainId.slice(7))
+        )
+      ) {
+        await setChain({
+          chainId: ethers.utils.hexValue(Number(desiredChainId.slice(7))),
+        });
+        return { status: 'success', message: 'Chain switched' };
+      } else {
         frameRenderer.showMessageToast({
           toastTitle: 'Error',
           toastMessage: 'Chain not supported',
@@ -296,11 +294,19 @@ const FrameRenderer = ({
         return { status: 'failure', message: 'Chain not supported' };
       }
     }
+    return { status: 'success', message: 'Chain switch not required' };
+  };
+  // Function to subscribe to a channel
+  const subscribeToChannel = async (button: FrameButton) => {
+    if (!user) return { status: 'failure', message: 'User not initialized' };
+    const { status, message } = await handleChainChange(button.action!);
+    if (status === 'failure') return { status: 'failure', message };
     try {
       const response = await user.notification.subscribe(
-        `eip155:${desiredChain}:${channel}`
+        `${button.action}:${button.target}`
       );
-      if (response.status === 204)
+
+      if (response.status === 204) {
         frameRenderer.showMessageToast({
           toastTitle: 'Success',
           toastMessage: 'Subscribed Successfully',
@@ -309,41 +315,47 @@ const FrameRenderer = ({
             <FaRegThumbsUp size={size} color="green" />
           ),
         });
-      return { status: 'success', message: 'Subscribed' };
+        return { status: 'success', message: 'Subscribed' };
+      } else {
+        frameRenderer.showMessageToast({
+          toastTitle: 'Error',
+          toastMessage:
+            JSON.stringify(response.message) ?? 'Subscription failed',
+          toastType: 'ERROR',
+          getToastIcon: (size: any) => <MdError size={size} color="red" />,
+        });
+        return {
+          status: 'failure',
+          message: JSON.stringify(response.message) ?? 'Subscription failed',
+        };
+      }
     } catch (error) {
       frameRenderer.showMessageToast({
         toastTitle: 'Error',
-        toastMessage: 'Chain not supported',
+        toastMessage: 'Something went wrong',
         toastType: 'ERROR',
         getToastIcon: (size: any) => <MdError size={size} color="red" />,
       });
       return { status: 'failure', message: 'Something went wrong' };
     }
-    return { status: 'failure', message: 'Unexpected error' };
   };
 
   // Function to trigger a transaction
-  const TriggerTx = async (data: any, provider: any) => {
-    if (chainId !== Number(data.chainId.slice(7))) {
-      if (
-        allowedNetworks[env].some(
-          (chain) => chain === Number(data.chainId.slice(7))
-        )
-      )
-        switchChain(Number(data.chainId.slice(7)));
-      else {
-        frameRenderer.showMessageToast({
-          toastTitle: 'Error',
-          toastMessage: 'Chain not supported',
-          toastType: 'ERROR',
-          getToastIcon: (size: any) => <MdError size={size} color="red" />,
-        });
-        return { status: 'failure', message: 'Chain not supported' };
-      }
-    }
+  const TriggerTx = async (data: any) => {
+    if (!data || !data.params || !data.chainId)
+      return { status: 'failure', message: 'Invalid data' };
+
+    const { status, message } = await handleChainChange(data.chainId);
+    if (status === 'failure') return { status: 'failure', message };
+    if (!wallet) return { status: 'failure', message: 'Wallet not connected' };
     let hash = undefined;
     try {
-      const signer = provider.getUncheckedSigner();
+      const provider = new ethers.providers.Web3Provider(
+        wallet.provider,
+        'any'
+      );
+
+      const signer = provider.getSigner();
       const tx = await signer.sendTransaction({
         from: account,
         to: data.params.to,
@@ -353,17 +365,17 @@ const FrameRenderer = ({
       });
       hash = tx.hash;
       return { hash, status: 'success', message: 'Transaction sent' };
-    } catch (error) {
+    } catch (error: any) {
       frameRenderer.showMessageToast({
         toastTitle: 'Error',
-        toastMessage: 'Something went wrong',
+        toastMessage: error?.data?.message ?? error?.message ?? 'Failed',
         toastType: 'ERROR',
         getToastIcon: (size: any) => <MdError size={size} color="red" />,
       });
       return {
         hash: 'Failed',
         status: 'failure',
-        message: 'Something went wrong',
+        message: error?.data?.message ?? error?.message ?? 'Failed',
       };
     }
   };
@@ -387,7 +399,7 @@ const FrameRenderer = ({
       unixTimestamp: Date.now().toString(),
       buttonIndex: Number(button.index),
       inputText: FrameData.frameDetails?.inputText ? inputText : 'undefined',
-      state: FrameData.frameDetails?.state ?? 'undefined',
+      state: FrameData.frameDetails?.state ?? '',
       transactionId: hash ?? '',
       address: account,
       messageId: messageId,
@@ -408,9 +420,7 @@ const FrameRenderer = ({
 
     // If the button action is subscribe, subscribes to the channel and then makes a POST call to the Frame server
     if (button.action?.includes('subscribe')) {
-      const desiredChainId = button.action?.split(':')[1];
-
-      const response = await subscribeToChannel(button.target!, desiredChainId);
+      const response = await subscribeToChannel(button);
       if (response.status === 'failure') {
         return;
       }
@@ -433,7 +443,7 @@ const FrameRenderer = ({
             inputText: FrameData.frameDetails?.inputText
               ? inputText
               : 'undefined',
-            state: FrameData.frameDetails?.state ?? 'undefined',
+            state: FrameData.frameDetails?.state ?? '',
             transactionId: hash ?? '',
             address: account,
             messageId: messageId,
@@ -447,11 +457,12 @@ const FrameRenderer = ({
           },
         }),
       });
+      if (!response.ok) return;
 
       const data = await response.json();
-
-      const { hash: txid, status } = await TriggerTx(data, provider);
+      const { hash: txid, status } = await TriggerTx(data);
       hash = txid;
+
       if (!txid || status === 'failure') return;
     }
 
@@ -482,7 +493,7 @@ const FrameRenderer = ({
           inputText: FrameData.frameDetails?.inputText
             ? inputText
             : 'undefined',
-          state: FrameData.frameDetails?.state ?? 'undefined',
+          state: FrameData.frameDetails?.state ?? '',
           transactionId: hash ?? '',
           address: account,
           messageId: messageId,
@@ -524,19 +535,22 @@ const FrameRenderer = ({
           }}
         >
           <a href={url} target="blank">
-            <img
-              src={
-                FrameData.frameDetails?.image ?? FrameData.frameDetails?.ogImage
-              }
-              alt="Frame Fallback"
-              style={{
-                borderRadius: '12px 12px 0px 0px',
-                width: '100%',
-              }}
-              onError={() => {
-                setImageLoadingError(true);
-              }}
-            />
+            {!imageLoadingError && (
+              <img
+                src={
+                  FrameData.frameDetails?.image ??
+                  FrameData.frameDetails?.ogImage
+                }
+                alt="Frame Fallback"
+                style={{
+                  borderRadius: '12px 12px 0px 0px',
+                  width: '100%',
+                }}
+                onError={() => {
+                  setImageLoadingError(true);
+                }}
+              />
+            )}
             {imageLoadingError && (
               <div
                 style={{
