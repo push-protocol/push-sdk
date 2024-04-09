@@ -18,9 +18,13 @@ import {
 import { CHAT } from '../../../src/lib/types/messageTypes';
 
 chai.use(chaiAsPromised);
-const _env = Constants.ENV.DEV;
+
+// accessing env dynamically using process.env
+type EnvStrings = keyof typeof Constants.ENV;
+const envMode = process.env.ENV as EnvStrings;
+const _env = Constants.ENV[envMode];
+
 describe('PushAPI.chat.send', () => {
-  const _env = Constants.ENV.DEV;
   const provider = ethers.getDefaultProvider(11155111);
   let _signer1: any;
   let walletAddress1: string;

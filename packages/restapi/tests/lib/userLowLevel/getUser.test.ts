@@ -5,7 +5,11 @@ import Constants from '../../../src/lib/constants';
 import CONSTANTS from '../../../src/lib/constantsV2';
 
 describe('Get user', () => {
-  const _env = CONSTANTS.ENV.DEV;
+  // accessing env dynamically using process.env
+  type EnvStrings = keyof typeof CONSTANTS.ENV;
+  const envMode = process.env.ENV as EnvStrings;
+  const _env = CONSTANTS.ENV[envMode];
+
   let provider = ethers.getDefaultProvider(5);
   let Pkey: string;
   let _signer: any;
