@@ -2,7 +2,10 @@ import { ethers } from 'ethers';
 import Constants from '../../../src/lib/constants';
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI';
 
-const _env = Constants.ENV.PROD;
+// accessing env dynamically using process.env
+type EnvStrings = keyof typeof Constants.ENV;
+const envMode = process.env.ENV as EnvStrings;
+const _env = Constants.ENV[envMode];
 
 /**
  * THIS TEST GROUP IS FOR BENCHMARKING CHAT PERFORMANCE

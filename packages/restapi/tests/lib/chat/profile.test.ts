@@ -1,19 +1,21 @@
-import * as path from 'path';
-import * as dotenv from 'dotenv';
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
-
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI'; // Ensure correct import path
 import { expect } from 'chai';
 import { ethers } from 'ethers';
+import Constants from '../../../src/lib/constants';
 
 describe('PushAPI.profile functionality', () => {
   let userAlice: PushAPI;
+
+  // accessing env dynamically using process.env
+  type EnvStrings = keyof typeof Constants.ENV;
+  const envMode = process.env.ENV as EnvStrings;
+  const _env = Constants.ENV[envMode];
 
   beforeEach(async () => {
     const provider = ethers.getDefaultProvider();
     const WALLET = ethers.Wallet.createRandom();
     const signer = new ethers.Wallet(WALLET.privateKey, provider);
-    userAlice = await PushAPI.initialize(signer);
+    userAlice = await PushAPI.initialize(signer, { env: _env });
   });
 
   it('Should update profile', async () => {
@@ -45,6 +47,7 @@ describe('PushAPI.profile functionality', () => {
     const account = (await userAlice.info()).did;
 
     const userAliceReadOnly = await PushAPI.initialize({
+      env: _env,
       account: account,
     });
 

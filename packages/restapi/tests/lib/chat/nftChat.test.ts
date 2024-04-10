@@ -1,5 +1,3 @@
-import * as path from 'path';
-import * as dotenv from 'dotenv';
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI';
 import { ethers } from 'ethers';
 import CONSTANTS from '../../../src/lib/constantsV2';
@@ -11,9 +9,11 @@ import {
 } from 'unique-names-generator';
 import { PushStream } from '../../../src/lib/pushstream/PushStream';
 
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+// accessing env dynamically using process.env
+type EnvStrings = keyof typeof CONSTANTS.ENV;
+const envMode = process.env.ENV as EnvStrings;
+const env = CONSTANTS.ENV[envMode];
 
-const env = CONSTANTS.ENV.DEV;
 const showAPIResponse = false;
 
 describe('PushAPI.chat functionality For NFT Profile', () => {

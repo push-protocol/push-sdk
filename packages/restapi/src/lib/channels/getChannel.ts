@@ -10,7 +10,7 @@ import { parseSettings } from '../utils/parseSettings';
 export type GetChannelOptionsType = {
   channel: string;
   env?: ENV;
-  raw?: boolean
+  raw?: boolean;
 };
 
 export const getChannel = async (options: GetChannelOptionsType) => {
@@ -21,17 +21,13 @@ export const getChannel = async (options: GetChannelOptionsType) => {
   const apiEndpoint = `${API_BASE_URL}/v1/channels`;
   const requestUrl = `${apiEndpoint}/${_channel}`;
 
-  return await axiosGet(requestUrl)
-    .then((response) => {
-      if(raw)
-        return response.data
-      else 
-      {
-        response.data.channel_settings = response.data.channel_settings? parseSettings(response.data.channel_settings): null;
-        return response.data
-      }
-    })
-    .catch((err) => {
-      console.error(`[Push SDK] - API ${requestUrl}: `, err);
-    });
+  return await axiosGet(requestUrl).then((response) => {
+    if (raw) return response.data;
+    else {
+      response.data.channel_settings = response.data.channel_settings
+        ? parseSettings(response.data.channel_settings)
+        : null;
+      return response.data;
+    }
+  });
 };

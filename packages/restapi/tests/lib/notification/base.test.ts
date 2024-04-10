@@ -1,6 +1,3 @@
-import * as path from 'path';
-import * as dotenv from 'dotenv';
-dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 import { expect } from 'chai';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { PushNotificationBaseClass } from '../../../src/lib/pushNotification/pushNotificationBase';
@@ -14,16 +11,8 @@ import {
 import { abi } from './tokenABI';
 import { goerli, polygonMumbai } from 'viem/chains';
 import { ethers } from 'ethers';
+import { ENV } from '../../../src/lib/constants';
 
-enum ENV {
-  PROD = 'prod',
-  STAGING = 'staging',
-  DEV = 'dev',
-  /**
-   * **This is for local development only**
-   */
-  LOCAL = 'local',
-}
 describe('test', () => {
   // const signer = createWalletClient({
   //   account: privateKeyToAccount(`0x${process.env['WALLET_PRIVATE_KEY']}`),

@@ -1,13 +1,13 @@
-import * as path from 'path';
-import * as dotenv from 'dotenv';
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
-
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI'; // Ensure correct import path
 import { expect } from 'chai';
 import { ethers } from 'ethers';
 import CONSTANTS from '../../../src/lib/constantsV2';
 
-const env = CONSTANTS.ENV.DEV;
+// accessing env dynamically using process.env
+type EnvStrings = keyof typeof CONSTANTS.ENV;
+const envMode = process.env.ENV as EnvStrings;
+const env = CONSTANTS.ENV[envMode];
+
 describe('PushAPI.encryption functionality', () => {
   let signer1: any;
   let account1: string;

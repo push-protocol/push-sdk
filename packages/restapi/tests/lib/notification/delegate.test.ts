@@ -1,19 +1,12 @@
-import * as path from 'path';
-import * as dotenv from 'dotenv';
-dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
-
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI'; // Ensure correct import path
 import { expect } from 'chai';
 import { ethers } from 'ethers';
-import { goerli, polygonMumbai, sepolia } from 'viem/chains';
-import {
-  createWalletClient,
-  http,
-  getContract,
-  createPublicClient,
-} from 'viem';
-import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
+import { sepolia } from 'viem/chains';
+import { createWalletClient, http } from 'viem';
+import { privateKeyToAccount } from 'viem/accounts';
 // import tokenABI from './tokenABI';
+import { ENV } from '../../../src/lib/constants';
+
 describe('PushAPI.delegate functionality', () => {
   let userAlice: PushAPI;
   let userBob: PushAPI;
@@ -23,6 +16,11 @@ describe('PushAPI.delegate functionality', () => {
   let signer2: any;
   let viemUser: any;
   let account2: string;
+
+  // accessing env dynamically using process.env
+  type EnvStrings = keyof typeof ENV;
+  const envMode = process.env.ENV as EnvStrings;
+  const _env = ENV[envMode];
 
   beforeEach(async () => {
     signer1 = new ethers.Wallet(`0x${process.env['WALLET_PRIVATE_KEY']}`);
@@ -45,13 +43,13 @@ describe('PushAPI.delegate functionality', () => {
     account2 = await signer2.getAddress();
 
     // initialisation with signer and provider
-    userKate = await PushAPI.initialize(signer2);
+    userKate = await PushAPI.initialize(signer2, { env: _env });
     // initialisation with signer
-    userAlice = await PushAPI.initialize(signer1);
+    userAlice = await PushAPI.initialize(signer1, { env: _env });
     // initialisation without signer
-    userBob = await PushAPI.initialize(signer1);
+    userBob = await PushAPI.initialize(signer1, { env: _env });
     // initalisation with viem
-    viemUser = await PushAPI.initialize(signer3);
+    viemUser = await PushAPI.initialize(signer3, { env: _env });
   });
 
   describe('delegate :: add', () => {
@@ -105,20 +103,7 @@ describe('PushAPI.delegate functionality', () => {
     });
 
     it('With viem signer: Should add delegate', async () => {
-      // create polygon mumbai provider
-      const provider = (ethers as any).providers
-        ? new (ethers as any).providers.JsonRpcProvider(
-            'https://rpc-mumbai.maticvigil.com/v1'
-          )
-        : new (ethers as any).JsonRpcProvider(
-            'https://rpc-mumbai.maticvigil.com/v1'
-          );
-      signer2 = new ethers.Wallet(
-        `0x${process.env['WALLET_PRIVATE_KEY']}`,
-        provider
-      );
-      userKate = await PushAPI.initialize(signer2);
-      const res = await userKate.channel.delegate.add(
+      const res = await viemUser.channel.delegate.add(
         '0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
       );
       console.log(res);
@@ -126,44 +111,8 @@ describe('PushAPI.delegate functionality', () => {
     }, 10000000);
 
     it('With viem signer: Should add delegate', async () => {
-      // create polygon mumbai provider
-      const provider = (ethers as any).providers
-        ? new (ethers as any).providers.JsonRpcProvider(
-            'https://rpc-mumbai.maticvigil.com/v1'
-          )
-        : new (ethers as any).JsonRpcProvider(
-            'https://rpc-mumbai.maticvigil.com/v1'
-          );
-
-      signer2 = new ethers.Wallet(
-        `0x${process.env['WALLET_PRIVATE_KEY']}`,
-        provider
-      );
-      userKate = await PushAPI.initialize(signer2);
-      const res = await userKate.channel.delegate.add(
-        '0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
-      );
-      console.log(res);
-      expect(res).not.null;
-    }, 10000000);
-
-    it('With viem signer: Should add delegate', async () => {
-      // create polygon mumbai provider
-      const provider = (ethers as any).providers
-        ? new (ethers as any).providers.JsonRpcProvider(
-            'https://rpc-mumbai.maticvigil.com/v1'
-          )
-        : new (ethers as any).JsonRpcProvider(
-            'https://rpc-mumbai.maticvigil.com/v1'
-          );
-
-      signer2 = new ethers.Wallet(
-        `0x${process.env['WALLET_PRIVATE_KEY']}`,
-        provider
-      );
-      userKate = await PushAPI.initialize(signer2);
-      const res = await userKate.channel.delegate.add(
-        'eip155:80001:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
+      const res = await viemUser.channel.delegate.add(
+        'eip155:11155111:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
       );
       // console.log(res);
       expect(res).not.null;
@@ -205,21 +154,8 @@ describe('PushAPI.delegate functionality', () => {
     });
 
     it('With viem signer: Should remove delegate', async () => {
-      // create polygon mumbai provider
-      const provider = (ethers as any).providers
-        ? new (ethers as any).providers.JsonRpcProvider(
-            'https://rpc-mumbai.maticvigil.com/v1'
-          )
-        : new (ethers as any).JsonRpcProvider(
-            'https://rpc-mumbai.maticvigil.com/v1'
-          );
-      signer2 = new ethers.Wallet(
-        `0x${process.env['WALLET_PRIVATE_KEY']}`,
-        provider
-      );
-      userKate = await PushAPI.initialize(signer2);
-      const res = await userKate.channel.delegate.remove(
-        'eip155:80001:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
+      const res = await viemUser.channel.delegate.remove(
+        'eip155:11155111:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
       );
       // console.log(res);
       expect(res).not.null;
