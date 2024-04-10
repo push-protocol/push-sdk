@@ -43,7 +43,7 @@ function extractTimeStamp(notificationBody: string): {
 
 type chainNameType =
   | 'ETH_TEST_SEPOLIA'
-  | 'POLYGON_TEST_MUMBAI'
+  | 'POLYGON_TEST_AMOY'
   | 'ETH_MAINNET'
   | 'POLYGON_MAINNET'
   | 'BSC_MAINNET'
