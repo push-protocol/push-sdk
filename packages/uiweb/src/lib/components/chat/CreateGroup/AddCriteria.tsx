@@ -266,6 +266,7 @@ const AddCriteria = ({
     } as DropdownValueType)
   }
 
+
   const onQuantityChange = (e: any) => {
     setQuantity({ ...quantity, value: e.target.value });
   };
