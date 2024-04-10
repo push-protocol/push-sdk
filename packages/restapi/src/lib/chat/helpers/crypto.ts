@@ -429,13 +429,15 @@ export const getEip712Signature = async (
 export async function getDecryptedPrivateKey(
   wallet: walletType,
   user: any,
-  address: string
+  address: string,
+  env: ENV
 ): Promise<string> {
   let decryptedPrivateKey;
   if (wallet.signer) {
     decryptedPrivateKey = await decryptPGPKey({
       signer: wallet.signer,
       encryptedPGPPrivateKey: user.encryptedPrivateKey,
+      env,
     });
   } else {
     decryptedPrivateKey = await decryptWithWalletRPCMethod(

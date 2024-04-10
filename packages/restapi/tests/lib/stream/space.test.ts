@@ -1,6 +1,3 @@
-import * as path from 'path';
-import * as dotenv from 'dotenv';
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 import { expect } from 'chai'; // Assuming you're using chai for assertions
 import { ethers } from 'ethers';
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI';
@@ -10,6 +7,12 @@ import * as util from 'util';
 import { PushStream } from '../../../src/lib/pushstream/PushStream';
 
 describe('PushStream.initialize functionality', () => {
+
+  // accessing env dynamically using process.env
+  type EnvStrings = keyof typeof CONSTANTS.ENV;
+  const envMode = process.env.ENV as EnvStrings;
+  const _env = CONSTANTS.ENV[envMode];
+
   it('Should initialize new stream and listen to events', async () => {
     const spaceDescription = 'Hey There!!!';
     const spaceImage =
@@ -20,14 +23,14 @@ describe('PushStream.initialize functionality', () => {
     const signer = new ethers.Wallet(WALLET.privateKey, provider);
 
     const userAlice = await PushAPI.initialize(signer, {
-      env: CONSTANTS.ENV.LOCAL,
+      env: _env,
     });
 
     const WALLET2 = ethers.Wallet.createRandom();
     const signer2 = new ethers.Wallet(WALLET2.privateKey);
     const account2 = `eip155:${signer2.address}`;
     const userBob = await PushAPI.initialize(signer2, {
-      env: CONSTANTS.ENV.LOCAL,
+      env: _env,
     });
 
     const userAliceStream = await userAlice.initStream(
@@ -59,6 +62,9 @@ describe('PushStream.initialize functionality', () => {
       participants: { listeners: [], speakers: [] },
       schedule: {
         start: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
+        end: new Date(
+          new Date().getTime() + 24 * 60 * 60 * 1000 + 60 * 60 * 1000
+        ),
       },
       private: false,
     };

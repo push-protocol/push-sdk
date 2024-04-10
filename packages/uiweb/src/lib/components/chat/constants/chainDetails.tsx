@@ -28,9 +28,9 @@ export const NETWORK_ICON_DETAILS =  {
     label: 'ETHEREUM MAINNET',
     icon: createSVGIcon(<EthereumSvg/>, 'Ethereum Mainnet'),
   },
-  80001: {
-    label: 'POLYGON MUMBAI',
-    icon: createSVGIcon(<PolygonSvg/>, 'Polygon Mumbai'),
+  80002: {
+    label: 'POLYGON AMOY',
+    icon: createSVGIcon(<PolygonSvg/>, 'Polygon Amoy'),
   },
   137: {
     label: 'POLYGON MAINNET',
