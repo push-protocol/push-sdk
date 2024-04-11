@@ -15,9 +15,9 @@ import styled from 'styled-components';
 import { useChatData, usePushChatStream } from '../../../hooks';
 import useFetchMessageUtilities from '../../../hooks/chat/useFetchMessageUtilities';
 import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
+import useUserProfile from '../../../hooks/useUserProfile';
 import { Button, Section, Span, Spinner } from '../../reusables';
 import { ChatPreview } from '../ChatPreview';
-import useUserProfile from '../../../hooks/useUserProfile';
 
 import {
   getAddress,
@@ -25,6 +25,7 @@ import {
   pCAIP10ToWallet,
   walletToPCAIP10,
 } from '../../../helpers';
+import useFetchChat from '../../../hooks/chat/useFetchChat';
 import {
   displayDefaultUser,
   generateRandomNonce,
@@ -33,7 +34,6 @@ import {
 } from '../helpers';
 import { IChatTheme } from '../theme';
 import { ThemeContext } from '../theme/ThemeProvider';
-import useFetchChat from '../../../hooks/chat/useFetchChat';
 
 // Define Interfaces
 /**
@@ -167,7 +167,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       items.forEach((item) => {
         // only increment if not selected
         if (chatPreviewListMeta.selectedChatId !== item.chatId) {
-        
+          console.debug("incrementing badge",item.chatId)
           setBadge(
             item.chatId!,
             chatPreviewListMeta.badges[item.chatId!]

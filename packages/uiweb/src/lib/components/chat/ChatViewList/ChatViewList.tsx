@@ -6,9 +6,9 @@ import {
   IUser,
 } from '@pushprotocol/restapi';
 import moment from 'moment';
-import styled from 'styled-components';
-import { ToastContainer } from 'react-toastify';
 import { MdError } from 'react-icons/md';
+import { ToastContainer } from 'react-toastify';
+import styled from 'styled-components';
 
 import { chatLimit } from '../../../config';
 import {
@@ -26,14 +26,14 @@ import { IChatTheme } from '../theme';
 import { ThemeContext } from '../theme/ThemeProvider';
 
 import useFetchChat from '../../../hooks/chat/useFetchChat';
+import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
+import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities';
+import useUserProfile from '../../../hooks/useUserProfile';
+import { checkIfNewRequest, transformStreamToIMessageIPFSWithCID } from '../helpers';
+import useToast from '../reusables/NewToast';
+import { ChatInfoResponse } from '../types';
 import { ApproveRequestBubble } from './ApproveRequestBubble';
 import { ENCRYPTION_KEYS, EncryptionMessage } from './MessageEncryption';
-import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities';
-import { ChatInfoResponse } from '../types';
-import useUserProfile from '../../../hooks/useUserProfile';
-import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
-import useToast from '../reusables/NewToast';
-import { checkIfNewRequest, transformStreamToIMessageIPFSWithCID } from '../helpers';
 
 /**
  * @interface IThemeProps
@@ -70,6 +70,9 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   const { fetchMemberStatus } = useGroupMemberUtilities();
   const chatViewListToast = useToast();
 
+  // setup blur
+  const [blur, setBlur] = useState<boolean>(false);
+
   //hack for stream not working
   const [chatStream, setChatStream] = useState<any>({}); // to track any new messages
   const [chatRequestStream, setChatRequestStream] = useState<any>({}); // to track any new messages
@@ -82,6 +85,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   const [participantJoinStream, setParticipantJoinStream] = useState<any>({}); // to track if a participant joins a group
 
   const [groupUpdateStream, setGroupUpdateStream] = useState<any>({});
+
   // const {
   //   chatStream,
   //   groupUpdateStream,
@@ -175,8 +179,8 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
               (address) => address != walletToPCAIP10(account)
             ) || chatId
           ),
-          env,
           user,
+          env,
         });
         if (UserProfile) setUserInfo(UserProfile);
         setChatStatusText(ChatStatus.FIRST_CHAT);
@@ -289,13 +293,15 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
         if (status && typeof status !== 'string') {
           setIsMember(status?.participant);
         } else {
+          console.error('Error in fetching account details, silently ignoring');
+          setIsMember(false);
           //show toast
-          chatViewListToast.showMessageToast({
-            toastTitle: 'Error',
-            toastMessage: 'Error in fetching member details',
-            toastType: 'ERROR',
-            getToastIcon: (size) => <MdError size={size} color="red" />,
-          });
+          // chatViewListToast.showMessageToast({
+          //   toastTitle: 'Error',
+          //   toastMessage: 'Error in fetching member details',
+          //   toastType: 'ERROR',
+          //   getToastIcon: (size) => <MdError size={size} color="red" />,
+          // });
         }
       })();
     }
@@ -308,6 +314,40 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     participantLeaveStream,
     participantRemoveStream,
   ]);
+
+  // To update blur based on group info
+  useEffect(() => {
+    if (groupInfo && groupInfo?.isPublic) {
+      setBlur(isConversationPrivate());
+    } else {
+      setBlur(isConversationPrivate());
+    }
+  }, [groupInfo, user, chatStatusText]);
+
+  const isConversationPrivate = () => {
+    // if it's a group and it's public, then it's not private
+    if (groupInfo && groupInfo?.isPublic) {
+      return false;
+    }
+
+    // if it's a group and it's private but user is a member, then it's not private
+    if (groupInfo && isMember) {
+      return false;
+    }
+
+    // if it's not a group and user is not connected and chat status text is ChatStatus.FIRST_CHAT, then it's not private
+    if (!user && !groupInfo && chatStatusText === ChatStatus.FIRST_CHAT) {
+      return false;
+    }
+
+    // if it's not a group and user is connected and not in readmode, then it's not private
+    if (user && !user.readmode() && !groupInfo) {
+      return false;
+    }
+
+    // All other cases are private
+    return true;
+  };
 
   //methods
   const scrollToBottom = () => {
@@ -371,12 +411,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       setMessages([...updatedMessageList]);
     }
   };
-  const ifBlurChat = () => {
-    return !!(
-      user &&
-      ((groupInfo && !groupInfo?.isPublic && !isMember) || user?.readmode())
-    );
-  };
 
   type RenderDataType = {
     chat: IMessageIPFS;
@@ -407,7 +441,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       justifyContent="start"
       padding="0 2px"
       theme={theme}
-      blur={ifBlurChat()}
+      blur={blur}
       onScroll={(e) => {
         e.stopPropagation();
         onScroll();
@@ -489,6 +523,8 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
 
 //styles
 const ChatViewListCard = styled(Section)<IThemeProps>`
+  filter: ${(props) => (props.blur ? 'blur(12px)' : 'none')};
+  
   &::-webkit-scrollbar-thumb {
     background: ${(props) => props.theme.scrollbarColor};
     border-radius: 10px;
@@ -497,11 +533,7 @@ const ChatViewListCard = styled(Section)<IThemeProps>`
   &::-webkit-scrollbar {
     width: 5px;
   }
-  ${({ blur }) =>
-    blur &&
-    `
-  filter: blur(12px);
-  `}
+
   overscroll-behavior: contain;
   scroll-behavior: smooth;
 `;

@@ -2,23 +2,23 @@
 
 import { useContext, useEffect, useRef, useState } from 'react';
 
-import styled from 'styled-components';
 import type { IUser } from '@pushprotocol/restapi';
 import { ethers } from 'ethers';
 import { ToastContainer } from 'react-toastify';
+import styled from 'styled-components';
 
-import { Image, Section, Span } from '../../reusables';
-import { useChatData, useClickAway } from '../../../hooks';
-import { ThemeContext } from '../theme/ThemeProvider';
-import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
-import useChatProfile from '../../../hooks/chat/useChatProfile';
-import { GroupInfoModal } from './GroupInfoModal';
-import useMediaQuery from '../../../hooks/useMediaQuery';
-import { createBlockie } from '../../space/helpers/blockies';
-import { ProfileContainer } from '../reusables';
 import 'react-toastify/dist/ReactToastify.min.css';
-import { Group, IChatProfile } from '../exportedTypes';
+import { useChatData, useClickAway } from '../../../hooks';
+import useChatProfile from '../../../hooks/chat/useChatProfile';
+import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
+import useMediaQuery from '../../../hooks/useMediaQuery';
 import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../../../types';
+import { Image, Section, Span } from '../../reusables';
+import { createBlockie } from '../../space/helpers/blockies';
+import { Group, IChatProfile } from '../exportedTypes';
+import { ProfileContainer } from '../reusables';
+import { ThemeContext } from '../theme/ThemeProvider';
+import { GroupInfoModal } from './GroupInfoModal';
 
 import {
   CoreContractChainId,
@@ -27,15 +27,15 @@ import {
   device,
 } from '../../../config';
 import { getAddress, pCAIP10ToWallet, resolveNewEns, shortenText, walletToPCAIP10 } from '../../../helpers';
-import { formatAddress, isValidETHAddress } from '../helpers/helper';
+import useFetchChat from '../../../hooks/chat/useFetchChat';
+import useUserProfile from '../../../hooks/useUserProfile';
 import PublicChatIcon from '../../../icons/Public-Chat.svg';
+import { TokenGatedSvg } from '../../../icons/TokenGatedSvg';
+import VerticalEllipsisIcon from '../../../icons/VerticalEllipsis.svg';
 import GreyImage from '../../../icons/greyImage.png';
 import InfoIcon from '../../../icons/infodark.svg';
-import VerticalEllipsisIcon from '../../../icons/VerticalEllipsis.svg';
-import { TokenGatedSvg } from '../../../icons/TokenGatedSvg';
-import useUserProfile from '../../../hooks/useUserProfile';
+import { formatAddress, isValidETHAddress } from '../helpers/helper';
 import { ChatInfoResponse } from '../types';
-import useFetchChat from '../../../hooks/chat/useFetchChat';
 
 export const ChatProfile: React.FC<IChatProfile> = ({
   chatId,
@@ -153,9 +153,6 @@ export const ChatProfile: React.FC<IChatProfile> = ({
             <Section
               cursor="pointer"
               maxHeight="1.75rem"
-              width="1.75rem"
-              maxWidth="1.75rem"
-              minWidth="1.75rem"
               overflow="hidden"
               justifyContent="center"
               alignSelf="center"
@@ -190,9 +187,6 @@ export const ChatProfile: React.FC<IChatProfile> = ({
             <Section
               cursor="pointer"
               maxHeight="1.75rem"
-              width="1.75rem"
-              maxWidth="1.75rem"
-              minWidth="1.75rem"
               overflow="hidden"
             >
               {chatProfileRightHelperComponent}

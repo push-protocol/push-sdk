@@ -1,7 +1,7 @@
-import { useCallback, useState } from 'react';
-import { useChatData } from './useChatData';
-import { FetchGroupMembersResponseType } from '../../components/chat/types';
 import { GroupParticipantCounts, ParticipantStatus } from '@pushprotocol/restapi';
+import { useCallback, useState } from 'react';
+import { FetchGroupMembersResponseType } from '../../components/chat/types';
+import { useChatData } from './useChatData';
 
 
 

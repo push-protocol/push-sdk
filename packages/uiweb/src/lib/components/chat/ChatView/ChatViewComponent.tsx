@@ -1,12 +1,12 @@
 import React, { useContext } from 'react';
+import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../../../types';
 import {
   IChatTheme,
   IChatViewComponentProps,
-
 } from '../exportedTypes';
-import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../../../types';
 
 import { chatLimit, device } from '../../../config';
+import { deriveChatId } from '../../../helpers';
 import { Section, Span } from '../../reusables';
 import { ChatViewList } from '../ChatViewList';
 
@@ -58,12 +58,19 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
 
   const isMobile = useMediaQuery(device.mobileL);
 
+  if (!signer && !(!!account && !!pgpPrivateKey) && !isConnected) {
+    console.warn("Chat::ChatView::You need to pass a signer or account and pgpPrivateKey to ChatViewComponent to send messages.")
+  }
+
+  // Use derive chatId to remove chatid: from chatId
+  const derivedChatId = chatId ? deriveChatId(chatId) : '';
+
   return (
     <Conatiner
       width="100%"
       height="inherit"
       flexDirection="column"
-      justifyContent={chatId?"space-between":'center'}
+      justifyContent={derivedChatId ? "space-between" : 'center'}
       overflow="hidden"
       background={theme.backgroundColor?.chatViewComponentBackground}
       borderRadius={theme.borderRadius?.chatViewComponent}
@@ -76,7 +83,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
           <ChatProfile
             chatProfileRightHelperComponent={chatProfileRightHelperComponent}
             chatProfileLeftHelperComponent={chatProfileLeftHelperComponent}
-            chatId={chatId}
+            chatId={derivedChatId}
             groupInfoModalBackground={groupInfoModalBackground}
             groupInfoModalPositionType={groupInfoModalPositionType}
           />}
@@ -92,7 +99,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
               <ChatViewList
                 chatFilterList={chatFilterList}
                 limit={limit}
-                chatId={chatId}
+                chatId={derivedChatId}
               />
             )}
           </Section>
@@ -100,7 +107,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
           {!signer && !(!!account && !!pgpPrivateKey) && !isConnected && (
             <Section flex="0 1 auto">
               <Span>
-                You need to either pass signer or isConnected to send messages{' '}
+                
               </Span>
             </Section>
           )}
@@ -109,7 +116,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
               <Section flex="0 1 auto" position="static">
                 <MessageInput
                   onVerificationFail={onVerificationFail}
-                  chatId={chatId}
+                  chatId={derivedChatId}
                   file={file}
                   emoji={emoji}
                   gif={gif}
@@ -135,6 +142,5 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
 //styles
 const Conatiner = styled(Section)<IThemeProps>`
   border: ${(props) => props.theme.border?.chatViewComponent};
-  backdrop-filter: ${(props) => props.theme.backdropFilter};
   box-sizing: border-box;
 `;
