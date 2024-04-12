@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.79](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.78...restapi-0.0.1-alpha.79) (2024-04-12)
+
+
+### Bug Fixes
+
+* added instanceids for push user and stream ([#1224](https://github.com/push-protocol/push-sdk/issues/1224)) ([34263c9](https://github.com/push-protocol/push-sdk/commit/34263c94ccfe674f915ce318a60cc21a77a0a5de))
+* Merge branch 'alpha' into alpha-deployment ([cb8d996](https://github.com/push-protocol/push-sdk/commit/cb8d996f868109a8e659a5654abfb265d2bb37ad))
+
+
+
 ## [0.0.1-alpha.78](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.77...restapi-0.0.1-alpha.78) (2024-04-10)
 
 
