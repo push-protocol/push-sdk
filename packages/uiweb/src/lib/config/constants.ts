@@ -22,8 +22,8 @@ export const NETWORK_DETAILS = {
   11155111: {
     network: 'sepolia',
   },
-  80001: {
-    network: 'polygon-mumbai',
+  80002: {
+    network: 'polygon-amoy',
   },
   1: {
     network: 'mainnet',
@@ -53,7 +53,7 @@ export const CoreRPC = {
 
 const TESTNET_NETWORK = {
   ETHEREUM: 'eip155:11155111',
-  POLYGON: 'eip155:80001',
+  POLYGON: 'eip155:80002',
   BSC: 'eip155:97',
   OPTIMISM: 'eip155:11155420',
   POLYGON_ZK_EVM: 'eip155:1442',
@@ -89,7 +89,7 @@ export const allowedNetworks = {
   ],
   dev: [
     11155111, // for eth sepolia
-    80001, //for mumbai polygon
+    80002, //for polygon amoy
     97, // bnb testnet
     11155420, // optimism sepolia testnet
     421614, // for arbitrum testnet
@@ -99,7 +99,7 @@ export const allowedNetworks = {
   staging: [
     // 42, //for kovan
     11155111, // for sepolia
-    80001, //for mumbai polygon
+    80002, //for polygon amoy
     97, // bnb testnet
     11155420, // optimism sepolia testnet
     421614, // for arbitrum testnet
@@ -108,7 +108,7 @@ export const allowedNetworks = {
   ],
   local: [
     11155111, // for eth sepolia
-    80001, //for mumbai polygon
+    80002, //for polygon amoy
     97, // bnb testnet
     11155420, // optimism sepolia testnet
     421614, // for arbitrum testnet
