@@ -17,7 +17,7 @@ import { Chat } from '../pushapi/chat';
 import { ProgressHookType, SignerType } from '../types';
 import { ALPHA_FEATURE_CONFIG } from '../config';
 import { ADDITIONAL_META_TYPE } from '../payloads';
-
+import { v4 as uuidv4 } from 'uuid';
 export class PushStream extends EventEmitter {
   private pushChatSocket: any;
   private pushNotificationSocket: any;
@@ -28,7 +28,7 @@ export class PushStream extends EventEmitter {
   private chatInstance: Chat;
   private listen: STREAM[];
   private disconnected: boolean;
-
+  public uid: string;
   constructor(
     account: string,
     private _listen: STREAM[],
@@ -45,6 +45,7 @@ export class PushStream extends EventEmitter {
     this.options = options;
     this.listen = _listen;
     this.disconnected = false;
+    this.uid = uuidv4(); 
     this.chatInstance = new Chat(
       this.account,
       this.options.env as ENV,
@@ -101,6 +102,7 @@ export class PushStream extends EventEmitter {
     listen: STREAM[],
     newOptions: PushStreamInitializeProps
   ): Promise<void> {
+    this.uid = uuidv4(); 
     this.listen = listen;
     this.options = { ...this.options, ...newOptions };
     await this.disconnect();
