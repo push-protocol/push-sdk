@@ -89,7 +89,7 @@ export const allowedNetworks = {
   ],
   dev: [
     11155111, // for eth sepolia
-    80002, //for mumbai amoy
+    80002, //for polygon amoy
     97, // bnb testnet
     11155420, // optimism sepolia testnet
     421614, // for arbitrum testnet
@@ -99,7 +99,7 @@ export const allowedNetworks = {
   staging: [
     // 42, //for kovan
     11155111, // for sepolia
-    80002, //for mumbai amoy
+    80002, //for polygon amoy
     97, // bnb testnet
     11155420, // optimism sepolia testnet
     421614, // for arbitrum testnet
@@ -108,7 +108,7 @@ export const allowedNetworks = {
   ],
   local: [
     11155111, // for eth sepolia
-    80002, //for mumbai amoy
+    80002, //for polygon amoy
     97, // bnb testnet
     11155420, // optimism sepolia testnet
     421614, // for arbitrum testnet
