@@ -28,7 +28,7 @@ export class PushStream extends EventEmitter {
   private chatInstance: Chat;
   private listen: STREAM[];
   private disconnected: boolean;
-  public streamInstanceId: string;
+  public uid: string;
   constructor(
     account: string,
     private _listen: STREAM[],
@@ -45,7 +45,7 @@ export class PushStream extends EventEmitter {
     this.options = options;
     this.listen = _listen;
     this.disconnected = false;
-    this.streamInstanceId = uuidv4(); 
+    this.uid = uuidv4(); 
     this.chatInstance = new Chat(
       this.account,
       this.options.env as ENV,
@@ -102,6 +102,7 @@ export class PushStream extends EventEmitter {
     listen: STREAM[],
     newOptions: PushStreamInitializeProps
   ): Promise<void> {
+    this.uid = uuidv4(); 
     this.listen = listen;
     this.options = { ...this.options, ...newOptions };
     await this.disconnect();
