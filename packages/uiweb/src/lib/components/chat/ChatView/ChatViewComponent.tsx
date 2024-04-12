@@ -81,6 +81,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
         <>
           {chatProfile && 
           <ChatProfile
+            key={derivedChatId}
             chatProfileRightHelperComponent={chatProfileRightHelperComponent}
             chatProfileLeftHelperComponent={chatProfileLeftHelperComponent}
             chatId={derivedChatId}
@@ -97,6 +98,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
           >
             { chatViewList && (
               <ChatViewList
+                key={derivedChatId}
                 chatFilterList={chatFilterList}
                 limit={limit}
                 chatId={derivedChatId}
@@ -115,6 +117,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
             (!!signer || (!!account && !!pgpPrivateKey) || isConnected) && (
               <Section flex="0 1 auto" position="static">
                 <MessageInput
+                  key={derivedChatId}
                   onVerificationFail={onVerificationFail}
                   chatId={derivedChatId}
                   file={file}

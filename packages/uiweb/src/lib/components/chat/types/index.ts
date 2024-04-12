@@ -1,5 +1,5 @@
-import { DropdownValueType } from '../reusables';
 import { ChatMemberProfile, UserV2 } from '@pushprotocol/restapi';
+import { DropdownValueType } from '../reusables';
 
 export const GROUP_ROLES = {
   ADMIN: 'ADMIN',
@@ -100,11 +100,12 @@ export const CRITERIA_TYPE = {
   export type CriteriaType = keyof typeof CRITERIA_TYPE;
 
   export interface ChatInfoResponse {
-    chatId:string;
+    chatId: string;
     meta: {
       group: boolean;
     };
     participants?: Array<string>;
     list: string;
   }
-export * from './tokenGatedGroupCreationType'
+export * from './tokenGatedGroupCreationType';
+

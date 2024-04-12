@@ -325,26 +325,37 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   }, [groupInfo, user, chatStatusText]);
 
   const isConversationPrivate = () => {
-    // if it's a group and it's public, then it's not private
-    if (groupInfo && groupInfo?.isPublic) {
+    // if user is not logged in 
+    if (!user) {
+      if (groupInfo && groupInfo?.isPublic) {
+        return false;
+      }
+
+      return true;
+    }  
+    // if user is in read mode
+    else if (user.readmode()) {
+      // if group is public or if it's dm and FIRST CHAT
+      if (groupInfo && groupInfo?.isPublic) {
+        return false;
+      }
+
+      if (!groupInfo && chatStatusText === ChatStatus.FIRST_CHAT) {
+        return false;
+      }
+
+      return true;
+    }
+    // If user is logged in
+    else {
+      // only condition is when group is private and user is not a member
+      if (groupInfo && !groupInfo?.isPublic && !isMember) {
+        return true;
+      }
+
       return false;
     }
-
-    // if it's a group and it's private but user is a member, then it's not private
-    if (groupInfo && isMember) {
-      return false;
-    }
-
-    // if it's not a group and user is not connected and chat status text is ChatStatus.FIRST_CHAT, then it's not private
-    if (!user && !groupInfo && chatStatusText === ChatStatus.FIRST_CHAT) {
-      return false;
-    }
-
-    // if it's not a group and user is connected and not in readmode, then it's not private
-    if (user && !user.readmode() && !groupInfo) {
-      return false;
-    }
-
+    
     // All other cases are private
     return true;
   };

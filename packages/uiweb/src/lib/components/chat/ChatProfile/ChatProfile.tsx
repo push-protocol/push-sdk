@@ -26,7 +26,13 @@ import {
   allowedNetworks,
   device,
 } from '../../../config';
-import { getAddress, pCAIP10ToWallet, resolveNewEns, shortenText, walletToPCAIP10 } from '../../../helpers';
+import {
+  getAddress,
+  pCAIP10ToWallet,
+  resolveNewEns,
+  shortenText,
+  walletToPCAIP10,
+} from '../../../helpers';
 import useFetchChat from '../../../hooks/chat/useFetchChat';
 import useUserProfile from '../../../hooks/useUserProfile';
 import PublicChatIcon from '../../../icons/Public-Chat.svg';
@@ -56,7 +62,8 @@ export const ChatProfile: React.FC<IChatProfile> = ({
   const [userInfo, setUserInfo] = useState<IUser | null>();
   const [groupInfo, setGroupInfo] = useState<Group | null>();
   const [web3Name, setWeb3Name] = useState<string | null>(null);
-  const isMobile = useMediaQuery(device.tablet);
+  const [loading, setLoading] = useState(true);
+
   const provider = new ethers.providers.InfuraProvider(
     CoreContractChainId[env],
     InfuraAPIKey
@@ -64,7 +71,6 @@ export const ChatProfile: React.FC<IChatProfile> = ({
   const DropdownRef = useRef(null);
   const [modal, setModal] = useState(false);
   const { fetchChat } = useFetchChat();
-
 
   useClickAway(DropdownRef, () => {
     setOptions(false);
@@ -75,10 +81,22 @@ export const ChatProfile: React.FC<IChatProfile> = ({
   };
 
   const fetchProfileData = async () => {
-   
-    if (chatInfo && !chatInfo?.meta?.group && chatInfo?.participants && account) {
-      const recipient = pCAIP10ToWallet(chatInfo?.participants.find((address)=>address != walletToPCAIP10(account)) || formattedChatId);
-      const ChatProfile = await fetchUserProfile({ profileId: recipient, env,user });
+    if (
+      chatInfo &&
+      !chatInfo?.meta?.group &&
+      chatInfo?.participants &&
+      account
+    ) {
+      const recipient = pCAIP10ToWallet(
+        chatInfo?.participants.find(
+          (address) => address != walletToPCAIP10(account)
+        ) || formattedChatId
+      );
+      const ChatProfile = await fetchUserProfile({
+        profileId: recipient,
+        env,
+        user,
+      });
 
       // const ChatProfile = await fetchUserProfile({
       //   profileId: formattedChatId,
@@ -118,30 +136,29 @@ export const ChatProfile: React.FC<IChatProfile> = ({
   };
 
   useEffect(() => {
- 
     (async () => {
+      setLoading(true);
+      
       if (!user) return;
-      if(chatId){
+      if (chatId) {
         let formattedChatId;
-    if (chatId.includes('eip155:')) {
-      formattedChatId = chatId.replace('eip155:', '');
-    } else if (chatId.includes('.')) {
-      formattedChatId = (await getAddress(chatId, env))!;
-     
-    } else formattedChatId = chatId;
-    setFormattedChatId(formattedChatId);
+        if (chatId.includes('eip155:')) {
+          formattedChatId = chatId.replace('eip155:', '');
+        } else if (chatId.includes('.')) {
+          formattedChatId = (await getAddress(chatId, env))!;
+        } else formattedChatId = chatId;
+        setFormattedChatId(formattedChatId);
         const chat = await fetchChat({ chatId: formattedChatId });
         if (Object.keys(chat || {}).length) {
           setChatInfo(chat as ChatInfoResponse);
         }
-  
       }
-     
     })();
   }, [chatId, account, user]);
+
   useEffect(() => {
     (async () => {
-     await   fetchProfileData(); 
+      await fetchProfileData();
     })();
   }, [chatInfo]);
 
@@ -165,15 +182,14 @@ export const ChatProfile: React.FC<IChatProfile> = ({
             member={{
               wallet: getProfileName() as string,
               image: getImage(),
-              web3Name: web3Name?web3Name:groupInfo?.groupName,
-              completeWallet:userInfo?.wallets??groupInfo?.chatId
+              web3Name: web3Name ? web3Name : groupInfo?.groupName,
+              completeWallet: userInfo?.wallets ?? groupInfo?.chatId,
             }}
-            copy={!!userInfo|| !!groupInfo}
+            copy={!!userInfo || !!groupInfo}
             customStyle={{
               fontSize: theme?.fontWeight?.chatProfileText,
               textColor: theme?.textColor?.chatProfileText,
             }}
-            
           />
         </Section>
         <Section
@@ -184,11 +200,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
           alignSelf="center"
         >
           {chatProfileRightHelperComponent && !groupInfo && (
-            <Section
-              cursor="pointer"
-              maxHeight="1.75rem"
-              overflow="hidden"
-            >
+            <Section cursor="pointer" maxHeight="1.75rem" overflow="hidden">
               {chatProfileRightHelperComponent}
             </Section>
           )}
