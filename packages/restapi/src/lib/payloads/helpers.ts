@@ -330,7 +330,7 @@ export function getCAIPFormat(chainId: number, address: string) {
   if (
     [
       1, 11155111, 42, 137, 80002, 56, 97, 10, 11155420, 1442, 1101, 421614,
-      42161, 122, 123, 80085,
+      42161, 122, 123, 80085, 59141, 59144,
     ].includes(chainId)
   ) {
     return `eip155:${chainId}:${address}`;

@@ -9,6 +9,7 @@ import { TheGraphSvg } from '../../icons/TheGraphSvg';
 import { ArbitrumSvg } from '../../icons/ArbitrumSvg';
 import { FuseSvg } from '../../icons/FuseSvg';
 import { BerachainSVG } from '../../icons/BerachainSVG';
+import LineaSVG from '../../icons/LineaSVG';
 const createSVGIcon = (element: any, chainName: string) => {
   return (
     <Tooltip tooltipContent={`Delivered by ${chainName}`}>{element}</Tooltip>
@@ -82,5 +83,13 @@ export default {
   BERACHAIN_TESTNET: {
     label: 'BERACHAIN TESTNET',
     icon: createSVGIcon(<BerachainSVG />, 'Berachain Testnet'),
+  },
+  LINEA_TESTNET : {
+    label: 'LINEA TESTNET',
+    icon: createSVGIcon(<LineaSVG/>, 'Linea Testnet'),
+  },
+  LIENA_MAINNET : {
+    label: 'LIENA MAINNET',
+    icon: createSVGIcon(<LineaSVG/>, 'Linea Mainnet'),
   },
 };

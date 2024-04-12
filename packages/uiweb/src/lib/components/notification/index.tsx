@@ -40,6 +40,8 @@ export type chainNameType =
   | 'FUSE_MAINNET'
   | 'THE_GRAPH'
   | 'BERACHAIN_TESTNET'
+  | 'LINEA_MAINNET'
+  | 'LINEA_TESTNET'
   | undefined;
 
 export type NotificationItemProps = {

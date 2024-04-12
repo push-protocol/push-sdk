@@ -86,6 +86,7 @@ export const allowedNetworks = {
     10, // for optimism mainnet
     42161, // for arbitrum mainnet
     122, // for fuse mainnet
+    59144 // for linea mainnet
   ],
   dev: [
     11155111, // for eth sepolia
@@ -95,6 +96,7 @@ export const allowedNetworks = {
     421614, // for arbitrum testnet
     123, // for fuse testnet
     80085, // for berachain testnet
+    59141 // for linea testnet
   ],
   staging: [
     // 42, //for kovan
@@ -105,6 +107,7 @@ export const allowedNetworks = {
     421614, // for arbitrum testnet
     123, // for fuse testnet
     80085, // for berachain testnet
+    59141 // for linea testnet
   ],
   local: [
     11155111, // for eth sepolia
@@ -114,6 +117,7 @@ export const allowedNetworks = {
     421614, // for arbitrum testnet
     123, // for fuse testnet
     80085, // for berachain testnet
+    59141 // for linea testnet
   ],
 };
 
