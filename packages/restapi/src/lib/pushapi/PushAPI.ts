@@ -45,7 +45,7 @@ export class PushAPI {
   // Notification
   public channel!: Channel;
   public notification!: Notification;
-  public pushUserInstanceId: string;
+  public uid: string;
   // error object to maintain errors and warnings
   public errors: { type: 'WARN' | 'ERROR'; message: string }[];
 
@@ -71,7 +71,7 @@ export class PushAPI {
     // Instantiate the notification classes
     this.channel = new Channel(this.signer, this.env, this.account);
     this.notification = new Notification(this.signer, this.env, this.account);
-    this.pushUserInstanceId = uuidv4();
+    this.uid = uuidv4();
     this.cache = cache;
 
     // Initialize the instances of the four classes
@@ -315,7 +315,7 @@ export class PushAPI {
     this.pgpPublicKey = newUser.publicKey;
     this.readMode = false;
     this.errors = [];
-
+    this.uid = uuidv4(); 
     // Initialize the instances of the four classes
     this.chat = new Chat(
       this.account,
