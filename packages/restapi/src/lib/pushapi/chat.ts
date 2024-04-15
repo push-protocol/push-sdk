@@ -283,15 +283,33 @@ export class Chat {
     });
   }
 
-  async info(receipient: string): Promise<ChatInfoResponse> {
-    const options: PUSH_CHAT.GetChatInfoType = {
+  async info(
+    receipient: string,
+    options?: {
+      overrideAccount?: string;
+    }
+  ): Promise<ChatInfoResponse> {
+    const accountToUse = options?.overrideAccount || this.account;
+    const request: PUSH_CHAT.GetChatInfoType = {
       receipient: receipient,
-      sender: this.account,
+      sender: accountToUse,
       env: this.env,
     };
-
     try {
-      const chatInfo = await PUSH_CHAT.getChatInfo(options);
+      const chatInfo = await PUSH_CHAT.getChatInfo(request);
+        const finalRecipient = chatInfo.meta.group
+          ? chatInfo.chatId
+          : receipient;
+
+        const response: ChatInfoResponse = {
+          meta: chatInfo.meta,
+          list: chatInfo.list,
+          participants: chatInfo.participants,
+          chatId: chatInfo.chatId,
+          receipient: finalRecipient,
+        };
+
+        return response;
       return chatInfo;
     } catch (error) {
       console.error(`Error in Chat.info: `, error);
