@@ -57,7 +57,7 @@ export class DataModifier {
   ): JoinGroupEvent {
     const baseEventData: JoinGroupEvent = {
       origin: data.messageOrigin,
-      timestamp: data.timestamp,
+      timestamp: data.timestamp.toString(),
       chatId: data.chatId,
       from: data.from,
       to: data.to,
@@ -78,7 +78,7 @@ export class DataModifier {
   ): LeaveGroupEvent {
     const baseEventData: LeaveGroupEvent = {
       origin: data.messageOrigin,
-      timestamp: data.timestamp,
+      timestamp: data.timestamp.toString(),
       chatId: data.chatId,
       from: data.from,
       to: data.to,
@@ -96,7 +96,7 @@ export class DataModifier {
   private static mapToRequestEvent(data: any, includeRaw: boolean): any {
     const eventData: RequestEvent = {
       origin: data.messageOrigin,
-      timestamp: data.timestamp,
+      timestamp: data.timestamp.toString(),
       chatId: data.chatId,
       from: data.from,
       to: data.to,
@@ -116,7 +116,7 @@ export class DataModifier {
     // Whatever the structure of your RemoveEvent, modify accordingly
     const eventData: RemoveEvent = {
       origin: data.messageOrigin,
-      timestamp: data.timestamp,
+      timestamp: data.timestamp.toString(),
       chatId: data.chatId,
       from: data.from,
       to: data.to,
@@ -133,7 +133,7 @@ export class DataModifier {
     // Whatever the structure of your RemoveEvent, modify accordingly
     const eventData: RoleEvent = {
       origin: data.messageOrigin,
-      timestamp: data.timestamp,
+      timestamp: data.timestamp.toString(),
       chatId: data.chatId,
       from: data.from,
       to: data.to,
@@ -186,7 +186,7 @@ export class DataModifier {
     const groupEvent: any = {
       event: eventType,
       origin: incomingData.messageOrigin,
-      timestamp: incomingData.timestamp,
+      timestamp: incomingData.timestamp.toString(),
       chatId: incomingData.chatId,
       from: incomingData.from,
       meta,
@@ -330,7 +330,7 @@ export class DataModifier {
     const notificationEvent: NotificationEvent = {
       event: notificationEventType,
       origin: origin,
-      timestamp: data.epoch,
+      timestamp: data.epoch.toString(),
       from: data.sender,
       to: recipients,
       notifID: data.payload_id.toString(),
@@ -515,7 +515,7 @@ export class DataModifier {
     const baseEventData: BaseEventData = {
       event: data.eventType,
       origin: data.messageOrigin,
-      timestamp: data.timestamp,
+      timestamp: data.timestamp.toString(),
       spaceId: data.spaceId,
       from: data.spaceCreator,
       meta: {
@@ -560,7 +560,7 @@ export class DataModifier {
     const baseEventData: BaseEventData = {
       event: data.eventType,
       origin: data.messageOrigin,
-      timestamp: data.timestamp,
+      timestamp: data.timestamp.toString(),
       spaceId: data.spaceId,
       from: data.spaceCreator,
       meta: {
@@ -585,7 +585,7 @@ export class DataModifier {
   private static mapToRequestSpaceEvent(data: any, includeRaw: boolean): any {
     const eventData: SpaceRequestEvent = {
       origin: data.messageOrigin,
-      timestamp: data.timestamp,
+      timestamp: data.timestamp.toString(),
       spaceId: data.spaceId,
       from: data.from,
       to: data.to,
@@ -614,7 +614,7 @@ export class DataModifier {
     const baseEventData: BaseEventData = {
       event: 'request',
       origin: data.messageOrigin === 'other' ? 'self' : 'other',
-      timestamp: data.timestamp,
+      timestamp: data.timestamp.toString(),
       spaceId: data.chatId,
       from: data.fromCAIP10,
       to: [data.toCAIP10],
@@ -675,7 +675,7 @@ export class DataModifier {
 
     const eventData: BaseEventData = {
       origin: data.messageOrigin,
-      timestamp: data.timestamp,
+      timestamp: data.timestamp.toString(),
       spaceId: data.spaceId,
       from: data.from,
       to: data.to,
@@ -703,7 +703,7 @@ export class DataModifier {
 
     const eventData: BaseEventData = {
       origin: data.messageOrigin,
-      timestamp: data.timestamp,
+      timestamp: data.timestamp.toString(),
       spaceId: data.spaceId,
       from: data.from,
       to: data.to,
@@ -731,7 +731,7 @@ export class DataModifier {
 
     const eventData: BaseEventData = {
       origin: data.messageOrigin,
-      timestamp: data.timestamp,
+      timestamp: data.timestamp.toString(),
       spaceId: data.spaceId,
       from: data.from,
       to: data.to,
@@ -759,7 +759,7 @@ export class DataModifier {
 
     const eventData: BaseEventData = {
       origin: data.messageOrigin,
-      timestamp: data.timestamp,
+      timestamp: data.timestamp.toString(),
       spaceId: data.spaceId,
       from: data.from,
       to: null,
@@ -787,7 +787,7 @@ export class DataModifier {
 
     const eventData: BaseEventData = {
       origin: data.messageOrigin,
-      timestamp: data.timestamp,
+      timestamp: data.timestamp.toString(),
       spaceId: data.spaceId,
       from: data.from,
       to: null,
@@ -856,7 +856,7 @@ export class DataModifier {
     const videoEvent: VideoEvent = {
       event: videoEventType,
       origin: origin,
-      timestamp: data.epoch,
+      timestamp: data.epoch.toString(),
       peerInfo,
     };
 
