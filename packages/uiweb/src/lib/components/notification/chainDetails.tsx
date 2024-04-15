@@ -24,9 +24,9 @@ export default {
     label: 'ETHEREUM MAINNET',
     icon: createSVGIcon(<EthereumSvg />, 'Ethereum Mainnet'),
   },
-  POLYGON_TEST_MUMBAI: {
-    label: 'POLYGON MUMBAI',
-    icon: createSVGIcon(<PolygonSvg />, 'Polygon Mumbai'),
+  POLYGON_TEST_AMOY: {
+    label: 'POLYGON AMOY',
+    icon: createSVGIcon(<PolygonSvg />, 'Polygon Amoy'),
   },
   POLYGON_MAINNET: {
     label: 'POLYGON MAINNET',

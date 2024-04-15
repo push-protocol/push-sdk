@@ -5,7 +5,6 @@ import { tokenABI } from './abis/token';
 import {
   mainnet,
   polygon,
-  polygonMumbai,
   bsc,
   bscTestnet,
   optimism,
@@ -19,6 +18,30 @@ import {
   fuseSparknet,
 } from 'viem/chains';
 import { defineChain } from 'viem';
+
+const polygonAmoy = defineChain({
+  id: 80002,
+  name: 'Polygon Amoy Testnet',
+  network: 'polygon-amoy',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'MATIC',
+    symbol: 'MATIC',
+  },
+  rpcUrls: {
+    default: { http: ['https://rpc-amoy.polygon.technology/'] },
+    public: { http: ['https://rpc-amoy.polygon.technology/'] },
+  },
+  blockExplorers: {
+    default: {
+      name: 'Polygon Amoy',
+      url: 'https://www.oklink.com/amoy',
+    },
+  },
+  testnet: true,
+});
+
+
 
 const berachainTestnet = defineChain({
   id: 80085,
@@ -58,7 +81,7 @@ const BLOCKCHAIN_NETWORK = {
   ETH_MAINNET: 'eip155:1',
   ETH_SEPOLIA: 'eip155:11155111',
   POLYGON_MAINNET: 'eip155:137',
-  POLYGON_MUMBAI: 'eip155:80001',
+  POLYGON_AMOY: 'eip155:80002',
   BSC_MAINNET: 'eip155:56',
   BSC_TESTNET: 'eip155:97',
   OPTIMISM_TESTNET: 'eip155:11155420',
@@ -92,9 +115,9 @@ export const ALIAS_CHAIN_ID: {
 } = {
   POLYGON: {
     [ENV.PROD]: 137,
-    [ENV.STAGING]: 80001,
-    [ENV.DEV]: 80001,
-    [ENV.LOCAL]: 80001,
+    [ENV.STAGING]: 80002,
+    [ENV.DEV]: 80002,
+    [ENV.LOCAL]: 80002,
   },
   BSC: {
     [ENV.PROD]: 56,
@@ -145,7 +168,7 @@ export const CHAIN_NAME: { [key: number]: string } = {
   11155111: 'ETHEREUM',
   // polygon
   137: 'POLYGON',
-  80001: 'POLYGON',
+  80002: 'POLYGON',
   // bsc
   56: 'BSC',
   97: 'BSC',
@@ -247,7 +270,7 @@ const CONFIG = {
       API_BASE_URL: API_BASE_URL[ENV.STAGING],
       EPNS_COMMUNICATOR_CONTRACT: '0x0c34d54a09cfe75bccd878a469206ae77e0fe6e7',
     },
-    [BLOCKCHAIN_NETWORK.POLYGON_MUMBAI]: {
+    [BLOCKCHAIN_NETWORK.POLYGON_AMOY]: {
       API_BASE_URL: API_BASE_URL[ENV.STAGING],
       EPNS_COMMUNICATOR_CONTRACT: '0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa',
     },
@@ -281,9 +304,9 @@ const CONFIG = {
       API_BASE_URL: API_BASE_URL[ENV.DEV],
       EPNS_COMMUNICATOR_CONTRACT: '0x9dDCD7ed7151afab43044E4D694FA064742C428c',
     },
-    [BLOCKCHAIN_NETWORK.POLYGON_MUMBAI]: {
+    [BLOCKCHAIN_NETWORK.POLYGON_AMOY]: {
       API_BASE_URL: API_BASE_URL[ENV.DEV],
-      EPNS_COMMUNICATOR_CONTRACT: '0xAf55BE8e6b0d6107891bA76eADeEa032ef8A4504',
+      EPNS_COMMUNICATOR_CONTRACT: '0x9cb3bd7550b5c92baa056fc0f08132f49508145f',
     },
     [BLOCKCHAIN_NETWORK.BSC_TESTNET]: {
       API_BASE_URL: API_BASE_URL[ENV.DEV],
@@ -315,9 +338,9 @@ const CONFIG = {
       API_BASE_URL: API_BASE_URL[ENV.LOCAL],
       EPNS_COMMUNICATOR_CONTRACT: '0x9dDCD7ed7151afab43044E4D694FA064742C428c',
     },
-    [BLOCKCHAIN_NETWORK.POLYGON_MUMBAI]: {
+    [BLOCKCHAIN_NETWORK.POLYGON_AMOY]: {
       API_BASE_URL: API_BASE_URL[ENV.LOCAL],
-      EPNS_COMMUNICATOR_CONTRACT: '0xAf55BE8e6b0d6107891bA76eADeEa032ef8A4504',
+      EPNS_COMMUNICATOR_CONTRACT: '0x9cb3bd7550b5c92baa056fc0f08132f49508145f',
     },
     [BLOCKCHAIN_NETWORK.BSC_TESTNET]: {
       API_BASE_URL: API_BASE_URL[ENV.LOCAL],
@@ -422,8 +445,8 @@ export const VIEM_CONFIG = {
       API_BASE_URL: API_BASE_URL[ENV.STAGING],
       EPNS_COMMUNICATOR_CONTRACT: '0x0c34d54a09cfe75bccd878a469206ae77e0fe6e7',
     },
-    [BLOCKCHAIN_NETWORK.POLYGON_MUMBAI]: {
-      NETWORK: polygonMumbai,
+    [BLOCKCHAIN_NETWORK.POLYGON_AMOY]: {
+      NETWORK: polygonAmoy,
       API_BASE_URL: API_BASE_URL[ENV.STAGING],
       EPNS_COMMUNICATOR_CONTRACT: '0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa',
     },
@@ -464,10 +487,10 @@ export const VIEM_CONFIG = {
       API_BASE_URL: API_BASE_URL[ENV.DEV],
       EPNS_COMMUNICATOR_CONTRACT: '0x9dDCD7ed7151afab43044E4D694FA064742C428c',
     },
-    [BLOCKCHAIN_NETWORK.POLYGON_MUMBAI]: {
-      NETWORK: polygonMumbai,
+    [BLOCKCHAIN_NETWORK.POLYGON_AMOY]: {
+      NETWORK: polygonAmoy,
       API_BASE_URL: API_BASE_URL[ENV.DEV],
-      EPNS_COMMUNICATOR_CONTRACT: '0xAf55BE8e6b0d6107891bA76eADeEa032ef8A4504',
+      EPNS_COMMUNICATOR_CONTRACT: '0x9cb3bd7550b5c92baa056fc0f08132f49508145f',
     },
     [BLOCKCHAIN_NETWORK.BSC_TESTNET]: {
       NETWORK: bscTestnet,
@@ -506,10 +529,10 @@ export const VIEM_CONFIG = {
       API_BASE_URL: API_BASE_URL[ENV.DEV],
       EPNS_COMMUNICATOR_CONTRACT: '0x9dDCD7ed7151afab43044E4D694FA064742C428c',
     },
-    [BLOCKCHAIN_NETWORK.POLYGON_MUMBAI]: {
-      NETWORK: polygonMumbai,
+    [BLOCKCHAIN_NETWORK.POLYGON_AMOY]: {
+      NETWORK: polygonAmoy,
       API_BASE_URL: API_BASE_URL[ENV.DEV],
-      EPNS_COMMUNICATOR_CONTRACT: '0xAf55BE8e6b0d6107891bA76eADeEa032ef8A4504',
+      EPNS_COMMUNICATOR_CONTRACT: '0x9cb3bd7550b5c92baa056fc0f08132f49508145f',
     },
     [BLOCKCHAIN_NETWORK.BSC_TESTNET]: {
       NETWORK: bscTestnet,

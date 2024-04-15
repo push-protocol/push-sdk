@@ -12,7 +12,12 @@ chai.use(chaiAsPromised);
 
 describe('Upgrade user keys', () => {
   const upgradationVersion = Constants.ENC_TYPE_V3;
-  const _env = CONSTANTS.ENV.DEV;
+
+  // accessing env dynamically using process.env
+  type EnvStrings = keyof typeof CONSTANTS.ENV;
+  const envMode = process.env.ENV as EnvStrings;
+  const _env = CONSTANTS.ENV[envMode];
+
   let provider = ethers.getDefaultProvider(5);
   let _signer: any;
   let walletAddress: string;

@@ -12,7 +12,7 @@ const NETWORK_MAPPING: NwMappingType = {
   11155111: 'ETH_SEPOLIA',
   3: 'ETH_ROPSTEN',
   137: 'POLYGON_MAINNET',
-  80001: 'POLYGON_MUMBAI',
+  80002: 'POLYGON_AMOY',
   56: 'BSC_MAINNET',
   97: 'BSC_TESTNET',
   11155420: 'OPTIMISM_TESTNET',
@@ -28,7 +28,7 @@ const NETWORK_MAPPING: NwMappingType = {
 
 const injected = new InjectedConnector({
   supportedChainIds: [
-    1, 3, 4, 11155111, 42, 137, 80001, 56, 97, 10, 11155420, 1442, 1101, 421614,
+    1, 3, 4, 11155111, 42, 137, 80002, 56, 97, 10, 11155420, 1442, 1101, 421614,
     42161, 122, 123, 80085,
   ],
 });
