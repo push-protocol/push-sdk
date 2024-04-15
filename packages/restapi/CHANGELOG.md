@@ -2,6 +2,18 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.7.4](https://github.com/push-protocol/push-sdk/compare/restapi-1.7.3...restapi-1.7.4) (2024-04-15)
+
+
+### Bug Fixes
+
+* add decryptedPGPPrivateKey in options ([#1216](https://github.com/push-protocol/push-sdk/issues/1216)) ([ed9d3a7](https://github.com/push-protocol/push-sdk/commit/ed9d3a7e6ef3880fd897927e67d7db8e0a7b06c7))
+* fix testcases to take push node environment from .env rather tha… ([#1196](https://github.com/push-protocol/push-sdk/issues/1196)) ([7a4bd8d](https://github.com/push-protocol/push-sdk/commit/7a4bd8d7637fb17a714062a7b9ea055c889b0bf0))
+* Merge branch 'main' into deployment ([f14c15c](https://github.com/push-protocol/push-sdk/commit/f14c15c144bfd8afcb5b738c0dfd29dac8fa49a2))
+* tes cases and minor bugs ([#1212](https://github.com/push-protocol/push-sdk/issues/1212)) ([d30e095](https://github.com/push-protocol/push-sdk/commit/d30e095860ef20b8f8ef6a341d49f698227df998))
+
+
+
 ## [1.7.3](https://github.com/push-protocol/push-sdk/compare/restapi-1.7.2...restapi-1.7.3) (2024-04-02)
 
 
