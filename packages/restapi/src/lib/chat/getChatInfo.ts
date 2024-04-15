@@ -13,7 +13,8 @@ export interface ChatInfoResponse {
   };
   list: string;
   participants: string[];
-  chatId: string
+  chatId: string;
+  receipient: string;
 }
 
 /**

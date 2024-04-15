@@ -70,8 +70,8 @@ export const GLOBALS = {
       label: 'ETHEREUM MAINNET',
       icon: EthereumSVG,
     },
-    POLYGON_TEST_MUMBAI: {
-      label: 'POLYGON MUMBAI',
+    POLYGON_TEST_AMOY: {
+      label: 'POLYGON AMOY',
       icon: PolygonSVG,
     },
     POLYGON_MAINNET: {
