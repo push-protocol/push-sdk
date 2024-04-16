@@ -1,4 +1,4 @@
-import { isValidETHAddress, isValidNFTCAIP10Address } from '../../helpers';
+import { isValidPushCAIP, isValidFullCAIP10 } from '../../helpers';
 import { GroupMemberUpdateOptions } from '../updateGroupMembers';
 
 export const createGroupRequestValidator = (
@@ -28,7 +28,7 @@ export const createGroupRequestValidator = (
   }
 
   for (let i = 0; i < members.length; i++) {
-    if (members[i] && !isValidETHAddress(members[i])) {
+    if (members[i] && !isValidPushCAIP(members[i])) {
       throw new Error(`Invalid member address!`);
     }
   }
@@ -38,7 +38,7 @@ export const createGroupRequestValidator = (
   }
 
   for (let i = 0; i < admins.length; i++) {
-    if (!isValidETHAddress(admins[i])) {
+    if (!isValidPushCAIP(admins[i])) {
       throw new Error(`Invalid admin address!`);
     }
   }
@@ -46,7 +46,7 @@ export const createGroupRequestValidator = (
   if (
     contractAddressNFT != null &&
     contractAddressNFT?.length > 0 &&
-    !isValidNFTCAIP10Address(contractAddressNFT)
+    !isValidFullCAIP10(contractAddressNFT)
   ) {
     throw new Error(`Invalid contractAddressNFT address!`);
   }
@@ -58,7 +58,7 @@ export const createGroupRequestValidator = (
   if (
     contractAddressERC20 != null &&
     contractAddressERC20?.length > 0 &&
-    !isValidNFTCAIP10Address(contractAddressERC20)
+    !isValidFullCAIP10(contractAddressERC20)
   ) {
     throw new Error(`Invalid contractAddressERC20 address!`);
   }
@@ -95,7 +95,7 @@ export const createSpaceRequestValidator = (
   }
 
   for (let i = 0; i < members.length; i++) {
-    if (members[i] && !isValidETHAddress(members[i])) {
+    if (members[i] && !isValidPushCAIP(members[i])) {
       throw new Error(`Invalid member address!`);
     }
   }
@@ -105,7 +105,7 @@ export const createSpaceRequestValidator = (
   }
 
   for (let i = 0; i < admins.length; i++) {
-    if (!isValidETHAddress(admins[i])) {
+    if (!isValidPushCAIP(admins[i])) {
       throw new Error(`Invalid admin address!`);
     }
   }
@@ -113,7 +113,7 @@ export const createSpaceRequestValidator = (
   if (
     contractAddressNFT != null &&
     contractAddressNFT?.length > 0 &&
-    !isValidNFTCAIP10Address(contractAddressNFT)
+    !isValidFullCAIP10(contractAddressNFT)
   ) {
     throw new Error(`Invalid contractAddressNFT address!`);
   }
@@ -125,7 +125,7 @@ export const createSpaceRequestValidator = (
   if (
     contractAddressERC20 != null &&
     contractAddressERC20?.length > 0 &&
-    !isValidNFTCAIP10Address(contractAddressERC20)
+    !isValidFullCAIP10(contractAddressERC20)
   ) {
     throw new Error(`Invalid contractAddressERC20 address!`);
   }
@@ -191,7 +191,7 @@ export const updateGroupRequestValidator = (
 
   if (members != null && members.length > 0) {
     for (let i = 0; i < members.length; i++) {
-      if (!isValidETHAddress(members[i])) {
+      if (!isValidPushCAIP(members[i])) {
         throw new Error(`Invalid member address in members list!`);
       }
     }
@@ -199,13 +199,13 @@ export const updateGroupRequestValidator = (
 
   if (admins != null && admins.length > 0) {
     for (let i = 0; i < admins.length; i++) {
-      if (!isValidETHAddress(admins[i])) {
+      if (!isValidPushCAIP(admins[i])) {
         throw new Error(`Invalid member address in admins list!`);
       }
     }
   }
 
-  if (address != null && !isValidETHAddress(address)) {
+  if (address != null && !isValidPushCAIP(address)) {
     throw new Error(`Invalid address field!`);
   }
 };
@@ -232,9 +232,9 @@ export const validateGroupMemberUpdateOptions = (
       throw new Error(`${role} array cannot have more than 1000 addresses.`);
     }
 
-    // Assuming you have a function `isValidETHAddress` to validate Ethereum addresses
+    // Assuming you have a function `isValidPushCAIP` to validate Ethereum addresses
     upsert[role].forEach((address) => {
-      if (!isValidETHAddress(address)) {
+      if (!isValidPushCAIP(address)) {
         throw new Error(`Invalid address found in ${role} list.`);
       }
     });
@@ -245,7 +245,7 @@ export const validateGroupMemberUpdateOptions = (
     throw new Error('Remove array cannot have more than 1000 addresses.');
   }
   remove.forEach((address) => {
-    if (!isValidETHAddress(address)) {
+    if (!isValidPushCAIP(address)) {
       throw new Error('Invalid address found in remove list.');
     }
   });

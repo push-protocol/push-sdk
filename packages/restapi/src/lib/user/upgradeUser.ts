@@ -1,6 +1,6 @@
 import { getAccountAddress, getWallet } from '../chat/helpers';
 import Constants, { ENV } from '../constants';
-import { isValidETHAddress, decryptPGPKey } from '../helpers';
+import { isValidPushCAIP, decryptPGPKey } from '../helpers';
 import {
   SignerType,
   IUser,
@@ -41,7 +41,7 @@ export const upgrade = async (options: UpgradeUserProps): Promise<IUser> => {
     const wallet = getWallet({ account, signer });
     const address = await getAccountAddress(wallet);
 
-    if (!isValidETHAddress(address)) {
+    if (!isValidPushCAIP(address)) {
       throw new Error(`Invalid address!`);
     }
 

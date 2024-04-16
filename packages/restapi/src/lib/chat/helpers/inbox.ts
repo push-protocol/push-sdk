@@ -1,6 +1,6 @@
 import * as PGP from './pgp';
 import Constants, { ENV } from '../../constants';
-import { isValidCAIP10NFTAddress, pCAIP10ToWallet } from '../../helpers';
+import { isValidNFTCAIP, pCAIP10ToWallet } from '../../helpers';
 import { IFeeds, IMessageIPFS, IUser, SpaceIFeeds } from '../../types';
 import { get as getUser } from '../../user';
 import { getCID } from '../ipfs';
@@ -212,7 +212,7 @@ export const addDeprecatedInfo = (() => {
   const latestDIDs: { [key: string]: string } = {};
   return (chats: IFeeds[]): IFeeds[] => {
     chats.forEach((chat) => {
-      if (isValidCAIP10NFTAddress(chat.did)) {
+      if (isValidNFTCAIP(chat.did)) {
         const didWithoutTimestamp = chat.did.split(':').slice(0, 5).join(':');
         const timestamp = chat.did.split(':')[5];
         if (
@@ -224,7 +224,7 @@ export const addDeprecatedInfo = (() => {
       }
     });
     chats.forEach((chat) => {
-      if (isValidCAIP10NFTAddress(chat.did)) {
+      if (isValidNFTCAIP(chat.did)) {
         const didWithoutTimestamp = chat.did.split(':').slice(0, 5).join(':');
         if (latestDIDs[didWithoutTimestamp] !== chat.did) {
           chat['deprecated'] = true;
@@ -242,7 +242,7 @@ export const addDeprecatedInfoToMessages = (() => {
   const latestDIDs: { [key: string]: string } = {};
   return (chats: IMessageIPFS[]): IMessageIPFS[] => {
     chats.forEach((chat) => {
-      if (isValidCAIP10NFTAddress(chat.fromDID)) {
+      if (isValidNFTCAIP(chat.fromDID)) {
         const didWithoutTimestamp = chat.fromDID
           .split(':')
           .slice(0, 5)
@@ -257,7 +257,7 @@ export const addDeprecatedInfoToMessages = (() => {
       }
     });
     chats.forEach((chat) => {
-      if (isValidCAIP10NFTAddress(chat.fromDID)) {
+      if (isValidNFTCAIP(chat.fromDID)) {
         const didWithoutTimestamp = chat.fromDID
           .split(':')
           .slice(0, 5)
