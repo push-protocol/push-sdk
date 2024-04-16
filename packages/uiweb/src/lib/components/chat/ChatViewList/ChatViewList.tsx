@@ -317,11 +317,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
 
   // To update blur based on group info
   useEffect(() => {
-    if (groupInfo && groupInfo?.isPublic) {
-      setBlur(isConversationPrivate());
-    } else {
-      setBlur(isConversationPrivate());
-    }
+    setBlur(isConversationPrivate());
   }, [groupInfo, user, chatStatusText]);
 
   const isConversationPrivate = () => {
@@ -335,6 +331,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     }  
     // if user is in read mode
     else if (user.readmode()) {
+      console.log(`Timestamp: ${new Date().toISOString()} - triggerered user that is logged readmode, ${user.readmode()}`);
       // if group is public or if it's dm and FIRST CHAT
       if (groupInfo && groupInfo?.isPublic) {
         return false;
@@ -350,6 +347,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     else {
       // only condition is when group is private and user is not a member
       if (groupInfo && !groupInfo?.isPublic && !isMember) {
+        console.log(`Timestamp: ${new Date().toISOString()} - triggerered user that is logged in as user, ${!user.readmode()}`);
         return true;
       }
 

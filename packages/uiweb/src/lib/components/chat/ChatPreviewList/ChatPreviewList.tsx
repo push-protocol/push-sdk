@@ -868,11 +868,11 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     }
   };
 
-  // Helper functions
-
+  
   // Render
   return (
     <ChatPreviewListContainer
+      key={user?.uid}
       ref={listInnerRef}
       theme={theme}
       onScroll={!options?.prefillChatPreviewList ? onScroll : undefined}

@@ -1,5 +1,16 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
+// Define keyframes
+const skeletonLoading = keyframes`
+  0% {
+    background-color: hsl(200, 20%, 80%);
+  }
+  100% {
+    background-color: hsl(200, 20%, 95%);
+  }
+`;
+
+// Define types and export components
 type SpanStyleProps = {
   alignSelf?: string;
   background?: string;
@@ -133,6 +144,7 @@ type SectionStyleProps = {
   borderStyle?: string;
   borderWidth?: string;
   borderRadius?: string;
+  lineHeight?: string;
   flex?: string;
   whiteSpace?:string;
   zIndex?: string;
@@ -154,6 +166,7 @@ export const Section = styled.div<SectionStyleProps>`
   min-width: ${(props) => props.minWidth || 'auto'};
   height: ${(props) => props.height || 'auto'};
   width: ${(props) => props.width || 'auto'};
+  line-height: ${(props) => props.lineHeight || 'initial'};
   overflow: ${(props) => props.overflow || 'default'};
   padding: ${(props) => props.padding || '0px'};
   position: ${(props) => props.position || 'relative'};
@@ -174,6 +187,19 @@ export const Section = styled.div<SectionStyleProps>`
   z-index: ${(props) => props.zIndex || '0'};
   white-space: ${(props) => props.whiteSpace || 'normal'};
 
+  &.skeleton {
+    &:after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 1;
+      animation: ${skeletonLoading} 1s linear infinite alternate;
+      border-radius: 8px;
+    }
+  }
 `;
 
 type ImageStyleProps = {
@@ -316,6 +342,7 @@ export const Button = styled.button<ButtonStyleProps>`
 
 type DivStyleProps = {
   height?: string;
+  lineHeight?: string;
   width?: string;
   cursor?: string;
   alignSelf?: string;
@@ -327,7 +354,22 @@ export const Div = styled.div<DivStyleProps>`
   width: ${(props) => props.width || '100%'};
   margin: ${(props) => props.margin || '0px'};
   cursor: ${(props) => props.cursor || 'default'};
+  line-height: ${(props) => props.lineHeight || 'initial'};
   align-self: ${(props) => props.alignSelf || 'center'};
   text-align: ${(props) => props.textAlign || 'default'};
+
+  &.skeleton {
+    &:after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 1;
+      animation: ${skeletonLoading} 1s linear infinite alternate;
+      border-radius: 8px;
+    }
+  }
 `;
 

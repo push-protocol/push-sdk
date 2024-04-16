@@ -5,15 +5,15 @@ import styled from 'styled-components';
 import { useChatData } from '../../../hooks';
 import { Button, Image, Section } from '../../reusables';
 
+import { ethers } from 'ethers';
+import { CiImageOn } from 'react-icons/ci';
+import { FaFile } from 'react-icons/fa';
+import { CoreContractChainId, InfuraAPIKey } from '../../../config';
+import { resolveNewEns, shortenText } from '../../../helpers';
 import { IChatPreviewProps } from '../exportedTypes';
+import { formatAddress, formatDate } from '../helpers';
 import { IChatTheme } from '../theme';
 import { ThemeContext } from '../theme/ThemeProvider';
-import { formatAddress, formatDate } from '../helpers';
-import { resolveNewEns, shortenText } from '../../../helpers';
-import { CoreContractChainId, InfuraAPIKey } from '../../../config';
-import { ethers } from 'ethers';
-import { FaFile } from 'react-icons/fa';
-import { CiImageOn } from 'react-icons/ci';
 /**
  * @interface IThemeProps
  * this interface is used for defining the props for styled components
@@ -65,8 +65,7 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
         width="100%"
         height="70px"
         minHeight="70px"
-        margin="5px 5px"
-        padding="5px 5px"
+        padding="10px"
         borderRadius={theme.borderRadius?.chatPreview}
         border={theme.border?.chatPreview}
         flexDirection="row"
@@ -102,21 +101,22 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
           />
         </Section>
         <Section
-          justifyContent="flex-start"
+          justifyContent="center"
+          gap="6px"
           flexDirection="column"
           alignItems="center"
           alignSelf="stretch"
           overflow="hidden"
-          margin="0 5px"
+          margin="0 5px 0 10px"
           flex="1"
         >
           <Section
+            flex="initial"
             justifyContent="flex-start"
             flexDirection="row"
             alignItems="flex-start"
             alignSelf="stretch"
             overflow="hidden"
-            flex="1"
           >
             <Account theme={theme}>
               {shortenText(getProfileName(formattedAddress), 8, true) ||
@@ -132,7 +132,7 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
             alignItems="flex-start"
             alignSelf="stretch"
             overflow="hidden"
-            flex="1"
+            flex="initial"
           >
             <Message theme={theme}>
               {options?.chatPreviewPayload?.chatMsg?.messageType === 'Image' ||

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { copyToClipboard, pCAIP10ToWallet } from '../../../helpers';
 import { CopySvg2 } from '../../../icons/CopySvg2';
-import { Section, Span, Image, Div, Tooltip } from '../../reusables';
+import { Div, Image, Section, Span, Tooltip } from '../../reusables';
 import { IChatTheme } from '../theme';
 
 type ProfileProps = {
@@ -14,6 +14,7 @@ type ProfileProps = {
   };
   copy?: boolean;
   customStyle?: CustomStyleParamsType | null;
+  loading?: boolean;
 };
 type CustomStyleParamsType = {
   fontSize?: string;
@@ -27,10 +28,9 @@ export const ProfileContainer = ({
   member,
   copy,
   customStyle,
+  loading,
 }: ProfileProps) => {
   const [copyText, setCopyText] = useState<string>();
-
-
 
   return (
     <Section justifyContent="flex-start">
@@ -41,6 +41,7 @@ export const ProfileContainer = ({
         overflow="hidden"
         margin="0px 12px 0px 0px"
         position="relative"
+        className={loading ? 'skeleton' : ''}
       >
         <Image
           height={customStyle?.imgHeight ?? '48px'}
@@ -48,61 +49,74 @@ export const ProfileContainer = ({
           width={'auto'}
           cursor="pointer"
           src={member?.image}
+          className={loading ? 'skeleton' : ''}
         />
       </Section>
-      <Section flexDirection="column" alignItems="start" gap="5px"  whiteSpace='nowrap' >
-        {!!member?.web3Name && (
-          <Span
-            fontSize={customStyle?.fontSize ?? '18px'}
-            fontWeight={customStyle?.fontWeight ?? '400'}
-            color={
-              customStyle?.textColor ?? theme.textColor?.modalSubHeadingText
-            }
-            position="relative"
-          >
-            {member?.web3Name}
-          </Span>
-        )}
-        <Tooltip content={copyText}>
-          <Section
-            gap="5px"
-       cursor='pointer'
-            onMouseEnter={() => {
-              setCopyText('Copy to clipboard');
-            }}
-            onMouseLeave={() => {
-              setCopyText('');
-            }}
-            onClick={() => {
-              copyToClipboard(pCAIP10ToWallet(member?.completeWallet || ''));
-              setCopyText('copied');
-            }}
-          >
-            <Span
-              fontSize={
-                member?.web3Name ? '14px' : customStyle?.fontSize ?? '18px'
-              }
-              fontWeight={
-                member?.web3Name ? '500' : customStyle?.fontWeight ?? '400'
-              }
-              color={
-                member?.web3Name
-                  ? theme.textColor?.modalSubHeadingText
-                  : customStyle?.textColor ??
+      <Section
+        flexDirection="column"
+        alignItems="start"
+        gap="5px"
+        whiteSpace="nowrap"
+        minWidth="150px"
+      >
+        {!loading && (
+          <>
+            {member?.web3Name && (
+              <Section>
+                <Span
+                  fontSize={customStyle?.fontSize ?? '18px'}
+                  fontWeight={customStyle?.fontWeight ?? '400'}
+                  color={
+                    customStyle?.textColor ??
                     theme.textColor?.modalSubHeadingText
-              }
-              position="relative"
-              whiteSpace='nowrap'
-            >
-              {member.wallet}
-            </Span>
-            {!!copy && copyText && (
-              <Div cursor="pointer" >
-                <CopySvg2 />
-              </Div>
+                  }
+                  position="relative"
+                >
+                  {member.web3Name}
+                </Span>
+              </Section>
             )}
-          </Section>
-        </Tooltip>
+
+            <Tooltip content={copyText}>
+              <Section
+                gap="5px"
+                cursor="pointer"
+                onMouseEnter={() => setCopyText('Copy to clipboard')}
+                onMouseLeave={() => setCopyText('')}
+                onClick={() => {
+                  copyToClipboard(
+                    pCAIP10ToWallet(member?.completeWallet || '')
+                  );
+                  setCopyText('copied');
+                }}
+              >
+                <Span
+                  fontSize={
+                    member?.web3Name ? '14px' : customStyle?.fontSize ?? '18px'
+                  }
+                  fontWeight={
+                    member?.web3Name ? '500' : customStyle?.fontWeight ?? '400'
+                  }
+                  color={
+                    member?.web3Name
+                      ? theme.textColor?.modalSubHeadingText
+                      : customStyle?.textColor ??
+                        theme.textColor?.modalSubHeadingText
+                  }
+                  position="relative"
+                  whiteSpace="nowrap"
+                >
+                  {member.wallet}
+                </Span>
+                {copy && copyText && (
+                  <Div cursor="pointer">
+                    <CopySvg2 />
+                  </Div>
+                )}
+              </Section>
+            </Tooltip>
+          </>
+        )}
       </Section>
     </Section>
   );

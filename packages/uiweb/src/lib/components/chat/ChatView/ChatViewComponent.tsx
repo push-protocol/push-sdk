@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../../../types';
 import {
   IChatTheme,
@@ -7,7 +7,7 @@ import {
 
 import { chatLimit, device } from '../../../config';
 import { deriveChatId } from '../../../helpers';
-import { Section, Span } from '../../reusables';
+import { Section, Span, Spinner } from '../../reusables';
 import { ChatViewList } from '../ChatViewList';
 
 import styled from 'styled-components';
@@ -51,9 +51,6 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
   } = options || {};
 
   const { env, signer, account, pgpPrivateKey } = useChatData();
-
-  // const [conversationHash, setConversationHash] = useState<string>();
-
   const theme = useContext(ThemeContext);
 
   const isMobile = useMediaQuery(device.mobileL);
@@ -62,29 +59,48 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
     console.warn("Chat::ChatView::You need to pass a signer or account and pgpPrivateKey to ChatViewComponent to send messages.")
   }
 
-  // Use derive chatId to remove chatid: from chatId
-  const derivedChatId = chatId ? deriveChatId(chatId) : '';
+  // set loading state
+  const [initialized, setInitialized] = useState({
+    loading: true,
+    derivedChatId: '',
+  });
+
+  useEffect(() => {
+    const fetchDerivedChatId = async () => {
+      setInitialized(currentState => ({ ...currentState, loading: true}));
+
+      if (chatId) {
+        const id = await deriveChatId(chatId, env);
+        setInitialized({ loading: false, derivedChatId: id });
+      } else {
+        setInitialized({ loading: false, derivedChatId: '' });
+      }
+    };
+
+    fetchDerivedChatId();
+  }, [chatId, env]); // Re-run this effect if chatId or env changes
 
   return (
     <Conatiner
       width="100%"
       height="inherit"
       flexDirection="column"
-      justifyContent={derivedChatId ? "space-between" : 'center'}
+      justifyContent="space-between"
       overflow="hidden"
       background={theme.backgroundColor?.chatViewComponentBackground}
       borderRadius={theme.borderRadius?.chatViewComponent}
       padding="13px"
       theme={theme}
     >
-      {chatId ? (
+      {initialized.loading && <Section padding="20px"><Spinner color={theme.spinnerColor} /></Section>}
+      {!initialized.loading && chatId ? (
         <>
           {chatProfile && 
           <ChatProfile
-            key={derivedChatId}
+            key={chatId}
             chatProfileRightHelperComponent={chatProfileRightHelperComponent}
             chatProfileLeftHelperComponent={chatProfileLeftHelperComponent}
-            chatId={derivedChatId}
+            chatId={initialized.derivedChatId}
             groupInfoModalBackground={groupInfoModalBackground}
             groupInfoModalPositionType={groupInfoModalPositionType}
           />}
@@ -98,10 +114,10 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
           >
             { chatViewList && (
               <ChatViewList
-                key={derivedChatId}
+                key={chatId}
                 chatFilterList={chatFilterList}
                 limit={limit}
-                chatId={derivedChatId}
+                chatId={initialized.derivedChatId}
               />
             )}
           </Section>
@@ -117,9 +133,9 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
             (!!signer || (!!account && !!pgpPrivateKey) || isConnected) && (
               <Section flex="0 1 auto" position="static">
                 <MessageInput
-                  key={derivedChatId}
+                  key={chatId}
                   onVerificationFail={onVerificationFail}
-                  chatId={derivedChatId}
+                  chatId={initialized.derivedChatId}
                   file={file}
                   emoji={emoji}
                   gif={gif}

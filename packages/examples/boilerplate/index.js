@@ -4,3 +4,4 @@ import input from 'input';
 
 console.log("Hello... what's my purpose?")
 console.log("To train all the hackers..")
+'

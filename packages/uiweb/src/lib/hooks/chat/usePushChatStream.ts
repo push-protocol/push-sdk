@@ -31,9 +31,10 @@ export const usePushChatStream = () => {
 
   const [groupUpdateStream, setGroupUpdateStream] = useState<any>({}); //group updation stream
 
-  const attachListenersAndConnect = async (stream: any) => {
+  // maintain uid of stream
+  const [streamUid, setStreamUid] = useState<string>('');
 
-    
+  const attachListenersAndConnect = async (stream: any) => {    
     stream?.on(CONSTANTS.STREAM.CONNECT, (err: Error) => {
       console.debug(' stream connected .........', err);
       setIsPushChatStreamConnected(true);
@@ -46,8 +47,6 @@ export const usePushChatStream = () => {
 
     //Listen for chat messages, your message, request, accept, rejected,
     stream?.on(CONSTANTS.STREAM.CHAT, (message: any) => {
-
-
       if (message.event === 'chat.request') {
         dispatchEvent(
           new CustomEvent('chatRequestStream', { detail: message })

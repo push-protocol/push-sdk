@@ -8,6 +8,7 @@ import { ToastContainer } from 'react-toastify';
 import styled from 'styled-components';
 
 import 'react-toastify/dist/ReactToastify.min.css';
+import { deriveChatId } from '../../../helpers';
 import { useChatData, useClickAway } from '../../../hooks';
 import useChatProfile from '../../../hooks/chat/useChatProfile';
 import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
@@ -43,6 +44,15 @@ import InfoIcon from '../../../icons/infodark.svg';
 import { formatAddress, isValidETHAddress } from '../helpers/helper';
 import { ChatInfoResponse } from '../types';
 
+// Interfaces
+interface IProfile {
+  name: string | null;
+  icon: string | null;
+  cawallet: string | null;
+  wallet: string | null;
+  desc: string | null;
+}
+
 export const ChatProfile: React.FC<IChatProfile> = ({
   chatId,
   groupInfoModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
@@ -56,13 +66,26 @@ export const ChatProfile: React.FC<IChatProfile> = ({
   const { fetchUserProfile } = useUserProfile();
 
   // const [isGroup, setIsGroup] = useState<boolean>(false);
-  const [options, setOptions] = useState(false);
+  const [showoptions, setShowOptions] = useState(false);
   const [formattedChatId, setFormattedChatId] = useState<string>('');
   const [chatInfo, setChatInfo] = useState<ChatInfoResponse | null>(null);
   const [userInfo, setUserInfo] = useState<IUser | null>();
   const [groupInfo, setGroupInfo] = useState<Group | null>();
   const [web3Name, setWeb3Name] = useState<string | null>(null);
+
+
   const [loading, setLoading] = useState(true);
+  const [initialized, setInitialized] = useState({
+    loading: false,
+    profile: {
+      name: '',
+      icon: '',
+      wallet: '',
+      cawallet: '',
+      desc: '',
+    } as IProfile,
+    groupInfo: null as Group | null
+  });
 
   const provider = new ethers.providers.InfuraProvider(
     CoreContractChainId[env],
@@ -73,7 +96,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
   const { fetchChat } = useFetchChat();
 
   useClickAway(DropdownRef, () => {
-    setOptions(false);
+    setShowOptions(false);
   });
 
   const ShowModal = () => {
@@ -135,32 +158,79 @@ export const ChatProfile: React.FC<IChatProfile> = ({
       : shortenText(chatId?.split(':')[1], 6, true);
   };
 
+  // Initiate profile fetch if chatId, account or user changes
   useEffect(() => {
     (async () => {
-      setLoading(true);
-      
-      if (!user) return;
-      if (chatId) {
-        let formattedChatId;
-        if (chatId.includes('eip155:')) {
-          formattedChatId = chatId.replace('eip155:', '');
-        } else if (chatId.includes('.')) {
-          formattedChatId = (await getAddress(chatId, env))!;
-        } else formattedChatId = chatId;
-        setFormattedChatId(formattedChatId);
-        const chat = await fetchChat({ chatId: formattedChatId });
-        if (Object.keys(chat || {}).length) {
-          setChatInfo(chat as ChatInfoResponse);
-        }
-      }
-    })();
-  }, [chatId, account, user]);
+      console.log('Profile Init with chatId:', chatId)
+      if (!user || !chatId || chatId === '' || initialized.loading) return;
 
-  useEffect(() => {
-    (async () => {
-      await fetchProfileData();
+      setInitialized(currentState => ({ ...currentState, loading: true}));
+
+      // derive chatId
+      const derivedChatId = await deriveChatId(chatId, env);
+
+      // We have derived chatId, fetch chat info to see if it's group or dm
+      const chatInfo = await user.chat.info(derivedChatId);
+      if (chatInfo) {
+        let groupInfo;
+
+        // eslint-disable-next-line prefer-const
+        let profile = {} as IProfile;
+
+        // If group
+        if (chatInfo.meta.group) {
+          groupInfo = await user.chat.group.info(derivedChatId);
+          profile.name = groupInfo.groupName;
+          profile.icon = groupInfo.groupImage;
+          profile.cawallet = chatId;
+          profile.wallet = derivedChatId;
+          profile.desc = groupInfo.groupDescription;
+          
+          // TODO - HANDLE ERROR IN UI
+        } else {
+          // This is DM
+          const profileInfo = await user.profile.info({overrideAccount: chatId});
+          console.log('Profile Info:', profileInfo);
+          profile.name = profileInfo.name;
+          profile.icon = profileInfo.icon ? profileInfo.icon : createBlockie?.(chatId)?.toDataURL()?.toString();
+          profile.cawallet = chatId;
+          profile.wallet = derivedChatId;
+          profile.desc = profileInfo.profile?.bio;
+        }
+
+        // Finally set everything
+        setInitialized({
+          loading: false,
+          profile: profile,
+          groupInfo: groupInfo,
+        });
+
+      } else {
+        // Handle Error
+
+      }
+      
+      // if (chatId) {
+      //   let formattedChatId;
+      //   if (chatId.includes('eip155:')) {
+      //     formattedChatId = chatId.replace('eip155:', '');
+      //   } else if (chatId.includes('.')) {
+      //     formattedChatId = (await getAddress(chatId, env))!;
+      //   } else formattedChatId = chatId;
+      //   setFormattedChatId(formattedChatId);
+      //   const chat = await fetchChat({ chatId: formattedChatId });
+      //   if (Object.keys(chat || {}).length) {
+      //     setChatInfo(chat as ChatInfoResponse);
+      //   }
+      // }
     })();
-  }, [chatInfo]);
+  }, [chatId, user, env]);
+
+  // useEffect(() => {
+  //   (async () => {
+  //     await fetchProfileData();
+  //   })();
+  // }, [chatInfo]);
 
   if (chatId) {
     return (
@@ -180,16 +250,17 @@ export const ChatProfile: React.FC<IChatProfile> = ({
           <ProfileContainer
             theme={theme}
             member={{
-              wallet: getProfileName() as string,
-              image: getImage(),
-              web3Name: web3Name ? web3Name : groupInfo?.groupName,
-              completeWallet: userInfo?.wallets ?? groupInfo?.chatId,
+              wallet: initialized.profile.wallet ? initialized.profile.wallet : chatId,
+              image: initialized.profile.icon ? initialized.profile.icon : getImage(),
+              web3Name: initialized.profile.name,
+              completeWallet: initialized.profile.cawallet,
             }}
-            copy={!!userInfo || !!groupInfo}
+            copy={!!initialized.profile.wallet}
             customStyle={{
               fontSize: theme?.fontWeight?.chatProfileText,
               textColor: theme?.textColor?.chatProfileText,
             }}
+            loading={initialized.loading}
           />
         </Section>
         <Section
@@ -199,13 +270,13 @@ export const ChatProfile: React.FC<IChatProfile> = ({
           margin="0 20px 0 auto"
           alignSelf="center"
         >
-          {chatProfileRightHelperComponent && !groupInfo && (
+          {chatProfileRightHelperComponent && !initialized.groupInfo && (
             <Section cursor="pointer" maxHeight="1.75rem" overflow="hidden">
               {chatProfileRightHelperComponent}
             </Section>
           )}
-          {!!Object.keys(groupInfo?.rules || {}).length && <TokenGatedSvg />}
-          {!!groupInfo?.isPublic && (
+          {!!Object.keys(initialized.groupInfo?.rules || {}).length && <TokenGatedSvg />}
+          {!!initialized.groupInfo?.isPublic && (
             <Image
               src={PublicChatIcon}
               height="28px"
@@ -214,8 +285,8 @@ export const ChatProfile: React.FC<IChatProfile> = ({
             />
           )}
 
-          {!!Object.keys(groupInfo || {}).length && (
-            <ImageItem onClick={() => setOptions(true)}>
+          {!!Object.keys(initialized.groupInfo || {}).length && (
+            <ImageItem onClick={() => setShowOptions(true)}>
               <Image
                 src={VerticalEllipsisIcon}
                 height="21px"
@@ -224,7 +295,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
                 cursor="pointer"
               />
 
-              {options && (
+              {showoptions && (
                 <DropDownBar theme={theme} ref={DropdownRef}>
                   <DropDownItem cursor="pointer" onClick={ShowModal}>
                     <Image
@@ -246,7 +317,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
           <GroupInfoModal
             theme={theme}
             setModal={setModal}
-            groupInfo={groupInfo!}
+            groupInfo={initialized.groupInfo!}
             setGroupInfo={setGroupInfo}
             groupInfoModalBackground={groupInfoModalBackground}
             groupInfoModalPositionType={groupInfoModalPositionType}
