@@ -1,5 +1,5 @@
 import { IUser } from '../types';
-import { isValidETHAddress, walletToPCAIP10 } from '../helpers/address';
+import { isValidPushCAIP, walletToPCAIP10 } from '../helpers/address';
 import { getAPIBaseUrls, verifyProfileKeys } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { populateDeprecatedUser } from '../utils/populateIUser';
@@ -24,7 +24,7 @@ export const getBatch = async (options: GetBatchType): Promise<IUser> => {
   }
 
   for (let i = 0; i < userIds.length; i++) {
-    if (!isValidETHAddress(userIds[i])) {
+    if (!isValidPushCAIP(userIds[i])) {
       throw new Error(`Invalid user address!`);
     }
   }

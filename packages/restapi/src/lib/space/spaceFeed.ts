@@ -1,7 +1,7 @@
-import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
+import { convertToValidDID, getAPIBaseUrls, isValidPushCAIP } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { SpaceIFeeds } from '../types';
-import {  getSpaceInboxLists, getUserDID } from './../chat/helpers';
+import { getSpaceInboxLists } from './../chat/helpers';
 import { axiosGet } from '../utils/axiosUtil';
 
 export const spaceFeed = async (options: {
@@ -18,9 +18,9 @@ export const spaceFeed = async (options: {
     toDecrypt = false,
     recipient,
   } = options || {};
-  const user = await getUserDID(account, env);
-  const recipientWallet = await getUserDID(recipient, env);
-  if (!isValidETHAddress(user)) throw new Error(`Invalid address ${user}`);
+  const user = await convertToValidDID(account, env);
+  const recipientWallet = await convertToValidDID(recipient, env);
+  if (!isValidPushCAIP(user)) throw new Error(`Invalid address ${user}`);
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/spaces/users/${user}/space/${recipientWallet}`;
   try {

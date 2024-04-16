@@ -1,11 +1,10 @@
 import axios from 'axios';
-import { getAPIBaseUrls } from '../helpers';
+import { convertToValidDID, getAPIBaseUrls } from '../helpers';
 import Constants, { PACKAGE_BUILD } from '../constants';
 import {
   getWallet,
   PGPHelper,
   getConnectedUserV2Core,
-  getUserDID,
   validateGroupMemberUpdateOptions,
   pgpEncrypt,
 } from './helpers';
@@ -60,7 +59,7 @@ export const updateGroupMembers = async (
     const convertedUpsertPromise = Object.entries(upsert).map(
       async ([role, userDIDs]) => {
         const userIDs = await Promise.all(
-          userDIDs.map((userDID) => getUserDID(userDID, env))
+          userDIDs.map((userDID) => convertToValidDID(userDID, env))
         );
         return [role, userIDs];
       }
@@ -69,7 +68,7 @@ export const updateGroupMembers = async (
       await Promise.all(convertedUpsertPromise)
     );
     const convertedRemove = await Promise.all(
-      remove.map((userDID) => getUserDID(userDID, env))
+      remove.map((userDID) => convertToValidDID(userDID, env))
     );
 
     let encryptedSecret: string | null = null;

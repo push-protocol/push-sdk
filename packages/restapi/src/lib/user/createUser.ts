@@ -8,11 +8,11 @@ import {
 } from '../chat/helpers';
 import Constants, { ENV } from '../constants';
 import {
-  isValidETHAddress,
+  isValidPushCAIP,
   walletToPCAIP10,
   encryptPGPKey,
   preparePGPPublicKey,
-  isValidCAIP10NFTAddress,
+  isValidNFTCAIP,
   validatePssword,
 } from '../helpers';
 import {
@@ -76,7 +76,7 @@ export const createUserCore = async (
     const wallet = getWallet({ account, signer });
     const address = await getAccountAddress(wallet);
 
-    if (!isValidETHAddress(address)) {
+    if (!isValidPushCAIP(address)) {
       throw new Error(`Invalid address!`);
     }
     if (additionalMeta?.NFTPGP_V1?.password) {
@@ -86,7 +86,7 @@ export const createUserCore = async (
     const caip10: string = walletToPCAIP10(address);
     let encryptionType = version;
 
-    if (isValidCAIP10NFTAddress(caip10)) {
+    if (isValidNFTCAIP(caip10)) {
       // upgrade to v4 (nft encryption)
       encryptionType = Constants.ENC_TYPE_V4;
     } else {
