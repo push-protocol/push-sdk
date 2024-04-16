@@ -14,14 +14,14 @@ export interface ChatInfoResponse {
   list: string;
   participants: string[];
   chatId: string;
-  receipient: string;
+  recipient: string;
 }
 
 /**
  * Represents the input type for fetching chat status.
  */
 export interface GetChatInfoType {
-  receipient: string;
+  recipient: string;
   sender: string; // Ethereum address or similar
   env?: ENV;
 }
@@ -32,16 +32,16 @@ export interface GetChatInfoType {
 export const getChatInfo = async (
   options: GetChatInfoType
 ): Promise<ChatInfoResponse> => {
-  const { receipient, sender, env = Constants.ENV.PROD } = options;
+  const { recipient, sender, env = Constants.ENV.PROD } = options;
 
   try {
-    if (!receipient || !sender) {
+    if (!recipient || !sender) {
       throw new Error('receipient and sender cannot be null or empty');
     }
 
     const API_BASE_URL = getAPIBaseUrls(env);
     const requestUrl = `${API_BASE_URL}/v1/chat/${await getUserDID(
-      receipient,
+      recipient,
       env
     )}/address/${await getUserDID(sender, env)}`;
     const response = await axiosGet<ChatInfoResponse>(requestUrl);
