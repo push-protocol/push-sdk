@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.7.5](https://github.com/push-protocol/push-sdk/compare/restapi-1.7.4...restapi-1.7.5) (2024-04-16)
+
+
+### Bug Fixes
+
+* merge main ([ae4b5d3](https://github.com/push-protocol/push-sdk/commit/ae4b5d337d879d424ede80bb2879f96333ee5653))
+
+
+
 ## [1.7.4](https://github.com/push-protocol/push-sdk/compare/restapi-1.7.3...restapi-1.7.4) (2024-04-15)
 
 
