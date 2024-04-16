@@ -27,7 +27,7 @@ export class PushAPI {
   private signer?: SignerType;
   private readMode: boolean;
   private alpha: { feature: string[] };
-  private account: string;
+  public account: string;
   private decryptedPgpPvtKey?: string;
   private pgpPublicKey?: string;
   private env: ENV;
@@ -315,7 +315,7 @@ export class PushAPI {
     this.pgpPublicKey = newUser.publicKey;
     this.readMode = false;
     this.errors = [];
-    this.uid = uuidv4(); 
+    this.uid = uuidv4();
     // Initialize the instances of the four classes
     this.chat = new Chat(
       this.account,
