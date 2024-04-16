@@ -2,6 +2,10 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.7.7](https://github.com/push-protocol/push-sdk/compare/restapi-1.7.6...restapi-1.7.7) (2024-04-16)
+
+
+
 ## [1.7.6](https://github.com/push-protocol/push-sdk/compare/restapi-1.7.5...restapi-1.7.6) (2024-04-16)
 
 
