@@ -13,8 +13,8 @@ import {
   getCAIPAddress,
   getCAIPDetails,
   getConfig,
-  isValidCAIP10NFTAddress,
-  isValidETHAddress,
+  isValidNFTCAIP,
+  isValidPushCAIP,
 } from '../helpers';
 import {
   IDENTITY_TYPE,
@@ -33,7 +33,7 @@ function validateOptions(options: ISendNotificationInputOptions) {
   if (!options?.channel) {
     throw '[Push SDK] - Error - sendNotification() - "channel" is mandatory!';
   }
-  if (!isValidETHAddress(options.channel)) {
+  if (!isValidPushCAIP(options.channel)) {
     throw '[Push SDK] - Error - sendNotification() - "channel" is invalid!';
   }
   if (options.senderType === 0 && options.signer === undefined) {
@@ -213,7 +213,7 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       verificationProof,
       identity,
       sender:
-        senderType === 1 && !isValidCAIP10NFTAddress(_channelAddress)
+        senderType === 1 && !isValidNFTCAIP(_channelAddress)
           ? `${channelCAIPDetails?.blockchain}:${channelCAIPDetails?.address}`
           : _channelAddress,
       source,

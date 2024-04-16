@@ -25,8 +25,8 @@ import {
 } from './pushAPITypes';
 import * as PUSH_USER from '../user';
 import * as PUSH_CHAT from '../chat';
-import { PGPHelper, getUserDID } from '../chat/helpers';
-import { isValidETHAddress } from '../helpers';
+import { PGPHelper } from '../chat/helpers';
+import { convertToValidDID, isValidPushCAIP } from '../helpers';
 import {
   ChatUpdateGroupProfileType,
   updateGroupProfile,
@@ -208,7 +208,7 @@ export class Chat {
     });
 
     for (const element of users) {
-      if (!isValidETHAddress(element)) {
+      if (!isValidPushCAIP(element)) {
         throw new Error('Invalid address in the users: ' + element);
       }
     }
@@ -249,7 +249,7 @@ export class Chat {
     });
 
     for (const element of users) {
-      if (!isValidETHAddress(element)) {
+      if (!isValidPushCAIP(element)) {
         throw new Error('Invalid address in the users: ' + element);
       }
     }
@@ -259,7 +259,7 @@ export class Chat {
     }
 
     const userDIDsPromises = users.map(async (user) => {
-      return (await getUserDID(user, this.env)).toLowerCase();
+      return (await convertToValidDID(user, this.env)).toLowerCase();
     });
     const userDIDs = await Promise.all(userDIDsPromises);
 
@@ -284,33 +284,29 @@ export class Chat {
   }
 
   async info(
-    receipient: string,
+    recipient: string,
     options?: {
       overrideAccount?: string;
     }
   ): Promise<ChatInfoResponse> {
     const accountToUse = options?.overrideAccount || this.account;
     const request: PUSH_CHAT.GetChatInfoType = {
-      receipient: receipient,
-      sender: accountToUse,
+      recipient: recipient,
+      account: accountToUse,
       env: this.env,
     };
     try {
       const chatInfo = await PUSH_CHAT.getChatInfo(request);
-        const finalRecipient = chatInfo.meta.group
-          ? chatInfo.chatId
-          : receipient;
+      const finalRecipient = chatInfo.meta.group ? chatInfo.chatId : recipient;
 
-        const response: ChatInfoResponse = {
-          meta: chatInfo.meta,
-          list: chatInfo.list,
-          participants: chatInfo.participants,
-          chatId: chatInfo.chatId,
-          receipient: finalRecipient,
-        };
-
-        return response;
-      return chatInfo;
+      const response: ChatInfoResponse = {
+        meta: chatInfo.meta,
+        list: chatInfo.list,
+        participants: chatInfo.participants,
+        chatId: chatInfo.chatId,
+        recipient: finalRecipient,
+      };
+      return response;
     } catch (error) {
       console.error(`Error in Chat.info: `, error);
       throw new Error(`Error fetching chat info: ${error}`);
@@ -508,7 +504,7 @@ export class Chat {
       }
 
       accounts.forEach((account) => {
-        if (!isValidETHAddress(account)) {
+        if (!isValidPushCAIP(account)) {
           throw new Error(`Invalid account address: ${account}`);
         }
       });
@@ -561,7 +557,7 @@ export class Chat {
       }
 
       accounts.forEach((account) => {
-        if (!isValidETHAddress(account)) {
+        if (!isValidPushCAIP(account)) {
           throw new Error(`Invalid account address: ${account}`);
         }
       });
@@ -623,7 +619,7 @@ export class Chat {
       }
 
       accounts.forEach((account) => {
-        if (!isValidETHAddress(account)) {
+        if (!isValidPushCAIP(account)) {
           throw new Error(`Invalid account address: ${account}`);
         }
       });
