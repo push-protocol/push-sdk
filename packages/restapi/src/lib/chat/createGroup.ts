@@ -1,4 +1,4 @@
-import { getAPIBaseUrls } from '../helpers';
+import { convertToValidDID, getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
 import { EnvOptionsType, GroupDTO, SignerType, Rules } from '../types';
 import {
@@ -6,7 +6,6 @@ import {
   createGroupPayload,
   createGroupRequestValidator,
   getWallet,
-  getUserDID,
   IPGPHelper,
   PGPHelper,
   validateScheduleDates,
@@ -88,10 +87,10 @@ export const createGroupCore = async (
     );
 
     const convertedMembersPromise = members.map(async (each) => {
-      return getUserDID(each, env);
+      return convertToValidDID(each, env);
     });
     const convertedAdminsPromise = admins.map(async (each) => {
-      return getUserDID(each, env);
+      return convertToValidDID(each, env);
     });
     const convertedMembers = await Promise.all(convertedMembersPromise);
     const convertedAdmins = await Promise.all(convertedAdminsPromise);
@@ -153,6 +152,6 @@ export const createGroupCore = async (
     const response = await axiosPost(apiEndpoint, body);
     return response.data;
   } catch (err) {
-      throw handleError(err, createGroup.name);
+    throw handleError(err, createGroup.name);
   }
 };

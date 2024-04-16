@@ -1,10 +1,9 @@
 import axios from 'axios';
-import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
+import { convertToValidDID, getAPIBaseUrls, isValidPushCAIP } from '../helpers';
 import Constants from '../constants';
 import { EnvOptionsType, GroupInfoDTO, SignerType, Rules } from '../types';
 import {
   getWallet,
-  getUserDID,
   IPGPHelper,
   PGPHelper,
   validateScheduleDates,
@@ -73,10 +72,10 @@ export const createGroupCoreV2 = async (
       pgpHelper
     );
     const convertedMembersPromise = members.map(async (each) => {
-      return getUserDID(each, env);
+      return convertToValidDID(each, env);
     });
     const convertedAdminsPromise = admins.map(async (each) => {
-      return getUserDID(each, env);
+      return convertToValidDID(each, env);
     });
     const convertedMembers = await Promise.all(convertedMembersPromise);
     const convertedAdmins = await Promise.all(convertedAdminsPromise);
@@ -199,13 +198,13 @@ const createGroupV2OptionsValidator = (
   }
 
   for (let i = 0; i < members.length; i++) {
-    if (members[i] && !isValidETHAddress(members[i])) {
+    if (members[i] && !isValidPushCAIP(members[i])) {
       throw new Error(`Invalid member address!`);
     }
   }
 
   for (let i = 0; i < admins.length; i++) {
-    if (!isValidETHAddress(admins[i])) {
+    if (!isValidPushCAIP(admins[i])) {
       throw new Error(`Invalid admin address!`);
     }
   }
