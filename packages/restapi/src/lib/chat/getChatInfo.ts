@@ -1,8 +1,7 @@
-import { getAPIBaseUrls } from '../helpers';
+import { convertToValidDID, getAPIBaseUrls } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { axiosGet } from '../utils/axiosUtil';
 import { handleError } from '../errors/validationError';
-import { getUserDID } from './helpers';
 
 /**
  * Represents the response type for the chat status.
@@ -13,7 +12,7 @@ export interface ChatInfoResponse {
   };
   list: string;
   participants: string[];
-  chatId: string
+  chatId: string;
 }
 
 /**
@@ -39,10 +38,10 @@ export const getChatInfo = async (
     }
 
     const API_BASE_URL = getAPIBaseUrls(env);
-    const requestUrl = `${API_BASE_URL}/v1/chat/${await getUserDID(
+    const requestUrl = `${API_BASE_URL}/v1/chat/${await convertToValidDID(
       receipient,
       env
-    )}/address/${await getUserDID(sender, env)}`;
+    )}/address/${await convertToValidDID(sender, env)}`;
     const response = await axiosGet<ChatInfoResponse>(requestUrl);
     return response.data;
   } catch (err) {

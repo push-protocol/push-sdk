@@ -1,4 +1,4 @@
-import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
+import { convertToValidDID, getAPIBaseUrls, isValidPushCAIP } from '../helpers';
 import Constants, { MessageType, ENV } from '../constants';
 import { ChatSendOptionsType, MessageWithCID, SignerType } from '../types';
 import {
@@ -6,7 +6,6 @@ import {
   PGPHelper,
   getAccountAddress,
   getConnectedUserV2Core,
-  getUserDID,
   getWallet,
 } from './helpers';
 import { conversationHash } from './conversationHash';
@@ -51,9 +50,9 @@ export const sendCore = async (
       env,
       pgpHelper
     );
-    const receiver = await getUserDID(to, env);
+    const receiver = await convertToValidDID(to, env);
     const API_BASE_URL = getAPIBaseUrls(env);
-    const isGroup = isValidETHAddress(to) ? false : true;
+    const isGroup = isValidPushCAIP(to) ? false : true;
 
     const group = isGroup
       ? await getGroupInfo({
@@ -133,7 +132,7 @@ const validateOptions = async (options: ComputedOptionsType) => {
 
   const wallet = getWallet({ account, signer });
   const address = await getAccountAddress(wallet);
-  if (!isValidETHAddress(address)) {
+  if (!isValidPushCAIP(address)) {
     throw new Error(
       `Invalid sender. Please ensure that either 'account' or 'signer' is properly defined.`
     );

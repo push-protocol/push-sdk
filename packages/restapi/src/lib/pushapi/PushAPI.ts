@@ -18,7 +18,7 @@ import {
 import { ALPHA_FEATURE_CONFIG } from '../config';
 import { Space } from './space';
 import { Video } from './video';
-import { isValidCAIP10NFTAddress } from '../helpers';
+import { isValidNFTCAIP } from '../helpers';
 import { LRUCache } from 'lru-cache';
 import { cache } from '../helpers/cache';
 
@@ -260,7 +260,7 @@ export class PushAPI {
             message: decryptionError,
           });
           console.error(decryptionError);
-          if (isValidCAIP10NFTAddress(derivedAccount)) {
+          if (isValidNFTCAIP(derivedAccount)) {
             const nftDecryptionError =
               'NFT Account Detected. If this NFT was recently transferred to you, please ensure you have received the correct password from the previous owner. Alternatively, you can reinitialize for a fresh start. Please be aware that reinitialization will result in the loss of all previous account data.';
 
