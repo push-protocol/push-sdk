@@ -22,7 +22,7 @@ export interface ChatInfoResponse {
  */
 export interface GetChatInfoType {
   recipient: string;
-  sender: string; // Ethereum address or similar
+  account: string; // Ethereum address or similar
   env?: ENV;
 }
 
@@ -32,18 +32,18 @@ export interface GetChatInfoType {
 export const getChatInfo = async (
   options: GetChatInfoType
 ): Promise<ChatInfoResponse> => {
-  const { recipient, sender, env = Constants.ENV.PROD } = options;
+  const { recipient, account, env = Constants.ENV.PROD } = options;
 
   try {
-    if (!recipient || !sender) {
-      throw new Error('receipient and sender cannot be null or empty');
+    if (!recipient || !account) {
+      throw new Error('receipient and account cannot be null or empty');
     }
 
     const API_BASE_URL = getAPIBaseUrls(env);
     const requestUrl = `${API_BASE_URL}/v1/chat/${await getUserDID(
       recipient,
       env
-    )}/address/${await getUserDID(sender, env)}`;
+    )}/address/${await getUserDID(account, env)}`;
     const response = await axiosGet<ChatInfoResponse>(requestUrl);
     return response.data;
   } catch (err) {

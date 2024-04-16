@@ -292,7 +292,7 @@ export class Chat {
     const accountToUse = options?.overrideAccount || this.account;
     const request: PUSH_CHAT.GetChatInfoType = {
       recipient: recipient,
-      sender: accountToUse,
+      account: accountToUse,
       env: this.env,
     };
     try {
