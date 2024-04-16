@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.7.6](https://github.com/push-protocol/push-sdk/compare/restapi-1.7.5...restapi-1.7.6) (2024-04-16)
+
+
+### Bug Fixes
+
+* push api  account public ([f453a25](https://github.com/push-protocol/push-sdk/commit/f453a253fc10d041a44e781788e88df85daba9b0))
+
+
+
 ## [1.7.5](https://github.com/push-protocol/push-sdk/compare/restapi-1.7.4...restapi-1.7.5) (2024-04-16)
 
 
