@@ -13,14 +13,15 @@ export interface ChatInfoResponse {
   list: string;
   participants: string[];
   chatId: string;
+  recipient: string;
 }
 
 /**
  * Represents the input type for fetching chat status.
  */
 export interface GetChatInfoType {
-  receipient: string;
-  sender: string; // Ethereum address or similar
+  recipient: string;
+  account: string; // Ethereum address or similar
   env?: ENV;
 }
 
@@ -30,11 +31,11 @@ export interface GetChatInfoType {
 export const getChatInfo = async (
   options: GetChatInfoType
 ): Promise<ChatInfoResponse> => {
-  const { receipient, sender, env = Constants.ENV.PROD } = options;
+  const { recipient, account, env = Constants.ENV.PROD } = options;
 
   try {
-    if (!receipient || !sender) {
-      throw new Error('receipient and sender cannot be null or empty');
+    if (!recipient || !account) {
+      throw new Error('receipient and account cannot be null or empty');
     }
 
     const API_BASE_URL = getAPIBaseUrls(env);

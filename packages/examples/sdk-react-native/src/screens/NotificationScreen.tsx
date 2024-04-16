@@ -16,7 +16,7 @@ export const NotificationScreen = () => {
       image: undefined,
       url: 'https://push.org/',
       theme: 'light',
-      chainName: 'POLYGON_TEST_MUMBAI',
+      chainName: 'POLYGON_TEST_AMOY',
       cta: 'https://github.com/ethereum-push-notification-service/',
     },
     {
