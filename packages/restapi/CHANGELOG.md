@@ -2,6 +2,19 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.82](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.81...restapi-0.0.1-alpha.82) (2024-04-16)
+
+
+### Bug Fixes
+
+* bug fixes ([fab3700](https://github.com/push-protocol/push-sdk/commit/fab370073224481b901351c00da43dc3bc99fa64))
+* fix fn definitions ([#1232](https://github.com/push-protocol/push-sdk/issues/1232)) ([7bbc443](https://github.com/push-protocol/push-sdk/commit/7bbc4434ec19c9969d0f1932c9cb08f74300a9b8))
+* fix tmp error ([bd70cda](https://github.com/push-protocol/push-sdk/commit/bd70cda0eb68a2329da743727c3b2a4b7f14589e))
+* Merge branch 'alpha' into alpha-deployment ([7e32f93](https://github.com/push-protocol/push-sdk/commit/7e32f93153b2ef338a1c18d4c1c6df7b9a1687cf))
+* renamed sender to account ([ce4af1a](https://github.com/push-protocol/push-sdk/commit/ce4af1a200e98de3c47055cc495f55a4a8e561cf))
+
+
+
 ## [0.0.1-alpha.81](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.80...restapi-0.0.1-alpha.81) (2024-04-15)
 
 
