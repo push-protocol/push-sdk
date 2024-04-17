@@ -2,6 +2,172 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.82](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.81...restapi-0.0.1-alpha.82) (2024-04-16)
+
+
+### Bug Fixes
+
+* bug fixes ([fab3700](https://github.com/push-protocol/push-sdk/commit/fab370073224481b901351c00da43dc3bc99fa64))
+* fix fn definitions ([#1232](https://github.com/push-protocol/push-sdk/issues/1232)) ([7bbc443](https://github.com/push-protocol/push-sdk/commit/7bbc4434ec19c9969d0f1932c9cb08f74300a9b8))
+* fix tmp error ([bd70cda](https://github.com/push-protocol/push-sdk/commit/bd70cda0eb68a2329da743727c3b2a4b7f14589e))
+* Merge branch 'alpha' into alpha-deployment ([7e32f93](https://github.com/push-protocol/push-sdk/commit/7e32f93153b2ef338a1c18d4c1c6df7b9a1687cf))
+* renamed sender to account ([ce4af1a](https://github.com/push-protocol/push-sdk/commit/ce4af1a200e98de3c47055cc495f55a4a8e561cf))
+
+
+
+## [0.0.1-alpha.81](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.80...restapi-0.0.1-alpha.81) (2024-04-15)
+
+
+### Bug Fixes
+
+* chat info changes ([6718648](https://github.com/push-protocol/push-sdk/commit/67186484a4dff605ef94df83b19bb2d4a220e546))
+* Merge branch 'alpha' into alpha-deployment ([97f8390](https://github.com/push-protocol/push-sdk/commit/97f839020e9b0313548753c364f01795e6bc7b3d))
+
+
+
+## [0.0.1-alpha.80](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.79...restapi-0.0.1-alpha.80) (2024-04-13)
+
+
+### Bug Fixes
+
+* Merge branch 'alpha' into alpha-deployment ([ad37848](https://github.com/push-protocol/push-sdk/commit/ad3784890d97b09b7d6212cfcd6c868cb360cba2))
+
+
+
+## [0.0.1-alpha.79](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.78...restapi-0.0.1-alpha.79) (2024-04-12)
+
+
+### Bug Fixes
+
+* added instanceids for push user and stream ([#1224](https://github.com/push-protocol/push-sdk/issues/1224)) ([34263c9](https://github.com/push-protocol/push-sdk/commit/34263c94ccfe674f915ce318a60cc21a77a0a5de))
+* Merge branch 'alpha' into alpha-deployment ([cb8d996](https://github.com/push-protocol/push-sdk/commit/cb8d996f868109a8e659a5654abfb265d2bb37ad))
+
+
+
+## [0.0.1-alpha.78](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.77...restapi-0.0.1-alpha.78) (2024-04-10)
+
+
+### Bug Fixes
+
+* add decryptedPGPPrivateKey in options ([#1216](https://github.com/push-protocol/push-sdk/issues/1216)) ([ed9d3a7](https://github.com/push-protocol/push-sdk/commit/ed9d3a7e6ef3880fd897927e67d7db8e0a7b06c7))
+* fix testcases to take push node environment from .env rather tha… ([#1196](https://github.com/push-protocol/push-sdk/issues/1196)) ([7a4bd8d](https://github.com/push-protocol/push-sdk/commit/7a4bd8d7637fb17a714062a7b9ea055c889b0bf0))
+* Merge branch 'alpha' into alpha-deployment ([3d52b21](https://github.com/push-protocol/push-sdk/commit/3d52b21accc046b2133eaf15d13e0c945d793b1f))
+* tes cases and minor bugs ([#1212](https://github.com/push-protocol/push-sdk/issues/1212)) ([d30e095](https://github.com/push-protocol/push-sdk/commit/d30e095860ef20b8f8ef6a341d49f698227df998))
+
+
+
+## [0.0.1-alpha.77](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.76...restapi-0.0.1-alpha.77) (2024-04-02)
+
+
+
+## [0.0.1-alpha.75](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.74...restapi-0.0.1-alpha.75) (2024-04-02)
+
+
+### Bug Fixes
+
+* chat.info changes ([#1163](https://github.com/push-protocol/push-sdk/issues/1163)) ([b16b842](https://github.com/push-protocol/push-sdk/commit/b16b84289bc840d1a6a210726fe8350f0291ccf0))
+* error handling for chat ([#1110](https://github.com/push-protocol/push-sdk/issues/1110)) ([59f4c77](https://github.com/push-protocol/push-sdk/commit/59f4c7704c91653ac114baf75ea30cd0b839980f))
+* fix build ([#1176](https://github.com/push-protocol/push-sdk/issues/1176)) ([fefdf91](https://github.com/push-protocol/push-sdk/commit/fefdf912df6110cebbbaf8fbd47989ba727679b4))
+* fix channel notifications response ([#1166](https://github.com/push-protocol/push-sdk/issues/1166)) ([c01798a](https://github.com/push-protocol/push-sdk/commit/c01798af23f4f8cc2215fa9a529145d0c3bf349d))
+* fixed berachain issue ([6cd5dd8](https://github.com/push-protocol/push-sdk/commit/6cd5dd8ff77d7a916ce795b1238b381d20808786))
+* merge alpha ([4d1c5ef](https://github.com/push-protocol/push-sdk/commit/4d1c5ef2e0e6ce3382af6b811ffd6211ba15520d))
+* Merge branch 'main' into alpha ([53a795d](https://github.com/push-protocol/push-sdk/commit/53a795db5ec82d44597410dca670dfadd9199277))
+* **migrate goerli to sepolia:** migrate goerli to sepolia ([#1149](https://github.com/push-protocol/push-sdk/issues/1149)) ([490b104](https://github.com/push-protocol/push-sdk/commit/490b104902b9a509c6a8c68d5c5f33446e91e113))
+* pulled ([f22e9fb](https://github.com/push-protocol/push-sdk/commit/f22e9fb0bd7a1529d1f9ba79626ef37a32e76f31))
+* pulled main ([b7391b6](https://github.com/push-protocol/push-sdk/commit/b7391b6318b40117d61b86ea8163b116f757c94a))
+
+
+
+## [0.0.1-alpha.75](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.74...restapi-0.0.1-alpha.75) (2024-04-02)
+
+
+### Bug Fixes
+
+* chat.info changes ([#1163](https://github.com/push-protocol/push-sdk/issues/1163)) ([b16b842](https://github.com/push-protocol/push-sdk/commit/b16b84289bc840d1a6a210726fe8350f0291ccf0))
+* error handling for chat ([#1110](https://github.com/push-protocol/push-sdk/issues/1110)) ([59f4c77](https://github.com/push-protocol/push-sdk/commit/59f4c7704c91653ac114baf75ea30cd0b839980f))
+* fix build ([#1176](https://github.com/push-protocol/push-sdk/issues/1176)) ([fefdf91](https://github.com/push-protocol/push-sdk/commit/fefdf912df6110cebbbaf8fbd47989ba727679b4))
+* fix channel notifications response ([#1166](https://github.com/push-protocol/push-sdk/issues/1166)) ([c01798a](https://github.com/push-protocol/push-sdk/commit/c01798af23f4f8cc2215fa9a529145d0c3bf349d))
+* fixed berachain issue ([6cd5dd8](https://github.com/push-protocol/push-sdk/commit/6cd5dd8ff77d7a916ce795b1238b381d20808786))
+* merge alpha ([4d1c5ef](https://github.com/push-protocol/push-sdk/commit/4d1c5ef2e0e6ce3382af6b811ffd6211ba15520d))
+* Merge branch 'main' into alpha ([53a795d](https://github.com/push-protocol/push-sdk/commit/53a795db5ec82d44597410dca670dfadd9199277))
+* **migrate goerli to sepolia:** migrate goerli to sepolia ([#1149](https://github.com/push-protocol/push-sdk/issues/1149)) ([490b104](https://github.com/push-protocol/push-sdk/commit/490b104902b9a509c6a8c68d5c5f33446e91e113))
+* pulled ([f22e9fb](https://github.com/push-protocol/push-sdk/commit/f22e9fb0bd7a1529d1f9ba79626ef37a32e76f31))
+* pulled main ([b7391b6](https://github.com/push-protocol/push-sdk/commit/b7391b6318b40117d61b86ea8163b116f757c94a))
+
+
+
+## [0.0.1-alpha.75](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.74...restapi-0.0.1-alpha.75) (2024-04-02)
+
+
+### Bug Fixes
+
+* chat.info changes ([#1163](https://github.com/push-protocol/push-sdk/issues/1163)) ([b16b842](https://github.com/push-protocol/push-sdk/commit/b16b84289bc840d1a6a210726fe8350f0291ccf0))
+* error handling for chat ([#1110](https://github.com/push-protocol/push-sdk/issues/1110)) ([59f4c77](https://github.com/push-protocol/push-sdk/commit/59f4c7704c91653ac114baf75ea30cd0b839980f))
+* fix build ([#1176](https://github.com/push-protocol/push-sdk/issues/1176)) ([fefdf91](https://github.com/push-protocol/push-sdk/commit/fefdf912df6110cebbbaf8fbd47989ba727679b4))
+* fix channel notifications response ([#1166](https://github.com/push-protocol/push-sdk/issues/1166)) ([c01798a](https://github.com/push-protocol/push-sdk/commit/c01798af23f4f8cc2215fa9a529145d0c3bf349d))
+* fixed berachain issue ([6cd5dd8](https://github.com/push-protocol/push-sdk/commit/6cd5dd8ff77d7a916ce795b1238b381d20808786))
+* merge alpha ([4d1c5ef](https://github.com/push-protocol/push-sdk/commit/4d1c5ef2e0e6ce3382af6b811ffd6211ba15520d))
+* Merge branch 'main' into alpha ([53a795d](https://github.com/push-protocol/push-sdk/commit/53a795db5ec82d44597410dca670dfadd9199277))
+* **migrate goerli to sepolia:** migrate goerli to sepolia ([#1149](https://github.com/push-protocol/push-sdk/issues/1149)) ([490b104](https://github.com/push-protocol/push-sdk/commit/490b104902b9a509c6a8c68d5c5f33446e91e113))
+* pulled ([f22e9fb](https://github.com/push-protocol/push-sdk/commit/f22e9fb0bd7a1529d1f9ba79626ef37a32e76f31))
+* pulled main ([b7391b6](https://github.com/push-protocol/push-sdk/commit/b7391b6318b40117d61b86ea8163b116f757c94a))
+
+
+
+## [0.0.1-alpha.75](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.74...restapi-0.0.1-alpha.75) (2024-04-02)
+
+
+### Bug Fixes
+
+* chat.info changes ([#1163](https://github.com/push-protocol/push-sdk/issues/1163)) ([b16b842](https://github.com/push-protocol/push-sdk/commit/b16b84289bc840d1a6a210726fe8350f0291ccf0))
+* error handling for chat ([#1110](https://github.com/push-protocol/push-sdk/issues/1110)) ([59f4c77](https://github.com/push-protocol/push-sdk/commit/59f4c7704c91653ac114baf75ea30cd0b839980f))
+* fix build ([#1176](https://github.com/push-protocol/push-sdk/issues/1176)) ([fefdf91](https://github.com/push-protocol/push-sdk/commit/fefdf912df6110cebbbaf8fbd47989ba727679b4))
+* fix channel notifications response ([#1166](https://github.com/push-protocol/push-sdk/issues/1166)) ([c01798a](https://github.com/push-protocol/push-sdk/commit/c01798af23f4f8cc2215fa9a529145d0c3bf349d))
+* fixed berachain issue ([6cd5dd8](https://github.com/push-protocol/push-sdk/commit/6cd5dd8ff77d7a916ce795b1238b381d20808786))
+* merge alpha ([4d1c5ef](https://github.com/push-protocol/push-sdk/commit/4d1c5ef2e0e6ce3382af6b811ffd6211ba15520d))
+* Merge branch 'main' into alpha ([53a795d](https://github.com/push-protocol/push-sdk/commit/53a795db5ec82d44597410dca670dfadd9199277))
+* **migrate goerli to sepolia:** migrate goerli to sepolia ([#1149](https://github.com/push-protocol/push-sdk/issues/1149)) ([490b104](https://github.com/push-protocol/push-sdk/commit/490b104902b9a509c6a8c68d5c5f33446e91e113))
+* pulled ([f22e9fb](https://github.com/push-protocol/push-sdk/commit/f22e9fb0bd7a1529d1f9ba79626ef37a32e76f31))
+* pulled main ([b7391b6](https://github.com/push-protocol/push-sdk/commit/b7391b6318b40117d61b86ea8163b116f757c94a))
+
+
+
+## [0.0.1-alpha.75](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.74...restapi-0.0.1-alpha.75) (2024-04-02)
+
+
+### Bug Fixes
+
+* chat.info changes ([#1163](https://github.com/push-protocol/push-sdk/issues/1163)) ([b16b842](https://github.com/push-protocol/push-sdk/commit/b16b84289bc840d1a6a210726fe8350f0291ccf0))
+* error handling for chat ([#1110](https://github.com/push-protocol/push-sdk/issues/1110)) ([59f4c77](https://github.com/push-protocol/push-sdk/commit/59f4c7704c91653ac114baf75ea30cd0b839980f))
+* fix build ([#1176](https://github.com/push-protocol/push-sdk/issues/1176)) ([fefdf91](https://github.com/push-protocol/push-sdk/commit/fefdf912df6110cebbbaf8fbd47989ba727679b4))
+* fix channel notifications response ([#1166](https://github.com/push-protocol/push-sdk/issues/1166)) ([c01798a](https://github.com/push-protocol/push-sdk/commit/c01798af23f4f8cc2215fa9a529145d0c3bf349d))
+* fixed berachain issue ([6cd5dd8](https://github.com/push-protocol/push-sdk/commit/6cd5dd8ff77d7a916ce795b1238b381d20808786))
+* merge alpha ([4d1c5ef](https://github.com/push-protocol/push-sdk/commit/4d1c5ef2e0e6ce3382af6b811ffd6211ba15520d))
+* Merge branch 'main' into alpha ([53a795d](https://github.com/push-protocol/push-sdk/commit/53a795db5ec82d44597410dca670dfadd9199277))
+* **migrate goerli to sepolia:** migrate goerli to sepolia ([#1149](https://github.com/push-protocol/push-sdk/issues/1149)) ([490b104](https://github.com/push-protocol/push-sdk/commit/490b104902b9a509c6a8c68d5c5f33446e91e113))
+* pulled ([f22e9fb](https://github.com/push-protocol/push-sdk/commit/f22e9fb0bd7a1529d1f9ba79626ef37a32e76f31))
+* pulled main ([b7391b6](https://github.com/push-protocol/push-sdk/commit/b7391b6318b40117d61b86ea8163b116f757c94a))
+
+
+
+## [0.0.1-alpha.75](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.74...restapi-0.0.1-alpha.75) (2024-04-02)
+
+
+### Bug Fixes
+
+* chat.info changes ([#1163](https://github.com/push-protocol/push-sdk/issues/1163)) ([b16b842](https://github.com/push-protocol/push-sdk/commit/b16b84289bc840d1a6a210726fe8350f0291ccf0))
+* error handling for chat ([#1110](https://github.com/push-protocol/push-sdk/issues/1110)) ([59f4c77](https://github.com/push-protocol/push-sdk/commit/59f4c7704c91653ac114baf75ea30cd0b839980f))
+* fix build ([#1176](https://github.com/push-protocol/push-sdk/issues/1176)) ([fefdf91](https://github.com/push-protocol/push-sdk/commit/fefdf912df6110cebbbaf8fbd47989ba727679b4))
+* fix channel notifications response ([#1166](https://github.com/push-protocol/push-sdk/issues/1166)) ([c01798a](https://github.com/push-protocol/push-sdk/commit/c01798af23f4f8cc2215fa9a529145d0c3bf349d))
+* fixed berachain issue ([6cd5dd8](https://github.com/push-protocol/push-sdk/commit/6cd5dd8ff77d7a916ce795b1238b381d20808786))
+* merge alpha ([4d1c5ef](https://github.com/push-protocol/push-sdk/commit/4d1c5ef2e0e6ce3382af6b811ffd6211ba15520d))
+* Merge branch 'main' into alpha ([53a795d](https://github.com/push-protocol/push-sdk/commit/53a795db5ec82d44597410dca670dfadd9199277))
+* **migrate goerli to sepolia:** migrate goerli to sepolia ([#1149](https://github.com/push-protocol/push-sdk/issues/1149)) ([490b104](https://github.com/push-protocol/push-sdk/commit/490b104902b9a509c6a8c68d5c5f33446e91e113))
+* pulled ([f22e9fb](https://github.com/push-protocol/push-sdk/commit/f22e9fb0bd7a1529d1f9ba79626ef37a32e76f31))
+* pulled main ([b7391b6](https://github.com/push-protocol/push-sdk/commit/b7391b6318b40117d61b86ea8163b116f757c94a))
+
+
+
 ## [1.7.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/restapi-1.7.1...restapi-1.7.2) (2024-03-13)
 
 

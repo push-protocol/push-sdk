@@ -1,5 +1,5 @@
 import { AccountEnvOptionsType, IUser } from '../types';
-import { isValidETHAddress, walletToPCAIP10 } from '../helpers/address';
+import { isValidPushCAIP, walletToPCAIP10 } from '../helpers/address';
 import { getAPIBaseUrls, verifyProfileKeys } from '../helpers';
 import Constants from '../constants';
 import { populateDeprecatedUser } from '../utils/populateIUser';
@@ -7,7 +7,7 @@ import { axiosGet } from '../utils/axiosUtil';
 
 export const get = async (options: AccountEnvOptionsType): Promise<IUser> => {
   const { account, env = Constants.ENV.PROD } = options || {};
-  if (!isValidETHAddress(account)) {
+  if (!isValidPushCAIP(account)) {
     throw new Error(`Invalid address!`);
   }
   const caip10 = walletToPCAIP10(account);

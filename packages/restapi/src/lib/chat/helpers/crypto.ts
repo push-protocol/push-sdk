@@ -16,7 +16,7 @@ import {
   Signer,
   decryptPGPKey,
   decryptWithWalletRPCMethod,
-  isValidETHAddress,
+  isValidPushCAIP,
 } from '../../helpers';
 import { get as getUser } from '../../user';
 import { createUserService } from './service';
@@ -247,7 +247,7 @@ export const getEncryptedRequestCore = async (
       env,
     });
     if (!receiverCreatedUser?.publicKey) {
-      if (!isValidETHAddress(receiverAddress)) {
+      if (!isValidPushCAIP(receiverAddress)) {
         throw new Error(`Invalid receiver address!`);
       }
       await createUserService({

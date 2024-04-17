@@ -15,7 +15,7 @@ import {
   CHAIN_ID_TO_SOURCE,
   SOURCE_TYPES,
 } from './constants';
-import { getConnectedUser, sign } from '../chat/helpers';
+import { sign } from '../chat/helpers';
 
 export function getUUID() {
   return uuidv4();

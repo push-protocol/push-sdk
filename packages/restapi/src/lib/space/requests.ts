@@ -1,7 +1,7 @@
-import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
+import { convertToValidDID, getAPIBaseUrls, isValidPushCAIP } from '../helpers';
 import Constants, { ENV } from '../constants';
-import {  SpaceIFeeds } from '../types';
-import { getSpaceInboxLists, getUserDID } from '../chat/helpers';
+import { SpaceIFeeds } from '../types';
+import { getSpaceInboxLists } from '../chat/helpers';
 import { axiosGet } from '../utils/axiosUtil';
 
 export type RequestOptionsType = {
@@ -40,11 +40,11 @@ export const requests = async (
     page = 1,
     limit = 10,
   } = options || {};
-  const user = await getUserDID(account, env);
+  const user = await convertToValidDID(account, env);
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/spaces/users/${user}/requests?page=${page}&limit=${limit}`;
   try {
-    if (!isValidETHAddress(user)) {
+    if (!isValidPushCAIP(user)) {
       throw new Error(`Invalid address!`);
     }
     const response = await axiosGet(apiEndpoint);
