@@ -1,18 +1,18 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
-import { ethers } from 'ethers';
-import styled from 'styled-components';
-import { ToastContainer } from 'react-toastify';
 import { IUser } from '@pushprotocol/restapi';
+import { ethers } from 'ethers';
+import { ToastContainer } from 'react-toastify';
+import styled from 'styled-components';
 
-import { Section, Span, Image } from '../../reusables';
-import { ThemeContext } from '../theme/ThemeProvider';
-import { useChatData } from '../../../hooks/chat/useChatData';
-import useMediaQuery from '../../../hooks/useMediaQuery';
 import { resolveNewEns, shortenText } from '../../../helpers';
-import { ProfileContainer } from '../reusables';
-import useChatProfile from '../../../hooks/chat/useChatProfile';
 import { useClickAway } from '../../../hooks';
+import { useChatData } from '../../../hooks/chat/useChatData';
+import useChatProfile from '../../../hooks/chat/useChatProfile';
+import useMediaQuery from '../../../hooks/useMediaQuery';
+import { Image, Section, Span } from '../../reusables';
+import { ProfileContainer } from '../reusables';
+import { ThemeContext } from '../theme/ThemeProvider';
 import { UpdateUserProfileModal } from './UpdateUserProfileModal';
 
 import {
@@ -23,8 +23,8 @@ import {
 } from '../../../config';
 import VerticalEllipsisIcon from '../../../icons/VerticalEllipsis.svg';
 import UserProfileIcon from '../../../icons/userCircleGear.svg';
-import { IChatTheme, UserProfileProps } from '../exportedTypes';
 import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../../../types';
+import { IChatTheme, UserProfileProps } from '../exportedTypes';
 
 /**
  * @interface IThemeProps
@@ -38,7 +38,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({
   updateUserProfileModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
   updateUserProfileModalPositionType = MODAL_POSITION_TYPE.GLOBAL,
 }) => {
-  const { account, user, env } = useChatData();
+  const { user, env } = useChatData();
   const [userProfile, setUserProfile] = useState<IUser>();
   const [web3Name, setWeb3Name] = useState<string | null>(null);
   const [options, setOptions] = useState<boolean>();
@@ -64,7 +64,8 @@ export const UserProfile: React.FC<UserProfileProps> = ({
         setUserProfile(fetchedUser);
       }
     })();
-  }, [account, user]);
+  }, [user]);
+  
   useClickAway(DropdownRef, () => {
     setOptions(false);
   });
@@ -84,10 +85,10 @@ export const UserProfile: React.FC<UserProfileProps> = ({
         <ProfileContainer
           theme={theme}
           member={{
-            wallet: shortenText(account || '', 8, true) as string,
-            image: userProfile?.profile?.picture || ProfilePicture,
             web3Name: web3Name,
-            completeWallet: account,
+            abbrRecipient: shortenText(user!.account || '', 8, true) as string,
+            recipient: user!.account,
+            image: userProfile?.profile?.picture || null,
           }}
           copy={true}
           customStyle={{
@@ -95,6 +96,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({
             fontWeight: theme?.fontWeight?.userProfileText,
             textColor: theme?.textColor?.userProfileText,
           }}
+          loading={!userProfile ? true : false}
         />
         {userProfile && (
           <Section>

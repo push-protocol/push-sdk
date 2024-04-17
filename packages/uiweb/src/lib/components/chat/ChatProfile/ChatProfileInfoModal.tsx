@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 
-import styled from 'styled-components';
 import {
   ChatMemberProfile,
   GroupParticipantCounts,
@@ -8,48 +7,49 @@ import {
   ParticipantStatus,
 } from '@pushprotocol/restapi';
 import { MdCheckCircle, MdError } from 'react-icons/md';
+import styled from 'styled-components';
 
 import { useChatData, usePushChatStream } from '../../../hooks';
-import { Section, Span, Image } from '../../reusables/sharedStyling';
-import { AddWalletContent } from './AddWalletContent';
-import { Modal, ModalHeader } from '../reusables';
-import useMediaQuery from '../../../hooks/useMediaQuery';
-import useToast from '../reusables/NewToast';
 import useUpdateGroup from '../../../hooks/chat/useUpdateGroup';
-import ConditionsComponent from '../CreateGroup/ConditionsComponent';
-import { AcceptedMembers, PendingMembers } from './PendingMembers';
+import useMediaQuery from '../../../hooks/useMediaQuery';
 import { Spinner } from '../../reusables';
+import { Image, Section, Span } from '../../reusables/sharedStyling';
+import ConditionsComponent from '../CreateGroup/ConditionsComponent';
+import { Modal, ModalHeader } from '../reusables';
+import useToast from '../reusables/NewToast';
+import { AddWalletContent } from './AddWalletContent';
+import { AcceptedMembers, PendingMembers } from './PendingMembers';
 
-import { IChatTheme } from '../theme';
 import { device } from '../../../config';
+import { copyToClipboard, shortenText } from '../../../helpers';
 import LockIcon from '../../../icons/Lock.png';
 import LockSlashIcon from '../../../icons/LockSlash.png';
 import addIcon from '../../../icons/addicon.svg';
-import { copyToClipboard, shortenText } from '../../../helpers';
-import {
-  ACCEPTED_MEMBERS_LIMIT,
-  ACCESS_TYPE_TITLE,
-  OPERATOR_OPTIONS_INFO,
-  PENDING_MEMBERS_LIMIT,
-} from '../constants';
-import { getRuleInfo } from '../helpers/getRulesToCondtionArray';
-import { Group } from '../exportedTypes';
 import {
   MODAL_BACKGROUND_TYPE,
   MODAL_POSITION_TYPE,
   ModalBackgroundType,
   ModalPositionType,
 } from '../../../types';
+import {
+  ACCEPTED_MEMBERS_LIMIT,
+  ACCESS_TYPE_TITLE,
+  OPERATOR_OPTIONS_INFO,
+  PENDING_MEMBERS_LIMIT,
+} from '../constants';
+import { Group } from '../exportedTypes';
+import { getRuleInfo } from '../helpers/getRulesToCondtionArray';
+import { IChatTheme } from '../theme';
 
-import { TokenGatedSvg } from '../../../icons/TokenGatedSvg';
-import { GROUP_ROLES } from '../types';
-import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities';
 import useChatProfile from '../../../hooks/chat/useChatProfile';
+import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities';
+import useUserProfile from '../../../hooks/useUserProfile';
+import { TokenGatedSvg } from '../../../icons/TokenGatedSvg';
 import {
   resolvePromisesSeq,
   transformIUserToChatMemberProfile,
 } from '../helpers';
-import useUserProfile from '../../../hooks/useUserProfile';
+import { GROUP_ROLES } from '../types';
 
 export interface MemberPaginationData {
   page: number;

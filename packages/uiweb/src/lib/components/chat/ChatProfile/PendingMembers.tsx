@@ -1,26 +1,26 @@
 import { useEffect, useRef, useState } from 'react';
 
-import styled from 'styled-components';
 import { ChatMemberProfile, ParticipantStatus } from '@pushprotocol/restapi';
 import { MdCheckCircle, MdError } from 'react-icons/md';
+import styled from 'styled-components';
 
+import { useChatData, useClickAway, useIsInViewport } from '../../../hooks';
+import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities';
+import useUpdateGroup from '../../../hooks/chat/useUpdateGroup';
 import { IChatTheme } from '../exportedTypes';
 import { DropdownValueType, ProfileContainer } from '../reusables';
-import { MemberPaginationData } from './GroupInfoModal';
-import { useChatData, useClickAway, useIsInViewport } from '../../../hooks';
-import { MemberProfileCard } from './MemberProfileCard';
-import useUpdateGroup from '../../../hooks/chat/useUpdateGroup';
-import { GROUP_ROLES, GroupRolesKeys } from '../types';
 import useToast from '../reusables/NewToast';
-import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities';
+import { GROUP_ROLES, GroupRolesKeys } from '../types';
+import { MemberPaginationData } from './ChatProfileInfoModal';
+import { MemberProfileCard } from './MemberProfileCard';
 
-import { isAdmin } from '../helpers';
-import ArrowIcon from '../../../icons/CaretUp.svg';
-import { Span, Image, Section, Spinner } from '../../reusables';
 import { pCAIP10ToWallet, shortenText } from '../../../helpers';
-import DismissAdmin from '../../../icons/dismissadmin.svg';
+import ArrowIcon from '../../../icons/CaretUp.svg';
 import AddAdmin from '../../../icons/addadmin.svg';
+import DismissAdmin from '../../../icons/dismissadmin.svg';
 import Remove from '../../../icons/remove.svg';
+import { Image, Section, Span, Spinner } from '../../reusables';
+import { isAdmin } from '../helpers';
 
 interface ShadowedProps {
   setPosition: boolean;
@@ -126,12 +126,14 @@ export const PendingMembers = ({
                 <ProfileContainer
                   theme={theme}
                   member={{
-                    wallet: shortenText(
+                    web3Name: null,
+                    abbrRecipient: null,
+                    recipient: shortenText(
                       pCAIP10ToWallet(item.address?.split(':')[1]),
                       6,
                       true
                     ),
-                    image: item?.userInfo?.profile?.picture || '',
+                    image: item?.userInfo?.profile?.picture || null,
                   }}
                   customStyle={{
                     imgHeight: '36px',

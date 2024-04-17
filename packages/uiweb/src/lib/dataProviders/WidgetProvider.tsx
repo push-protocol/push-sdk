@@ -1,16 +1,16 @@
-import { useState, ReactNode, useEffect } from 'react';
-import { Constants, ENV } from '../config';
-import {
-  WidgetDataContext,
-  IWidgetDataContextValues,
-} from '../context/widgetContext';
 import { PushAPI, SignerType } from '@pushprotocol/restapi';
-import { getAddressFromSigner, pCAIP10ToWallet } from '../helpers';
-import { GUEST_MODE_ACCOUNT } from '../config/constants';
+import { ReactNode, useEffect, useState } from 'react';
 import { IWidgetTheme, lightWidgetTheme } from '../components/widget/theme';
 import { ThemeContext } from '../components/widget/theme/ThemeProvider';
+import { Constants, ENV } from '../config';
+import { GUEST_MODE_ACCOUNT } from '../config/constants';
+import {
+  IWidgetDataContextValues,
+  WidgetDataContext,
+} from '../context/widgetContext';
+import { getAddressFromSigner, pCAIP10ToWallet } from '../helpers';
+import useInitializeUser from '../hooks/usePushUser';
 import useUserProfile from '../hooks/useUserProfile';
-import useInitializeUser from '../hooks/useInitializeUser';
 
 export interface IWidgetUIProviderProps {
   children: ReactNode;

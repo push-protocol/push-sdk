@@ -1,46 +1,46 @@
 import { ChangeEvent, useContext, useEffect, useRef, useState } from 'react';
 
-import styled from 'styled-components';
-import { MdCheckCircle, MdError } from 'react-icons/md';
+import { IUser } from '@pushprotocol/restapi';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import GifPicker from 'gif-picker-react';
-import { IUser } from '@pushprotocol/restapi';
+import { MdCheckCircle, MdError } from 'react-icons/md';
 import { ToastContainer } from 'react-toastify';
+import styled from 'styled-components';
 
-import { Section, Div, Span } from '../../reusables';
-import { EmojiIcon } from '../../../icons/Emoji';
-import { GifIcon } from '../../../icons/Gif';
-import { AttachmentIcon } from '../../../icons/Attachment';
-import usePushSendMessage from '../../../hooks/chat/usePushSendMessage';
-import { SendCompIcon } from '../../../icons/SendCompIcon';
-import { Spinner } from '../../reusables';
-import { ThemeContext } from '../theme/ThemeProvider';
-import OpenLink from '../../../icons/OpenLink';
-import useVerifyAccessControl from '../../../hooks/chat/useVerifyAccessControl';
-import { Modal, ModalHeader } from '../reusables/Modal';
-import { ConnectButtonComp } from '../ConnectButton';
-import useToast from '../reusables/NewToast';
-import { ConditionsInformation } from '../ChatProfile/GroupInfoModal';
 import {
   pCAIP10ToWallet,
   setAccessControl,
   walletToPCAIP10,
 } from '../../../helpers';
-import useFetchChat from '../../../hooks/chat/useFetchChat';
 import {
   useChatData,
   useClickAway,
   useDeviceWidthCheck,
   usePushChatStream,
-  // usePushChatStream,
 } from '../../../hooks';
+import useFetchChat from '../../../hooks/chat/useFetchChat';
 import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
 import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities';
+import usePushSendMessage from '../../../hooks/chat/usePushSendMessage';
+import useVerifyAccessControl from '../../../hooks/chat/useVerifyAccessControl';
+import { AttachmentIcon } from '../../../icons/Attachment';
+import { EmojiIcon } from '../../../icons/Emoji';
+import { GifIcon } from '../../../icons/Gif';
+import OpenLink from '../../../icons/OpenLink';
+import { SendCompIcon } from '../../../icons/SendCompIcon';
+import { Div, Section, Span, Spinner } from '../../reusables';
+import { ConditionsInformation } from '../ChatProfile/ChatProfileInfoModal';
+import { ConnectButtonComp } from '../ConnectButton';
+import { Modal, ModalHeader } from '../reusables/Modal';
+import useToast from '../reusables/NewToast';
+import { ThemeContext } from '../theme/ThemeProvider';
 
+import { PUBLIC_GOOGLE_TOKEN, device } from '../../../config';
+import useUserProfile from '../../../hooks/useUserProfile';
 import {
   MODAL_BACKGROUND_TYPE,
-  type FileMessageContent,
   MODAL_POSITION_TYPE,
+  type FileMessageContent,
 } from '../../../types';
 import {
   GIFType,
@@ -48,11 +48,9 @@ import {
   IChatTheme,
   MessageInputProps,
 } from '../exportedTypes';
-import { PUBLIC_GOOGLE_TOKEN, device } from '../../../config';
 import { checkIfAccessVerifiedGroup } from '../helpers';
 import { InfoContainer } from '../reusables';
 import { ChatInfoResponse } from '../types';
-import useUserProfile from '../../../hooks/useUserProfile';
 
 /**
  * @interface IThemeProps

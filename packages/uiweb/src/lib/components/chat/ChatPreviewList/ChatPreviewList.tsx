@@ -44,12 +44,6 @@ import {
 } from '../exportedTypes';
 import { IChatTheme } from '../theme';
 
-// Constants
-
-// Main Logic
-
-
-// Define Interfaces
 /**
  * @interface IThemeProps
  * this interface is used for defining the props for styled components
@@ -79,10 +73,13 @@ interface IChatPreviewListMeta {
   };
 }
 
-// Define Constants
+// Constants
 const CHAT_PAGE_LIMIT = 10;
 const SCROLL_LIMIT = 25;
 
+// Exported Interfaces & Types
+
+// Exported Functions
 export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
   options: IChatPreviewListProps
 ) => {
@@ -927,7 +924,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
                 ? options?.prefillChatPreviewList[index].setSelected
                 : setSelectedBadge
             }
-            readmode={false} // user?.readmode() || options.listType === CONSTANTS.CHAT.LIST_TYPE.REQUESTS || 
+            readmode={user?.readmode()}
           />
         );
       })}

@@ -7,10 +7,10 @@ import { IChatTheme } from '../theme';
 type ProfileProps = {
   theme: IChatTheme;
   member: {
-    wallet: string;
-    image: string;
+    image: string | null;
     web3Name?: string | null;
-    completeWallet?: string | null;
+    abbrRecipient: string | null;
+    recipient?: string | null;
   };
   copy?: boolean;
   customStyle?: CustomStyleParamsType | null;
@@ -36,33 +36,36 @@ export const ProfileContainer = ({
     <Section justifyContent="flex-start">
       <Section
         height={customStyle?.imgHeight ?? '48px'}
-        maxWidth="48px"
+        width={customStyle?.imgHeight ?? '48px'}
         borderRadius="100%"
         overflow="hidden"
         margin="0px 12px 0px 0px"
         position="relative"
         className={loading ? 'skeleton' : ''}
       >
-        <Image
-          height={customStyle?.imgHeight ?? '48px'}
-          maxHeight={customStyle?.imgMaxHeight ?? '48px'}
-          width={'auto'}
-          cursor="pointer"
-          src={member?.image}
-          className={loading ? 'skeleton' : ''}
-        />
+        {member?.image &&
+          <Image
+            height={customStyle?.imgHeight ?? '48px'}
+            maxHeight={customStyle?.imgMaxHeight ?? '48px'}
+            width={'auto'}
+            cursor="pointer"
+            src={member?.image}
+          /> 
+        }
       </Section>
       <Section
         flexDirection="column"
         alignItems="start"
-        gap="5px"
         whiteSpace="nowrap"
         minWidth="150px"
       >
-        {!loading && (
-          <>
-            {member?.web3Name && (
-              <Section>
+        <>
+            {member?.web3Name || loading && (
+              <Section
+                justifyContent="flex-start"
+                minWidth="120px"
+                className={loading ? 'skeleton' : ''}
+              >
                 <Span
                   fontSize={customStyle?.fontSize ?? '18px'}
                   fontWeight={customStyle?.fontWeight ?? '400'}
@@ -79,16 +82,20 @@ export const ProfileContainer = ({
 
             <Tooltip content={copyText}>
               <Section
+                justifyContent="flex-start"
                 gap="5px"
                 cursor="pointer"
+                minHeight="22px"
+                minWidth="180px"
                 onMouseEnter={() => setCopyText('Copy to clipboard')}
                 onMouseLeave={() => setCopyText('')}
                 onClick={() => {
                   copyToClipboard(
-                    pCAIP10ToWallet(member?.completeWallet || '')
+                    pCAIP10ToWallet(member?.recipient || '')
                   );
                   setCopyText('copied');
                 }}
+                className={loading ? 'skeleton' : ''}
               >
                 <Span
                   fontSize={
@@ -106,7 +113,7 @@ export const ProfileContainer = ({
                   position="relative"
                   whiteSpace="nowrap"
                 >
-                  {member.wallet}
+                  {member.abbrRecipient}
                 </Span>
                 {copy && copyText && (
                   <Div cursor="pointer">
@@ -116,7 +123,6 @@ export const ProfileContainer = ({
               </Section>
             </Tooltip>
           </>
-        )}
       </Section>
     </Section>
   );

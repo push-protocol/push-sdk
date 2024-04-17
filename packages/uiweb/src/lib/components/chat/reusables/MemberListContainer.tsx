@@ -1,20 +1,20 @@
 import { useContext, useRef, useState } from 'react';
 
-import styled from 'styled-components';
 import { IUser } from '@pushprotocol/restapi';
+import styled from 'styled-components';
 
-import { ThemeContext } from '../theme/ThemeProvider';
 import { useClickAway } from '../../../hooks';
-import Dropdown, { DropdownValueType } from './DropDown';
 import { Section, Span } from '../../reusables/sharedStyling';
+import { ThemeContext } from '../theme/ThemeProvider';
+import Dropdown, { DropdownValueType } from './DropDown';
 
-import DismissAdmin from '../../../icons/dismissadmin.svg';
-import AddAdmin from '../../../icons/addadmin.svg';
-import Remove from '../../../icons/remove.svg';
-import { findObject } from '../helpers/helper';
+import { ProfileContainer } from '.';
 import { device } from '../../../config';
 import { shortenText } from '../../../helpers';
-import { ProfileContainer } from '.';
+import AddAdmin from '../../../icons/addadmin.svg';
+import DismissAdmin from '../../../icons/dismissadmin.svg';
+import Remove from '../../../icons/remove.svg';
+import { findObject } from '../helpers/helper';
 
 
 type MemberListContainerType = {
@@ -113,7 +113,9 @@ export const MemberListContainer = ({
       <ProfileContainer
         theme={theme}
         member={{
-          wallet: shortenText(memberData.wallets?.split(':')[1], 6, true),
+          web3Name: memberData.wallets?.split(':')[1],
+          abbrRecipient: shortenText(memberData.wallets?.split(':')[1], 6, true),
+          recipient: memberData.wallets?.split(':')[1],
           image: memberData.profile?.picture || '',
         }}
       />
