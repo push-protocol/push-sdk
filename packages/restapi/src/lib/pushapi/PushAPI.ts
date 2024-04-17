@@ -24,13 +24,13 @@ import { cache } from '../helpers/cache';
 import { v4 as uuidv4 } from 'uuid';
 
 export class PushAPI {
-  private signer?: SignerType;
+  public signer?: SignerType;
   private readMode: boolean;
   private alpha: { feature: string[] };
   public account: string;
-  private decryptedPgpPvtKey?: string;
-  private pgpPublicKey?: string;
-  private env: ENV;
+  public decryptedPgpPvtKey?: string;
+  public pgpPublicKey?: string;
+  public env: ENV;
   private progressHook?: (progress: ProgressHookType) => void;
   private cache: LRUCache<string, any>;
 
