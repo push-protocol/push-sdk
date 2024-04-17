@@ -1,20 +1,22 @@
-import { useState, ReactNode, useEffect } from 'react';
+import { IUser, PushAPI, SignerType } from '@pushprotocol/restapi';
+import { ReactNode, useEffect, useState } from 'react';
+import { IChatTheme, lightChatTheme } from '../components/chat/theme';
+import { ThemeContext } from '../components/chat/theme/ThemeProvider';
 import { Constants, ENV, GUEST_MODE_ACCOUNT } from '../config';
 import {
   ChatDataContext,
   IChatDataContextValues,
 } from '../context/chatContext';
-import { ThemeContext } from '../components/chat/theme/ThemeProvider';
-import useGetChatProfile from '../hooks/useGetChatProfile';
-import { IUser, PushAPI, SignerType } from '@pushprotocol/restapi';
-import { IChatTheme, lightChatTheme } from '../components/chat/theme';
 import { getAddressFromSigner, pCAIP10ToWallet } from '../helpers';
+import useChatProfile from '../hooks/chat/useChatProfile';
 import useCreateChatProfile from '../hooks/useCreateChatProfile';
 import useDecryptPGPKey from '../hooks/useDecryptPGPKey';
-import useInitializePushUser from '../hooks/useInitializeUser';
-import useInitializeUser from '../hooks/useInitializeUser';
-import useChatProfile from '../hooks/chat/useChatProfile';
+import useGetChatProfile from '../hooks/useGetChatProfile';
+import { default as useInitializePushUser, default as useInitializeUser } from '../hooks/useInitializeUser';
 
+import {
+  traceStackCalls,
+} from '../helpers';
 import usePushUserInfoUtilities from '../hooks/chat/useUserInfoUtilities';
 import useUserProfile from '../hooks/useUserProfile';
 
@@ -61,7 +63,15 @@ export const ChatUIProvider = ({
 
   const [isPushChatStreamConnected, setIsPushChatStreamConnected] =
     useState<boolean>(false);
+
+
   useEffect(() => {
+    // 
+    // add timestamp over here
+    const timestamp = new Date().toISOString();
+    console.debug(`${timestamp}::ChatPreviewList::user changed`, user);
+    traceStackCalls();
+
     (async () => {
       resetStates();
   
@@ -71,7 +81,7 @@ export const ChatUIProvider = ({
       } else if (!signer && user) {
         const profile = await fetchUserProfile({user});
         if(profile)
-        address = (pCAIP10ToWallet(profile?.wallets));
+        address = (pCAIP10ToWallet(profile.account));
       } 
      
 
@@ -80,32 +90,33 @@ export const ChatUIProvider = ({
       setSignerVal(signer);
     
       setUserVal(user);
-      setPgpPrivateKeyVal(pgpPrivateKey);
+      // setPgpPrivateKeyVal(user.decyptedPgpPrivateKey);
     })();
-  }, [env, account, signer, pgpPrivateKey,user]);
+  }, [user]);
   
-  useEffect(() => {
-    (async () => {
+  // useEffect(() => {
+  //   (async () => {
 
-      if ((accountVal && envVal ) ) {
-        const pushUser = await initializeUser({
-          signer: signerVal,
-          account: accountVal!,
-          env: envVal,
-        });
-        setUserVal(pushUser);
-      }
-    })();
-  }, [signerVal, accountVal, envVal]);
-  useEffect(() => {
-    (async () => {
-      if (userVal && !userVal?.readmode()&& !pgpPrivateKeyVal) {
-        const encryptionInfo = await fetchEncryptionInfo({user:userVal});
-        if (encryptionInfo)
-          setPgpPrivateKeyVal(encryptionInfo.decryptedPgpPrivateKey);
-      }
-    })();
-  }, [userVal]);
+  //     if ((accountVal && envVal ) ) {
+  //       const pushUser = await initializeUser({
+  //         signer: signerVal,
+  //         account: accountVal!,
+  //         env: envVal,
+  //       });
+  //       setUserVal(pushUser);
+  //     }
+  //   })();
+  // }, [signerVal, accountVal, envVal]);
+
+  // useEffect(() => {
+  //   (async () => {
+  //     if (userVal && !userVal?.readmode()&& !pgpPrivateKeyVal) {
+  //       const encryptionInfo = await fetchEncryptionInfo({user:userVal});
+  //       if (encryptionInfo)
+  //         setPgpPrivateKeyVal(encryptionInfo.decryptedPgpPrivateKey);
+  //     }
+  //   })();
+  // }, [userVal]);
 
   const resetStates = () => {
     setPushChatSocket(null);
@@ -114,15 +125,16 @@ export const ChatUIProvider = ({
     setIsPushChatStreamConnected(false);
   };
 
-  useEffect(() => {
-    (async () => {
-      let user;
-      if (account) {
-        user = await fetchUserProfile({ profileId: account, env,user });
-        if (user) setConnectedProfile(user);
-      }
-    })();
-  }, [account, env, pgpPrivateKey]);
+  // useEffect(() => {
+  //   (async () => {
+  //     let user;
+  //     if (account) {
+  //       user = await fetchUserProfile({ profileId: account, env,user });
+  //       if (user) setConnectedProfile(user);
+  //     }
+  //   })();
+  // }, [account, env, pgpPrivateKey]);
+
 console.debug('userval',userVal)
   const value: IChatDataContextValues = {
     account: accountVal,

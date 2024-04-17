@@ -171,6 +171,8 @@ export const ChatProfile: React.FC<IChatProfile> = ({
 
       // We have derived chatId, fetch chat info to see if it's group or dm
       const chatInfo = await user.chat.info(derivedChatId);
+      console.log('Chat Info:', chatInfo);
+
       if (chatInfo) {
         let groupInfo;
 
@@ -189,7 +191,9 @@ export const ChatProfile: React.FC<IChatProfile> = ({
           // TODO - HANDLE ERROR IN UI
         } else {
           // This is DM
-          const profileInfo = await user.profile.info({overrideAccount: chatId});
+          const recipient = await deriveChatId(chatInfo.participants[0], env);
+
+          const profileInfo = await user.profile.info({overrideAccount: recipient});
           console.log('Profile Info:', profileInfo);
           profile.name = profileInfo.name;
           profile.icon = profileInfo.icon ? profileInfo.icon : createBlockie?.(chatId)?.toDataURL()?.toString();

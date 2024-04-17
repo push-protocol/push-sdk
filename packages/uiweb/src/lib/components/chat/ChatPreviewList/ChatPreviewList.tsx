@@ -1,5 +1,40 @@
+// React + Web3 Essentials
+import { ethers } from 'ethers';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
+// External Packages
+import styled from 'styled-components';
+
+// Internal Compoonents
+import {
+  getAddress,
+  getNewChatUser,
+  pCAIP10ToWallet,
+  traceStackCalls,
+  walletToPCAIP10,
+} from '../../../helpers';
+import { useChatData, usePushChatStream } from '../../../hooks';
+import useFetchChat from '../../../hooks/chat/useFetchChat';
+import useFetchMessageUtilities from '../../../hooks/chat/useFetchMessageUtilities';
+import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
+import useUserProfile from '../../../hooks/useUserProfile';
+import { Button, Section, Span, Spinner } from '../../reusables';
+import { ChatPreview } from '../ChatPreview';
+import {
+  displayDefaultUser,
+  generateRandomNonce,
+  transformChatItems,
+  transformStreamToIChatPreviewPayload,
+} from '../helpers';
+
+// Internal Configs
+import { CONSTANTS } from '@pushprotocol/restapi';
+import { ThemeContext } from '../theme/ThemeProvider';
+
+// Assets
+
+// Interfaces & Types
+import { IFeeds, IUser } from '@pushprotocol/restapi';
 import {
   ChatPreviewListErrorCodes,
   Group,
@@ -7,33 +42,12 @@ import {
   IChatPreviewListProps,
   IChatPreviewPayload,
 } from '../exportedTypes';
-
-import { CONSTANTS, IFeeds, IUser } from '@pushprotocol/restapi';
-import { ethers } from 'ethers';
-import styled from 'styled-components';
-
-import { useChatData, usePushChatStream } from '../../../hooks';
-import useFetchMessageUtilities from '../../../hooks/chat/useFetchMessageUtilities';
-import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
-import useUserProfile from '../../../hooks/useUserProfile';
-import { Button, Section, Span, Spinner } from '../../reusables';
-import { ChatPreview } from '../ChatPreview';
-
-import {
-  getAddress,
-  getNewChatUser,
-  pCAIP10ToWallet,
-  walletToPCAIP10,
-} from '../../../helpers';
-import useFetchChat from '../../../hooks/chat/useFetchChat';
-import {
-  displayDefaultUser,
-  generateRandomNonce,
-  transformChatItems,
-  transformStreamToIChatPreviewPayload,
-} from '../helpers';
 import { IChatTheme } from '../theme';
-import { ThemeContext } from '../theme/ThemeProvider';
+
+// Constants
+
+// Main Logic
+
 
 // Define Interfaces
 /**
@@ -143,6 +157,36 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     };
   }, []);
 
+
+  // If push user changes or if options param changes
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+
+    // reset the entire state
+    if (!options?.prefillChatPreviewList) {
+      setChatPreviewList({
+        nonce: generateRandomNonce(),
+        items: [],
+        page: 1,
+        preloading: true,
+        loading: false,
+        loaded: false,
+        reset: true,
+        resume: false,
+        errored: false,
+        error: null,
+      });
+    }
+  }, [
+    user,
+    options?.prefillChatPreviewList,
+    options?.searchParamter,
+    options.listType,
+    options.overrideAccount,
+  ]);
+
   // Helper Functions
 
   // Add to chat items
@@ -167,7 +211,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       items.forEach((item) => {
         // only increment if not selected
         if (chatPreviewListMeta.selectedChatId !== item.chatId) {
-          console.debug("incrementing badge",item.chatId)
+          console.debug("::ChatPreviewList::incrementing badge", item.chatId);
           setBadge(
             item.chatId!,
             chatPreviewListMeta.badges[item.chatId!]
@@ -496,24 +540,29 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       });
     }
   }, [options?.prefillChatPreviewList]);
-  // If account, env or signer changes
-  useEffect(() => {
-    if (!options?.prefillChatPreviewList) {
-      setChatPreviewList({
-        nonce: generateRandomNonce(),
-        items: [],
-        page: 1,
-        preloading: true,
-        loading: false,
-        loaded: false,
-        reset: false,
-        resume: false,
-        errored: false,
-        error: null,
-      });
-      resetBadge();
-    }
-  }, [account, env, signer]);
+
+  // // This is initialize function, only called if user changes (account, env, etc are not required for update)
+  // useEffect(() => {
+  //   if (!user) {
+  //     return;
+  //   }
+
+  //   if (!options?.prefillChatPreviewList) {
+  //     setChatPreviewList({
+  //       nonce: generateRandomNonce(),
+  //       items: [],
+  //       page: 1,
+  //       preloading: true,
+  //       loading: false,
+  //       loaded: false,
+  //       reset: false,
+  //       resume: false,
+  //       errored: false,
+  //       error: null,
+  //     });
+  //     resetBadge();
+  //   }
+  // }, [user, options?.prefillChatPreviewList]);
 
   useEffect(() => {
     if (options?.onLoading) {
@@ -529,33 +578,6 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     chatPreviewList.preloading,
     chatPreviewList.loaded,
     chatPreviewList.resume,
-  ]);
-  // If push user changes | preloading
-  useEffect(() => {
-    if (!user) {
-      return;
-    }
-
-    // reset the entire state
-    if (!options?.prefillChatPreviewList) {
-      setChatPreviewList({
-        nonce: generateRandomNonce(),
-        items: [],
-        page: 1,
-        preloading: true,
-        loading: false,
-        loaded: false,
-        reset: true,
-        resume: false,
-        errored: false,
-        error: null,
-      });
-    }
-  }, [
-    options?.searchParamter,
-    user,
-    options.listType,
-    options.overrideAccount,
   ]);
 
   useEffect(() => {
@@ -905,6 +927,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
                 ? options?.prefillChatPreviewList[index].setSelected
                 : setSelectedBadge
             }
+            readmode={false} // user?.readmode() || options.listType === CONSTANTS.CHAT.LIST_TYPE.REQUESTS || 
           />
         );
       })}

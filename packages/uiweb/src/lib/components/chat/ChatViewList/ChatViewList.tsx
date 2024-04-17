@@ -317,10 +317,20 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
 
   // To update blur based on group info
   useEffect(() => {
-    setBlur(isConversationPrivate());
-  }, [groupInfo, user, chatStatusText]);
+    const checkPrivacy = async () => {
+      const isPrivate = await isConversationPrivate();
+      // console log with timestamp and chatid for debugging
+      const timestamp = new Date().toISOString();
+      console.log(
+        `::ChatViewList::isConversationPrivate::timestamp: ${timestamp}::chatId: ${chatId}::isPrivate: ${isPrivate}`
+      );
+      setBlur(isPrivate);
+    };
+  
+    checkPrivacy();
+  }, [groupInfo, user, chatStatusText, chatId]);
 
-  const isConversationPrivate = () => {
+  const isConversationPrivate = async () => {
     // if user is not logged in 
     if (!user) {
       if (groupInfo && groupInfo?.isPublic) {
@@ -331,7 +341,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     }  
     // if user is in read mode
     else if (user.readmode()) {
-      console.log(`Timestamp: ${new Date().toISOString()} - triggerered user that is logged readmode, ${user.readmode()}`);
       // if group is public or if it's dm and FIRST CHAT
       if (groupInfo && groupInfo?.isPublic) {
         return false;
@@ -345,13 +354,24 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     }
     // If user is logged in
     else {
-      // only condition is when group is private and user is not a member
-      if (groupInfo && !groupInfo?.isPublic && !isMember) {
-        console.log(`Timestamp: ${new Date().toISOString()} - triggerered user that is logged in as user, ${!user.readmode()}`);
-        return true;
-      }
+      // user logged in, use API
+      console.log("USERLOGGEDIN")
+      user.chat.info(chatId).then((chatInfo) => {
+        console.log("CHATINFO",chatInfo)
+        if (chatInfo.list === 'CHATS') {
+          return false;
+        } else if (!chatInfo.meta.group) {
+          // normal dm
+          return false;
+        } else if (groupInfo && groupInfo?.isPublic) {
+          return false;
+        }
 
-      return false;
+        return true;
+      }).catch((e) => {
+        console.error('::ChatViewList::isConversationPrivate::Error in fetching chat info', e);
+        return true;
+      });
     }
     
     // All other cases are private

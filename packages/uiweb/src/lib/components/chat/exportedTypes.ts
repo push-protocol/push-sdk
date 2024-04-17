@@ -4,8 +4,8 @@ import type {
   GroupInfoDTO,
   IMessageIPFS,
 } from '@pushprotocol/restapi';
-import { IChatTheme } from './theme';
 import { IGroup, ModalBackgroundType, ModalPositionType } from '../../types';
+import { IChatTheme } from './theme';
 
 export interface IChatPreviewPayload {
   chatId: string | undefined;
@@ -26,6 +26,7 @@ export interface IChatPreviewProps {
   badge?: {
     count?: number;
   };
+  readmode?: boolean;
 }
 export type Group = GroupInfoDTO | GroupDTO | undefined;
 

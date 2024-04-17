@@ -133,6 +133,7 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
             alignSelf="stretch"
             overflow="hidden"
             flex="initial"
+            className={options.readmode ? 'skeleton' : ''}
           >
             <Message theme={theme}>
               {options?.chatPreviewPayload?.chatMsg?.messageType === 'Image' ||
