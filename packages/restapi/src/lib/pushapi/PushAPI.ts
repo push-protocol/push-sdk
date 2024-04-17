@@ -24,13 +24,13 @@ import { cache } from '../helpers/cache';
 import { v4 as uuidv4 } from 'uuid';
 
 export class PushAPI {
-  private signer?: SignerType;
+  public signer?: SignerType;
   private readMode: boolean;
   private alpha: { feature: string[] };
-  private account: string;
-  private decryptedPgpPvtKey?: string;
-  private pgpPublicKey?: string;
-  private env: ENV;
+  public account: string;
+  public decryptedPgpPvtKey?: string;
+  public pgpPublicKey?: string;
+  public env: ENV;
   private progressHook?: (progress: ProgressHookType) => void;
   private cache: LRUCache<string, any>;
 
@@ -315,7 +315,7 @@ export class PushAPI {
     this.pgpPublicKey = newUser.publicKey;
     this.readMode = false;
     this.errors = [];
-    this.uid = uuidv4(); 
+    this.uid = uuidv4();
     // Initialize the instances of the four classes
     this.chat = new Chat(
       this.account,
