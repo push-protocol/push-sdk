@@ -3,6 +3,7 @@ import { ethers } from 'ethers';
 import { useContext, useEffect, useRef, useState } from 'react';
 
 // External Packages
+import { CONSTANTS, PushAPI } from '@pushprotocol/restapi';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import styled from 'styled-components';
@@ -26,13 +27,7 @@ import { ProfileContainer } from '../reusables';
 import { GroupInfoModal } from './ChatProfileInfoModal';
 
 // Internal Configs
-import { CONSTANTS, IUser } from '@pushprotocol/restapi';
-import {
-  CoreContractChainId,
-  InfuraAPIKey,
-  allowedNetworks,
-  device,
-} from '../../../config';
+import { CoreContractChainId, InfuraAPIKey, allowedNetworks, device } from '../../../config';
 import { ThemeContext } from '../theme/ThemeProvider';
 
 // Assets
@@ -67,19 +62,9 @@ export const ChatProfile: React.FC<IChatProfile> = ({
   chatProfileLeftHelperComponent = null,
 }) => {
   const theme = useContext(ThemeContext);
-  const { account, user } = useChatData();
-  const { getGroupByIDnew } = useGetGroupByIDnew();
-  const { fetchUserProfile } = usePushUser();
-
-  // const [isGroup, setIsGroup] = useState<boolean>(false);
+  const { user } = useChatData();
   const [showoptions, setShowOptions] = useState(false);
-  const [formattedChatId, setFormattedChatId] = useState<string>('');
-  const [chatInfo, setChatInfo] = useState<ChatInfoResponse | null>(null);
-  const [userInfo, setUserInfo] = useState<IUser | null>();
-  const [groupInfo, setGroupInfo] = useState<Group | null>();
-  const [web3Name, setWeb3Name] = useState<string | null>(null);
 
-  const [loading, setLoading] = useState(true);
   const [initialized, setInitialized] = useState({
     loading: false,
     profile: {
@@ -138,7 +123,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
 
       try {
         // derive chatId
-        const derivedChatId = await deriveChatId(chatId, user.env);
+        const derivedChatId = await deriveChatId(chatId, user);
 
         // We have derived chatId, fetch chat info to see if it's group or dm
         console.log('FETCHING CHAT INFO', derivedChatId, user);
@@ -164,10 +149,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
             // TODO - HANDLE ERROR IN UI
           } else {
             // This is DM
-            const recipient = await deriveChatId(
-              chatInfo.participants[0],
-              user.env
-            );
+            const recipient = await deriveChatId(chatInfo.participants[0], user);
 
             const profileInfo = await user.profile.info({
               overrideAccount: recipient,
@@ -239,11 +221,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
               fontSize: theme?.fontWeight?.chatProfileText,
               textColor: theme?.textColor?.chatProfileText,
             }}
-            loading={
-              initialized.loading ||
-              initialized.profile.recipient === '' ||
-              initialized.profile.icon === ''
-            }
+            loading={initialized.loading || initialized.profile.recipient === '' || initialized.profile.icon === ''}
           />
         </Section>
 
@@ -257,21 +235,31 @@ export const ChatProfile: React.FC<IChatProfile> = ({
         >
           {/* For showing chat profile right helper component */}
           {chatProfileRightHelperComponent && !initialized.groupInfo && (
-            <Section cursor="pointer" maxHeight="1.75rem" overflow="hidden">
+            <Section
+              cursor="pointer"
+              maxHeight="1.75rem"
+              overflow="hidden"
+            >
               {chatProfileRightHelperComponent}
             </Section>
           )}
 
           {/* For showing Token Gated Group Icon */}
           {!!Object.keys(initialized.groupInfo?.rules || {}).length && (
-            <Tooltip content={"Token Gated Group"}>
-              <TokenGatedIcon size={20} color={ICON_COLOR.BLUISH_GRAY} />
+            <Tooltip content={'Token Gated Group'}>
+              <TokenGatedIcon
+                size={20}
+                color={ICON_COLOR.BLUISH_GRAY}
+              />
             </Tooltip>
           )}
 
           {!!initialized.groupInfo?.isPublic && (
-            <Tooltip content={"Token Gated Group"}>
-              <PublicChatIcon size={{ height: 20 }} color={ICON_COLOR.BLUISH_GRAY} />
+            <Tooltip content={'Token Gated Group'}>
+              <PublicChatIcon
+                size={{ height: 20 }}
+                color={ICON_COLOR.BLUISH_GRAY}
+              />
             </Tooltip>
           )}
 
@@ -286,8 +274,14 @@ export const ChatProfile: React.FC<IChatProfile> = ({
               />
 
               {showoptions && (
-                <DropDownBar theme={theme} ref={DropdownRef}>
-                  <DropDownItem cursor="pointer" onClick={() => setModal(true)}>
+                <DropDownBar
+                  theme={theme}
+                  ref={DropdownRef}
+                >
+                  <DropDownItem
+                    cursor="pointer"
+                    onClick={() => setModal(true)}
+                  >
                     <Image
                       src={InfoIcon}
                       height="21px"
@@ -296,16 +290,14 @@ export const ChatProfile: React.FC<IChatProfile> = ({
                       cursor="pointer"
                     />
 
-                    <TextItem cursor="pointer">
-                      {initialized.groupInfo ? 'Group Info' : 'User Info'}
-                    </TextItem>
+                    <TextItem cursor="pointer">{initialized.groupInfo ? 'Group Info' : 'User Info'}</TextItem>
                   </DropDownItem>
                 </DropDownBar>
               )}
             </ImageItem>
           )}
         </Section>
-        
+
         {/* For showing chat info modal */}
         {modal && (
           <GroupInfoModal

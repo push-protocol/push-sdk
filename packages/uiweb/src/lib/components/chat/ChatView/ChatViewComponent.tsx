@@ -1,9 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../../../types';
-import {
-  IChatTheme,
-  IChatViewComponentProps,
-} from '../exportedTypes';
+import { IChatTheme, IChatViewComponentProps } from '../exportedTypes';
 
 import { chatLimit, device } from '../../../config';
 import { deriveChatId } from '../../../helpers';
@@ -25,9 +22,7 @@ interface IThemeProps {
   theme?: IChatTheme;
 }
 
-export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
-  options: IChatViewComponentProps
-) => {
+export const ChatViewComponent: React.FC<IChatViewComponentProps> = (options: IChatViewComponentProps) => {
   const {
     chatId = null,
     chatFilterList = [],
@@ -50,13 +45,15 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
     welcomeComponent = null,
   } = options || {};
 
-  const { env, signer, account, pgpPrivateKey } = useChatData();
+  const { user } = useChatData();
   const theme = useContext(ThemeContext);
 
   const isMobile = useMediaQuery(device.mobileL);
 
-  if (!signer && !(!!account && !!pgpPrivateKey) && !isConnected) {
-    console.warn("Chat::ChatView::You need to pass a signer or account and pgpPrivateKey to ChatViewComponent to send messages.")
+  if (!user) {
+    console.warn(
+      'Chat::ChatView::You need to pass either push user, or a signer, or account and pgpPrivateKey in ChatViewComponent to send messages.'
+    );
   }
 
   // set loading state
@@ -67,10 +64,10 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
 
   useEffect(() => {
     const fetchDerivedChatId = async () => {
-      setInitialized(currentState => ({ ...currentState, loading: true}));
+      setInitialized((currentState) => ({ ...currentState, loading: true }));
 
       if (chatId) {
-        const id = await deriveChatId(chatId, env);
+        const id = await deriveChatId(chatId, user);
         setInitialized({ loading: false, derivedChatId: id });
       } else {
         setInitialized({ loading: false, derivedChatId: '' });
@@ -78,7 +75,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
     };
 
     fetchDerivedChatId();
-  }, [chatId, env]); // Re-run this effect if chatId or env changes
+  }, [chatId, user]); // Re-run this effect if chatId or env changes
 
   return (
     <Conatiner
@@ -92,18 +89,29 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
       padding="13px"
       theme={theme}
     >
-      {initialized.loading && <Section padding="20px"><Spinner color={theme.spinnerColor} /></Section>}
+      {/* If initialized is loading then show spinner */}
+      {initialized.loading && (
+        <Section padding="20px">
+          <Spinner color={theme.spinnerColor} />
+        </Section>
+      )}
+
+      {/* If chat id is present and initialized is not loading then show chat view */}
       {!initialized.loading && chatId ? (
         <>
-          {chatProfile && 
-          <ChatProfile
-            key={chatId}
-            chatProfileRightHelperComponent={chatProfileRightHelperComponent}
-            chatProfileLeftHelperComponent={chatProfileLeftHelperComponent}
-            chatId={initialized.derivedChatId}
-            groupInfoModalBackground={groupInfoModalBackground}
-            groupInfoModalPositionType={groupInfoModalPositionType}
-          />}
+          {/* Load ChatProfile if in options */}
+          {chatProfile && (
+            <ChatProfile
+              key={chatId}
+              chatProfileRightHelperComponent={chatProfileRightHelperComponent}
+              chatProfileLeftHelperComponent={chatProfileLeftHelperComponent}
+              chatId={initialized.derivedChatId}
+              groupInfoModalBackground={groupInfoModalBackground}
+              groupInfoModalPositionType={groupInfoModalPositionType}
+            />
+          )}
+
+          {/* Load ChatViewList if in options */}
           <Section
             flex="1 1 auto"
             overflow="hidden"
@@ -112,7 +120,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
             flexDirection="column"
             justifyContent="start"
           >
-            { chatViewList && (
+            {chatViewList && (
               <ChatViewList
                 key={chatId}
                 chatFilterList={chatFilterList}
@@ -121,38 +129,38 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (
               />
             )}
           </Section>
-          {/* )} */}
-          {!signer && !(!!account && !!pgpPrivateKey) && !isConnected && (
+
+          {/* Check if user is not in read mode */}
+          {/* This will probably be not needed anymore */}
+          {/* {!signer && !(!!account && !!pgpPrivateKey) && !isConnected && (
             <Section flex="0 1 auto">
-              <Span>
-                
-              </Span>
+              <Span></Span>
+            </Section>
+          )} */}
+
+          {/* Load MessageInput if in options and user is present */}
+          {messageInput && user && (
+            <Section
+              flex="0 1 auto"
+              position="static"
+            >
+              <MessageInput
+                key={chatId}
+                onVerificationFail={onVerificationFail}
+                chatId={initialized.derivedChatId}
+                file={file}
+                emoji={emoji}
+                gif={gif}
+                isConnected={isConnected}
+                verificationFailModalBackground={verificationFailModalBackground}
+                verificationFailModalPosition={verificationFailModalPosition}
+                autoConnect={autoConnect}
+              />
             </Section>
           )}
-          {messageInput &&
-            (!!signer || (!!account && !!pgpPrivateKey) || isConnected) && (
-              <Section flex="0 1 auto" position="static">
-                <MessageInput
-                  key={chatId}
-                  onVerificationFail={onVerificationFail}
-                  chatId={initialized.derivedChatId}
-                  file={file}
-                  emoji={emoji}
-                  gif={gif}
-                  isConnected={isConnected}
-                  verificationFailModalBackground={
-                    verificationFailModalBackground
-                  }
-                  verificationFailModalPosition={verificationFailModalPosition}
-                  autoConnect={autoConnect}
-                />
-              </Section>
-            )}
         </>
       ) : (
-        <Section overflow='auto'>
-        { welcomeComponent }
-        </Section>
+        <Section overflow="auto">{welcomeComponent}</Section>
       )}
     </Conatiner>
   );
