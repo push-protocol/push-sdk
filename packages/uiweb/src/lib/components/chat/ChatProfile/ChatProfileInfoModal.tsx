@@ -476,6 +476,8 @@ export const GroupInfoModal = ({
   groupInfoModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
   groupInfoModalPositionType = MODAL_POSITION_TYPE.GLOBAL,
 }: GroupInfoModalProps) => {
+  console.log('groupInfo', groupInfo);
+  
   const [activeComponent, setActiveComponent] = useState<GROUP_INFO_TYPE>(
     GROUPINFO_STEPS.GROUP_INFO
   );

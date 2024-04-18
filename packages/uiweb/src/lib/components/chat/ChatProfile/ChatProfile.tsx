@@ -21,7 +21,7 @@ import useFetchChat from '../../../hooks/chat/useFetchChat';
 import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
 import usePushUser from '../../../hooks/usePushUser';
 import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../../../types';
-import { Image, Section, Span } from '../../reusables';
+import { Div, Image, Section, Span, Tooltip } from '../../reusables';
 import { ProfileContainer } from '../reusables';
 import { GroupInfoModal } from './ChatProfileInfoModal';
 
@@ -36,8 +36,7 @@ import {
 import { ThemeContext } from '../theme/ThemeProvider';
 
 // Assets
-import PublicChatIcon from '../../../icons/Public-Chat.svg';
-import { TokenGatedSvg } from '../../../icons/TokenGatedSvg';
+import { ICON_COLOR, PublicChatIcon, TokenGatedIcon } from '../../../icons/PushIcons';
 import VerticalEllipsisIcon from '../../../icons/VerticalEllipsis.svg';
 import InfoIcon from '../../../icons/infodark.svg';
 
@@ -211,6 +210,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
   if (chatId) {
     return (
       <Container theme={theme}>
+        {/* For showing Chat Profile */}
         <Section gap="10px">
           {chatProfileLeftHelperComponent && (
             <Section
@@ -246,6 +246,8 @@ export const ChatProfile: React.FC<IChatProfile> = ({
             }
           />
         </Section>
+
+        {/* For showing group related icons and menu */}
         <Section
           zIndex="unset"
           flexDirection="row"
@@ -253,21 +255,24 @@ export const ChatProfile: React.FC<IChatProfile> = ({
           margin="0 20px 0 auto"
           alignSelf="center"
         >
+          {/* For showing chat profile right helper component */}
           {chatProfileRightHelperComponent && !initialized.groupInfo && (
             <Section cursor="pointer" maxHeight="1.75rem" overflow="hidden">
               {chatProfileRightHelperComponent}
             </Section>
           )}
+
+          {/* For showing Token Gated Group Icon */}
           {!!Object.keys(initialized.groupInfo?.rules || {}).length && (
-            <TokenGatedSvg />
+            <Tooltip content={"Token Gated Group"}>
+              <TokenGatedIcon size={20} color={ICON_COLOR.BLUISH_GRAY} />
+            </Tooltip>
           )}
+
           {!!initialized.groupInfo?.isPublic && (
-            <Image
-              src={PublicChatIcon}
-              height="28px"
-              maxHeight="32px"
-              width={'auto'}
-            />
+            <Tooltip content={"Token Gated Group"}>
+              <PublicChatIcon size={{ height: 20 }} color={ICON_COLOR.BLUISH_GRAY} />
+            </Tooltip>
           )}
 
           {!initialized.loading && (
@@ -282,7 +287,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
 
               {showoptions && (
                 <DropDownBar theme={theme} ref={DropdownRef}>
-                  <DropDownItem cursor="pointer" onClick={ShowModal}>
+                  <DropDownItem cursor="pointer" onClick={() => setModal(true)}>
                     <Image
                       src={InfoIcon}
                       height="21px"
@@ -300,6 +305,8 @@ export const ChatProfile: React.FC<IChatProfile> = ({
             </ImageItem>
           )}
         </Section>
+        
+        {/* For showing chat info modal */}
         {modal && (
           <GroupInfoModal
             theme={theme}

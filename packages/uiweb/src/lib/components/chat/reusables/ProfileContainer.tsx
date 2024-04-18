@@ -1,4 +1,3 @@
-
 // React + Web3 Essentials
 import { useState } from 'react';
 
@@ -6,12 +5,12 @@ import { useState } from 'react';
 
 // Internal Compoonents
 import { copyToClipboard, pCAIP10ToWallet } from '../../../helpers';
-
-// Internal Configs
 import { Div, Image, Section, Span, Tooltip } from '../../reusables';
 
+// Internal Configs
+
 // Assets
-import { CopyPinkIcon, ICON_COLOR } from '../../../icons/PushIcons';
+import { CopyIcon, ICON_COLOR } from '../../../icons/PushIcons';
 
 // Interfaces & Types
 import { IChatTheme } from '../theme';
@@ -64,15 +63,15 @@ export const ProfileContainer = ({
         position="relative"
         className={loading ? 'skeleton' : ''}
       >
-        {member?.icon &&
+        {member?.icon && (
           <Image
             height={customStyle?.imgHeight ?? '48px'}
             maxHeight={customStyle?.imgMaxHeight ?? '48px'}
             width={'auto'}
             cursor="pointer"
             src={member?.icon}
-          /> 
-        }
+          />
+        )}
       </Section>
       <Section
         flexDirection="column"
@@ -81,7 +80,9 @@ export const ProfileContainer = ({
         minWidth="150px"
       >
         <>
-            {member?.name || member?.web3Name || loading && (
+          {member?.name ||
+            member?.web3Name ||
+            (loading && (
               <Section
                 justifyContent="flex-start"
                 minWidth="120px"
@@ -97,54 +98,68 @@ export const ProfileContainer = ({
                   position="relative"
                 >
                   {/* If name and web3 name then show push user name else show web3 name */}
-                  {member.name && member.web3Name ? member.name : member.name ? member.name : member.web3Name}
+                  {member.name && member.web3Name
+                    ? member.name
+                    : member.name
+                    ? member.name
+                    : member.web3Name}
                 </Span>
               </Section>
-            )}
+            ))}
 
-            <Tooltip content={copyText}>
-              <Section
-                justifyContent="flex-start"
-                gap="5px"
-                cursor="pointer"
-                minHeight="22px"
-                minWidth="180px"
-                onMouseEnter={() => setCopyText('Copy to clipboard')}
-                onMouseLeave={() => setCopyText('')}
-                onClick={() => {
-                  copyToClipboard(
-                    pCAIP10ToWallet(member?.recipient || '')
-                  );
-                  setCopyText('copied');
-                }}
-                className={loading ? 'skeleton' : ''}
+          <Tooltip content={copyText}>
+            <Section
+              justifyContent="flex-start"
+              gap="5px"
+              cursor="pointer"
+              minHeight="22px"
+              minWidth="180px"
+              onMouseEnter={() => {
+                const text =
+                  member.chatId === member.recipient
+                    ? 'Copy Chat ID'
+                    : 'Copy Wallet';
+                setCopyText(text);
+              }}
+              onMouseLeave={() => setCopyText('')}
+              onClick={() => {
+                copyToClipboard(pCAIP10ToWallet(member?.recipient || ''));
+                setCopyText('Copied');
+              }}
+              className={loading ? 'skeleton' : ''}
+            >
+              <Span
+                fontSize={
+                  member?.name || member?.web3Name
+                    ? '14px'
+                    : customStyle?.fontSize ?? '18px'
+                }
+                fontWeight={
+                  member?.name || member?.web3Name
+                    ? '500'
+                    : customStyle?.fontWeight ?? '400'
+                }
+                color={
+                  member?.name || member?.web3Name
+                    ? theme.textColor?.modalSubHeadingText
+                    : customStyle?.textColor ??
+                      theme.textColor?.modalSubHeadingText
+                }
+                position="relative"
+                whiteSpace="nowrap"
               >
-                <Span
-                  fontSize={
-                    member?.name || member?.web3Name ? '14px' : customStyle?.fontSize ?? '18px'
-                  }
-                  fontWeight={
-                    member?.name || member?.web3Name ? '500' : customStyle?.fontWeight ?? '400'
-                  }
-                  color={
-                    member?.name || member?.web3Name
-                      ? theme.textColor?.modalSubHeadingText
-                      : customStyle?.textColor ??
-                        theme.textColor?.modalSubHeadingText
-                  }
-                  position="relative"
-                  whiteSpace="nowrap"
-                >
-                  {member?.name && member?.web3Name ? `${member?.web3Name} | ${member.abbrRecipient}` : member.abbrRecipient}
-                </Span>
-                {copy && copyText && (
-                  <Div cursor="pointer">
-                    <CopyPinkIcon size={16} color={ICON_COLOR.PINK} />
-                  </Div>
-                )}
-              </Section>
-            </Tooltip>
-          </>
+                {member?.name && member?.web3Name
+                  ? `${member?.web3Name} | ${member.abbrRecipient}`
+                  : member.abbrRecipient}
+              </Span>
+              {copy && copyText && (
+                <Div cursor="pointer">
+                  <CopyIcon size={16} color={ICON_COLOR.PINK} />
+                </Div>
+              )}
+            </Section>
+          </Tooltip>
+        </>
       </Section>
     </Section>
   );
