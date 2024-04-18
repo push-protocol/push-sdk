@@ -118,7 +118,7 @@ export class PushAPI {
   }
   // Overloaded initialize method signatures
   static async initialize(
-    signer?: SignerType,
+    signer?: SignerType | null,
     options?: PushAPIInitializeProps
   ): Promise<PushAPI>;
   static async initialize(options?: PushAPIInitializeProps): Promise<PushAPI>;
