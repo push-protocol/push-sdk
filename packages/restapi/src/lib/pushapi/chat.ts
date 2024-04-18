@@ -297,8 +297,7 @@ export class Chat {
     };
     try {
       const chatInfo = await PUSH_CHAT.getChatInfo(request);
-      const finalRecipient = chatInfo.meta.group ? chatInfo.chatId : recipient;
-
+      const finalRecipient = chatInfo.meta?.group ? chatInfo.chatId : recipient;
       const response: ChatInfoResponse = {
         meta: chatInfo.meta,
         list: chatInfo.list,
