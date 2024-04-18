@@ -1,29 +1,29 @@
 import { useContext, useState } from 'react';
 
-import styled from 'styled-components';
 import { ChatMemberProfile, IUser } from '@pushprotocol/restapi';
 import { MdError } from 'react-icons/md';
+import styled from 'styled-components';
 
-import { ThemeContext } from '../theme/ThemeProvider';
 import { useChatData } from '../../../hooks';
-import { Spinner } from '../../supportChat/spinner/Spinner';
-import { MoreDarkIcon } from '../../../icons/MoreDark';
-import { Section, Span, Image } from '../../reusables/sharedStyling';
-import { AddUserDarkIcon } from '../../../icons/Adddark';
-import { MemberListContainer } from './MemberListContainer';
 import useMediaQuery from '../../../hooks/useMediaQuery';
+import { AddUserDarkIcon } from '../../../icons/Adddark';
+import { MoreDarkIcon } from '../../../icons/MoreDark';
+import { Image, Section, Span } from '../../reusables/sharedStyling';
+import { Spinner } from '../../supportChat/spinner/Spinner';
 import useToast from '../reusables/NewToast';
+import { ThemeContext } from '../theme/ThemeProvider';
+import { MemberListContainer } from './MemberListContainer';
 
-import { getNewChatUser } from '../../../helpers';
-import { Group, IChatTheme, ModalButtonProps } from '../exportedTypes';
 import { device } from '../../../config';
+import { getNewChatUser } from '../../../helpers';
+import useChatProfile from '../../../hooks/chat/useChatProfile';
+import usePushUser from '../../../hooks/usePushUser';
+import { Group, IChatTheme, ModalButtonProps } from '../exportedTypes';
 import {
   ChatSearchInput,
   CustomStyleParamsType,
   ModalHeader,
 } from '../reusables';
-import useChatProfile from '../../../hooks/chat/useChatProfile';
-import useUserProfile from '../../../hooks/useUserProfile';
 
 type AddWalletProps = {
   onSubmit: () => void;
@@ -56,7 +56,7 @@ export const AddWallets = ({
   const [filteredUserData, setFilteredUserData] = useState<any>(null);
   const { env,user } = useChatData();
   const isMobile = useMediaQuery(device.mobileL);
-  const { fetchUserProfile } = useUserProfile();
+  const { fetchUserProfile } = usePushUser();
   const groupInfoToast = useToast();
   const customSearchStyle: CustomStyleParamsType = {
     background: theme.backgroundColor?.modalInputBackground,

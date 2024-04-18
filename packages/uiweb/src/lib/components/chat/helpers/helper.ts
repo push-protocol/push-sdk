@@ -1,10 +1,9 @@
-import { Group, IChatPreviewPayload, IMessagePayload, User } from '../exportedTypes';
+import { Env, IFeeds, IMessageIPFSWithCID, IUser, ParticipantStatus } from '@pushprotocol/restapi';
 import { ethers } from 'ethers';
-import { IFeeds, IMessageIPFSWithCID, IUser, ParticipantStatus } from '@pushprotocol/restapi';
-import { getAddress, walletToPCAIP10 } from '../../../helpers';
-import { Env,  } from '@pushprotocol/restapi';
 import moment from 'moment';
 import { ProfilePicture } from '../../../config';
+import { getAddress, walletToPCAIP10 } from '../../../helpers';
+import { Group, IChatPreviewPayload, IMessagePayload, User } from '../exportedTypes';
 
 export const profilePicture = `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==`;
 
@@ -151,7 +150,17 @@ export const formatDate = (chatPreviewPayload: IChatPreviewPayload) => {
     } else {
       // If the timestamp is from before yesterday, show the date
       // Use 'L' to format the date based on the locale
-      formattedDate = timestamp.format('L');
+      // But remove the year if it's the current year
+      const currentYear = today.year();
+      const timestampYear = timestamp.year();
+      
+      if (timestampYear === currentYear) {
+        // Change this later to show the date in the format 'DD MMM' (e.g. '01 Jan')
+        formattedDate = timestamp.format('L'); // Default locale-specific format
+      }
+      else {
+        formattedDate = timestamp.format('L'); // Default locale-specific format
+      }
     }
   }
 

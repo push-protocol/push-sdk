@@ -113,10 +113,13 @@ export const MemberListContainer = ({
       <ProfileContainer
         theme={theme}
         member={{
+          name: null,
+          icon: memberData.profilePicture || null,
+          chatId: null,
+          recipient: memberData.wallets?.split(':')[1],
+          abbrRecipient: shortenText(memberData.wallets?.split(':')[1], 6, true),
           web3Name: null,
-          abbrRecipient: null,
-          recipient: shortenText(memberData.wallets?.split(':')[1], 6, true),
-          image: memberData.profilePicture || '',
+          desc: null,
         }}
       />
 

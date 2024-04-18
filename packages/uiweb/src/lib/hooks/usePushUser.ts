@@ -10,13 +10,13 @@ export interface InitializeUserParams {
   env: ENV;
 }
 
-export interface FetchProfileParams {
+export interface FetchUserProfileParams {
   profileId?: string;
   user?: PushAPI;
 }
 
 const usePushUser = () => {
-  // For initializing user
+  // HOOK - For initializing user
   const initializeUser = useCallback(
     async ({
       signer,
@@ -42,12 +42,12 @@ const usePushUser = () => {
     []
   );
 
-  // For getting user profile
+  // HOOK - For fetching user profile
   const fetchUserProfile = useCallback(
     async ({
       profileId,
       user
-    }: FetchProfileParams): Promise<any> => {
+    }: FetchUserProfileParams): Promise<any> => {
       try {
         let userReadOnly;
         

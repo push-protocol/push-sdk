@@ -1,6 +1,10 @@
+import type { InfuraProvider, Web3Provider } from '@ethersproject/providers';
+import { CONSTANTS, Env, PushAPI, SignerType } from '@pushprotocol/restapi';
 import { ethers } from 'ethers';
-import type { Web3Provider, InfuraProvider } from '@ethersproject/providers';
-import { Env, SignerType } from '@pushprotocol/restapi';
+import {
+  CoreContractChainId,
+  InfuraAPIKey,
+} from '../config';
 import { getUdResolver } from './udResolver';
 
 /**
@@ -67,27 +71,23 @@ export const resolveEns = (address: string, provider: Web3Provider) => {
   });
 };
 
-export const resolveNewEns = async (
+export const getProvider = (user: PushAPI | undefined): any => {
+  const envKey = user ? user.env : CONSTANTS.ENV.PROD; // Default to 'PROD' if user.env is not in Constants.ENV
+  const chainId = CoreContractChainId[envKey as keyof typeof CoreContractChainId]; // Use 'as' to assert the type
+  const provider = new ethers.providers.InfuraProvider(chainId, InfuraAPIKey);
+
+  return provider;
+}
+
+export const resolveWeb3Name = async (
   address: string,
-  provider: InfuraProvider,
-  env:Env
+  user: PushAPI | undefined,
 ) => {
   const walletLowercase = pCAIP10ToWallet(address).toLowerCase();
   const checksumWallet = ethers.utils.getAddress(walletLowercase);
-  // let provider = ethers.getDefaultProvider('mainnet');
-  // if (
-  //   window.location.hostname == 'app.push.org' ||
-  //   window.location.hostname == 'staging.push.org' ||
-  //   window.location.hostname == 'dev.push.org' ||
-  //   window.location.hostname == 'alpha.push.org' ||
-  //   window.location.hostname == 'w2w.push.org'
-  // ) {
-  //   provider = new ethers.providers.InfuraProvider(
-  //     'mainnet',
-  //     appConfig.infuraAPIKey
-  //   );
-  // }
-
+ 
+  // get provider
+  const provider = getProvider(user);
 
   let result: string | null = null;
 
@@ -98,7 +98,7 @@ export const resolveNewEns = async (
         // return ens;
       } else {
         try {
-          const udResolver = getUdResolver(env);
+          const udResolver = getUdResolver(user ? user.env : CONSTANTS.ENV.PROD);
           // attempt reverse resolution on provided address
           const udName = await udResolver.reverse(checksumWallet);
           if (udName) {

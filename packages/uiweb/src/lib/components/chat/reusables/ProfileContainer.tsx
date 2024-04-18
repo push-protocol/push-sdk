@@ -1,21 +1,36 @@
-import { useState } from 'react';
-import { copyToClipboard, pCAIP10ToWallet } from '../../../helpers';
-import { CopySvg2 } from '../../../icons/CopySvg2';
-import { Div, Image, Section, Span, Tooltip } from '../../reusables';
-import { IChatTheme } from '../theme';
 
+// React + Web3 Essentials
+import { useState } from 'react';
+
+// External Packages
+
+// Internal Compoonents
+import { copyToClipboard, pCAIP10ToWallet } from '../../../helpers';
+
+// Internal Configs
+import { Div, Image, Section, Span, Tooltip } from '../../reusables';
+
+// Assets
+import { CopyPinkIcon, ICON_COLOR } from '../../../icons/PushIcons';
+
+// Interfaces & Types
+import { IChatTheme } from '../theme';
 type ProfileProps = {
   theme: IChatTheme;
   member: {
-    image: string | null;
-    web3Name?: string | null;
-    abbrRecipient: string | null;
+    name?: string | null;
+    icon?: string | null;
+    chatId?: string | null;
+    abbrRecipient?: string | null;
     recipient?: string | null;
+    web3Name?: string | null;
+    desc?: string | null;
   };
   copy?: boolean;
   customStyle?: CustomStyleParamsType | null;
   loading?: boolean;
 };
+
 type CustomStyleParamsType = {
   fontSize?: string;
   fontWeight?: string;
@@ -23,6 +38,12 @@ type CustomStyleParamsType = {
   imgMaxHeight?: string;
   textColor?: string;
 };
+
+// Constants
+
+// Exported Interfaces & Types
+
+// Exported Functions
 export const ProfileContainer = ({
   theme,
   member,
@@ -43,13 +64,13 @@ export const ProfileContainer = ({
         position="relative"
         className={loading ? 'skeleton' : ''}
       >
-        {member?.image &&
+        {member?.icon &&
           <Image
             height={customStyle?.imgHeight ?? '48px'}
             maxHeight={customStyle?.imgMaxHeight ?? '48px'}
             width={'auto'}
             cursor="pointer"
-            src={member?.image}
+            src={member?.icon}
           /> 
         }
       </Section>
@@ -60,7 +81,7 @@ export const ProfileContainer = ({
         minWidth="150px"
       >
         <>
-            {member?.web3Name || loading && (
+            {member?.name || member?.web3Name || loading && (
               <Section
                 justifyContent="flex-start"
                 minWidth="120px"
@@ -75,7 +96,8 @@ export const ProfileContainer = ({
                   }
                   position="relative"
                 >
-                  {member.web3Name}
+                  {/* If name and web3 name then show push user name else show web3 name */}
+                  {member.name && member.web3Name ? member.name : member.name ? member.name : member.web3Name}
                 </Span>
               </Section>
             )}
@@ -99,13 +121,13 @@ export const ProfileContainer = ({
               >
                 <Span
                   fontSize={
-                    member?.web3Name ? '14px' : customStyle?.fontSize ?? '18px'
+                    member?.name || member?.web3Name ? '14px' : customStyle?.fontSize ?? '18px'
                   }
                   fontWeight={
-                    member?.web3Name ? '500' : customStyle?.fontWeight ?? '400'
+                    member?.name || member?.web3Name ? '500' : customStyle?.fontWeight ?? '400'
                   }
                   color={
-                    member?.web3Name
+                    member?.name || member?.web3Name
                       ? theme.textColor?.modalSubHeadingText
                       : customStyle?.textColor ??
                         theme.textColor?.modalSubHeadingText
@@ -113,11 +135,11 @@ export const ProfileContainer = ({
                   position="relative"
                   whiteSpace="nowrap"
                 >
-                  {member.abbrRecipient}
+                  {member?.name && member?.web3Name ? `${member?.web3Name} | ${member.abbrRecipient}` : member.abbrRecipient}
                 </Span>
                 {copy && copyText && (
                   <Div cursor="pointer">
-                    <CopySvg2 />
+                    <CopyPinkIcon size={16} color={ICON_COLOR.PINK} />
                   </Div>
                 )}
               </Section>

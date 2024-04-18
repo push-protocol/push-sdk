@@ -28,7 +28,7 @@ import { ThemeContext } from '../theme/ThemeProvider';
 import useFetchChat from '../../../hooks/chat/useFetchChat';
 import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
 import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities';
-import useUserProfile from '../../../hooks/useUserProfile';
+import usePushUser from '../../../hooks/usePushUser';
 import { checkIfNewRequest, transformStreamToIMessageIPFSWithCID } from '../helpers';
 import useToast from '../reusables/NewToast';
 import { ChatInfoResponse } from '../types';
@@ -65,7 +65,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   const listInnerRef = useRef<HTMLDivElement>(null);
   const [isMember, setIsMember] = useState<boolean>(false);
   const { fetchChat } = useFetchChat();
-  const { fetchUserProfile } = useUserProfile();
+  const { fetchUserProfile } = usePushUser();
   const { getGroupByIDnew } = useGetGroupByIDnew();
   const { fetchMemberStatus } = useGroupMemberUtilities();
   const chatViewListToast = useToast();
@@ -179,8 +179,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
               (address) => address != walletToPCAIP10(account)
             ) || chatId
           ),
-          user,
-          env,
+          user
         });
         if (UserProfile) setUserInfo(UserProfile);
         setChatStatusText(ChatStatus.FIRST_CHAT);

@@ -43,7 +43,7 @@ import { IChatTheme } from '../theme';
 
 import useChatProfile from '../../../hooks/chat/useChatProfile';
 import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities';
-import useUserProfile from '../../../hooks/useUserProfile';
+import usePushUser from '../../../hooks/usePushUser';
 import { TokenGatedSvg } from '../../../icons/TokenGatedSvg';
 import {
   resolvePromisesSeq,
@@ -515,7 +515,7 @@ export const GroupInfoModal = ({
   const { user } = useChatData();
   const { addMember } = useUpdateGroup();
   const { fetchMembersCount } = useGroupMemberUtilities();
-  const { fetchUserProfile } = useUserProfile();
+  const { fetchUserProfile } = usePushUser();
 
   //hack for stream not working
   const [chatAcceptStream, setChatAcceptStream] = useState<any>({}); // to track any new messages

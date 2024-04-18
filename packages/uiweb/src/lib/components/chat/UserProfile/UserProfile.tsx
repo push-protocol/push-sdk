@@ -5,7 +5,7 @@ import { ethers } from 'ethers';
 import { ToastContainer } from 'react-toastify';
 import styled from 'styled-components';
 
-import { resolveNewEns, shortenText } from '../../../helpers';
+import { resolveWeb3Name, shortenText } from '../../../helpers';
 import { useClickAway } from '../../../hooks';
 import { useChatData } from '../../../hooks/chat/useChatData';
 import useChatProfile from '../../../hooks/chat/useChatProfile';
@@ -59,13 +59,13 @@ export const UserProfile: React.FC<UserProfileProps> = ({
     (async () => {
       const fetchedUser = await fetchChatProfile({ user });
       if (fetchedUser) {
-        const result = await resolveNewEns(fetchedUser?.wallets, provider, env);
+        const result = await resolveWeb3Name(fetchedUser?.wallets, user);
         setWeb3Name(result);
         setUserProfile(fetchedUser);
       }
     })();
   }, [user]);
-  
+
   useClickAway(DropdownRef, () => {
     setOptions(false);
   });
@@ -88,7 +88,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({
             web3Name: web3Name,
             abbrRecipient: shortenText(user!.account || '', 8, true) as string,
             recipient: user!.account,
-            image: userProfile?.profile?.picture || null,
+            icon: userProfile?.profile?.picture || null,
           }}
           copy={true}
           customStyle={{

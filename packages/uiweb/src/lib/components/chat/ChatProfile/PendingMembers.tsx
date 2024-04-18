@@ -126,14 +126,21 @@ export const PendingMembers = ({
                 <ProfileContainer
                   theme={theme}
                   member={{
+                    name: null,
+                    icon: item?.userInfo?.profile?.picture || null,
+                    chatId: null,
                     web3Name: null,
-                    abbrRecipient: null,
                     recipient: shortenText(
                       pCAIP10ToWallet(item.address?.split(':')[1]),
                       6,
                       true
                     ),
-                    image: item?.userInfo?.profile?.picture || null,
+                    abbrRecipient: shortenText(
+                      pCAIP10ToWallet(item.address?.split(':')[1]),
+                      6,
+                      true
+                    ),
+                    desc: null
                   }}
                   customStyle={{
                     imgHeight: '36px',

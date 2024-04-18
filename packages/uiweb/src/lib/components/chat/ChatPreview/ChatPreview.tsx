@@ -5,11 +5,12 @@ import styled from 'styled-components';
 import { useChatData } from '../../../hooks';
 import { Button, Image, Section } from '../../reusables';
 
+import { CONSTANTS } from '@pushprotocol/restapi';
 import { ethers } from 'ethers';
 import { CiImageOn } from 'react-icons/ci';
 import { FaFile } from 'react-icons/fa';
 import { CoreContractChainId, InfuraAPIKey } from '../../../config';
-import { resolveNewEns, shortenText } from '../../../helpers';
+import { resolveWeb3Name, shortenText } from '../../../helpers';
 import { IChatPreviewProps } from '../exportedTypes';
 import { formatAddress, formatDate } from '../helpers';
 import { IChatTheme } from '../theme';
@@ -26,22 +27,20 @@ interface IThemeProps {
 export const ChatPreview: React.FC<IChatPreviewProps> = (
   options: IChatPreviewProps
 ) => {
+  // get hooks
+  const { user } = useChatData();
+
   const theme = useContext(ThemeContext);
-  const { env } = useChatData();
-  const provider = new ethers.providers.InfuraProvider(
-    CoreContractChainId[env],
-    InfuraAPIKey
-  );
   const [formattedAddress, setFormattedAddress] = useState<string>('');
   const [web3Name, setWeb3Name] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
-      const address = await formatAddress(options.chatPreviewPayload, env);
+      const address = await formatAddress(options.chatPreviewPayload, user?.env || CONSTANTS.ENV.PROD);
       setFormattedAddress(address);
       if (!options.chatPreviewPayload?.chatGroup) {
         try {
-          const result = await resolveNewEns(address, provider, env);
+          const result = await resolveWeb3Name(address, user);
           if (result) setWeb3Name(result);
         } catch (e) {
           // console.debug(e);
@@ -119,8 +118,7 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
             overflow="hidden"
           >
             <Account theme={theme}>
-              {shortenText(getProfileName(formattedAddress), 8, true) ||
-                shortenText(formattedAddress, 8, true)}
+              {getProfileName(formattedAddress)}
             </Account>
             <Dated theme={theme}>
               {formatDate(options.chatPreviewPayload)}
@@ -207,7 +205,7 @@ const Account = styled.div<IThemeProps>`
   flex: 1;
   align-self: stretch;
   text-align: start;
-  // text-overflow: ellipsis ellipsis;
+  text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
   margin-right: 10px;
@@ -227,7 +225,7 @@ const Message = styled.div<IThemeProps>`
   flex: 1;
   align-self: stretch;
   text-align: start;
-  // text-overflow: ellipsis;
+  text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
   margin-right: 10px;
@@ -240,7 +238,7 @@ const Badge = styled.div<IThemeProps>`
   font-size: ${(props) => props.theme.fontSize?.chatPreviewBadgeText};
   color: ${(props) => props.theme.textColor?.chatPreviewBadgeText};
   padding: 0px 8px;
-  min-height: 24px;
+  text-overflow: ellipsis;
   border-radius: 24px;
   align-self: center;
 `;

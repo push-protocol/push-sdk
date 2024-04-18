@@ -59,10 +59,13 @@ export const MemberProfileCard = ({
       <ProfileContainer
         theme={theme}
         member={{
-          web3Name: null,
-          abbrRecipient: shortenText(pCAIP10ToWallet(member?.address), 6, true),
+          name: null,
+          icon: member?.userInfo?.profile?.picture,
+          chatId: null,
           recipient: member.address,
-          image: member?.userInfo?.profile?.picture,
+          abbrRecipient: shortenText(pCAIP10ToWallet(member?.address), 6, true),
+          web3Name: null,
+          desc: null,
         }}
       />
       <Section justifyContent="flex-end" position="relative" zIndex="2">

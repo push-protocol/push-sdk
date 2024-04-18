@@ -17,7 +17,7 @@ import { useChatData, usePushChatStream } from '../../../hooks';
 import useFetchChat from '../../../hooks/chat/useFetchChat';
 import useFetchMessageUtilities from '../../../hooks/chat/useFetchMessageUtilities';
 import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
-import useUserProfile from '../../../hooks/useUserProfile';
+import usePushUser from '../../../hooks/usePushUser';
 import { Button, Section, Span, Spinner } from '../../reusables';
 import { ChatPreview } from '../ChatPreview';
 import {
@@ -85,7 +85,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
 ) => {
   // get hooks
   const { env, signer, account, user } = useChatData();
-  const { fetchUserProfile } = useUserProfile();
+  const { fetchUserProfile } = usePushUser();
   const { getGroupByIDnew } = useGetGroupByIDnew();
   const { fetchLatestMessage, fetchChatList } = useFetchMessageUtilities();
 

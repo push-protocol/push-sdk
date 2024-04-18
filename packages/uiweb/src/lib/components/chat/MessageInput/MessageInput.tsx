@@ -36,7 +36,7 @@ import useToast from '../reusables/NewToast';
 import { ThemeContext } from '../theme/ThemeProvider';
 
 import { PUBLIC_GOOGLE_TOKEN, device } from '../../../config';
-import useUserProfile from '../../../hooks/useUserProfile';
+import usePushUser from '../../../hooks/usePushUser';
 import {
   MODAL_BACKGROUND_TYPE,
   MODAL_POSITION_TYPE,
@@ -131,7 +131,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   } = useVerifyAccessControl();
   const { fetchMemberStatus, joinGroup, joinLoading, joinError } =
     useGroupMemberUtilities();
-  const { fetchUserProfile } = useUserProfile();
+  const { fetchUserProfile } = usePushUser();
 
   const { account, env, signer, user } = useChatData();
   const { fetchChat } = useFetchChat();

@@ -16,7 +16,6 @@ import useCreateChatProfile from '../hooks/useCreateChatProfile';
 import useDecryptPGPKey from '../hooks/useDecryptPGPKey';
 import useGetChatProfile from '../hooks/useGetChatProfile';
 import usePushUser from '../hooks/usePushUser';
-import useUserProfile from '../hooks/useUserProfile';
 
 // Internal Configs
 import { lightChatTheme } from '../components/chat/theme';
@@ -78,20 +77,36 @@ export const ChatUIProvider = ({
   const [isPushChatSocketConnected, setIsPushChatSocketConnected] =
     useState<boolean>(false);
   const { fetchEncryptionInfo } = usePushUserInfoUtilities();
-  const { fetchUserProfile } = useUserProfile();
+  const { fetchUserProfile } = usePushUser();
 
   const [isPushChatStreamConnected, setIsPushChatStreamConnected] =
     useState<boolean>(false);
 
   // Setup Push User
   const initialize = async (user: PushAPI) => {
+    // Setup Push User and other related states but only if uid of user is different
+    if (user && pushUser && !shouldCreateNewPushUser(user)) {
+      return;
+    }
+
     console.debug(`UIWeb::ChatDataProvider::user changed - ${new Date().toISOString()}`, user);
     // traceStackCalls();
 
-    // Setup Push User and other related states
     resetStates();
     setPushUser(user);
   }
+
+  // Check if new push user should be created
+  const shouldCreateNewPushUser = (user: PushAPI) => {
+    // check if push sdk is already initialized with same account
+    return !(
+      pushUser && 
+      user?.account === pushUser?.account &&
+      user?.env === pushUser?.env &&
+      user?.signer === pushUser?.signer &&
+      user?.readmode() === pushUser?.readmode()
+    );
+  };
 
   // // If 
   // useEffect(() => {
@@ -199,7 +214,7 @@ export const ChatUIProvider = ({
   //   (async () => {
   //     let user;
   //     if (account) {
-  //       user = await fetchUserProfile({ profileId: account, env,user });
+  //       user = await fetchUserProfile({ profileId: account,user });
   //       if (user) setConnectedProfile(user);
   //     }
   //   })();

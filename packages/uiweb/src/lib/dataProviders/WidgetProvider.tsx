@@ -9,8 +9,7 @@ import {
   WidgetDataContext,
 } from '../context/widgetContext';
 import { getAddressFromSigner, pCAIP10ToWallet } from '../helpers';
-import useInitializeUser from '../hooks/usePushUser';
-import useUserProfile from '../hooks/useUserProfile';
+import usePushUser from '../hooks/usePushUser';
 
 export interface IWidgetUIProviderProps {
   children: ReactNode;
@@ -35,8 +34,7 @@ export const WidgetUIProvider = ({
   const [signerVal, setSignerVal] = useState<SignerType | undefined>(signer);
   const [userVal, setUserVal] = useState<PushAPI | undefined>(user);
   const [envVal, setEnvVal] = useState<ENV>(env);
-  const { initializeUser } = useInitializeUser();
-  const { fetchUserProfile } = useUserProfile();
+  const { initializeUser, fetchUserProfile } = usePushUser();
 
   useEffect(() => {
     (async () => {
