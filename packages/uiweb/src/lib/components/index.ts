@@ -6,3 +6,4 @@ export * from './supportChat';
 export * from './chatAndNotification';
 export * from './chat';
 export * from './widget';
+export * from  './supportChatV2';

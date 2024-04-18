@@ -18,18 +18,19 @@ import {
 import { ALPHA_FEATURE_CONFIG } from '../config';
 import { Space } from './space';
 import { Video } from './video';
-import { isValidCAIP10NFTAddress } from '../helpers';
+import { isValidNFTCAIP } from '../helpers';
 import { LRUCache } from 'lru-cache';
 import { cache } from '../helpers/cache';
+import { v4 as uuidv4 } from 'uuid';
 
 export class PushAPI {
-  private signer?: SignerType;
+  public signer?: SignerType;
   private readMode: boolean;
   private alpha: { feature: string[] };
-  private account: string;
-  private decryptedPgpPvtKey?: string;
-  private pgpPublicKey?: string;
-  private env: ENV;
+  public account: string;
+  public decryptedPgpPvtKey?: string;
+  public pgpPublicKey?: string;
+  public env: ENV;
   private progressHook?: (progress: ProgressHookType) => void;
   private cache: LRUCache<string, any>;
 
@@ -44,7 +45,7 @@ export class PushAPI {
   // Notification
   public channel!: Channel;
   public notification!: Notification;
-
+  public uid: string;
   // error object to maintain errors and warnings
   public errors: { type: 'WARN' | 'ERROR'; message: string }[];
 
@@ -70,7 +71,7 @@ export class PushAPI {
     // Instantiate the notification classes
     this.channel = new Channel(this.signer, this.env, this.account);
     this.notification = new Notification(this.signer, this.env, this.account);
-
+    this.uid = uuidv4();
     this.cache = cache;
 
     // Initialize the instances of the four classes
@@ -260,7 +261,7 @@ export class PushAPI {
             message: decryptionError,
           });
           console.error(decryptionError);
-          if (isValidCAIP10NFTAddress(derivedAccount)) {
+          if (isValidNFTCAIP(derivedAccount)) {
             const nftDecryptionError =
               'NFT Account Detected. If this NFT was recently transferred to you, please ensure you have received the correct password from the previous owner. Alternatively, you can reinitialize for a fresh start. Please be aware that reinitialization will result in the loss of all previous account data.';
 
@@ -314,7 +315,7 @@ export class PushAPI {
     this.pgpPublicKey = newUser.publicKey;
     this.readMode = false;
     this.errors = [];
-
+    this.uid = uuidv4();
     // Initialize the instances of the four classes
     this.chat = new Chat(
       this.account,

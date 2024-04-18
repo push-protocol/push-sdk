@@ -345,7 +345,7 @@ export function App() {
                   <ChatUIProvider
                     env={env}
                     theme={darkChatTheme}
-                    signer={signer}
+                    // signer={signer}
                   >
                     <SpacesUIProvider spaceUI={spaceUI} theme={customDarkTheme}>
                       <Routes>
