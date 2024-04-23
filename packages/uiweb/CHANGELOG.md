@@ -2,6 +2,28 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.46](https://github.com/push-protocol/push-sdk/compare/uiweb-1.2.7...uiweb-0.0.1-alpha.46) (2024-04-23)
+
+
+### Bug Fixes
+
+* add doman in user profile and chat profile and copy ([#1171](https://github.com/push-protocol/push-sdk/issues/1171)) ([e981565](https://github.com/push-protocol/push-sdk/commit/e9815656f76f99d841e0895ec4fc283abd04db16))
+* added settings name ([#1168](https://github.com/push-protocol/push-sdk/issues/1168)) ([62620ae](https://github.com/push-protocol/push-sdk/commit/62620ae7bc75f966b72f3058a8b4a08f40d6aa14))
+* fixed user giving undefined for info ([#1194](https://github.com/push-protocol/push-sdk/issues/1194)) ([5e6dcc5](https://github.com/push-protocol/push-sdk/commit/5e6dcc5554a720f08e9dbfee77e5fe44933b4c67))
+* horizontal scroll ([#1156](https://github.com/push-protocol/push-sdk/issues/1156)) ([8fb3301](https://github.com/push-protocol/push-sdk/commit/8fb3301146469df60eb32bef5703e3acb474101d))
+* Merge branch 'main' into alpha ([53a795d](https://github.com/push-protocol/push-sdk/commit/53a795db5ec82d44597410dca670dfadd9199277))
+* **migrate goerli to sepolia:** migrate goerli to sepolia ([#1149](https://github.com/push-protocol/push-sdk/issues/1149)) ([490b104](https://github.com/push-protocol/push-sdk/commit/490b104902b9a509c6a8c68d5c5f33446e91e113))
+* pulled main ([b7391b6](https://github.com/push-protocol/push-sdk/commit/b7391b6318b40117d61b86ea8163b116f757c94a))
+* support chat scroll ([#1184](https://github.com/push-protocol/push-sdk/issues/1184)) ([85cf829](https://github.com/push-protocol/push-sdk/commit/85cf829c44411cc8140c628a83c2f4900be77f28))
+
+
+### Features
+
+* Add Polygon zkEvm Cardona support ([#1243](https://github.com/push-protocol/push-sdk/issues/1243)) ([70f63b1](https://github.com/push-protocol/push-sdk/commit/70f63b1d80d1f3f77a33266c91335c2807bf18b9)), closes [#1237](https://github.com/push-protocol/push-sdk/issues/1237) [#952](https://github.com/push-protocol/push-sdk/issues/952) [#930](https://github.com/push-protocol/push-sdk/issues/930)
+* **uiweb:** return response in createGroupModal ([#1198](https://github.com/push-protocol/push-sdk/issues/1198)) ([241080d](https://github.com/push-protocol/push-sdk/commit/241080dc703dd90797262f4852e25aab60db5a93))
+
+
+
 ## [1.1.15](https://github.com/push-protocol/push-sdk/compare/uiweb-0.0.1-alpha.44...uiweb-1.1.15) (2024-03-27)
 
 
