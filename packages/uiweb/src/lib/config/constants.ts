@@ -56,7 +56,7 @@ const TESTNET_NETWORK = {
   POLYGON: 'eip155:80002',
   BSC: 'eip155:97',
   OPTIMISM: 'eip155:11155420',
-  POLYGON_ZK_EVM: 'eip155:1442',
+  POLYGON_ZK_EVM: 'eip155:2442',
   ARBITRUM: 'eip155:421614',
   FUSE: 'eip155:123',
   BERACHAIN: 'eip155:80085',
@@ -95,6 +95,7 @@ export const allowedNetworks = {
     421614, // for arbitrum testnet
     123, // for fuse testnet
     80085, // for berachain testnet
+    2442 // polygon zkevm
   ],
   staging: [
     // 42, //for kovan
@@ -105,6 +106,7 @@ export const allowedNetworks = {
     421614, // for arbitrum testnet
     123, // for fuse testnet
     80085, // for berachain testnet
+    2442 // polygon zkevm
   ],
   local: [
     11155111, // for eth sepolia
@@ -114,6 +116,7 @@ export const allowedNetworks = {
     421614, // for arbitrum testnet
     123, // for fuse testnet
     80085, // for berachain testnet
+    2442 // polygon zkevm
   ],
 };
 
