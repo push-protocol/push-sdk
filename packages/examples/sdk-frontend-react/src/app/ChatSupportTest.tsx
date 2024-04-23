@@ -34,7 +34,7 @@ export const ChatSupportTest = () => {
     //works as Chat as well as Support Chat
     <SupportChatV2
     key= {'460336a9fa83112c95894af5471cd2b1091290a11298d87ec824ed74b7c14974'}
-          supportAddress="0xc64444D6a076D6a8252390709A1270bfBBa32e2d"
+          supportAddress="0x778D3206374f8AC265728E18E3fE2Ae6b93E4ce4"
           welcomeComponent={<div style={{display: "flex",flexDirection:'column',border:'1px solid black',overflow:'auto',height:'100%',width:'100%'}}>
             <p>Welcome</p>
             <p>new chat</p>

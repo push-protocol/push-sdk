@@ -2,6 +2,224 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.86](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.85...restapi-0.0.1-alpha.86) (2024-04-23)
+
+
+### Bug Fixes
+
+* Merge branch 'alpha' into alpha-deployment ([46dcbc3](https://github.com/push-protocol/push-sdk/commit/46dcbc38358c7fd2ec59df4280e7c5969ce2bfb8))
+
+
+### Features
+
+* Add Polygon zkEvm Cardona support ([#1243](https://github.com/push-protocol/push-sdk/issues/1243)) ([70f63b1](https://github.com/push-protocol/push-sdk/commit/70f63b1d80d1f3f77a33266c91335c2807bf18b9)), closes [#1237](https://github.com/push-protocol/push-sdk/issues/1237) [#952](https://github.com/push-protocol/push-sdk/issues/952) [#930](https://github.com/push-protocol/push-sdk/issues/930)
+
+
+
+## [0.0.1-alpha.85](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.84...restapi-0.0.1-alpha.85) (2024-04-18)
+
+
+### Bug Fixes
+
+* error meta fix ([5b7c30a](https://github.com/push-protocol/push-sdk/commit/5b7c30ad43d08ab683c80d3a4407b58a4e6abf74))
+
+
+
+## [0.0.1-alpha.84](https://github.com/push-protocol/push-sdk/compare/restapi-1.7.8...restapi-0.0.1-alpha.84) (2024-04-17)
+
+
+### Bug Fixes
+
+* add public params ([07060e7](https://github.com/push-protocol/push-sdk/commit/07060e79df102db447032e4a69afb10767e3e9a2))
+* Merge branch 'alpha' into alpha-deployment ([39c674a](https://github.com/push-protocol/push-sdk/commit/39c674ad18caedee405d7e7d8183e1e2b0bae975))
+
+
+
+## [0.0.1-alpha.83](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.82...restapi-0.0.1-alpha.83) (2024-04-16)
+
+
+### Bug Fixes
+
+* update chat ([74a6785](https://github.com/push-protocol/push-sdk/commit/74a67854e1185b5d5128552f8c7c0fee7a0bb24b))
+
+
+
+## [0.0.1-alpha.82](https://github.com/push-protocol/push-sdk/compare/restapi-1.7.4...restapi-0.0.1-alpha.82) (2024-04-16)
+
+
+### Bug Fixes
+
+* bug fixes ([fab3700](https://github.com/push-protocol/push-sdk/commit/fab370073224481b901351c00da43dc3bc99fa64))
+* fix fn definitions ([#1232](https://github.com/push-protocol/push-sdk/issues/1232)) ([7bbc443](https://github.com/push-protocol/push-sdk/commit/7bbc4434ec19c9969d0f1932c9cb08f74300a9b8))
+* fix tmp error ([bd70cda](https://github.com/push-protocol/push-sdk/commit/bd70cda0eb68a2329da743727c3b2a4b7f14589e))
+* Merge branch 'alpha' into alpha-deployment ([7e32f93](https://github.com/push-protocol/push-sdk/commit/7e32f93153b2ef338a1c18d4c1c6df7b9a1687cf))
+* renamed sender to account ([ce4af1a](https://github.com/push-protocol/push-sdk/commit/ce4af1a200e98de3c47055cc495f55a4a8e561cf))
+
+
+
+## [0.0.1-alpha.81](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.80...restapi-0.0.1-alpha.81) (2024-04-15)
+
+
+### Bug Fixes
+
+* chat info changes ([6718648](https://github.com/push-protocol/push-sdk/commit/67186484a4dff605ef94df83b19bb2d4a220e546))
+* Merge branch 'alpha' into alpha-deployment ([97f8390](https://github.com/push-protocol/push-sdk/commit/97f839020e9b0313548753c364f01795e6bc7b3d))
+
+
+
+## [0.0.1-alpha.80](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.79...restapi-0.0.1-alpha.80) (2024-04-13)
+
+
+### Bug Fixes
+
+* Merge branch 'alpha' into alpha-deployment ([ad37848](https://github.com/push-protocol/push-sdk/commit/ad3784890d97b09b7d6212cfcd6c868cb360cba2))
+
+
+
+## [0.0.1-alpha.79](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.78...restapi-0.0.1-alpha.79) (2024-04-12)
+
+
+### Bug Fixes
+
+* added instanceids for push user and stream ([#1224](https://github.com/push-protocol/push-sdk/issues/1224)) ([34263c9](https://github.com/push-protocol/push-sdk/commit/34263c94ccfe674f915ce318a60cc21a77a0a5de))
+* Merge branch 'alpha' into alpha-deployment ([cb8d996](https://github.com/push-protocol/push-sdk/commit/cb8d996f868109a8e659a5654abfb265d2bb37ad))
+
+
+
+## [0.0.1-alpha.78](https://github.com/push-protocol/push-sdk/compare/restapi-1.7.3...restapi-0.0.1-alpha.78) (2024-04-10)
+
+
+### Bug Fixes
+
+* Merge branch 'alpha' into alpha-deployment ([3d52b21](https://github.com/push-protocol/push-sdk/commit/3d52b21accc046b2133eaf15d13e0c945d793b1f))
+
+
+
+## [0.0.1-alpha.77](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.76...restapi-0.0.1-alpha.77) (2024-04-02)
+
+
+
+## [0.0.1-alpha.76](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.75...restapi-0.0.1-alpha.76) (2024-04-02)
+
+
+### Bug Fixes
+
+* fixed berachain issue ([6cd5dd8](https://github.com/push-protocol/push-sdk/commit/6cd5dd8ff77d7a916ce795b1238b381d20808786))
+* merge alpha ([4d1c5ef](https://github.com/push-protocol/push-sdk/commit/4d1c5ef2e0e6ce3382af6b811ffd6211ba15520d))
+* Merge branch 'main' into alpha ([53a795d](https://github.com/push-protocol/push-sdk/commit/53a795db5ec82d44597410dca670dfadd9199277))
+* pulled ([f22e9fb](https://github.com/push-protocol/push-sdk/commit/f22e9fb0bd7a1529d1f9ba79626ef37a32e76f31))
+* pulled main ([b7391b6](https://github.com/push-protocol/push-sdk/commit/b7391b6318b40117d61b86ea8163b116f757c94a))
+
+
+
+## [0.0.1-alpha.74](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.73...restapi-0.0.1-alpha.74) (2024-03-07)
+
+
+
+## [0.0.1-alpha.73](https://github.com/push-protocol/push-sdk/compare/restapi-1.6.10...restapi-0.0.1-alpha.73) (2024-03-07)
+
+
+### Bug Fixes
+
+* fixed support chat issues ([c63cbb8](https://github.com/push-protocol/push-sdk/commit/c63cbb8b64c20c2b84046beae7e3b6135ca9332e))
+* Merge branch 'alpha' into alpha-deployment ([ddfba9e](https://github.com/push-protocol/push-sdk/commit/ddfba9ecaa164f829e436af796ebe85a6c30bfae))
+
+
+
+## [0.0.1-alpha.71](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.70...restapi-0.0.1-alpha.71) (2024-02-26)
+
+
+### Bug Fixes
+
+* Merge branch 'alpha' into alpha-deployment ([07cdbeb](https://github.com/push-protocol/push-sdk/commit/07cdbeb386f3bc319878597672549d04d369db02))
+
+
+
+## [0.0.1-alpha.70](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.69...restapi-0.0.1-alpha.70) (2024-02-21)
+
+
+
+## [0.0.1-alpha.69](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.68...restapi-0.0.1-alpha.69) (2024-02-21)
+
+
+### Bug Fixes
+
+* fixed conflicts ([c6ba60b](https://github.com/push-protocol/push-sdk/commit/c6ba60bef51bf6a938353946e5b8265ac0679a28))
+* fixed readmode ([7214d68](https://github.com/push-protocol/push-sdk/commit/7214d686d1b826c07758d54b02b5be003aa4efd2))
+* testing readMode ([50b6fd3](https://github.com/push-protocol/push-sdk/commit/50b6fd3a097e645dca2631b78afcaab59cf4bd4e))
+
+
+
+## [0.0.1-alpha.67](https://github.com/push-protocol/push-sdk/compare/restapi-1.6.8...restapi-0.0.1-alpha.67) (2024-02-13)
+
+
+### Bug Fixes
+
+* Merge alpha ([be6cac0](https://github.com/push-protocol/push-sdk/commit/be6cac001715da4f51e3a1d061c0d2c274d82def))
+
+
+
+## [0.0.1-alpha.66](https://github.com/push-protocol/push-sdk/compare/restapi-1.6.7...restapi-0.0.1-alpha.66) (2024-02-08)
+
+
+### Bug Fixes
+
+* Merge branch 'alpha' into alpha-deployment ([feb77a9](https://github.com/push-protocol/push-sdk/commit/feb77a91bb74e14005ab3613b3813a3c1342e633))
+
+
+
+## [0.0.1-alpha.65](https://github.com/push-protocol/push-sdk/compare/restapi-1.6.6...restapi-0.0.1-alpha.65) (2024-02-08)
+
+
+### Bug Fixes
+
+* Merge branch 'alpha' into alpha-deployment ([0d61b10](https://github.com/push-protocol/push-sdk/commit/0d61b10238edca9b68baaba63928c61095ccfaf5))
+* Merge branch 'alpha' into alpha-deployment ([e80f2f8](https://github.com/push-protocol/push-sdk/commit/e80f2f85f0d8b9e747a0566c64edcee8a9bb4375))
+* Merge branch 'alpha' into alpha-deployment ([e3d08bb](https://github.com/push-protocol/push-sdk/commit/e3d08bbefa688107bfc7cdbc8d0e2e360ffedbab))
+
+
+
+## [0.0.1-alpha.64](https://github.com/push-protocol/push-sdk/compare/restapi-1.6.3...restapi-0.0.1-alpha.64) (2024-01-18)
+
+
+### Bug Fixes
+
+* fix errors ([6a91107](https://github.com/push-protocol/push-sdk/commit/6a9110796fe2519f62156adec2b91771abc3017c))
+* Merge branch 'alpha' into alpha-deployment ([f93c645](https://github.com/push-protocol/push-sdk/commit/f93c64545256ae6ed496f121a1904e41ec1e29e3))
+
+
+
+## [0.0.1-alpha.63](https://github.com/push-protocol/push-sdk/compare/restapi-1.5.7...restapi-0.0.1-alpha.63) (2024-01-15)
+
+
+### Bug Fixes
+
+* Merge branch 'alpha' into alpha-deployment ([25f6f4f](https://github.com/push-protocol/push-sdk/commit/25f6f4fe226cc5b79c90a7ea31564f4075fc7790))
+
+
+
+## [0.0.1-alpha.62](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.61...restapi-0.0.1-alpha.62) (2024-01-03)
+
+
+### Bug Fixes
+
+* Merge branch 'alpha' into alpha-deployment ([f07f84b](https://github.com/push-protocol/push-sdk/commit/f07f84bb0b2b4491cfbe9de8905f6e664da834df))
+
+
+
+## [0.0.1-alpha.61](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.60...restapi-0.0.1-alpha.61) (2024-01-03)
+
+
+
+## [0.0.1-alpha.83](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.82...restapi-0.0.1-alpha.83) (2024-04-16)
+
+
+### Bug Fixes
+
+* update chat ([74a6785](https://github.com/push-protocol/push-sdk/commit/74a67854e1185b5d5128552f8c7c0fee7a0bb24b))
+
+
+
 ## [0.0.1-alpha.82](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.81...restapi-0.0.1-alpha.82) (2024-04-16)
 
 
