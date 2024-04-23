@@ -2,6 +2,17 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.2.8](https://github.com/push-protocol/push-sdk/compare/uiweb-1.2.7...uiweb-1.2.8) (2024-04-23)
+
+
+### Bug Fixes
+
+* add doman in user profile and chat profile and copy ([#1171](https://github.com/push-protocol/push-sdk/issues/1171)) ([e981565](https://github.com/push-protocol/push-sdk/commit/e9815656f76f99d841e0895ec4fc283abd04db16))
+* added settings name ([#1168](https://github.com/push-protocol/push-sdk/issues/1168)) ([62620ae](https://github.com/push-protocol/push-sdk/commit/62620ae7bc75f966b72f3058a8b4a08f40d6aa14))
+* **migrate goerli to sepolia:** migrate goerli to sepolia ([#1149](https://github.com/push-protocol/push-sdk/issues/1149)) ([490b104](https://github.com/push-protocol/push-sdk/commit/490b104902b9a509c6a8c68d5c5f33446e91e113))
+
+
+
 ## [0.0.1-alpha.46](https://github.com/push-protocol/push-sdk/compare/uiweb-1.2.7...uiweb-0.0.1-alpha.46) (2024-04-23)
 
 
