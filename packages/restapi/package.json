@@ -1,6 +1,6 @@
 {
   "name": "@pushprotocol/restapi",
-  "version": "1.7.9",
+  "version": "1.7.10",
   "type": "commonjs",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
