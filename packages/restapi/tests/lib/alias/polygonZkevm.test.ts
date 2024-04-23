@@ -2,7 +2,7 @@ import { ethers } from 'ethers';
 import { PushAPI } from '../../../src';
 import { ENV } from '../../../src/lib/constants';
 
-describe.only('POLYGON ZKEVM ALIAS functionality', () => {
+describe('POLYGON ZKEVM ALIAS functionality', () => {
   let userAlice: PushAPI;
   let userBob: PushAPI;
   let account: string;
