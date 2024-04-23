@@ -32,8 +32,8 @@ describe('PushAPI.alias functionality', () => {
       : new (ethers as any).JsonRpcProvider('https://rpc.sepolia.org');
 
     const provider1 = (ethers as any).providers
-      ? new (ethers as any).providers.JsonRpcProvider('https://convincing-old-violet.bsc-testnet.quiknode.pro/473ebceb2d8570ac74ba8d2f82e9531d25a54db9')
-      : new (ethers as any).JsonRpcProvider('https://convincing-old-violet.bsc-testnet.quiknode.pro/473ebceb2d8570ac74ba8d2f82e9531d25a54db9');
+      ? new (ethers as any).providers.JsonRpcProvider('https://bsc-testnet-rpc.publicnode.com')
+      : new (ethers as any).JsonRpcProvider('https://bsc-testnet-rpc.publicnode.com');
 
 
     signer2 = new ethers.Wallet(
@@ -160,7 +160,6 @@ describe('PushAPI.alias functionality', () => {
         '0x6eF394b8dcc840d3d65a835E371066244187B1C6',
         { raw: true }
       );
-      console.log(res);
       expect(res).not.null;
     }, 100000000);
   });
