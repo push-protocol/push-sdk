@@ -449,6 +449,31 @@ export const encryptPGPKey = async (
       );
       encryptedPrivateKey.version = Constants.ENC_TYPE_V4;
       encryptedPrivateKey.preKey = '';
+      encryptedPrivateKey.encryptedPassword = await encryptPGPKey(
+        Constants.ENC_TYPE_V3,
+        additionalMeta.NFTPGP_V1.password,
+        wallet
+      );
+      break;
+    }
+    case Constants.ENC_TYPE_V5: {
+      // TODO
+      // if (!additionalMeta?.SCWPGP_V1?.password) {
+      //   throw new Error('Password is required!');
+      // }
+      // const enc = new TextEncoder();
+      // const encodedPrivateKey = enc.encode(privateKey);
+      // encryptedPrivateKey = await encryptV2(
+      //   encodedPrivateKey,
+      //   hexToBytes(stringToHex(additionalMeta.NFTPGP_V1.password))
+      // );
+      // encryptedPrivateKey.version = Constants.ENC_TYPE_V4;
+      // encryptedPrivateKey.preKey = '';
+      // encryptedPrivateKey.encryptedPassword = await encryptPGPKey(
+      //   Constants.ENC_TYPE_V3,
+      //   additionalMeta.NFTPGP_V1.password,
+      //   wallet
+      // );
       break;
     }
     default:
@@ -464,7 +489,8 @@ export const preparePGPPublicKey = async (
 ): Promise<string> => {
   let chatPublicKey: string;
   switch (encryptionType) {
-    case Constants.ENC_TYPE_V1: {
+    case Constants.ENC_TYPE_V1:
+    case Constants.ENC_TYPE_V5: {
       chatPublicKey = publicKey;
       break;
     }
