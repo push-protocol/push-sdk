@@ -2,6 +2,20 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.1-alpha.86](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.85...restapi-0.0.1-alpha.86) (2024-04-23)
+
+
+### Bug Fixes
+
+* Merge branch 'alpha' into alpha-deployment ([46dcbc3](https://github.com/push-protocol/push-sdk/commit/46dcbc38358c7fd2ec59df4280e7c5969ce2bfb8))
+
+
+### Features
+
+* Add Polygon zkEvm Cardona support ([#1243](https://github.com/push-protocol/push-sdk/issues/1243)) ([70f63b1](https://github.com/push-protocol/push-sdk/commit/70f63b1d80d1f3f77a33266c91335c2807bf18b9)), closes [#1237](https://github.com/push-protocol/push-sdk/issues/1237) [#952](https://github.com/push-protocol/push-sdk/issues/952) [#930](https://github.com/push-protocol/push-sdk/issues/930)
+
+
+
 ## [0.0.1-alpha.85](https://github.com/push-protocol/push-sdk/compare/restapi-0.0.1-alpha.84...restapi-0.0.1-alpha.85) (2024-04-18)
 
 
