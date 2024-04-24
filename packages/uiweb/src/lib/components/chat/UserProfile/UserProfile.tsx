@@ -15,12 +15,7 @@ import { ProfileContainer } from '../reusables';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { UpdateUserProfileModal } from './UpdateUserProfileModal';
 
-import {
-  CoreContractChainId,
-  InfuraAPIKey,
-  ProfilePicture,
-  device,
-} from '../../../config';
+import { CoreContractChainId, InfuraAPIKey, ProfilePicture, device } from '../../../config';
 import VerticalEllipsisIcon from '../../../icons/VerticalEllipsis.svg';
 import UserProfileIcon from '../../../icons/userCircleGear.svg';
 import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../../../types';
@@ -42,13 +37,9 @@ export const UserProfile: React.FC<UserProfileProps> = ({
   const [userProfile, setUserProfile] = useState<IUser>();
   const [web3Name, setWeb3Name] = useState<string | null>(null);
   const [options, setOptions] = useState<boolean>();
-  const [showUpdateUserProfileModal, setShowUpdateUserProfileModal] =
-    useState<boolean>(false);
+  const [showUpdateUserProfileModal, setShowUpdateUserProfileModal] = useState<boolean>(false);
   const DropdownRef = useRef(null);
-  const provider = new ethers.providers.InfuraProvider(
-    CoreContractChainId[env],
-    InfuraAPIKey
-  );
+  const provider = new ethers.providers.InfuraProvider(CoreContractChainId[env], InfuraAPIKey);
 
   const theme = useContext(ThemeContext);
   const { fetchChatProfile } = useChatProfile();
@@ -137,9 +128,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({
             userProfile={userProfile!}
             setUserProfile={setUserProfile}
             updateUserProfileModalBackground={updateUserProfileModalBackground}
-            updateUserProfileModalPositionType={
-              updateUserProfileModalPositionType
-            }
+            updateUserProfileModalPositionType={updateUserProfileModalPositionType}
           />
         )}
       </Conatiner>

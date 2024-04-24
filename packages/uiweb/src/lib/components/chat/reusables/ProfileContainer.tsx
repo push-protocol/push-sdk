@@ -1,10 +1,11 @@
 // React + Web3 Essentials
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 // External Packages
 
 // Internal Compoonents
 import { copyToClipboard, pCAIP10ToWallet } from '../../../helpers';
+import { createBlockie } from '../../../helpers/blockies';
 import { Div, Image, Section, Span, Tooltip } from '../../reusables';
 
 // Internal Configs
@@ -24,6 +25,7 @@ type ProfileProps = {
     recipient?: string | null;
     web3Name?: string | null;
     desc?: string | null;
+    isGroup?: boolean | null;
   };
   copy?: boolean;
   customStyle?: CustomStyleParamsType | null;
@@ -43,14 +45,19 @@ type CustomStyleParamsType = {
 // Exported Interfaces & Types
 
 // Exported Functions
-export const ProfileContainer = ({
-  theme,
-  member,
-  copy,
-  customStyle,
-  loading,
-}: ProfileProps) => {
+export const ProfileContainer = ({ theme, member, copy, customStyle, loading }: ProfileProps) => {
   const [copyText, setCopyText] = useState<string>();
+
+  // For blockie if icon is missing
+  const blockieContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (blockieContainerRef.current && !member?.icon) {
+      const blockie = createBlockie(member?.recipient || '', { size: 8, scale: 6 });
+      blockieContainerRef.current.innerHTML = ''; // Clear the container to avoid duplicating the canvas
+      blockieContainerRef.current.appendChild(blockie);
+    }
+  }, [member?.recipient, member?.icon]);
 
   return (
     <Section justifyContent="flex-start">
@@ -72,7 +79,17 @@ export const ProfileContainer = ({
             src={member?.icon}
           />
         )}
+        {/* If no icon then show blockie */}
+        {!member?.icon && (
+          <Div
+            ref={blockieContainerRef}
+            height={customStyle?.imgHeight ?? '48px'}
+            width={customStyle?.imgHeight ?? '48px'}
+            cursor="pointer"
+          ></Div>
+        )}
       </Section>
+
       <Section
         flexDirection="column"
         alignItems="start"
@@ -91,18 +108,11 @@ export const ProfileContainer = ({
                 <Span
                   fontSize={customStyle?.fontSize ?? '18px'}
                   fontWeight={customStyle?.fontWeight ?? '400'}
-                  color={
-                    customStyle?.textColor ??
-                    theme.textColor?.modalSubHeadingText
-                  }
+                  color={customStyle?.textColor ?? theme.textColor?.modalSubHeadingText}
                   position="relative"
                 >
                   {/* If name and web3 name then show push user name else show web3 name */}
-                  {member.name && member.web3Name
-                    ? member.name
-                    : member.name
-                    ? member.name
-                    : member.web3Name}
+                  {member.name && member.web3Name ? member.name : member.name ? member.name : member.web3Name}
                 </Span>
               </Section>
             ))}
@@ -115,10 +125,7 @@ export const ProfileContainer = ({
               minHeight="22px"
               minWidth="180px"
               onMouseEnter={() => {
-                const text =
-                  member.chatId === member.recipient
-                    ? 'Copy Chat ID'
-                    : 'Copy Wallet';
+                const text = member.chatId === member.recipient ? 'Copy Chat ID' : 'Copy Wallet';
                 setCopyText(text);
               }}
               onMouseLeave={() => setCopyText('')}
@@ -129,21 +136,12 @@ export const ProfileContainer = ({
               className={loading ? 'skeleton' : ''}
             >
               <Span
-                fontSize={
-                  member?.name || member?.web3Name
-                    ? '14px'
-                    : customStyle?.fontSize ?? '18px'
-                }
-                fontWeight={
-                  member?.name || member?.web3Name
-                    ? '500'
-                    : customStyle?.fontWeight ?? '400'
-                }
+                fontSize={member?.name || member?.web3Name ? '14px' : customStyle?.fontSize ?? '18px'}
+                fontWeight={member?.name || member?.web3Name ? '500' : customStyle?.fontWeight ?? '400'}
                 color={
                   member?.name || member?.web3Name
                     ? theme.textColor?.modalSubHeadingText
-                    : customStyle?.textColor ??
-                      theme.textColor?.modalSubHeadingText
+                    : customStyle?.textColor ?? theme.textColor?.modalSubHeadingText
                 }
                 position="relative"
                 whiteSpace="nowrap"
@@ -154,7 +152,10 @@ export const ProfileContainer = ({
               </Span>
               {copy && copyText && (
                 <Div cursor="pointer">
-                  <CopyIcon size={16} color={ICON_COLOR.PINK} />
+                  <CopyIcon
+                    size={16}
+                    color={ICON_COLOR.PINK}
+                  />
                 </Div>
               )}
             </Section>

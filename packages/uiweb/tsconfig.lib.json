@@ -20,5 +20,12 @@
     "**/*.test.jsx",
     "src/lib/icons/raw/**/*"
   ],
-  "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "src/lib/components/chatAndNotification/modal/sidebar/chatSidebar"]
+  "include": [
+    "**/*.js",
+    "**/*.jsx",
+    "**/*.ts",
+    "**/*.tsx",
+    "src/lib/components/chatAndNotification/modal/sidebar/chatSidebar",
+    "src/lib/hooks/chat/usePushChatSocket.ts.deprecated"
+  ]
 }

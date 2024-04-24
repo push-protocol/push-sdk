@@ -67,7 +67,7 @@ export const ShareIcon: React.FC<IconProps> = ({ size, color }) => {
     <svg
       width={returnWSize(size)}
       height={returnHSize(size)}
-      viewBox={returnViewBox(size)}
+      viewBox={returnViewBox(16)}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -92,7 +92,7 @@ export const TokenGatedIcon: React.FC<IconProps> = ({ size, color }) => {
     <svg
       width={returnWSize(size)}
       height={returnHSize(size)}
-      viewBox={returnViewBox(size)}
+      viewBox={returnViewBox(20)}
       fill={'none'}
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -110,7 +110,7 @@ export const PublicChatIcon: React.FC<IconProps> = ({ size, color }) => {
     <svg
       width={returnWSize(size)}
       height={returnHSize(size)}
-      viewBox={returnViewBox(size, 1.5)}
+      viewBox={returnViewBox(30)}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >

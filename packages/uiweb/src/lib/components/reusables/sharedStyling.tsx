@@ -40,7 +40,7 @@ type SectionStyleProps = {
   borderRadius?: string;
   lineHeight?: string;
   flex?: string;
-  whiteSpace?:string;
+  whiteSpace?: string;
   visibility?: string;
   zIndex?: string;
 };
@@ -66,11 +66,7 @@ export const Section = styled.div<SectionStyleProps>`
   padding: ${(props) => props.padding || '0px'};
   position: ${(props) => props.position || 'relative'};
   background: ${(props) =>
-    props.gradient
-      ? props.gradient
-      : props.background
-      ? props.background
-      : 'transparent' || 'transparent'};
+    props.gradient ? props.gradient : props.background ? props.background : 'transparent' || 'transparent'};
   right: ${(props) => props.right || 'auto'};
   top: ${(props) => props.top || 'auto'};
   bottom: ${(props) => props.bottom || 'auto'};
@@ -84,7 +80,7 @@ export const Section = styled.div<SectionStyleProps>`
 
   &.skeleton {
     > * {
-      visibility: ${(props) => props.visibility || skeletonLoading ? 'hidden' : 'visible'};
+      visibility: ${(props) => (props.visibility || skeletonLoading ? 'hidden' : 'visible')};
     }
 
     &:after {
@@ -108,7 +104,7 @@ type DivStyleProps = {
   cursor?: string;
   alignSelf?: string;
   margin?: string;
-  textAlign?:string;
+  textAlign?: string;
   visibility?: string;
 };
 export const Div = styled.div<DivStyleProps>`
@@ -122,7 +118,7 @@ export const Div = styled.div<DivStyleProps>`
 
   &.skeleton {
     > * {
-      visibility: ${(props) => props.visibility || skeletonLoading ? 'hidden' : 'visible'};
+      visibility: ${(props) => (props.visibility || skeletonLoading ? 'hidden' : 'visible')};
     }
 
     &:after {
@@ -163,7 +159,8 @@ type SpanStyleProps = {
   maxWidth?: string;
   width?: string;
   cursor?: string;
-  whiteSpace?:string;
+  whiteSpace?: string;
+  visibility?: string;
 };
 
 export const Span = styled.span<SpanStyleProps>`
@@ -191,6 +188,25 @@ export const Span = styled.span<SpanStyleProps>`
   z-index: ${(props) => props.zIndex || 'auto'};
   max-width: ${(props) => props.maxWidth || 'initial'};
   white-space: ${(props) => props.whiteSpace || 'normal'};
+
+  &.skeleton {
+    > * {
+      visibility: ${(props) => (props.visibility || skeletonLoading ? 'hidden' : 'visible')};
+    }
+
+    &:after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      opacity: 1;
+      z-index: 1;
+      animation: ${skeletonLoading} 1s linear infinite alternate;
+      border-radius: 8px;
+    }
+  }
 `;
 
 type AnchorStyleProps = {
@@ -277,7 +293,6 @@ export const Image = styled.img<ImageStyleProps>`
   object-fit: ${(props) => props.objectFit || 'fill'};
 `;
 
-
 type ButtonStyleProps = {
   display?: string;
   lineHeight?: string;
@@ -310,36 +325,36 @@ type ButtonStyleProps = {
 };
 
 export const Button = styled.button<ButtonStyleProps>`
-  display: ${(props) => props.display || "initial"};
-  line-height: ${(props) => props.lineHeight || "26px"};
-  flex: ${(props) => props.flex || "initial"};
-  flex-direction: ${(props) => props.flexDirection || "row"};
-  align-self: ${(props) => props.alignSelf || "auto"};
-  align-items: ${(props) => props.alignItems || "center"};
-  justify-content: ${(props) => props.justifyContent || "center"};
+  display: ${(props) => props.display || 'initial'};
+  line-height: ${(props) => props.lineHeight || '26px'};
+  flex: ${(props) => props.flex || 'initial'};
+  flex-direction: ${(props) => props.flexDirection || 'row'};
+  align-self: ${(props) => props.alignSelf || 'auto'};
+  align-items: ${(props) => props.alignItems || 'center'};
+  justify-content: ${(props) => props.justifyContent || 'center'};
   font-weight: ${(props) => props.fontWeight || 400};
-  font-size: ${(props) => props.fontSize || "inherit"};
-  color: ${(props) => props.color || "inherit"};
-  background: ${(props) => props.background || "inherit"};
-  margin: ${(props) => props.margin || "initial"};
+  font-size: ${(props) => props.fontSize || 'inherit'};
+  color: ${(props) => props.color || 'inherit'};
+  background: ${(props) => props.background || 'inherit'};
+  margin: ${(props) => props.margin || 'initial'};
 
-  height: ${(props) => props.height || "initial"};
+  height: ${(props) => props.height || 'initial'};
   min-height: ${(props) => props.minHeight || 'auto'};
-  padding: ${(props) => props.padding || "initial"};
-  border: ${(props) => props.border || "none"};
-  border-radius: ${(props) => props.borderRadius || "inherit"};
-  position: ${(props) => props.position || "relative"};
-  text-decoration: ${(props) => props.textDecoration || "none"};
-  width: ${(props) => props.width || "initial"};
-  overflow: ${(props) => props.overflow || "hidden"};
-  z-index: ${(props) => props.zIndex || "3"};
-  cursor: ${(props) => props.cursor || "pointer"};
-  font-family: ${(props) => props.fontFamily || "inherit"};
+  padding: ${(props) => props.padding || 'initial'};
+  border: ${(props) => props.border || 'none'};
+  border-radius: ${(props) => props.borderRadius || 'inherit'};
+  position: ${(props) => props.position || 'relative'};
+  text-decoration: ${(props) => props.textDecoration || 'none'};
+  width: ${(props) => props.width || 'initial'};
+  overflow: ${(props) => props.overflow || 'hidden'};
+  z-index: ${(props) => props.zIndex || '3'};
+  cursor: ${(props) => props.cursor || 'pointer'};
+  font-family: ${(props) => props.fontFamily || 'inherit'};
 
   &:before {
-    background: ${(props) => props.hover || (props.background ? props.background : "transparent")};
+    background: ${(props) => props.hover || (props.background ? props.background : 'transparent')};
     bottom: 0;
-    content: "";
+    content: '';
     display: none;
     left: 0;
     position: absolute;
@@ -349,9 +364,9 @@ export const Button = styled.button<ButtonStyleProps>`
   }
 
   &:after {
-    background: ${(props) => props.hoverBackground || "#000"};
+    background: ${(props) => props.hoverBackground || '#000'};
     bottom: 0;
-    content: "";
+    content: '';
     left: 0;
     opacity: 0;
     position: absolute;
@@ -361,10 +376,10 @@ export const Button = styled.button<ButtonStyleProps>`
   }
 
   &:hover {
-    border: ${(props) => props.hoverBorder || "inherit"};
+    border: ${(props) => props.hoverBorder || 'inherit'};
 
     & svg > path {
-      stroke: ${(props) => props.hoverSVGPathStroke || "auto"};
+      stroke: ${(props) => props.hoverSVGPathStroke || 'auto'};
     }
   }
 

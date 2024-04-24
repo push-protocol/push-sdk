@@ -39,7 +39,10 @@ import InfoIcon from '../../../icons/infodark.svg';
 import { Group, IChatProfile } from '../exportedTypes';
 import { ChatInfoResponse } from '../types';
 
-interface IProfile {
+// Constants
+
+// Exported Interfaces & Types
+export interface IChatProfileUserInfo {
   name: string | null;
   icon: string | null;
   chatId: string | null;
@@ -47,11 +50,8 @@ interface IProfile {
   abbrRecipient: string | null;
   web3Name: string | null;
   desc: string | null;
+  isGroup?: boolean | null;
 }
-
-// Constants
-
-// Exported Interfaces & Types
 
 // Exported Functions
 export const ChatProfile: React.FC<IChatProfile> = ({
@@ -75,25 +75,17 @@ export const ChatProfile: React.FC<IChatProfile> = ({
       abbrRecipient: null,
       web3Name: null,
       desc: null,
-    } as IProfile,
+      isGroup: null,
+    } as IChatProfileUserInfo,
     groupInfo: null as Group | null,
   });
 
-  const provider = new ethers.providers.InfuraProvider(
-    CoreContractChainId[user ? user.env : CONSTANTS.ENV.PROD],
-    InfuraAPIKey
-  );
   const DropdownRef = useRef(null);
   const [modal, setModal] = useState(false);
-  const { fetchChat } = useFetchChat();
 
   useClickAway(DropdownRef, () => {
     setShowOptions(false);
   });
-
-  const ShowModal = () => {
-    setModal(true);
-  };
 
   // To setup web3 name, asynchrounously
   const setupWeb3Name = async (address: string) => {
@@ -126,18 +118,16 @@ export const ChatProfile: React.FC<IChatProfile> = ({
         const derivedChatId = await deriveChatId(chatId, user);
 
         // We have derived chatId, fetch chat info to see if it's group or dm
-        console.log('FETCHING CHAT INFO', derivedChatId, user);
         const chatInfo = await user.chat.info(derivedChatId);
-        console.log('FETCHING CHAT INFO FETCHED', chatInfo);
 
         if (chatInfo) {
           let groupInfo;
 
           // eslint-disable-next-line prefer-const
-          let profile = {} as IProfile;
+          let profile = {} as IChatProfileUserInfo;
 
           // If group
-          if (chatInfo.meta.group) {
+          if (chatInfo.meta && chatInfo.meta.group) {
             groupInfo = await user.chat.group.info(derivedChatId);
             profile.name = groupInfo.groupName;
             profile.icon = groupInfo.groupImage;
@@ -145,24 +135,43 @@ export const ChatProfile: React.FC<IChatProfile> = ({
             profile.recipient = derivedChatId;
             profile.abbrRecipient = getAbbreiatedRecipient(derivedChatId);
             profile.desc = groupInfo.groupDescription;
+            profile.isGroup = true;
 
             // TODO - HANDLE ERROR IN UI
           } else {
             // This is DM
-            const recipient = await deriveChatId(chatInfo.participants[0], user);
+            const recipient = await deriveChatId(chatInfo.recipient, user);
 
-            const profileInfo = await user.profile.info({
-              overrideAccount: recipient,
-            });
-            profile.name = profileInfo.name;
-            profile.icon = profileInfo.picture;
-            profile.chatId = chatInfo.chatId;
-            profile.recipient = recipient;
-            profile.abbrRecipient = getAbbreiatedRecipient(recipient);
-            profile.desc = profileInfo.profile?.desc;
+            try {
+              const profileInfo = await user.profile.info({
+                overrideAccount: recipient,
+              });
+
+              profile.name = profileInfo.name;
+              profile.icon = profileInfo.picture;
+              profile.chatId = chatInfo.chatId;
+              profile.recipient = recipient;
+              profile.abbrRecipient = getAbbreiatedRecipient(recipient);
+              profile.desc = profileInfo.profile?.desc;
+              profile.isGroup = false;
+            } catch (error) {
+              console.warn(
+                'UIWeb::ChatProfile::user.profile.info fetch error, possible push user does not exist.',
+                error
+              );
+              profile.name = '';
+              profile.icon = null;
+              profile.chatId = chatInfo.chatId;
+              profile.recipient = recipient;
+              profile.abbrRecipient = getAbbreiatedRecipient(recipient);
+              profile.desc = '';
+              profile.isGroup = false;
+            }
 
             // get and set web3 name asynchrounously
-            setupWeb3Name(profile.recipient);
+            if (profile.recipient) {
+              setupWeb3Name(profile.recipient);
+            }
           }
 
           // Finally set everything
@@ -298,12 +307,13 @@ export const ChatProfile: React.FC<IChatProfile> = ({
           )}
         </Section>
 
-        {/* For showing chat info modal */}
+        {/* For showing chat info modal | modal && */}
         {modal && (
           <GroupInfoModal
             theme={theme}
             setModal={setModal}
             groupInfo={initialized.groupInfo!}
+            chatProfileInfo={initialized.profile}
             setGroupInfo={(mutatedGroupInfo) =>
               setInitialized((prevState) => ({
                 ...prevState,

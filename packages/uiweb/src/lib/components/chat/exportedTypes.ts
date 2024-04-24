@@ -1,9 +1,4 @@
-import type {
-  CONSTANTS,
-  GroupDTO,
-  GroupInfoDTO,
-  IMessageIPFS,
-} from '@pushprotocol/restapi';
+import type { CONSTANTS, GroupDTO, GroupInfoDTO, IMessageIPFS } from '@pushprotocol/restapi';
 import { IGroup, ModalBackgroundType, ModalPositionType } from '../../types';
 import { IChatTheme } from './theme';
 
@@ -39,12 +34,7 @@ export interface IChatPreviewListProps {
   onUnreadCountChange?: (count: number) => void;
   onPreload?: (chats: Array<IChatPreviewPayload>) => void;
   onPaging?: (chats: Array<IChatPreviewPayload>) => void;
-  onLoading?: (loadingData: {
-    loading: boolean;
-    preload: boolean;
-    paging: boolean;
-    finished: boolean;
-  }) => void;
+  onLoading?: (loadingData: { loading: boolean; preload: boolean; paging: boolean; finished: boolean }) => void;
 }
 
 export interface IChatViewListProps {
@@ -65,6 +55,7 @@ export interface IChatViewComponentProps {
   file?: boolean;
   isConnected?: boolean;
   autoConnect?: boolean;
+  suppressToast?: boolean;
   groupInfoModalBackground?: ModalBackgroundType;
   groupInfoModalPositionType?: ModalPositionType;
   verificationFailModalBackground?: ModalBackgroundType;
@@ -113,6 +104,7 @@ export interface MessageInputProps {
   file?: boolean;
   isConnected?: boolean;
   autoConnect?: boolean;
+  suppressToast?: boolean;
   verificationFailModalBackground?: ModalBackgroundType;
   verificationFailModalPosition?: ModalPositionType;
   onVerificationFail?: () => void;

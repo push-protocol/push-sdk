@@ -7,17 +7,8 @@ import { MdCheckCircle, MdError } from 'react-icons/md';
 import { ToastContainer } from 'react-toastify';
 import styled from 'styled-components';
 
-import {
-  pCAIP10ToWallet,
-  setAccessControl,
-  walletToPCAIP10,
-} from '../../../helpers';
-import {
-  useChatData,
-  useClickAway,
-  useDeviceWidthCheck,
-  usePushChatStream,
-} from '../../../hooks';
+import { pCAIP10ToWallet, setAccessControl, walletToPCAIP10 } from '../../../helpers';
+import { useChatData, useClickAway, useDeviceWidthCheck, usePushChatStream } from '../../../hooks';
 import useFetchChat from '../../../hooks/chat/useFetchChat';
 import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
 import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities';
@@ -37,17 +28,8 @@ import { ThemeContext } from '../theme/ThemeProvider';
 
 import { PUBLIC_GOOGLE_TOKEN, device } from '../../../config';
 import usePushUser from '../../../hooks/usePushUser';
-import {
-  MODAL_BACKGROUND_TYPE,
-  MODAL_POSITION_TYPE,
-  type FileMessageContent,
-} from '../../../types';
-import {
-  GIFType,
-  Group,
-  IChatTheme,
-  MessageInputProps,
-} from '../exportedTypes';
+import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, type FileMessageContent } from '../../../types';
+import { GIFType, Group, IChatTheme, MessageInputProps } from '../exportedTypes';
 import { checkIfAccessVerifiedGroup } from '../helpers';
 import { InfoContainer } from '../reusables';
 import { ChatInfoResponse } from '../types';
@@ -61,7 +43,7 @@ interface IThemeProps {
 }
 
 const ConnectButtonSection = ({ autoConnect }: { autoConnect: boolean }) => {
-  const { account, user } = useChatData();
+  const { user } = useChatData();
   return (
     <Section
       width="100%"
@@ -69,7 +51,7 @@ const ConnectButtonSection = ({ autoConnect }: { autoConnect: boolean }) => {
       alignItems="center"
       padding="8px"
     >
-      {!(user && !user?.readmode() && account) && (
+      {!(user && !user?.readmode() && user?.account) && (
         <Span
           padding="8px 8px 8px 16px"
           color="#B6BCD6"
@@ -92,6 +74,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   file = true,
   isConnected = true,
   autoConnect = false,
+  suppressToast = false,
   verificationFailModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
   verificationFailModalPosition = MODAL_POSITION_TYPE.GLOBAL,
   onVerificationFail,
@@ -106,9 +89,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   const [isMember, setIsMember] = useState<boolean>(false);
   //hack for stream not working
   const [chatAcceptStream, setChatAcceptStream] = useState<any>({}); // to track any new messages
-  const [participantRemoveStream, setParticipantRemoveStream] = useState<any>(
-    {}
-  ); // to track if a participant is removed from group
+  const [participantRemoveStream, setParticipantRemoveStream] = useState<any>({}); // to track if a participant is removed from group
   const [participantLeaveStream, setParticipantLeaveStream] = useState<any>({}); // to track if a participant leaves a group
   const [participantJoinStream, setParticipantJoinStream] = useState<any>({}); // to track if a participant joins a group
 
@@ -129,11 +110,10 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     setVerified,
     loading: accessLoading,
   } = useVerifyAccessControl();
-  const { fetchMemberStatus, joinGroup, joinLoading, joinError } =
-    useGroupMemberUtilities();
+  const { fetchMemberStatus, joinGroup, joinLoading, joinError } = useGroupMemberUtilities();
   const { fetchUserProfile } = usePushUser();
 
-  const { account, env, signer, user } = useChatData();
+  const { user } = useChatData();
   const { fetchChat } = useFetchChat();
   const statusToast = useToast();
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -141,37 +121,17 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   //event listners
   usePushChatStream();
   useEffect(() => {
-    window.addEventListener('chatAcceptStream', (e: any) =>
-      setChatAcceptStream(e.detail)
-    );
-    window.addEventListener('participantRemoveStream', (e: any) =>
-      setParticipantRemoveStream(e.detail)
-    );
-    window.addEventListener('participantLeaveStream', (e: any) =>
-      setParticipantLeaveStream(e.detail)
-    );
-    window.addEventListener('participantJoinStream', (e: any) =>
-      setParticipantJoinStream(e.detail)
-    );
-    window.addEventListener('groupUpdateStream', (e: any) =>
-      setGroupUpdateStream(e.detail)
-    );
+    window.addEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
+    window.addEventListener('participantRemoveStream', (e: any) => setParticipantRemoveStream(e.detail));
+    window.addEventListener('participantLeaveStream', (e: any) => setParticipantLeaveStream(e.detail));
+    window.addEventListener('participantJoinStream', (e: any) => setParticipantJoinStream(e.detail));
+    window.addEventListener('groupUpdateStream', (e: any) => setGroupUpdateStream(e.detail));
     return () => {
-      window.removeEventListener('chatAcceptStream', (e: any) =>
-        setChatAcceptStream(e.detail)
-      );
-      window.removeEventListener('participantRemoveStream', (e: any) =>
-        setParticipantRemoveStream(e.detail)
-      );
-      window.removeEventListener('participantLeaveStream', (e: any) =>
-        setParticipantLeaveStream(e.detail)
-      );
-      window.removeEventListener('participantJoinStream', (e: any) =>
-        setParticipantJoinStream(e.detail)
-      );
-      window.removeEventListener('groupUpdateStream', (e: any) =>
-        setGroupUpdateStream(e.detail)
-      );
+      window.removeEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
+      window.removeEventListener('participantRemoveStream', (e: any) => setParticipantRemoveStream(e.detail));
+      window.removeEventListener('participantLeaveStream', (e: any) => setParticipantLeaveStream(e.detail));
+      window.removeEventListener('participantJoinStream', (e: any) => setParticipantJoinStream(e.detail));
+      window.removeEventListener('groupUpdateStream', (e: any) => setGroupUpdateStream(e.detail));
     };
   }, []);
 
@@ -206,10 +166,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         const currentTimestamp = new Date().getTime();
         const twentyFourHoursInMilliseconds = 24 * 60 * 60 * 1000;
 
-        if (
-          Math.abs(currentTimestamp - storedTimestamp) <
-          twentyFourHoursInMilliseconds
-        ) {
+        if (Math.abs(currentTimestamp - storedTimestamp) < twentyFourHoursInMilliseconds) {
           setVerified(true);
         } else {
           setVerified(false);
@@ -217,7 +174,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         }
       }
     }
-  }, [chatId, verified, isMember, account, env, user]);
+  }, [chatId, verified, isMember, user]);
 
   useEffect(() => {
     (async () => {
@@ -229,7 +186,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         }
       }
     })();
-  }, [chatId, user, account, env]);
+  }, [chatId, user]);
 
   useEffect(() => {
     (async () => {
@@ -243,20 +200,17 @@ export const MessageInput: React.FC<MessageInputProps> = ({
 
   //moniter stream changes
   useEffect(() => {
-    if (
-      Object.keys(groupUpdateStream || {}).length > 0 &&
-      groupUpdateStream.constructor === Object
-    )
+    if (Object.keys(groupUpdateStream || {}).length > 0 && groupUpdateStream.constructor === Object)
       transformGroupDetails(groupUpdateStream);
   }, [groupUpdateStream]);
 
   useEffect(() => {
     if (!user) return;
-    if (user && account && groupInfo) {
+    if (user && groupInfo) {
       (async () => {
         const status = await fetchMemberStatus({
           chatId: groupInfo.chatId!,
-          accountId: account,
+          accountId: user?.account,
         });
         if (status && typeof status !== 'string') {
           setIsMember(status?.participant);
@@ -267,7 +221,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       })();
     }
   }, [
-    account,
+    user,
     groupInfo,
     chatInfo,
     chatAcceptStream,
@@ -280,7 +234,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     if (user && chatId && groupInfo) {
       setIsRules(checkIfAccessVerifiedGroup(groupInfo));
     }
-  }, [chatId, groupInfo, user, account, env]);
+  }, [chatId, groupInfo, user]);
 
   const transformGroupDetails = (item: any): void => {
     if (groupInfo?.chatId === item?.chatId) {
@@ -309,11 +263,15 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   };
 
   const checkVerification = () => {
-    verifyAccessControl({ chatId, did: account! });
+    if (user?.account) {
+      verifyAccessControl({ chatId, did: user.account });
+    } else {
+      console.error("UIWeb::MessageInput::checkVerification::User's account is not available");
+    }
   };
 
   const handleJoinGroup = async () => {
-    if (chatInfo && groupInfo && groupInfo?.isPublic) {
+    if (chatInfo && groupInfo) {
       const response = await joinGroup({
         chatId,
       });
@@ -326,7 +284,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       }
     } else {
       const sendTextMessage = await sendMessage({
-        message: `Hello, please let me join this group, my wallet address is ${account}`,
+        message: `Hello, please let me join this group, my wallet address is ${user?.account}`,
         chatId: groupInfo?.groupCreator || '',
         messageType: 'Text',
       });
@@ -339,37 +297,51 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   };
 
   const showError = (title: string, subTitle: string) => {
+    if (suppressToast) {
+      console.warn('UIWeb::MessageInput::showError::Toast is suppressed | Title:', title, ' | Subtitle:', subTitle);
+      return;
+    }
+
     statusToast.showMessageToast({
       toastTitle: title,
       toastMessage: subTitle,
       toastType: 'ERROR',
-      getToastIcon: (size) => <MdError size={size} color="red" />,
+      getToastIcon: (size) => (
+        <MdError
+          size={size}
+          color="red"
+        />
+      ),
     });
   };
 
   const showSuccess = (title: string, subTitle: string) => {
+    if (suppressToast) {
+      console.warn('UIWeb::MessageInput::showSuccess::Toast is suppressed | Title:', title, ' | Subtitle:', subTitle);
+      return;
+    }
+
     statusToast.showMessageToast({
       toastTitle: title,
       toastMessage: subTitle,
       toastType: 'SUCCESS',
-      getToastIcon: (size) => <MdCheckCircle size={size} color="green" />,
+      getToastIcon: (size) => (
+        <MdCheckCircle
+          size={size}
+          color="green"
+        />
+      ),
     });
   };
 
-  const uploadFile = async (
-    e: ChangeEvent<HTMLInputElement>
-  ): Promise<void> => {
+  const uploadFile = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {
     if (!(e.target instanceof HTMLInputElement)) {
       return;
     }
     if (!e.target.files) {
       return;
     }
-    if (
-      e.target &&
-      (e.target as HTMLInputElement).files &&
-      ((e.target as HTMLInputElement).files as FileList).length
-    ) {
+    if (e.target && (e.target as HTMLInputElement).files && ((e.target as HTMLInputElement).files as FileList).length) {
       const file: File = e.target.files[0];
       if (file) {
         try {
@@ -417,11 +389,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         chatId,
         messageType: type as any,
       });
-      if (
-        sendMessageResponse &&
-        typeof sendMessageResponse === 'string' &&
-        sendMessageResponse.includes('403')
-      ) {
+      if (sendMessageResponse && typeof sendMessageResponse === 'string' && sendMessageResponse.includes('403')) {
         setAccessControl(chatId, true);
         setVerified(false);
         setVerificationSuccessfull(false);
@@ -498,17 +466,14 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                 )}
               </Span>
               <ConnectWrapper>
-                <Connect
-                  onClick={async () =>
-                    isJoinGroup()
-                      ? await handleJoinGroup()
-                      : await checkVerification()
-                  }
-                >
+                <Connect onClick={async () => (isJoinGroup() ? await handleJoinGroup() : await checkVerification())}>
                   {isJoinGroup() && (
                     <>
                       {joinLoading ? (
-                        <Spinner color="#fff" size="24" />
+                        <Spinner
+                          color="#fff"
+                          size="24"
+                        />
                       ) : (
                         ' Join Group '
                       )}
@@ -517,7 +482,10 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                   {isNotVerified() && (
                     <>
                       {accessLoading ? (
-                        <Spinner color="#fff" size="24" />
+                        <Spinner
+                          color="#fff"
+                          size="24"
+                        />
                       ) : (
                         'Verify Access'
                       )}
@@ -567,120 +535,127 @@ export const MessageInput: React.FC<MessageInputProps> = ({
           )}
         </>
       ) : null}
-      {user &&
-        !user?.readmode() &&
-        (((isRules ? verified : true) && isMember) ||
-          (chatInfo && !groupInfo)) && (
-          <>
-            <Section gap="8px" flex="1" position="static">
-              {emoji && (
-                <Div
-                  width="25px"
-                  cursor="pointer"
-                  height="25px"
-                  alignSelf="end"
-                  onClick={() => setShowEmojis(!showEmojis)}
-                >
-                  <EmojiIcon color={theme.iconColor?.emoji} />
-                </Div>
-              )}
-              {showEmojis && (
-                <Section
-                  ref={modalRef}
-                  position="absolute"
-                  bottom="2.5rem"
-                  left="2.5rem"
-                  zIndex="700"
-                >
-                  <EmojiPicker
-                    width={isMobile ? 260 : 320}
-                    height={370}
-                    onEmojiClick={addEmoji}
-                  />
-                </Section>
-              )}
-              <MultiLineInput
-                disabled={loading ? true : false}
-                theme={theme}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter' && !event.shiftKey) {
-                    event.preventDefault();
-                    sendTextMsg();
-                  }
-                }}
-                placeholder="Type your message..."
-                onChange={(e) => onChangeTypedMessage(e.target.value)}
-                value={typedMessage}
-                ref={textAreaRef}
-                rows={1}
-              />
-            </Section>
-            <SendSection position="static">
-              {gif && (
-                <Section
-                  width="34px"
-                  height="24px"
-                  cursor="pointer"
-                  alignSelf="end"
-                  onClick={() => setGifOpen(!gifOpen)}
-                >
-                  <GifIcon />
-                </Section>
-              )}
-              {gifOpen && (
-                <Section
-                  position="absolute"
-                  bottom="2.5rem"
-                  zIndex="1"
-                  right={isMobile ? '7rem' : '8rem'}
-                  ref={modalRef}
-                >
-                  <GifPicker
-                    onGifClick={sendGIF}
-                    width={isMobile ? 260 : 320}
-                    height={370}
-                    tenorApiKey={String(PUBLIC_GOOGLE_TOKEN)}
-                  />
-                </Section>
-              )}
-              <Section onClick={handleUploadFile}>
-                {!fileUploading && file && (
-                  <>
-                    <Section
-                      width="17"
-                      height="24px"
-                      cursor="pointer"
-                      alignSelf="end"
-                    >
-                      <AttachmentIcon color={theme.iconColor?.attachment} />
-                    </Section>
-                    <FileInput
-                      type="file"
-                      ref={fileUploadInputRef}
-                      onChange={(e) => uploadFile(e)}
-                    />
-                  </>
-                )}
+      {user && !user?.readmode() && (((isRules ? verified : true) && isMember) || (chatInfo && !groupInfo)) && (
+        <>
+          <Section
+            gap="8px"
+            flex="1"
+            position="static"
+          >
+            {emoji && (
+              <Div
+                width="25px"
+                cursor="pointer"
+                height="25px"
+                alignSelf="end"
+                onClick={() => setShowEmojis(!showEmojis)}
+              >
+                <EmojiIcon color={theme.iconColor?.emoji} />
+              </Div>
+            )}
+            {showEmojis && (
+              <Section
+                ref={modalRef}
+                position="absolute"
+                bottom="2.5rem"
+                left="2.5rem"
+                zIndex="700"
+              >
+                <EmojiPicker
+                  width={isMobile ? 260 : 320}
+                  height={370}
+                  onEmojiClick={addEmoji}
+                />
               </Section>
-              {!(loading || fileUploading) && (
-                <Section
-                  cursor="pointer"
-                  alignSelf="end"
-                  height="24px"
-                  onClick={() => sendTextMsg()}
-                >
-                  <SendCompIcon color={theme.iconColor?.sendButton} />
-                </Section>
+            )}
+            <MultiLineInput
+              disabled={loading ? true : false}
+              theme={theme}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' && !event.shiftKey) {
+                  event.preventDefault();
+                  sendTextMsg();
+                }
+              }}
+              placeholder="Type your message..."
+              onChange={(e) => onChangeTypedMessage(e.target.value)}
+              value={typedMessage}
+              ref={textAreaRef}
+              rows={1}
+            />
+          </Section>
+          <SendSection position="static">
+            {gif && (
+              <Section
+                width="34px"
+                height="24px"
+                cursor="pointer"
+                alignSelf="end"
+                onClick={() => setGifOpen(!gifOpen)}
+              >
+                <GifIcon />
+              </Section>
+            )}
+            {gifOpen && (
+              <Section
+                position="absolute"
+                bottom="2.5rem"
+                zIndex="1"
+                right={isMobile ? '7rem' : '8rem'}
+                ref={modalRef}
+              >
+                <GifPicker
+                  onGifClick={sendGIF}
+                  width={isMobile ? 260 : 320}
+                  height={370}
+                  tenorApiKey={String(PUBLIC_GOOGLE_TOKEN)}
+                />
+              </Section>
+            )}
+            <Section onClick={handleUploadFile}>
+              {!fileUploading && file && (
+                <>
+                  <Section
+                    width="17"
+                    height="24px"
+                    cursor="pointer"
+                    alignSelf="end"
+                  >
+                    <AttachmentIcon color={theme.iconColor?.attachment} />
+                  </Section>
+                  <FileInput
+                    type="file"
+                    ref={fileUploadInputRef}
+                    onChange={(e) => uploadFile(e)}
+                  />
+                </>
               )}
+            </Section>
+            {!(loading || fileUploading) && (
+              <Section
+                cursor="pointer"
+                alignSelf="end"
+                height="24px"
+                onClick={() => sendTextMsg()}
+              >
+                <SendCompIcon color={theme.iconColor?.sendButton} />
+              </Section>
+            )}
 
-              {(loading || fileUploading) && (
-                <Section alignSelf="end" height="24px">
-                  <Spinner color={theme.spinnerColor} size="22" />
-                </Section>
-              )}
-            </SendSection>
-          </>
-        )}
+            {(loading || fileUploading) && (
+              <Section
+                alignSelf="end"
+                height="24px"
+              >
+                <Spinner
+                  color={theme.spinnerColor}
+                  size="22"
+                />
+              </Section>
+            )}
+          </SendSection>
+        </>
+      )}
       <ToastContainer />
     </TypebarSection>
   ) : (
