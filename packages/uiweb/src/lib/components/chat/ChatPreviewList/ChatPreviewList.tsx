@@ -6,13 +6,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 // Internal Compoonents
-import {
-  getAddress,
-  getNewChatUser,
-  pCAIP10ToWallet,
-  traceStackCalls,
-  walletToPCAIP10,
-} from '../../../helpers';
+import { getAddress, getNewChatUser, pCAIP10ToWallet, traceStackCalls, walletToPCAIP10 } from '../../../helpers';
 import { useChatData, usePushChatStream } from '../../../hooks';
 import useFetchChat from '../../../hooks/chat/useFetchChat';
 import useFetchMessageUtilities from '../../../hooks/chat/useFetchMessageUtilities';
@@ -80,9 +74,7 @@ const SCROLL_LIMIT = 25;
 // Exported Interfaces & Types
 
 // Exported Functions
-export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
-  options: IChatPreviewListProps
-) => {
+export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatPreviewListProps) => {
   // get hooks
   const { env, signer, account, user } = useChatData();
   const { fetchUserProfile } = usePushUser();
@@ -103,14 +95,13 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     error: null,
   });
   // set chat preview list meta
-  const [chatPreviewListMeta, setChatPreviewListMeta] =
-    useState<IChatPreviewListMeta>({
-      selectedChatId: undefined,
-      badges: {},
-    });
+  const [chatPreviewListMeta, setChatPreviewListMeta] = useState<IChatPreviewListMeta>({
+    selectedChatId: undefined,
+    badges: {},
+  });
 
   //hack to fix stream
-  const [chatStream, setChatStream] = useState<any>({}); // to track any new messages
+  // const [chatStream, setChatStream] = useState<any>({}); // to track any new messages
   const [chatAcceptStream, setChatAcceptStream] = useState<any>({}); // to track any new messages
   const [chatRequestStream, setChatRequestStream] = useState<any>({}); // any message in request
   const [groupCreateStream, setGroupCreateStream] = useState<any>({}); // any message in request
@@ -121,39 +112,25 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
 
   // set ref
   const listInnerRef = useRef<HTMLDivElement>(null);
-  // const {  chatRequestStream, chatAcceptStream } =
-  //   usePushChatStream();
+  const { chatStream } = usePushChatStream();
 
   //event listeners
   usePushChatStream();
 
   useEffect(() => {
-    window.addEventListener('chatStream', (e: any) => setChatStream(e.detail));
-    window.addEventListener('chatAcceptStream', (e: any) =>
-      setChatAcceptStream(e.detail)
-    );
-    window.addEventListener('chatRequestStream', (e: any) =>
-      setChatRequestStream(e.detail)
-    );
-    window.addEventListener('groupCreateStream', (e: any) =>
-      setGroupCreateStream(e.detail)
-    );
+    // window.addEventListener('chatStream', (e: any) => setChatStream(e.detail));
+    window.addEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
+    window.addEventListener('chatRequestStream', (e: any) => setChatRequestStream(e.detail));
+    window.addEventListener('groupCreateStream', (e: any) => setGroupCreateStream(e.detail));
     return () => {
-      window.removeEventListener('chatStream', (e: any) =>
-        setChatStream(e.detail)
-      );
-      window.removeEventListener('chatAcceptStream', (e: any) =>
-        setChatAcceptStream(e.detail)
-      );
-      window.removeEventListener('chatRequestStream', (e: any) =>
-        setChatRequestStream(e.detail)
-      );
-      window.removeEventListener('groupCreateStream', (e: any) =>
-        setGroupCreateStream(e.detail)
-      );
+      // window.removeEventListener('chatStream', (e: any) =>
+      //   setChatStream(e.detail)
+      // );
+      window.removeEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
+      window.removeEventListener('chatRequestStream', (e: any) => setChatRequestStream(e.detail));
+      window.removeEventListener('groupCreateStream', (e: any) => setGroupCreateStream(e.detail));
     };
   }, []);
-
 
   // If push user changes or if options param changes
   useEffect(() => {
@@ -176,27 +153,17 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
         error: null,
       });
     }
-  }, [
-    user,
-    options?.prefillChatPreviewList,
-    options?.searchParamter,
-    options.listType,
-    options.overrideAccount,
-  ]);
+  }, [user, options?.prefillChatPreviewList, options?.searchParamter, options.listType, options.overrideAccount]);
 
   // Helper Functions
 
   // Add to chat items
-  const addChatItems: (
+  const addChatItems: (items: IChatPreviewPayload[], incrementBadge?: boolean) => void = (
     items: IChatPreviewPayload[],
     incrementBadge?: boolean
-  ) => void = (items: IChatPreviewPayload[], incrementBadge?:boolean) => {
-    const combinedItems: IChatPreviewPayload[] = [
-      ...items,
-      ...chatPreviewList.items,
-    ].filter(
-      (item, index, self) =>
-        index === self.findIndex((t) => t.chatId === item.chatId)
+  ) => {
+    const combinedItems: IChatPreviewPayload[] = [...items, ...chatPreviewList.items].filter(
+      (item, index, self) => index === self.findIndex((t) => t.chatId === item.chatId)
     );
 
     setChatPreviewList((prev) => ({
@@ -208,12 +175,10 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       items.forEach((item) => {
         // only increment if not selected
         if (chatPreviewListMeta.selectedChatId !== item.chatId) {
-          console.debug("::ChatPreviewList::incrementing badge", item.chatId);
+          console.debug('::ChatPreviewList::incrementing badge', item.chatId);
           setBadge(
             item.chatId!,
-            chatPreviewListMeta.badges[item.chatId!]
-              ? chatPreviewListMeta.badges[item.chatId!] + 1
-              : 1
+            chatPreviewListMeta.badges[item.chatId!] ? chatPreviewListMeta.badges[item.chatId!] + 1 : 1
           );
         }
       });
@@ -222,9 +187,9 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
 
   // Remove from chat items
   const removeChatItems: (items: string[]) => void = (items: string[]) => {
-    const combinedItems: IChatPreviewPayload[] = [
-      ...chatPreviewList.items,
-    ].filter((item) => !items.includes(item.chatId!));
+    const combinedItems: IChatPreviewPayload[] = [...chatPreviewList.items].filter(
+      (item) => !items.includes(item.chatId!)
+    );
 
     setChatPreviewList((prev) => ({
       ...prev,
@@ -238,9 +203,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
   };
 
   //Transform group creation stream
-  const transformGroupCreationStream: (item: any) => void = async (
-    item: any
-  ) => {
+  const transformGroupCreationStream: (item: any) => void = async (item: any) => {
     const transformedItem: IChatPreviewPayload = {
       chatId: item?.chatId,
       chatPic: item?.meta.image,
@@ -252,7 +215,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
         messageContent: '',
       },
     };
-    addChatItems([transformedItem],false);
+    addChatItems([transformedItem], false);
   };
 
   // Transform stream message
@@ -267,9 +230,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     const modItem = transformStreamToIChatPreviewPayload(item);
 
     // now check if this message is already present in the list
-    const chatItem = chatPreviewList.items.find(
-      (chatItem) => chatItem.chatId === modItem.chatId
-    );
+    const chatItem = chatPreviewList.items.find((chatItem) => chatItem.chatId === modItem.chatId);
 
     // if chat item is present, take pfp an group name if request
     if (chatItem) {
@@ -289,8 +250,8 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       }
     }
     // modify the chat items
-    console.debug('calling twice')
-    addChatItems([modItem],true);
+    console.debug('calling twice');
+    addChatItems([modItem], true);
   };
 
   // Transform accepted request
@@ -311,12 +272,8 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
   // get type and override account
 
   const getTypeAndAccount = () => {
-    const type = options.listType
-      ? options.listType
-      : CONSTANTS.CHAT.LIST_TYPE.CHATS;
-    const overrideAccount = options.overrideAccount
-      ? options.overrideAccount
-      : undefined;
+    const type = options.listType ? options.listType : CONSTANTS.CHAT.LIST_TYPE.CHATS;
+    const overrideAccount = options.overrideAccount ? options.overrideAccount : undefined;
     return { type, overrideAccount };
   };
 
@@ -340,15 +297,10 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       if (chatList) {
         // get and transform chats
         const transformedChats = transformChatItems(chatList);
-        console.debug(
-          `currentNonce: ${currentNonce}, chatPreviewList.nonce: ${chatPreviewList.nonce}`
-        );
+        console.debug(`currentNonce: ${currentNonce}, chatPreviewList.nonce: ${chatPreviewList.nonce}`);
 
         // return if nonce doesn't match or if page is not 1
-        if (
-          currentNonce !== chatPreviewList.nonce ||
-          chatPreviewList.page !== 1
-        ) {
+        if (currentNonce !== chatPreviewList.nonce || chatPreviewList.page !== 1) {
           return;
         }
         setChatPreviewList((prev) => ({
@@ -369,9 +321,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
         }
       } else {
         // return if nonce doesn't match
-        console.debug(
-          `Errored: currentNonce: ${currentNonce}, chatPreviewList.nonce: ${chatPreviewList.nonce}`
-        );
+        console.debug(`Errored: currentNonce: ${currentNonce}, chatPreviewList.nonce: ${chatPreviewList.nonce}`);
         if (currentNonce !== chatPreviewList.nonce) {
           return;
         }
@@ -405,10 +355,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     const currentNonce = chatPreviewList.nonce;
     const currentPage = newpage;
 
-    if (
-      type === CONSTANTS.CHAT.LIST_TYPE.CHATS ||
-      type === CONSTANTS.CHAT.LIST_TYPE.REQUESTS
-    ) {
+    if (type === CONSTANTS.CHAT.LIST_TYPE.CHATS || type === CONSTANTS.CHAT.LIST_TYPE.REQUESTS) {
       const chatList = await fetchChatList({
         type,
         page: newpage,
@@ -420,18 +367,14 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
         const transformedChats = transformChatItems(chatList);
 
         // return if nonce doesn't match or if page plus 1 is not the same as new page
-        if (
-          currentNonce !== chatPreviewList.nonce ||
-          chatPreviewList.page + 1 !== currentPage
-        ) {
+        if (currentNonce !== chatPreviewList.nonce || chatPreviewList.page + 1 !== currentPage) {
           return;
         }
 
         setChatPreviewList((prev) => ({
           nonce: generateRandomNonce(),
           items: [...prev.items, ...transformedChats].filter(
-            (item, index, self) =>
-              index === self.findIndex((t) => t.chatId === item.chatId)
+            (item, index, self) => index === self.findIndex((t) => t.chatId === item.chatId)
           ),
           page: newpage,
           preloading: false,
@@ -447,10 +390,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
         }
       } else {
         // return if nonce doesn't match or if page plus 1 is not the same as new page
-        if (
-          currentNonce !== chatPreviewList.nonce ||
-          chatPreviewList.page + 1 !== newpage
-        ) {
+        if (currentNonce !== chatPreviewList.nonce || chatPreviewList.page + 1 !== newpage) {
           return;
         }
 
@@ -491,10 +431,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
   };
 
   // Set badge
-  const setBadge: (chatId: string, num: number) => void = (
-    chatId: string,
-    num: number
-  ) => {
+  const setBadge: (chatId: string, num: number) => void = (chatId: string, num: number) => {
     // increment badge
     setChatPreviewListMeta((prev) => ({
       ...prev,
@@ -517,15 +454,10 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
   // Effects
 
   useEffect(() => {
-    if (
-      options?.prefillChatPreviewList &&
-      options?.prefillChatPreviewList.length
-    ) {
+    if (options?.prefillChatPreviewList && options?.prefillChatPreviewList.length) {
       setChatPreviewList({
         nonce: generateRandomNonce(),
-        items: options?.prefillChatPreviewList.map(
-          (list) => list.chatPreviewPayload
-        ),
+        items: options?.prefillChatPreviewList.map((list) => list.chatPreviewPayload),
         page: 1,
         preloading: false,
         loading: false,
@@ -570,12 +502,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
         paging: chatPreviewList.loading || chatPreviewList.resume,
       });
     }
-  }, [
-    chatPreviewList.loading,
-    chatPreviewList.preloading,
-    chatPreviewList.loaded,
-    chatPreviewList.resume,
-  ]);
+  }, [chatPreviewList.loading, chatPreviewList.preloading, chatPreviewList.loaded, chatPreviewList.resume]);
 
   useEffect(() => {
     if (
@@ -583,14 +510,10 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
       listInnerRef?.current &&
       listInnerRef?.current?.parentElement &&
       !chatPreviewList.preloading &&
-      (options.listType === CONSTANTS.CHAT.LIST_TYPE.CHATS ||
-        options.listType === CONSTANTS.CHAT.LIST_TYPE.REQUESTS) &&
+      (options.listType === CONSTANTS.CHAT.LIST_TYPE.CHATS || options.listType === CONSTANTS.CHAT.LIST_TYPE.REQUESTS) &&
       !options?.prefillChatPreviewList
     ) {
-      if (
-        listInnerRef.current.clientHeight + SCROLL_LIMIT >
-        listInnerRef.current.parentElement.clientHeight
-      ) {
+      if (listInnerRef.current.clientHeight + SCROLL_LIMIT > listInnerRef.current.parentElement.clientHeight) {
         // set loading to true
         setChatPreviewList((prev) => ({
           ...prev,
@@ -616,10 +539,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
 
   // If loading becomes active
   useEffect(() => {
-    if (
-      (chatPreviewList.loading || chatPreviewList.resume) &&
-      !options.prefillChatPreviewList
-    ) {
+    if ((chatPreviewList.loading || chatPreviewList.resume) && !options.prefillChatPreviewList) {
       loadMoreChats();
     }
   }, [chatPreviewList.loading, chatPreviewList.resume]);
@@ -627,10 +547,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
   // If badges count change
   useEffect(() => {
     // Count all badges object that are greater than 0
-    const count = Object.values(chatPreviewListMeta.badges).reduce(
-      (acc, cur) => (acc > 0 ? 1 + cur : cur),
-      0
-    );
+    const count = Object.values(chatPreviewListMeta.badges).reduce((acc, cur) => (acc > 0 ? 1 + cur : cur), 0);
 
     // Call onBadgeCountChange if present
     if (options?.onUnreadCountChange) {
@@ -640,10 +557,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
 
   // Define stream objects
   useEffect(() => {
-    if (
-      Object.keys(chatStream || {}).length > 0 &&
-      chatStream.constructor === Object
-    ) {
+    if (Object.keys(chatStream || {}).length > 0 && chatStream.constructor === Object) {
       if (options.listType === CONSTANTS.CHAT.LIST_TYPE.CHATS) {
         transformStreamMessage(chatStream);
       }
@@ -651,48 +565,27 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
   }, [chatStream]);
 
   useEffect(() => {
-    if (
-      Object.keys(groupCreateStream).length > 0 &&
-      groupCreateStream.constructor === Object
-    ) {
-      if (
-        options.listType === CONSTANTS.CHAT.LIST_TYPE.CHATS &&
-        groupCreateStream.origin === 'self'
-      ) {
+    if (Object.keys(groupCreateStream).length > 0 && groupCreateStream.constructor === Object) {
+      if (options.listType === CONSTANTS.CHAT.LIST_TYPE.CHATS && groupCreateStream.origin === 'self') {
         transformGroupCreationStream(groupCreateStream);
-      } else if (
-        options.listType === CONSTANTS.CHAT.LIST_TYPE.REQUESTS &&
-        groupCreateStream.origin === 'other'
-      ) {
+      } else if (options.listType === CONSTANTS.CHAT.LIST_TYPE.REQUESTS && groupCreateStream.origin === 'other') {
         transformGroupCreationStream(groupCreateStream);
       }
     }
   }, [groupCreateStream]);
 
   useEffect(() => {
-    if (
-      Object.keys(chatRequestStream || {}).length > 0 &&
-      chatRequestStream.constructor === Object
-    ) {
-      if (
-        options.listType === CONSTANTS.CHAT.LIST_TYPE.CHATS &&
-        chatRequestStream.origin === 'self'
-      ) {
+    if (Object.keys(chatRequestStream || {}).length > 0 && chatRequestStream.constructor === Object) {
+      if (options.listType === CONSTANTS.CHAT.LIST_TYPE.CHATS && chatRequestStream.origin === 'self') {
         transformStreamMessage(chatRequestStream);
-      } else if (
-        options.listType === CONSTANTS.CHAT.LIST_TYPE.REQUESTS &&
-        chatRequestStream.origin === 'other'
-      ) {
+      } else if (options.listType === CONSTANTS.CHAT.LIST_TYPE.REQUESTS && chatRequestStream.origin === 'other') {
         transformStreamMessage(chatRequestStream);
       }
     }
   }, [chatRequestStream]);
   console.debug(chatStream, 'chat preview list chat stream event');
   useEffect(() => {
-    if (
-      Object.keys(chatAcceptStream || {}).length > 0 &&
-      chatAcceptStream.constructor === Object
-    ) {
+    if (Object.keys(chatAcceptStream || {}).length > 0 && chatAcceptStream.constructor === Object) {
       transformAcceptedRequest(chatAcceptStream);
     }
   }, [chatAcceptStream]);
@@ -745,9 +638,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
               });
             else if (account)
               formattedChatId = pCAIP10ToWallet(
-                chatInfo?.participants.find(
-                  (address) => address != walletToPCAIP10(account)
-                ) || formattedChatId
+                chatInfo?.participants.find((address) => address != walletToPCAIP10(account)) || formattedChatId
               );
 
             //fetch  profile
@@ -770,12 +661,8 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
                 ...searchedChat,
                 chatId: chatInfo?.chatId || formattedChatId,
                 chatGroup: !!groupProfile,
-                chatPic:
-                  (userProfile?.profile?.picture ?? groupProfile?.groupImage) ||
-                  null,
-                chatParticipant: groupProfile
-                  ? groupProfile?.groupName
-                  : formattedChatId!,
+                chatPic: (userProfile?.profile?.picture ?? groupProfile?.groupImage) || null,
+                chatParticipant: groupProfile ? groupProfile?.groupName : formattedChatId!,
               };
               //fetch latest chat
               const latestMessage = await fetchLatestMessage({
@@ -793,10 +680,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
               }
 
               // return if nonce doesn't match or if page is not 1
-              if (
-                currentNonce !== chatPreviewList.nonce ||
-                chatPreviewList.page !== 1
-              ) {
+              if (currentNonce !== chatPreviewList.nonce || chatPreviewList.page !== 1) {
                 return;
               }
               setChatPreviewList((prev) => ({
@@ -836,9 +720,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     } catch (e) {
       // return if nonce doesn't match
       console.debug(e);
-      console.debug(
-        `Errored: currentNonce: ${currentNonce}, chatPreviewList.nonce: ${chatPreviewList.nonce}`
-      );
+      console.debug(`Errored: currentNonce: ${currentNonce}, chatPreviewList.nonce: ${chatPreviewList.nonce}`);
       if (currentNonce !== chatPreviewList.nonce) {
         return;
       }
@@ -887,7 +769,6 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
     }
   };
 
-  
   // Render
   return (
     <ChatPreviewListContainer
@@ -903,24 +784,21 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
             key={item.chatId}
             chatPreviewPayload={item}
             badge={
-              options?.prefillChatPreviewList &&
-              options?.prefillChatPreviewList[index].badge
+              options?.prefillChatPreviewList && options?.prefillChatPreviewList[index].badge
                 ? options?.prefillChatPreviewList[index].badge
                 : chatPreviewListMeta.badges
                 ? { count: chatPreviewListMeta.badges[item.chatId!] }
                 : { count: 0 }
             }
             selected={
-              options?.prefillChatPreviewList &&
-              options?.prefillChatPreviewList[index].selected
+              options?.prefillChatPreviewList && options?.prefillChatPreviewList[index].selected
                 ? options?.prefillChatPreviewList[index].selected
                 : chatPreviewListMeta.selectedChatId === item.chatId
                 ? true
                 : false
             }
             setSelected={
-              options?.prefillChatPreviewList &&
-              options?.prefillChatPreviewList[index].setSelected
+              options?.prefillChatPreviewList && options?.prefillChatPreviewList[index].setSelected
                 ? options?.prefillChatPreviewList[index].setSelected
                 : setSelectedBadge
             }
@@ -931,13 +809,14 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
 
       {/* if errored out for any reason */}
       {chatPreviewList.errored && (
-        <Section padding="10px" flexDirection="column">
+        <Section
+          padding="10px"
+          flexDirection="column"
+        >
           <Span margin="0 0 10px 0">{chatPreviewList.error?.message}</Span>
           {!!(
-            chatPreviewList.error?.code !==
-              ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_INVALID_SEARCH_ERROR &&
-            chatPreviewList.error?.code !==
-              ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_INSUFFICIENT_INPUT
+            chatPreviewList.error?.code !== ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_INVALID_SEARCH_ERROR &&
+            chatPreviewList.error?.code !== ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_INSUFFICIENT_INPUT
           ) && (
             <Button
               onClick={() => {
@@ -947,36 +826,12 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
 
                 setChatPreviewList((prev) => ({
                   ...prev,
-                  items:
-                    errorCode ===
-                    ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_PRELOAD_ERROR
-                      ? []
-                      : prev.items,
-                  page:
-                    errorCode ===
-                    ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_PRELOAD_ERROR
-                      ? 1
-                      : prev.page,
-                  preloading:
-                    errorCode ===
-                    ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_PRELOAD_ERROR
-                      ? true
-                      : false,
-                  loading:
-                    errorCode ===
-                    ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_LOAD_ERROR
-                      ? true
-                      : false,
-                  reset:
-                    errorCode ===
-                    ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_PRELOAD_ERROR
-                      ? true
-                      : false,
-                  resume:
-                    errorCode ===
-                    ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_LOAD_ERROR
-                      ? true
-                      : false,
+                  items: errorCode === ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_PRELOAD_ERROR ? [] : prev.items,
+                  page: errorCode === ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_PRELOAD_ERROR ? 1 : prev.page,
+                  preloading: errorCode === ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_PRELOAD_ERROR ? true : false,
+                  loading: errorCode === ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_LOAD_ERROR ? true : false,
+                  reset: errorCode === ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_PRELOAD_ERROR ? true : false,
+                  resume: errorCode === ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_LOAD_ERROR ? true : false,
                   errored: false,
                 }));
               }}
@@ -991,12 +846,14 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (
         </Section>
       )}
 
-      {(chatPreviewList.preloading || chatPreviewList.loading) &&
-        !chatPreviewList.errored && (
-          <Section padding="10px" flexDirection="column">
-            <Spinner color={theme.spinnerColor} />
-          </Section>
-        )}
+      {(chatPreviewList.preloading || chatPreviewList.loading) && !chatPreviewList.errored && (
+        <Section
+          padding="10px"
+          flexDirection="column"
+        >
+          <Spinner color={theme.spinnerColor} />
+        </Section>
+      )}
     </ChatPreviewListContainer>
   );
 };
