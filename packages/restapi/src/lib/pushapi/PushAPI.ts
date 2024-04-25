@@ -8,7 +8,7 @@ import { Chat } from './chat';
 import { Profile } from './profile';
 import { Encryption } from './encryption';
 import { User } from './user';
-import { PushStream } from '../pushstream/PushStream';
+import { PushStream, StreamType } from '../pushstream/PushStream';
 import { Channel } from '../pushNotification/channel';
 import { Notification } from '../pushNotification/notification';
 import {
@@ -18,7 +18,7 @@ import {
 import { ALPHA_FEATURE_CONFIG } from '../config';
 import { Space } from './space';
 import { Video } from './video';
-import { isValidNFTCAIP } from '../helpers';
+import { isValidNFTCAIP, walletToPCAIP10 } from '../helpers';
 import { LRUCache } from 'lru-cache';
 import { cache } from '../helpers/cache';
 import { v4 as uuidv4 } from 'uuid';
@@ -274,7 +274,7 @@ export class PushAPI {
           readMode = true;
         }
       }
-
+      derivedAccount = walletToPCAIP10(derivedAccount);
       // Initialize PushAPI instance
       const api = new PushAPI(
         settings.env as ENV,
@@ -343,7 +343,7 @@ export class PushAPI {
   }
 
   async initStream(
-    listen: STREAM[],
+    listen: StreamType[],
     options?: PushStreamInitializeProps
   ): Promise<PushStream> {
     if (this.stream) {
