@@ -18,13 +18,13 @@ interface IThemeProps {
   theme?: IChatTheme;
 }
 
-export type SupportChatV2Props = {
+export type ChatWidgetProps = {
   supportAddress: string;
   modalTitle?: string;
   welcomeComponent?: React.ReactNode;
 };
 
-export const SupportChatV2: React.FC<SupportChatV2Props> = ({
+export const ChatWidget: React.FC<ChatWidgetProps> = ({
   supportAddress,
   modalTitle = Constants.DEFAULT_TITLE,
   welcomeComponent = null
