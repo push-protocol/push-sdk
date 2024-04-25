@@ -11,13 +11,13 @@ import type {
   IUser,
 } from '@pushprotocol/restapi';
 import { isPCAIP, pCAIP10ToWallet, walletToPCAIP10 } from '../address';
-import { Group } from '../../components';
+import { Group, IChatTheme } from '../../components';
 import { getData } from './localStorage';
 import { ethers } from 'ethers';
 import { PushAPI } from '@pushprotocol/restapi';
 type HandleOnChatIconClickProps = {
   isModalOpen: boolean;
-  setIsModalOpen: (isModalOpen: boolean) => void;
+  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 type GetChatsType = {
@@ -222,3 +222,4 @@ export const appendUniqueMessages = (
   // );
   return appendedArray;
 };
+

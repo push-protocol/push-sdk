@@ -1,22 +1,22 @@
 import { useState, ReactNode, useEffect } from 'react';
+
+import { IUser, PushAPI, SignerType } from '@pushprotocol/restapi';
+
+
 import { Constants, ENV, GUEST_MODE_ACCOUNT } from '../config';
 import {
   ChatDataContext,
   IChatDataContextValues,
 } from '../context/chatContext';
 import { ThemeContext } from '../components/chat/theme/ThemeProvider';
-import useGetChatProfile from '../hooks/useGetChatProfile';
-import { IUser, PushAPI, SignerType } from '@pushprotocol/restapi';
 import { IChatTheme, lightChatTheme } from '../components/chat/theme';
 import { getAddressFromSigner, pCAIP10ToWallet } from '../helpers';
-import useCreateChatProfile from '../hooks/useCreateChatProfile';
-import useDecryptPGPKey from '../hooks/useDecryptPGPKey';
-import useInitializePushUser from '../hooks/useInitializeUser';
 import useInitializeUser from '../hooks/useInitializeUser';
-import useChatProfile from '../hooks/chat/useChatProfile';
 
 import usePushUserInfoUtilities from '../hooks/chat/useUserInfoUtilities';
 import useUserProfile from '../hooks/useUserProfile';
+import { GlobalStyle } from '../components/reusables';
+
 
 export interface IChatUIProviderProps {
   children: ReactNode;
@@ -123,7 +123,6 @@ export const ChatUIProvider = ({
       }
     })();
   }, [account, env, pgpPrivateKey]);
-console.debug('userval',userVal)
   const value: IChatDataContextValues = {
     account: accountVal,
     signer: signerVal,
@@ -151,6 +150,7 @@ console.debug('userval',userVal)
   return (
     <ThemeContext.Provider value={PROVIDER_THEME}>
       <ChatDataContext.Provider value={value}>
+        <GlobalStyle/>
         {children}
       </ChatDataContext.Provider>
     </ThemeContext.Provider>

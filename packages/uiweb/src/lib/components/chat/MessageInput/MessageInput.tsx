@@ -22,6 +22,7 @@ import { ConnectButtonComp } from '../ConnectButton';
 import useToast from '../reusables/NewToast';
 import { ConditionsInformation } from '../ChatProfile/GroupInfoModal';
 import {
+  getAddress,
   pCAIP10ToWallet,
   setAccessControl,
   walletToPCAIP10,
@@ -106,6 +107,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   const [fileUploading, setFileUploading] = useState<boolean>(false);
   const [isRules, setIsRules] = useState<boolean>(false);
   const [isMember, setIsMember] = useState<boolean>(false);
+  const [formattedChatId, setFormattedChatId] = useState<string>('');
+
   //hack for stream not working
   const [chatAcceptStream, setChatAcceptStream] = useState<any>({}); // to track any new messages
   const [participantRemoveStream, setParticipantRemoveStream] = useState<any>(
@@ -215,7 +218,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
           setVerified(true);
         } else {
           setVerified(false);
-          setAccessControl(chatId, true);
+          setAccessControl(formattedChatId, true);
         }
       }
     }
@@ -225,7 +228,12 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     (async () => {
       if (!user) return;
       if (chatId) {
-        const chat = await fetchChat({ chatId: chatId });
+        let formattedChatId;
+        if (chatId.includes('.')) {
+          formattedChatId = (await getAddress(chatId, env))!;
+        } else formattedChatId = chatId;
+        setFormattedChatId(formattedChatId);
+        const chat = await fetchChat({ chatId: formattedChatId });
         if (Object.keys(chat || {}).length) {
           setChatInfo(chat as ChatInfoResponse);
         }
@@ -237,7 +245,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     (async () => {
       let GroupProfile;
       if (chatInfo && chatInfo?.meta?.group) {
-        GroupProfile = await getGroupByIDnew({ groupId: chatId });
+        GroupProfile = await getGroupByIDnew({ groupId: formattedChatId });
         if (GroupProfile) setGroupInfo(GroupProfile);
       }
     })();
@@ -311,13 +319,13 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   };
 
   const checkVerification = () => {
-    verifyAccessControl({ chatId, did: account! });
+    verifyAccessControl({ chatId:formattedChatId, did: account! });
   };
 
   const handleJoinGroup = async () => {
     if (chatInfo && groupInfo && groupInfo?.isPublic) {
       const response = await joinGroup({
-        chatId,
+        chatId:formattedChatId,
       });
       if (typeof response !== 'string') {
         showSuccess('Success', 'Successfully joined group');
@@ -416,7 +424,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     try {
       const sendMessageResponse = await sendMessage({
         message: content,
-        chatId,
+        chatId:formattedChatId,
         messageType: type as any,
       });
       if (
@@ -424,7 +432,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         typeof sendMessageResponse === 'string' &&
         sendMessageResponse.includes('403')
       ) {
-        setAccessControl(chatId, true);
+        setAccessControl(formattedChatId, true);
         setVerified(false);
         setVerificationSuccessfull(false);
       }
@@ -479,7 +487,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
               alignItems="center"
             >
               <Span
-                padding="8px 8px 8px 16px"
+                padding="8px 8px 8px 0px"
                 color={theme.textColor?.chatReceivedBubbleText}
                 fontSize="15px"
                 fontWeight="500"
@@ -620,7 +628,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
             <SendSection position="static">
               {gif && (
                 <Section
-                  width="34px"
+                  width="30px"
                   height="24px"
                   cursor="pointer"
                   alignSelf="end"
@@ -649,7 +657,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                 {!fileUploading && file && (
                   <>
                     <Section
-                      width="17"
+                      width="18px"
                       height="24px"
                       cursor="pointer"
                       alignSelf="end"
@@ -668,7 +676,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                 <Section
                   cursor="pointer"
                   alignSelf="end"
-                  height="24px"
+                  height="20px"
+                  width='22px'
                   onClick={() => sendTextMsg()}
                 >
                   <SendCompIcon color={theme.iconColor?.sendButton} />
@@ -691,7 +700,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
 };
 
 const TypebarSection = styled(Section)<{ border?: string }>`
-  gap: 10px;
+  // gap: 10px;
   border: ${(props) => props.border || 'none'};
   @media ${device.mobileL} {
     gap: 0px;
@@ -707,7 +716,7 @@ const MultiLineInput = styled.textarea<IThemeProps>`
   font-family: inherit;
   font-weight: 400;
   transform: translateY(3px);
-  font-size: 16px;
+  font-size: 15px;
   outline: none;
   overflow-y: auto;
   box-sizing: border-box;

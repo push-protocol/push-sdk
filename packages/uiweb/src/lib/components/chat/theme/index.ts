@@ -2,7 +2,15 @@
  * @file theme file: all the predefined themes are defined here
  */
 import { CHAT_THEME_OPTIONS } from '../exportedTypes';
-
+// bgColorPrimary: "#fff",
+//   bgColorSecondary: "#D53A94",
+//   textColorPrimary: "#1e1e1e",
+//   textColorSecondary: "#fff",
+//   btnColorPrimary: "#D53A94",
+//   btnColorSecondary: "#494D5F",
+//   border: "1px solid #E4E8EF", done
+//   borderRadius:"24px", done
+//   moduleColor:"#fff",
 //theme type
 interface IBorder {
   chatViewComponent?: string;
@@ -13,6 +21,9 @@ interface IBorder {
   modalInnerComponents?:string;
   chatPreview?:string;
   userProfile?:string;
+  chatWidget?:string;
+  chatSentBubble?: string;
+  chatReceivedBubble?: string;
 }
 interface IBorderRadius {
   chatViewComponent?: string;
@@ -23,6 +34,7 @@ interface IBorderRadius {
   modalInnerComponents?:string;
   chatPreview?:string;
   userProfile?:string;
+  chatWidget?:string;
 }
 interface IBackgroundColor {
   chatViewComponentBackground?: string;
@@ -46,6 +58,8 @@ interface IBackgroundColor {
   chatPreviewBadgeBackground?:string;
   chatPreviewHoverBackground?:string;
   userProfileBackground?:string;
+  chatWidgetModalBackground?:string;
+
 }
 
 interface ITextColor {
@@ -69,6 +83,7 @@ interface ITextColor {
   chatPreviewDateText?:string;
   chatPreviewBadgeText?:string;
   userProfileText?:string;
+  chatWidgetModalHeadingText?:string;
 }
 interface IFont {
   chatProfileText?: string;
@@ -144,7 +159,8 @@ export const lightChatTheme: IChatTheme = {
     modal: '16px',
     modalInnerComponents:'12px',
     chatPreview:'24px',
-    userProfile:'0px'
+    userProfile:'0px',
+    chatWidget:'24px'
   },
 
   backgroundColor: {
@@ -171,7 +187,10 @@ export const lightChatTheme: IChatTheme = {
   chatPreviewSelectedBackground:'#f5f5f5',
   chatPreviewBadgeBackground:'rgb(226,8,128)',
   chatPreviewHoverBackground:'#f5f5f5',
-  userProfileBackground:'#fff'
+  userProfileBackground:'#fff',
+
+  chatWidgetModalBackground:'#fff',
+
   },
 
   fontSize: {
@@ -222,7 +241,10 @@ export const lightChatTheme: IChatTheme = {
     modal:'none',
     modalInnerComponents:'1px solid rgb(194, 203, 219)',
     chatPreview:'none',
-    userProfile:'none'
+    userProfile:'none',
+    chatWidget:'1px solid #E4E8EF',
+    chatReceivedBubble:'none',
+    chatSentBubble:'none'
   },
 
   iconColor: {
@@ -252,7 +274,9 @@ export const lightChatTheme: IChatTheme = {
     chatPreviewMessageText:'#888',
     chatPreviewDateText:'#888',
     chatPreviewBadgeText:'#fff',
-    userProfileText:'#000'
+    userProfileText:'#000',
+    chatWidgetModalHeadingText:'#000',
+
   },
   backdropFilter: 'none',
   spinnerColor: 'rgb(202, 89, 155)',
@@ -268,7 +292,8 @@ export const darkChatTheme: IChatTheme = {
     modal: '16px',
     modalInnerComponents:'12px',
     chatPreview:'24px',
-    userProfile:'0px'
+    userProfile:'0px',
+    chatWidget:'24px'
   },
 
   backgroundColor: {
@@ -293,7 +318,10 @@ export const darkChatTheme: IChatTheme = {
   chatPreviewSelectedBackground:'rgb(64, 70, 80)',
   chatPreviewBadgeBackground:'rgb(226,8,128)',
   chatPreviewHoverBackground:'rgb(64, 70, 80)',
-  userProfileBackground:'rgb(47, 49, 55)'
+  userProfileBackground:'rgb(47, 49, 55)',
+
+  chatWidgetModalBackground:'rgb(47, 49, 55)',
+
   },
 
   fontSize: {
@@ -344,7 +372,9 @@ export const darkChatTheme: IChatTheme = {
     modal:'none',
     modalInnerComponents:'1px solid rgb(74, 79, 103)',
     chatPreview:'none',
-    userProfile:'none'
+    userProfile:'none',
+    chatReceivedBubble:'none',
+    chatSentBubble:'none'
   },
 
   iconColor: {
@@ -374,7 +404,9 @@ export const darkChatTheme: IChatTheme = {
     chatPreviewMessageText:'#888',
     chatPreviewDateText:'#888',
     chatPreviewBadgeText:'#fff',
-    userProfileText:'rgb(182, 188, 214)'
+    userProfileText:'rgb(182, 188, 214)',
+    chatWidgetModalHeadingText:'#fff',
+
   },
   backdropFilter: 'none',
   spinnerColor: 'rgb(202, 89, 155)',
