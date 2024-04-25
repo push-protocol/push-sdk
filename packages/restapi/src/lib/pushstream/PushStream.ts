@@ -18,6 +18,8 @@ import { ProgressHookType, SignerType } from '../types';
 import { ALPHA_FEATURE_CONFIG } from '../config';
 import { ADDITIONAL_META_TYPE } from '../payloads';
 import { v4 as uuidv4 } from 'uuid';
+
+export type StreamType = STREAM | '*';
 export class PushStream extends EventEmitter {
   private pushChatSocket: any;
   private pushNotificationSocket: any;
@@ -26,12 +28,12 @@ export class PushStream extends EventEmitter {
   private raw: boolean;
   private options: PushStreamInitializeProps;
   private chatInstance: Chat;
-  private listen: STREAM[];
+  private listen: StreamType[];
   private disconnected: boolean;
   public uid: string;
   constructor(
     account: string,
-    private _listen: STREAM[],
+    private _listen: StreamType[],
     options: PushStreamInitializeProps,
     private decryptedPgpPvtKey?: string,
     private progressHook?: (progress: ProgressHookType) => void,
@@ -45,7 +47,7 @@ export class PushStream extends EventEmitter {
     this.options = options;
     this.listen = _listen;
     this.disconnected = false;
-    this.uid = uuidv4(); 
+    this.uid = uuidv4();
     this.chatInstance = new Chat(
       this.account,
       this.options.env as ENV,
@@ -58,7 +60,7 @@ export class PushStream extends EventEmitter {
 
   static async initialize(
     account: string,
-    listen: STREAM[],
+    listen: StreamType[],
     env: ENV,
     decryptedPgpPvtKey?: string,
     progressHook?: (progress: ProgressHookType) => void,
@@ -87,6 +89,10 @@ export class PushStream extends EventEmitter {
 
     const accountToUse = settings.overrideAccount || account;
 
+    if (listen.includes('*')) {
+      listen = Object.values(STREAM);
+    }
+
     const stream = new PushStream(
       accountToUse,
       listen,
@@ -102,7 +108,7 @@ export class PushStream extends EventEmitter {
     listen: STREAM[],
     newOptions: PushStreamInitializeProps
   ): Promise<void> {
-    this.uid = uuidv4(); 
+    this.uid = uuidv4();
     this.listen = listen;
     this.options = { ...this.options, ...newOptions };
     await this.disconnect();
@@ -136,7 +142,7 @@ export class PushStream extends EventEmitter {
           !shouldInitializeNotifSocket)
       ) {
         this.emit(STREAM.CONNECT);
-        console.log('Emitted STREAM.CONNECT');
+        //console.log('Emitted STREAM.CONNECT');
       }
     };
 
@@ -156,7 +162,7 @@ export class PushStream extends EventEmitter {
         } else {
           // Emit STREAM.DISCONNECT only if the notification socket was already disconnected
           this.emit(STREAM.DISCONNECT);
-          console.log('Emitted STREAM.DISCONNECT ');
+          //console.log('Emitted STREAM.DISCONNECT ');
         }
       } else if (socketType === 'notif') {
         isNotifSocketConnected = false;
@@ -168,7 +174,7 @@ export class PushStream extends EventEmitter {
         } else {
           // Emit STREAM.DISCONNECT only if the chat socket was already disconnected
           this.emit(STREAM.DISCONNECT);
-          console.log('Emitted STREAM.DISCONNECT');
+          //console.log('Emitted STREAM.DISCONNECT');
         }
       }
     };
@@ -191,11 +197,11 @@ export class PushStream extends EventEmitter {
         }
       } else if (!this.pushChatSocket.connected) {
         // If pushChatSocket exists but is not connected, attempt to reconnect
-        console.log('Attempting to reconnect push chat socket...');
+        //console.log('Attempting to reconnect push chat socket...');
         this.pushChatSocket.connect(); // Assuming connect() is the method to re-establish connection
       } else {
         // If pushChatSocket is already connected
-        console.log('Push chat socket already connected');
+        //console.log('Push chat socket already connected');
       }
     }
 
@@ -216,11 +222,11 @@ export class PushStream extends EventEmitter {
         }
       } else if (!this.pushNotificationSocket.connected) {
         // If pushNotificationSocket exists but is not connected, attempt to reconnect
-        console.log('Attempting to reconnect push notification socket...');
+        //console.log('Attempting to reconnect push notification socket...');
         this.pushNotificationSocket.connect(); // Assuming connect() is the method to re-establish connection
       } else {
         // If pushNotificationSocket is already connected
-        console.log('Push notification socket already connected');
+        //console.log('Push notification socket already connected');
       }
     }
 
@@ -235,7 +241,7 @@ export class PushStream extends EventEmitter {
       this.pushChatSocket.on(EVENTS.CONNECT, async () => {
         isChatSocketConnected = true;
         checkAndEmitConnectEvent();
-        console.log(`Chat Socket Connected (ID: ${this.pushChatSocket.id})`);
+        //console.log(`Chat Socket Connected (ID: ${this.pushChatSocket.id})`);
       });
 
       this.pushChatSocket.on(EVENTS.DISCONNECT, async () => {
@@ -251,6 +257,7 @@ export class PushStream extends EventEmitter {
           modifiedData.event = DataModifier.convertToProposedName(
             modifiedData.event
           );
+          modifiedData.streamUid = this.uid;
           DataModifier.handleToField(modifiedData);
           if (this.shouldEmitChat(data.chatId)) {
             if (
@@ -298,6 +305,7 @@ export class PushStream extends EventEmitter {
             modifiedData.event = DataModifier.convertToProposedName(
               modifiedData.event
             );
+            modifiedData.streamUid = this.uid;
             DataModifier.handleToField(modifiedData);
             if (this.shouldEmitChat(data.chatId)) {
               if (shouldEmit(STREAM.CHAT)) {
@@ -323,6 +331,7 @@ export class PushStream extends EventEmitter {
           );
 
           DataModifier.handleToField(modifiedData);
+          modifiedData.streamUid = this.uid;
 
           if (this.shouldEmitSpace(data.spaceId)) {
             if (
@@ -355,6 +364,7 @@ export class PushStream extends EventEmitter {
           );
 
           DataModifier.handleToField(modifiedData);
+          modifiedData.streamUid = this.uid;
 
           if (this.shouldEmitSpace(data.spaceId)) {
             if (shouldEmit(STREAM.SPACE)) {
@@ -369,9 +379,9 @@ export class PushStream extends EventEmitter {
 
     if (this.pushNotificationSocket) {
       this.pushNotificationSocket.on(EVENTS.CONNECT, async () => {
-        console.log(
+        /*console.log(
           `Notification Socket Connected (ID: ${this.pushNotificationSocket.id})`
-        );
+        );*/
         isNotifSocketConnected = true;
         checkAndEmitConnectEvent();
       });
@@ -397,7 +407,7 @@ export class PushStream extends EventEmitter {
                 : MessageOrigin.Other,
               this.raw
             );
-
+            modifiedData.streamUid = this.uid;
             this.emit(STREAM.VIDEO, modifiedData);
           } else {
             // Channel Notification
@@ -407,6 +417,7 @@ export class PushStream extends EventEmitter {
               this.account === data.sender ? 'self' : 'other',
               this.raw
             );
+            modifiedData.streamUid = this.uid;
 
             if (this.shouldEmitChannel(modifiedData.from)) {
               if (shouldEmit(STREAM.NOTIF)) {

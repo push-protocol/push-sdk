@@ -277,6 +277,7 @@ export interface NotificationEvent {
     chatid?: string;
   };
   source: string;
+  streamUid?: string
   raw?: {
     verificationProof: string;
   };
@@ -300,6 +301,7 @@ export interface VideoEvent {
   origin: MessageOrigin;
   timestamp: string;
   peerInfo: VideoPeerInfo;
+  streamUid?: string;
   raw?: GroupEventRawData;
 }
 

@@ -392,8 +392,11 @@ export class Chat {
 
       status: async (
         chatId: string,
-        accountId: string
+        options?: {
+          overrideAccount?: string;
+        }
       ): Promise<ParticipantStatus> => {
+        const accountId = options?.overrideAccount || this.account;
         const status = await PUSH_CHAT.getGroupMemberStatus({
           chatId: chatId,
           did: accountId,
