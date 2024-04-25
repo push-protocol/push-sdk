@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.7.11](https://github.com/push-protocol/push-sdk/compare/restapi-1.7.10...restapi-1.7.11) (2024-04-25)
+
+
+### Bug Fixes
+
+* Merge branch 'main' into deployment ([b367674](https://github.com/push-protocol/push-sdk/commit/b367674c1f1270b75dd11416fe4a77c4d579298e))
+* stream improvements ([#1247](https://github.com/push-protocol/push-sdk/issues/1247)) ([8874df0](https://github.com/push-protocol/push-sdk/commit/8874df07891d12f9410dcd4dd21e467d07c45623))
+
+
+
 ## [1.7.10](https://github.com/push-protocol/push-sdk/compare/restapi-1.7.9...restapi-1.7.10) (2024-04-23)
 
 
