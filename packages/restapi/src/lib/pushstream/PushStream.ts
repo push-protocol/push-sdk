@@ -29,6 +29,8 @@ export class PushStream extends EventEmitter {
   private listen: STREAM[];
   private disconnected: boolean;
   public uid: string;
+  public chatSocketCount: number;
+  public notifSocketCount: number;
   constructor(
     account: string,
     private _listen: STREAM[],
@@ -45,7 +47,9 @@ export class PushStream extends EventEmitter {
     this.options = options;
     this.listen = _listen;
     this.disconnected = false;
-    this.uid = uuidv4(); 
+    this.uid = uuidv4();
+    this.chatSocketCount = 0;
+    this.notifSocketCount = 0;
     this.chatInstance = new Chat(
       this.account,
       this.options.env as ENV,
@@ -102,7 +106,7 @@ export class PushStream extends EventEmitter {
     listen: STREAM[],
     newOptions: PushStreamInitializeProps
   ): Promise<void> {
-    this.uid = uuidv4(); 
+    this.uid = uuidv4();
     this.listen = listen;
     this.options = { ...this.options, ...newOptions };
     await this.disconnect();
@@ -176,6 +180,10 @@ export class PushStream extends EventEmitter {
     if (shouldInitializeChatSocket) {
       if (!this.pushChatSocket) {
         // If pushChatSocket does not exist, create a new socket connection
+        console.log(
+          'pushChatSocket does not exist, create a new socket connection...'
+        );
+        this.chatSocketCount++;
         this.pushChatSocket = await createSocketConnection({
           user: walletToPCAIP10(this.account),
           socketType: 'chat',
@@ -192,6 +200,7 @@ export class PushStream extends EventEmitter {
       } else if (!this.pushChatSocket.connected) {
         // If pushChatSocket exists but is not connected, attempt to reconnect
         console.log('Attempting to reconnect push chat socket...');
+        this.chatSocketCount++;
         this.pushChatSocket.connect(); // Assuming connect() is the method to re-establish connection
       } else {
         // If pushChatSocket is already connected
@@ -202,6 +211,9 @@ export class PushStream extends EventEmitter {
     if (shouldInitializeNotifSocket) {
       if (!this.pushNotificationSocket) {
         // If pushNotificationSocket does not exist, create a new socket connection
+        console.log(
+          'pushNotificationSocket does not exist, create a new socket connection...'
+        );
         this.pushNotificationSocket = await createSocketConnection({
           user: pCAIP10ToWallet(this.account),
           env: this.options?.env as ENV,
@@ -210,13 +222,14 @@ export class PushStream extends EventEmitter {
             reconnectionAttempts: this.options?.connection?.retries ?? 3,
           },
         });
-
+        this.notifSocketCount++;
         if (!this.pushNotificationSocket) {
           throw new Error('Push notification socket not connected');
         }
       } else if (!this.pushNotificationSocket.connected) {
         // If pushNotificationSocket exists but is not connected, attempt to reconnect
         console.log('Attempting to reconnect push notification socket...');
+        this.notifSocketCount++;
         this.pushNotificationSocket.connect(); // Assuming connect() is the method to re-establish connection
       } else {
         // If pushNotificationSocket is already connected
@@ -454,10 +467,18 @@ export class PushStream extends EventEmitter {
   }
 
   public connected(): boolean {
-    return (
-      (this.pushNotificationSocket && this.pushNotificationSocket.connected) ||
-      (this.pushChatSocket && this.pushChatSocket.connected)
+    const isNotificationSocketConnected: boolean =
+      this.pushNotificationSocket && this.pushNotificationSocket.connected;
+    const isChatSocketConnected: boolean =
+      this.pushChatSocket && this.pushChatSocket.connected;
+
+    // Log the connection status of both sockets
+    console.log(
+      `Notification Socket Connected: ${isNotificationSocketConnected}`
     );
+    console.log(`Chat Socket Connected: ${isChatSocketConnected}`);
+
+    return isNotificationSocketConnected || isChatSocketConnected;
   }
 
   public async disconnect(): Promise<void> {
