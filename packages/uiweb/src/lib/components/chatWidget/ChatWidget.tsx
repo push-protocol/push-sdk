@@ -19,13 +19,13 @@ interface IThemeProps {
 }
 
 export type ChatWidgetProps = {
-  supportAddress: string;
+  chatId: string;
   modalTitle?: string;
   welcomeComponent?: React.ReactNode;
 };
 
 export const ChatWidget: React.FC<ChatWidgetProps> = ({
-  supportAddress,
+  chatId,
   modalTitle = Constants.DEFAULT_TITLE,
   welcomeComponent = null
 }) => {
@@ -44,7 +44,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
       )}
       {isModalOpen && (
         <Modal
-          chatId={supportAddress}
+          chatId={chatId}
           isModalOpen={isModalOpen}
           setIsModalOpen={setIsModalOpen}
           modalTitle={modalTitle}

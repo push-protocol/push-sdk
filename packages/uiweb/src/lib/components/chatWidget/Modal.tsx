@@ -40,7 +40,7 @@ export const Modal: React.FC<ModalProps> = ({
           textAlign="center"
           fontSize="20px"
           fontWeight="500"
-          color={theme?.textColor?.supportChatModalHeadingText}
+          color={theme?.textColor?.chatWidgetModalHeadingText}
         >
           {modalTitle}
         </Span>
@@ -76,7 +76,7 @@ export const Modal: React.FC<ModalProps> = ({
       </Section>
       <Div width="100%" textAlign="center">
         <SponserPushIcon
-          color={theme?.textColor?.supportChatModalHeadingText}
+          color={theme?.textColor?.chatWidgetModalHeadingText}
         />
       </Div>
     </Container>
@@ -90,11 +90,11 @@ const Container = styled.div<IThemeProps>`
   flex-direction: column;
   box-sizing: border-box;
   background: ${(props) =>
-    props.theme?.backgroundColor?.supportChatModalBackground};
-  border: ${(props) => props.theme?.border?.supportChat};
+    props.theme?.backgroundColor?.chatWidgetModalBackground};
+  border: ${(props) => props.theme?.border?.chatWidget};
 
   box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.07);
-  border-radius: ${(props) => props.theme?.borderRadius?.supportChat};
+  border-radius: ${(props) => props.theme?.borderRadius?.chatWidget};
   height: 585px;
   max-height: 585px;
   width: 350px;
@@ -102,7 +102,7 @@ const Container = styled.div<IThemeProps>`
   padding: 0 15px;
 `;
 const HeaderSection = styled(Section)<IThemeProps>`
-  border-bottom: ${(props) => props.theme.border?.supportChat};
+  border-bottom: ${(props) => props.theme.border?.chatWidget};
   align-items: center;
   justify-content: center;
   padding: 17px;
