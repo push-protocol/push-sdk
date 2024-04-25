@@ -126,12 +126,17 @@ const MessageCard = ({
   const time = moment(chat.timestamp).format('hh:mm a');
   return (
     <MessageWrapper chat={chat} isGroup={isGroup} maxWidth="70%">
-      <Section
+      <MessageSection
         gap="5px"
         background={
           position
             ? `${theme.backgroundColor?.chatSentBubbleBackground}`
             : `${theme.backgroundColor?.chatReceivedBubbleBackground}`
+        }
+        border = {
+          position
+          ? `${theme.border?.chatSentBubble}`
+          : `${theme.border?.chatReceivedBubble}`
         }
         padding="8px 12px"
         borderRadius={position ? '12px 0px 12px 12px' : '0px 12px 12px 12px'}
@@ -196,7 +201,7 @@ const MessageCard = ({
         >
           {time}
         </Span>
-      </Section>
+      </MessageSection>
     </MessageWrapper>
   );
 };
@@ -391,3 +396,7 @@ const FileDownloadIcon = styled.i`
 const FileDownloadIconAnchor = styled.a`
   font-size: 20px;
 `;
+const MessageSection = styled(Section)<{border:string}>`
+border: ${(props) => props.border};
+`;
+
