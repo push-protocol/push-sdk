@@ -1,18 +1,136 @@
 import { CONSTANTS, PushAPI } from '@pushprotocol/restapi';
 import { ethers } from 'ethers';
-import input from 'input';
 
-console.log("Hello... what's my purpose?")
-console.log("To train all the hackers..")
+// Creating a random signer from a wallet, ideally this is the wallet you will connect
+const signerAlice = ethers.Wallet.createRandom();
+const signerBob = ethers.Wallet.createRandom();
 
-// Create read only user
-const readOnlyAccount = await PushAPI.initialize(null, { 
-  account: '0x0000000000000000000000000000000000000001',
-  env: CONSTANTS.ENV.PROD 
+// Initialize wallet user, pass 'prod' instead of 'staging' for mainnet apps
+const userAlice = await PushAPI.initialize(signerAlice, {
+  env: CONSTANTS.ENV.PROD,
+});
+const userBob = await PushAPI.initialize(signerBob, {
+  env: CONSTANTS.ENV.PROD,
 });
 
-// get chat info
-const recipient = 'eip155:0x99A08ac6254dcf7ccc37CeC662aeba8eFA666666';
-const chatInfo = await readOnlyAccount.chat.info(recipient);
+// Initialize stream but don't connect yet
+// Checkout all chat stream listen options - https://push.org/docs/chat/build/stream-chats/
+const streamAlice = await userAlice.initStream([
+  CONSTANTS.STREAM.CHAT,
+  CONSTANTS.STREAM.CHAT_OPS,
+  CONSTANTS.STREAM.CONNECT,
+]);
 
-console.log('Chat Info:', chatInfo);
+const streamBob = await userBob.initStream([
+  CONSTANTS.STREAM.CHAT,
+  CONSTANTS.STREAM.CHAT_OPS,
+  CONSTANTS.STREAM.CONNECT,
+]);
+
+let aliceConnected = false;
+let bobConnected = false;
+
+// IMPORTANT: Setup stream events before stream.connect()
+// Connect stream - Alice
+streamAlice.on(CONSTANTS.STREAM.CONNECT, () => {
+  aliceConnected = true;
+  console.log('Alice Stream Connected');
+
+  // Call sendMessage which checks if both Alice and Bob are connected
+  // amd sends a message from Alice to Bob
+  sendMessage();
+});
+
+streamAlice.on(CONSTANTS.STREAM.CONNECT, () => {
+  aliceConnected = true;
+  console.log('Alice Stream Connected 2');
+});
+
+// Connect stream - Bob
+streamBob.on(CONSTANTS.STREAM.CONNECT, () => {
+  bobConnected = true;
+  console.log('Bob Stream Connected');
+
+  // Call sendMessage which checks if both Alice and Bob are connected
+  // amd sends a message from Alice to Bob
+  sendMessage();
+});
+
+const sendMessage = async () => {
+  if (aliceConnected && bobConnected) {
+    // Send a message to Bob after socket connection so that messages as an example
+    console.log(
+      'Sending message from Alice to Bob as we know Alice and Bob stream are both connected and can respond'
+    );
+    console.log('Wait few moments to get messages streaming in');
+    await userAlice.chat.send(signerBob.address, {
+      content: "Gm gm! It's a me... Alice!",
+    });
+  }
+};
+
+// Listen for chat messages - Alice
+streamAlice.on(CONSTANTS.STREAM.CHAT, (chat) => {
+  if (chat.origin === 'other') {
+    // means chat that is coming is sent by other (not self as stream emits both your and other's messages)
+    console.log('Alice received chat message', chat);
+  }
+});
+
+// Listen for chat messages - Bob
+streamBob.on(CONSTANTS.STREAM.CHAT, async (chat) => {
+  if (chat.origin === 'other') {
+    // means chat that is coming is sent by other (not self as stream emits both your and other's messages)
+    console.log('Bob received chat message', chat);
+
+    // Since Bob and Alice are not connected, approve Alice's request
+    await userBob.chat.accept(chat.from);
+    console.log('Bob approved Alice, only required once per chat', chat);
+
+    // send response to Alice
+    await userBob.chat.send(chat.from, {
+      content: 'Nice to meet you Alice! This is Bob!',
+    });
+
+    if (streamAlice.connected()) {
+      console.log('Alice Stream is definitely connected');
+    }
+
+    if (userAlice.stream.connected()) {
+      console.log('Alice Stream is definitely connected 2');
+    }
+
+    // disconnect the streams
+    await streamAlice.disconnect();
+    await streamBob.disconnect();
+  }
+});
+
+// Listen for chat ops - Alice
+streamAlice.on(CONSTANTS.STREAM.CHAT_OPS, (chatops) => {
+  console.log('Alice received chat ops', chatops);
+});
+
+// Listen for chat ops - Bob
+streamBob.on(CONSTANTS.STREAM.CHAT_OPS, (chatops) => {
+  console.log('Bob received chat ops', chatops);
+});
+
+// Listen for disconnect - Alice
+streamAlice.on(CONSTANTS.STREAM.DISCONNECT, () => {
+  console.log('Alice disconnected');
+});
+
+streamAlice.on(CONSTANTS.STREAM.DISCONNECT, () => {
+  console.log('Alice disconnected 2');
+});
+
+// Listen for disconnect - Bob
+streamBob.on(CONSTANTS.STREAM.DISCONNECT, () => {
+  console.log('Bob disconnected');
+});
+
+// Events and methods for socket connection are set, now connect stream
+await streamAlice.connect();
+await streamAlice.connect();
+await streamBob.connect();

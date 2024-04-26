@@ -115,7 +115,9 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
   // } = usePushChatStream();
 
   //event listeners
-  usePushChatStream();
+  // This should be invoked from data provider
+  // usePushChatStream();
+
   useEffect(() => {
     window.addEventListener('chatStream', (e: any) => setChatStream(e.detail));
     window.addEventListener('chatRequestStream', (e: any) => setChatRequestStream(e.detail));

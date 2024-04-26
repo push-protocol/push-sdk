@@ -519,7 +519,9 @@ export const GroupInfoModal = ({
   const [groupUpdateStream, setGroupUpdateStream] = useState<any>({});
 
   //event listners
-  usePushChatStream();
+  // This should be invoked from data provider
+  // usePushChatStream();
+
   useEffect(() => {
     window.addEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
     window.addEventListener('chatRejectStream', (e: any) => setChatRejectStream(e.detail));

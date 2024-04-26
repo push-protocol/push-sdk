@@ -119,7 +119,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   //event listners
-  usePushChatStream();
+  // This should be invoked from data provider
+  // usePushChatStream();
   useEffect(() => {
     window.addEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
     window.addEventListener('participantRemoveStream', (e: any) => setParticipantRemoveStream(e.detail));
