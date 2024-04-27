@@ -1,14 +1,14 @@
 import { IFeeds } from '@pushprotocol/restapi';
-import { ThemeContext } from '../theme/ThemeProvider';
 import { Dispatch, useContext } from 'react';
-import { Section, Span, Spinner } from '../../reusables';
-import useApproveChatRequest from '../../../hooks/chat/useApproveChatRequest';
-import { useChatData } from '../../../hooks';
+import { MdCheckCircle } from 'react-icons/md';
 import styled from 'styled-components';
-import { IChatTheme } from '../theme';
+import { useChatData } from '../../../hooks';
+import useApproveChatRequest from '../../../hooks/chat/useApproveChatRequest';
+import { Section, Span, Spinner } from '../../reusables';
 import { Group } from '../exportedTypes';
 import useToast from '../reusables/NewToast';
-import { MdCheckCircle } from 'react-icons/md';
+import { IChatTheme } from '../theme';
+import { ThemeContext } from '../theme/ThemeProvider';
 
 /**
  * @interface IThemeProps
@@ -22,39 +22,39 @@ export interface IApproveRequestBubbleProps {
   groupInfo?: Group | null;
 }
 
-
-export const ApproveRequestBubble = ({
-  groupInfo = null,
-  chatId,
-}: IApproveRequestBubbleProps) => {
-  const { pgpPrivateKey } = useChatData();
+export const ApproveRequestBubble = ({ groupInfo = null, chatId }: IApproveRequestBubbleProps) => {
+  const { user } = useChatData();
 
   const ApproveRequestText = {
     GROUP: `You were invited to the group ${groupInfo?.groupName}. Please accept to continue messaging in this group.`,
     W2W: ` Please accept to enable push chat from this wallet`,
   };
-  
+
   const theme = useContext(ThemeContext);
-  const { approveChatRequest, loading: approveLoading } =
-    useApproveChatRequest();
-    const approveToast = useToast();
+  const { approveChatRequest, loading: approveLoading } = useApproveChatRequest();
+  const approveToast = useToast();
 
   const handleApproveChatRequest = async () => {
     try {
-      if (!pgpPrivateKey) {
+      if (!user || user.readmode()) {
         return;
       }
 
       const response = await approveChatRequest({
         chatId,
       });
-      
+
       if (response) {
         approveToast.showMessageToast({
           toastTitle: 'Success',
           toastMessage: 'Group Invitation sent',
           toastType: 'SUCCESS',
-          getToastIcon: (size) => <MdCheckCircle size={size} color="green" />,
+          getToastIcon: (size) => (
+            <MdCheckCircle
+              size={size}
+              color="green"
+            />
+          ),
         });
       }
     } catch (error_: Error | any) {
@@ -72,7 +72,7 @@ export const ApproveRequestBubble = ({
       alignSelf="start"
       justifyContent="start"
       maxWidth="600px"
-      width='40%'
+      width="40%"
       minWidth="15%"
       position="relative"
       flexDirection="column"
@@ -85,17 +85,21 @@ export const ApproveRequestBubble = ({
         color={theme.textColor?.chatReceivedBubbleText}
         lineHeight="24px"
       >
-        {groupInfo
-          ? ApproveRequestText.GROUP
-          : ApproveRequestText.W2W}
+        {groupInfo ? ApproveRequestText.GROUP : ApproveRequestText.W2W}
       </Span>
       <Button
         theme={theme}
         onClick={() => (!approveLoading ? handleApproveChatRequest() : null)}
       >
-        {approveLoading ? <Spinner color="#fff" size="24" /> : 'Accept'}
+        {approveLoading ? (
+          <Spinner
+            color="#fff"
+            size="24"
+          />
+        ) : (
+          'Accept'
+        )}
       </Button>
-     
     </Section>
   );
 };
@@ -107,7 +111,7 @@ const Button = styled.button<IThemeProps>`
   border-radius: 8px;
   background: ${(props) => props.theme.backgroundColor!.buttonBackground};
   border: none;
-  color:  ${(props) => props.theme.textColor!.buttonText};
+  color: ${(props) => props.theme.textColor!.buttonText};
   width: 100%;
   font-size: 16px;
   font-weight: 600;

@@ -95,15 +95,26 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
   const [blur, setBlur] = useState<boolean>(false);
 
   //hack for stream not working
-  const [chatStream, setChatStream] = useState<any>({}); // to track any new messages
-  const [chatRequestStream, setChatRequestStream] = useState<any>({}); // to track any new messages
+  // const [chatStream, setChatStream] = useState<any>({}); // to track any new messages
+  // const [chatRequestStream, setChatRequestStream] = useState<any>({}); // to track any new messages
 
-  const [chatAcceptStream, setChatAcceptStream] = useState<any>({}); // to track any new messages
-  const [participantRemoveStream, setParticipantRemoveStream] = useState<any>({}); // to track if a participant is removed from group
-  const [participantLeaveStream, setParticipantLeaveStream] = useState<any>({}); // to track if a participant leaves a group
-  const [participantJoinStream, setParticipantJoinStream] = useState<any>({}); // to track if a participant joins a group
+  // const [chatAcceptStream, setChatAcceptStream] = useState<any>({}); // to track any new messages
+  // const [participantRemoveStream, setParticipantRemoveStream] = useState<any>({}); // to track if a participant is removed from group
+  // const [participantLeaveStream, setParticipantLeaveStream] = useState<any>({}); // to track if a participant leaves a group
+  // const [participantJoinStream, setParticipantJoinStream] = useState<any>({}); // to track if a participant joins a group
 
-  const [groupUpdateStream, setGroupUpdateStream] = useState<any>({});
+  // const [groupUpdateStream, setGroupUpdateStream] = useState<any>({});
+
+  // for stream
+  const {
+    chatStream,
+    chatAcceptStream,
+    chatRequestStream,
+    participantJoinStream,
+    participantLeaveStream,
+    participantRemoveStream,
+    groupUpdateStream,
+  } = useChatData();
 
   // const {
   //   chatStream,
@@ -118,28 +129,27 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
   // This should be invoked from data provider
   // usePushChatStream();
 
-  useEffect(() => {
-    window.addEventListener('chatStream', (e: any) => setChatStream(e.detail));
-    window.addEventListener('chatRequestStream', (e: any) => setChatRequestStream(e.detail));
-    window.addEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
-    window.addEventListener('participantRemoveStream', (e: any) => setParticipantRemoveStream(e.detail));
-    window.addEventListener('participantLeaveStream', (e: any) => setParticipantLeaveStream(e.detail));
-    window.addEventListener('participantJoinStream', (e: any) => setParticipantJoinStream(e.detail));
-    window.addEventListener('groupUpdateStream', (e: any) => setGroupUpdateStream(e.detail));
-    return () => {
-      window.removeEventListener('chatStream', (e: any) => setChatStream(e.detail));
-      window.removeEventListener('chatRequestStream', (e: any) => setChatRequestStream(e.detail));
+  // useEffect(() => {
+  //   window.addEventListener('chatStream', (e: any) => setChatStream(e.detail));
+  //   window.addEventListener('chatRequestStream', (e: any) => setChatRequestStream(e.detail));
+  //   window.addEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
+  //   window.addEventListener('participantRemoveStream', (e: any) => setParticipantRemoveStream(e.detail));
+  //   window.addEventListener('participantLeaveStream', (e: any) => setParticipantLeaveStream(e.detail));
+  //   window.addEventListener('participantJoinStream', (e: any) => setParticipantJoinStream(e.detail));
+  //   window.addEventListener('groupUpdateStream', (e: any) => setGroupUpdateStream(e.detail));
+  //   return () => {
+  //     window.removeEventListener('chatStream', (e: any) => setChatStream(e.detail));
+  //     window.removeEventListener('chatRequestStream', (e: any) => setChatRequestStream(e.detail));
 
-      window.removeEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
-      window.removeEventListener('participantRemoveStream', (e: any) => setParticipantRemoveStream(e.detail));
-      window.removeEventListener('participantLeaveStream', (e: any) => setParticipantLeaveStream(e.detail));
-      window.removeEventListener('participantJoinStream', (e: any) => setParticipantJoinStream(e.detail));
-      window.removeEventListener('groupUpdateStream', (e: any) => setGroupUpdateStream(e.detail));
-    };
-  }, []);
+  //     window.removeEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
+  //     window.removeEventListener('participantRemoveStream', (e: any) => setParticipantRemoveStream(e.detail));
+  //     window.removeEventListener('participantLeaveStream', (e: any) => setParticipantLeaveStream(e.detail));
+  //     window.removeEventListener('participantJoinStream', (e: any) => setParticipantJoinStream(e.detail));
+  //     window.removeEventListener('groupUpdateStream', (e: any) => setGroupUpdateStream(e.detail));
+  //   };
+  // }, []);
   const theme = useContext(ThemeContext);
   const dates = new Set();
-  const { env } = useChatData();
   // useEffect(() => {
   //   setChatStatusText('');
   // }, [chatId, account, env, user]);
@@ -239,6 +249,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
       setChatInfo(updatedChatInfo);
     }
   }, [chatAcceptStream]);
+
   useEffect(() => {
     if (Object.keys(chatStream || {}).length > 0 && chatStream.constructor === Object) {
       transformSteamMessage(chatStream);
@@ -264,7 +275,8 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
     if (!user) {
       return;
     }
-    if (chatInfo && (item?.chatId == chatInfo?.chatId || checkIfNewRequest(item, chatId))) {
+
+    if (initialized.chatInfo && (item?.chatId === initialized.chatInfo?.chatId || checkIfNewRequest(item, chatId))) {
       const transformedMessage = transformStreamToIMessageIPFSWithCID(item);
       if (messages && messages.length) {
         const newChatViewList = appendUniqueMessages(messages, [transformedMessage], false);

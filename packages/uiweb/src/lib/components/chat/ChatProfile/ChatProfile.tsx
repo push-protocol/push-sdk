@@ -143,8 +143,8 @@ export const ChatProfile: React.FC<IChatProfile> = ({
             // TODO - HANDLE ERROR IN UI
           } else {
             // This is DM
-            console.debug('UIWeb::ChatProfile::user.chat.info fetched', chatInfo);
             const recipient = await deriveChatId(chatInfo.recipient, user);
+            console.debug('UIWeb::ChatProfile::user.chat.info fetched', chatInfo, recipient);
 
             try {
               const profileInfo = await user.profile.info({

@@ -506,40 +506,51 @@ export const GroupInfoModal = ({
   const { fetchMembersCount } = useGroupMemberUtilities();
   const { fetchUserProfile } = usePushUser();
 
+  // setup stream
+  const {
+    chatAcceptStream,
+    chatRejectStream,
+    participantRemoveStream,
+    participantLeaveStream,
+    participantJoinStream,
+    participantRoleChangeStream,
+    groupUpdateStream,
+  } = useChatData();
+
   //hack for stream not working
-  const [chatAcceptStream, setChatAcceptStream] = useState<any>({}); // to track any new messages
-  const [chatRejectStream, setChatRejectStream] = useState<any>({}); // to track any rejected request
+  // const [chatAcceptStream, setChatAcceptStream] = useState<any>({}); // to track any new messages
+  // const [chatRejectStream, setChatRejectStream] = useState<any>({}); // to track any rejected request
 
-  const [participantRoleChangeStream, setParticipantRoleChangeStream] = useState<any>({}); // to track if a participant role is changed in a  group
+  // const [participantRoleChangeStream, setParticipantRoleChangeStream] = useState<any>({}); // to track if a participant role is changed in a  group
 
-  const [participantRemoveStream, setParticipantRemoveStream] = useState<any>({}); // to track if a participant is removed from group
-  const [participantLeaveStream, setParticipantLeaveStream] = useState<any>({}); // to track if a participant leaves a group
-  const [participantJoinStream, setParticipantJoinStream] = useState<any>({}); // to track if a participant joins a group
+  // const [participantRemoveStream, setParticipantRemoveStream] = useState<any>({}); // to track if a participant is removed from group
+  // const [participantLeaveStream, setParticipantLeaveStream] = useState<any>({}); // to track if a participant leaves a group
+  // const [participantJoinStream, setParticipantJoinStream] = useState<any>({}); // to track if a participant joins a group
 
-  const [groupUpdateStream, setGroupUpdateStream] = useState<any>({});
+  // const [groupUpdateStream, setGroupUpdateStream] = useState<any>({});
 
   //event listners
   // This should be invoked from data provider
   // usePushChatStream();
 
-  useEffect(() => {
-    window.addEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
-    window.addEventListener('chatRejectStream', (e: any) => setChatRejectStream(e.detail));
-    window.addEventListener('participantRoleChangeStream', (e: any) => setParticipantRoleChangeStream(e.detail));
-    window.addEventListener('participantRemoveStream', (e: any) => setParticipantRemoveStream(e.detail));
-    window.addEventListener('participantLeaveStream', (e: any) => setParticipantLeaveStream(e.detail));
-    window.addEventListener('participantJoinStream', (e: any) => setParticipantJoinStream(e.detail));
-    window.addEventListener('groupUpdateStream', (e: any) => setGroupUpdateStream(e.detail));
-    return () => {
-      window.removeEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
-      window.removeEventListener('chatRejectStream', (e: any) => setChatRejectStream(e.detail));
-      window.removeEventListener('participantRoleChangeStream', (e: any) => setParticipantRoleChangeStream(e.detail));
-      window.removeEventListener('participantRemoveStream', (e: any) => setParticipantRemoveStream(e.detail));
-      window.removeEventListener('participantLeaveStream', (e: any) => setParticipantLeaveStream(e.detail));
-      window.removeEventListener('participantJoinStream', (e: any) => setParticipantJoinStream(e.detail));
-      window.removeEventListener('groupUpdateStream', (e: any) => setGroupUpdateStream(e.detail));
-    };
-  }, []);
+  // useEffect(() => {
+  //   window.addEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
+  //   window.addEventListener('chatRejectStream', (e: any) => setChatRejectStream(e.detail));
+  //   window.addEventListener('participantRoleChangeStream', (e: any) => setParticipantRoleChangeStream(e.detail));
+  //   window.addEventListener('participantRemoveStream', (e: any) => setParticipantRemoveStream(e.detail));
+  //   window.addEventListener('participantLeaveStream', (e: any) => setParticipantLeaveStream(e.detail));
+  //   window.addEventListener('participantJoinStream', (e: any) => setParticipantJoinStream(e.detail));
+  //   window.addEventListener('groupUpdateStream', (e: any) => setGroupUpdateStream(e.detail));
+  //   return () => {
+  //     window.removeEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
+  //     window.removeEventListener('chatRejectStream', (e: any) => setChatRejectStream(e.detail));
+  //     window.removeEventListener('participantRoleChangeStream', (e: any) => setParticipantRoleChangeStream(e.detail));
+  //     window.removeEventListener('participantRemoveStream', (e: any) => setParticipantRemoveStream(e.detail));
+  //     window.removeEventListener('participantLeaveStream', (e: any) => setParticipantLeaveStream(e.detail));
+  //     window.removeEventListener('participantJoinStream', (e: any) => setParticipantJoinStream(e.detail));
+  //     window.removeEventListener('groupUpdateStream', (e: any) => setGroupUpdateStream(e.detail));
+  //   };
+  // }, []);
 
   // const {
   //   chatAcceptStream,

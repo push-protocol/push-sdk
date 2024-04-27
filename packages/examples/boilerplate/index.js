@@ -41,11 +41,6 @@ streamAlice.on(CONSTANTS.STREAM.CONNECT, () => {
   sendMessage();
 });
 
-streamAlice.on(CONSTANTS.STREAM.CONNECT, () => {
-  aliceConnected = true;
-  console.log('Alice Stream Connected 2');
-});
-
 // Connect stream - Bob
 streamBob.on(CONSTANTS.STREAM.CONNECT, () => {
   bobConnected = true;
@@ -84,21 +79,13 @@ streamBob.on(CONSTANTS.STREAM.CHAT, async (chat) => {
     console.log('Bob received chat message', chat);
 
     // Since Bob and Alice are not connected, approve Alice's request
-    await userBob.chat.accept(chat.from);
+    await userBob.chat.accept(chat.chatId);
     console.log('Bob approved Alice, only required once per chat', chat);
 
     // send response to Alice
     await userBob.chat.send(chat.from, {
       content: 'Nice to meet you Alice! This is Bob!',
     });
-
-    if (streamAlice.connected()) {
-      console.log('Alice Stream is definitely connected');
-    }
-
-    if (userAlice.stream.connected()) {
-      console.log('Alice Stream is definitely connected 2');
-    }
 
     // disconnect the streams
     await streamAlice.disconnect();
@@ -121,16 +108,11 @@ streamAlice.on(CONSTANTS.STREAM.DISCONNECT, () => {
   console.log('Alice disconnected');
 });
 
-streamAlice.on(CONSTANTS.STREAM.DISCONNECT, () => {
-  console.log('Alice disconnected 2');
-});
-
 // Listen for disconnect - Bob
 streamBob.on(CONSTANTS.STREAM.DISCONNECT, () => {
   console.log('Bob disconnected');
 });
 
 // Events and methods for socket connection are set, now connect stream
-await streamAlice.connect();
 await streamAlice.connect();
 await streamBob.connect();

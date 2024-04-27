@@ -75,7 +75,7 @@ const SCROLL_LIMIT = 25;
 // Exported Functions
 export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatPreviewListProps) => {
   // get hooks
-  const { env, signer, account, user } = useChatData();
+  const { user } = useChatData();
   const { fetchUserProfile } = usePushUser();
   const { getGroupByIDnew } = useGetGroupByIDnew();
   const { fetchLatestMessage, fetchChatList } = useFetchMessageUtilities();
@@ -101,9 +101,9 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
 
   //hack to fix stream
   // const [chatStream, setChatStream] = useState<any>({}); // to track any new messages
-  const [chatAcceptStream, setChatAcceptStream] = useState<any>({}); // to track any new messages
-  const [chatRequestStream, setChatRequestStream] = useState<any>({}); // any message in request
-  const [groupCreateStream, setGroupCreateStream] = useState<any>({}); // any message in request
+  // const [chatAcceptStream, setChatAcceptStream] = useState<any>({}); // to track any new messages
+  // const [chatRequestStream, setChatRequestStream] = useState<any>({}); // any message in request
+  // const [groupCreateStream, setGroupCreateStream] = useState<any>({}); // any message in request
 
   // set theme
   const theme = useContext(ThemeContext);
@@ -111,26 +111,28 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
 
   // set ref
   const listInnerRef = useRef<HTMLDivElement>(null);
-  const { chatStream } = usePushChatStream();
+
+  // setup stream
+  const { chatStream, chatAcceptStream, chatRequestStream, groupCreateStream } = useChatData();
 
   // event listeners
   // This should be invoked from data provider
   // usePushChatStream();
 
-  useEffect(() => {
-    // window.addEventListener('chatStream', (e: any) => setChatStream(e.detail));
-    window.addEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
-    window.addEventListener('chatRequestStream', (e: any) => setChatRequestStream(e.detail));
-    window.addEventListener('groupCreateStream', (e: any) => setGroupCreateStream(e.detail));
-    return () => {
-      // window.removeEventListener('chatStream', (e: any) =>
-      //   setChatStream(e.detail)
-      // );
-      window.removeEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
-      window.removeEventListener('chatRequestStream', (e: any) => setChatRequestStream(e.detail));
-      window.removeEventListener('groupCreateStream', (e: any) => setGroupCreateStream(e.detail));
-    };
-  }, []);
+  // useEffect(() => {
+  //   // window.addEventListener('chatStream', (e: any) => setChatStream(e.detail));
+  //   window.addEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
+  //   window.addEventListener('chatRequestStream', (e: any) => setChatRequestStream(e.detail));
+  //   window.addEventListener('groupCreateStream', (e: any) => setGroupCreateStream(e.detail));
+  //   return () => {
+  //     // window.removeEventListener('chatStream', (e: any) =>
+  //     //   setChatStream(e.detail)
+  //     // );
+  //     window.removeEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
+  //     window.removeEventListener('chatRequestStream', (e: any) => setChatRequestStream(e.detail));
+  //     window.removeEventListener('groupCreateStream', (e: any) => setGroupCreateStream(e.detail));
+  //   };
+  // }, []);
 
   // If push user changes or if options param changes
   useEffect(() => {
@@ -224,10 +226,9 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
       return;
     }
 
-    console.debug('Transforming stream message', item);
-
     // transform the item to IChatPreviewPayload
     const modItem = transformStreamToIChatPreviewPayload(item);
+    console.debug('Transforming stream message', modItem);
 
     // now check if this message is already present in the list
     const chatItem = chatPreviewList.items.find((chatItem) => chatItem.chatId === modItem.chatId);
@@ -249,8 +250,8 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
         modItem.chatParticipant = profile.groupName;
       }
     }
+
     // modify the chat items
-    console.debug('calling twice');
     addChatItems([modItem], true);
   };
 
@@ -470,7 +471,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
     }
   }, [options?.prefillChatPreviewList]);
 
-  // // This is initialize function, only called if user changes (account, env, etc are not required for update)
+  // // This is initialize function, only called if user changes (user?.account, user.env, etc are not required for update)
   // useEffect(() => {
   //   if (!user) {
   //     return;
@@ -622,7 +623,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
               };
             }
           }
-          if (pCAIP10ToWallet(formattedChatId) == pCAIP10ToWallet(account!)) {
+          if (pCAIP10ToWallet(formattedChatId) === pCAIP10ToWallet(user?.account || '')) {
             error = {
               code: ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_INVALID_SEARCH_ERROR,
               message: 'Invalid search',
@@ -636,16 +637,16 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
               groupProfile = await getGroupByIDnew({
                 groupId: formattedChatId,
               });
-            else if (account)
+            else if (user?.account)
               formattedChatId = pCAIP10ToWallet(
-                chatInfo?.participants.find((address) => address != walletToPCAIP10(account)) || formattedChatId
+                chatInfo?.participants.find((address) => address != walletToPCAIP10(user?.account)) || formattedChatId
               );
 
             //fetch  profile
             if (!groupProfile) {
               userProfile = await getNewChatUser({
                 searchText: formattedChatId,
-                env,
+                env: user?.env ? user?.env : CONSTANTS.ENV.PROD,
                 fetchChatProfile: fetchUserProfile,
                 user,
               });

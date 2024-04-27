@@ -386,20 +386,23 @@ export const ChatUIProvider = ({
       }
     });
 
-    if (!userInstance.stream?.connected()) {
-      console.debug('UIWeb::ChatDataProvider::attachListenersAndConnect::Stream not connected', userInstance);
+    setTimeout(async () => {
+      console.debug('UIWeb::ChatDataProvider::attachListenersAndConnect::Timeout Connect', userInstance?.stream?.uid);
+      if (!userInstance.stream?.connected()) {
+        console.debug('UIWeb::ChatDataProvider::attachListenersAndConnect::Stream not connected', userInstance);
 
-      await userInstance.stream?.connect();
-      console.debug(
-        'UIWeb::ChatDataProvider::attachListenersAndConnect::Stream listeners attached and stream connected',
-        userInstance?.stream?.uid
-      );
-    } else {
-      console.debug(
-        'UIWeb::ChatDataProvider::attachListenersAndConnect::Stream listeners attached',
-        userInstance?.stream?.uid
-      );
-    }
+        await userInstance.stream?.connect();
+        console.debug(
+          'UIWeb::ChatDataProvider::attachListenersAndConnect::Stream listeners attached and stream connected',
+          userInstance?.stream?.uid
+        );
+      } else {
+        console.debug(
+          'UIWeb::ChatDataProvider::attachListenersAndConnect::Stream listeners attached',
+          userInstance?.stream?.uid
+        );
+      }
+    }, 1000);
   };
 
   const value: IChatDataContextValues = {
