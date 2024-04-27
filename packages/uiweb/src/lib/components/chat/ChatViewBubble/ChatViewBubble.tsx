@@ -113,13 +113,14 @@ const MessageCard = ({ chat, position, isGroup }: { chat: IMessagePayload; posit
       isGroup={isGroup}
       maxWidth="70%"
     >
-      <Section
+      <MessageSection
         gap="5px"
         background={
           position
             ? `${theme.backgroundColor?.chatSentBubbleBackground}`
             : `${theme.backgroundColor?.chatReceivedBubbleBackground}`
         }
+        border={position ? `${theme.border?.chatSentBubble}` : `${theme.border?.chatReceivedBubble}`}
         padding="8px 12px"
         borderRadius={position ? '12px 0px 12px 12px' : '0px 12px 12px 12px'}
         margin="5px 0"
@@ -170,7 +171,7 @@ const MessageCard = ({ chat, position, isGroup }: { chat: IMessagePayload; posit
         >
           {time}
         </Span>
-      </Section>
+      </MessageSection>
     </MessageWrapper>
   );
 };
@@ -390,4 +391,7 @@ const FileDownloadIcon = styled.i`
 
 const FileDownloadIconAnchor = styled.a`
   font-size: 20px;
+`;
+const MessageSection = styled(Section)<{ border: string }>`
+  border: ${(props) => props.border};
 `;

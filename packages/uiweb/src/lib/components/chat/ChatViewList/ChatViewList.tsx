@@ -429,7 +429,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
     if (user) {
       const chatHistory = await historyMessages({
         limit: limit,
-        chatId,
+        chatId: chatId,
         reference,
       });
       if (chatHistory?.length) {

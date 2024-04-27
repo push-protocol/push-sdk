@@ -7,7 +7,7 @@ import { MdCheckCircle, MdError } from 'react-icons/md';
 import { ToastContainer } from 'react-toastify';
 import styled from 'styled-components';
 
-import { pCAIP10ToWallet, setAccessControl, walletToPCAIP10 } from '../../../helpers';
+import { deriveChatId, pCAIP10ToWallet, setAccessControl, walletToPCAIP10 } from '../../../helpers';
 import { useChatData, useClickAway, useDeviceWidthCheck, usePushChatStream } from '../../../hooks';
 import useFetchChat from '../../../hooks/chat/useFetchChat';
 import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
@@ -87,6 +87,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   const [fileUploading, setFileUploading] = useState<boolean>(false);
   const [isRules, setIsRules] = useState<boolean>(false);
   const [isMember, setIsMember] = useState<boolean>(false);
+  const [formattedChatId, setFormattedChatId] = useState<string>('');
+
   //hack for stream not working
   const [chatAcceptStream, setChatAcceptStream] = useState<any>({}); // to track any new messages
   const [participantRemoveStream, setParticipantRemoveStream] = useState<any>({}); // to track if a participant is removed from group
@@ -171,7 +173,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
           setVerified(true);
         } else {
           setVerified(false);
-          setAccessControl(chatId, true);
+          setAccessControl(formattedChatId, true);
         }
       }
     }
@@ -181,7 +183,12 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     (async () => {
       if (!user) return;
       if (chatId) {
-        const chat = await fetchChat({ chatId: chatId });
+        let formattedChatId;
+        if (chatId.includes('.')) {
+          formattedChatId = (await deriveChatId(chatId, user))!;
+        } else formattedChatId = chatId;
+        setFormattedChatId(formattedChatId);
+        const chat = await fetchChat({ chatId: formattedChatId });
         if (Object.keys(chat || {}).length) {
           setChatInfo(chat as ChatInfoResponse);
         }
@@ -193,7 +200,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     (async () => {
       let GroupProfile;
       if (chatInfo && chatInfo?.meta?.group) {
-        GroupProfile = await getGroupByIDnew({ groupId: chatId });
+        GroupProfile = await getGroupByIDnew({ groupId: formattedChatId });
         if (GroupProfile) setGroupInfo(GroupProfile);
       }
     })();
@@ -274,7 +281,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   const handleJoinGroup = async () => {
     if (chatInfo && groupInfo) {
       const response = await joinGroup({
-        chatId,
+        chatId: formattedChatId,
       });
       if (typeof response !== 'string') {
         showSuccess('Success', 'Successfully joined group');
@@ -387,7 +394,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     try {
       const sendMessageResponse = await sendMessage({
         message: content,
-        chatId,
+        chatId: formattedChatId,
         messageType: type as any,
       });
       if (sendMessageResponse && typeof sendMessageResponse === 'string' && sendMessageResponse.includes('403')) {
@@ -446,7 +453,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
               alignItems="center"
             >
               <Span
-                padding="8px 8px 8px 16px"
+                padding="8px 8px 8px 0px"
                 color={theme.textColor?.chatReceivedBubbleText}
                 fontSize="15px"
                 fontWeight="500"
@@ -665,7 +672,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
 };
 
 const TypebarSection = styled(Section)<{ border?: string }>`
-  gap: 10px;
+  // gap: 10px;
   border: ${(props) => props.border || 'none'};
   @media ${device.mobileL} {
     gap: 0px;
@@ -681,7 +688,7 @@ const MultiLineInput = styled.textarea<IThemeProps>`
   font-family: inherit;
   font-weight: 400;
   transform: translateY(3px);
-  font-size: 16px;
+  font-size: 15px;
   outline: none;
   overflow-y: auto;
   box-sizing: border-box;

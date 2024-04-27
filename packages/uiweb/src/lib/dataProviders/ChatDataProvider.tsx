@@ -287,7 +287,8 @@ export const ChatUIProvider = ({
       console.debug(
         'UIWeb::ChatDataProvider::attachListenersAndConnect::CONNECT',
         userInstance?.uid,
-        userInstance?.stream?.uid
+        userInstance?.stream?.uid,
+        userInstance?.stream
       );
       setIsPushChatStreamConnected(true);
     });
