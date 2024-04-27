@@ -31,6 +31,8 @@ export class PushStream extends EventEmitter {
   public uid: string;
   public chatSocketCount: number;
   public notifSocketCount: number;
+  public chatSocketConnected: boolean;
+  public notifSocketConnected: boolean;
   constructor(
     account: string,
     private _listen: STREAM[],
@@ -50,6 +52,8 @@ export class PushStream extends EventEmitter {
     this.uid = uuidv4();
     this.chatSocketCount = 0;
     this.notifSocketCount = 0;
+    this.chatSocketConnected = false;
+    this.notifSocketConnected = false;
     this.chatInstance = new Chat(
       this.account,
       this.options.env as ENV,
@@ -145,34 +149,44 @@ export class PushStream extends EventEmitter {
     };
 
     const handleSocketDisconnection = async (socketType: 'chat' | 'notif') => {
-      //console.log(`${socketType.toUpperCase()} Socket Disconnected`);
-
       if (socketType === 'chat') {
         isChatSocketConnected = false;
+        this.chatSocketConnected = false;
+        this.chatSocketCount--;
         if (isNotifSocketConnected) {
           if (
             this.pushNotificationSocket &&
             this.pushNotificationSocket.connected
           ) {
-            //console.log('Disconnecting Notification Socket...');
+            console.log(
+              'RestAPI::PushStream::handleSocketDisconnection - Disconnecting Notification Socket...'
+            );
             this.pushNotificationSocket.disconnect();
           }
         } else {
           // Emit STREAM.DISCONNECT only if the notification socket was already disconnected
           this.emit(STREAM.DISCONNECT);
-          console.log('Emitted STREAM.DISCONNECT ');
+          console.log(
+            'RestAPI::PushStream::handleSocketDisconnection - Emitted STREAM.DISCONNECT for chat.'
+          );
         }
       } else if (socketType === 'notif') {
         isNotifSocketConnected = false;
+        this.notifSocketConnected = false;
+        this.notifSocketCount--;
         if (isChatSocketConnected) {
           if (this.pushChatSocket && this.pushChatSocket.connected) {
-            //console.log('Disconnecting Chat Socket...');
+            console.log(
+              'RestAPI::PushStream::handleSocketDisconnection - Disconnecting Chat Socket...'
+            );
             this.pushChatSocket.disconnect();
           }
         } else {
           // Emit STREAM.DISCONNECT only if the chat socket was already disconnected
           this.emit(STREAM.DISCONNECT);
-          console.log('Emitted STREAM.DISCONNECT');
+          console.log(
+            'RestAPI::PushStream::handleSocketDisconnection - Emitted STREAM.DISCONNECT for notification.'
+          );
         }
       }
     };
@@ -181,9 +195,9 @@ export class PushStream extends EventEmitter {
       if (!this.pushChatSocket) {
         // If pushChatSocket does not exist, create a new socket connection
         console.log(
-          'pushChatSocket does not exist, create a new socket connection...'
+          'RestAPI::PushStream::ChatSocket::Create - pushChatSocket does not exist, creating new socket connection...'
         );
-        this.chatSocketCount++;
+
         this.pushChatSocket = await createSocketConnection({
           user: walletToPCAIP10(this.account),
           socketType: 'chat',
@@ -195,16 +209,20 @@ export class PushStream extends EventEmitter {
         });
 
         if (!this.pushChatSocket) {
-          throw new Error('Push chat socket not connected');
+          throw new Error(
+            'RestAPI::PushStream::ChatSocket::Error - Push chat socket not connected'
+          );
         }
-      } else if (!this.pushChatSocket.connected) {
+      } else if (this.pushChatSocket && !this.chatSocketConnected) {
         // If pushChatSocket exists but is not connected, attempt to reconnect
-        console.log('Attempting to reconnect push chat socket...');
-        this.chatSocketCount++;
+        console.log(
+          'RestAPI::PushStream::ChatSocket::Reconnect - Attempting to reconnect push chat socket...'
+        );
         this.pushChatSocket.connect(); // Assuming connect() is the method to re-establish connection
       } else {
-        // If pushChatSocket is already connected
-        console.log('Push chat socket already connected');
+        console.log(
+          'RestAPI::PushStream::ChatSocket::Status - Push chat socket already connected'
+        );
       }
     }
 
@@ -212,7 +230,7 @@ export class PushStream extends EventEmitter {
       if (!this.pushNotificationSocket) {
         // If pushNotificationSocket does not exist, create a new socket connection
         console.log(
-          'pushNotificationSocket does not exist, create a new socket connection...'
+          'RestAPI::PushStream::NotifSocket::Create - pushNotificationSocket does not exist, creating new socket connection...'
         );
         this.pushNotificationSocket = await createSocketConnection({
           user: pCAIP10ToWallet(this.account),
@@ -222,18 +240,24 @@ export class PushStream extends EventEmitter {
             reconnectionAttempts: this.options?.connection?.retries ?? 3,
           },
         });
-        this.notifSocketCount++;
+
         if (!this.pushNotificationSocket) {
-          throw new Error('Push notification socket not connected');
+          throw new Error(
+            'RestAPI::PushStream::NotifSocket::Error - Push notification socket not connected'
+          );
         }
-      } else if (!this.pushNotificationSocket.connected) {
+      } else if (this.pushNotificationSocket && !this.notifSocketConnected) {
         // If pushNotificationSocket exists but is not connected, attempt to reconnect
-        console.log('Attempting to reconnect push notification socket...');
+        console.log(
+          'RestAPI::PushStream::NotifSocket::Reconnect - Attempting to reconnect push notification socket...'
+        );
         this.notifSocketCount++;
         this.pushNotificationSocket.connect(); // Assuming connect() is the method to re-establish connection
       } else {
         // If pushNotificationSocket is already connected
-        console.log('Push notification socket already connected');
+        console.log(
+          'RestAPI::PushStream::NotifSocket::Status - Push notification socket already connected'
+        );
       }
     }
 
@@ -247,8 +271,12 @@ export class PushStream extends EventEmitter {
     if (this.pushChatSocket) {
       this.pushChatSocket.on(EVENTS.CONNECT, async () => {
         isChatSocketConnected = true;
+        this.chatSocketCount++;
+        this.chatSocketConnected = true;
         checkAndEmitConnectEvent();
-        console.log(`Chat Socket Connected (ID: ${this.pushChatSocket.id})`);
+        console.log(
+          `RestAPI::PushStream::EVENTS.CONNECT::Chat Socket Connected (ID: ${this.pushChatSocket.id})`
+        );
       });
 
       this.pushChatSocket.on(EVENTS.DISCONNECT, async () => {
@@ -383,15 +411,19 @@ export class PushStream extends EventEmitter {
     if (this.pushNotificationSocket) {
       this.pushNotificationSocket.on(EVENTS.CONNECT, async () => {
         console.log(
-          `Notification Socket Connected (ID: ${this.pushNotificationSocket.id})`
+          `RestAPI::PushStream::NotifSocket::Connect - Notification Socket Connected (ID: ${this.pushNotificationSocket.id})`
         );
         isNotifSocketConnected = true;
+        this.notifSocketCount++;
+        this.notifSocketConnected = true;
         checkAndEmitConnectEvent();
       });
 
       this.pushNotificationSocket.on(EVENTS.DISCONNECT, async () => {
+        console.log(
+          'RestAPI::PushStream::NotifSocket::Disconnect - Notification socket disconnected.'
+        );
         await handleSocketDisconnection('notif');
-        //console.log(`Notification Socket Disconnected`);
       });
 
       this.pushNotificationSocket.on(EVENTS.USER_FEEDS, (data: any) => {
@@ -429,10 +461,9 @@ export class PushStream extends EventEmitter {
           }
         } catch (error) {
           console.error(
-            'Error handling USER_FEEDS event:',
-            error,
-            'Data:',
-            data
+            `RestAPI::PushStream::NotifSocket::UserFeeds::Error - Error handling event: ${error}, Data: ${JSON.stringify(
+              data
+            )}`
           );
         }
       });
@@ -467,31 +498,32 @@ export class PushStream extends EventEmitter {
   }
 
   public connected(): boolean {
-    const isNotificationSocketConnected: boolean =
-      this.pushNotificationSocket && this.pushNotificationSocket.connected;
-    const isChatSocketConnected: boolean =
-      this.pushChatSocket && this.pushChatSocket.connected;
-
-    // Log the connection status of both sockets
+    // Log the connection status of both sockets with detailed prefix
     console.log(
-      `Notification Socket Connected: ${isNotificationSocketConnected}`
+      `RestAPI::PushStream::connected::Notification Socket Connected: ${this.notifSocketConnected}`
     );
-    console.log(`Chat Socket Connected: ${isChatSocketConnected}`);
+    console.log(
+      `RestAPI::PushStream::connected::Chat Socket Connected: ${this.chatSocketConnected}`
+    );
 
-    return isNotificationSocketConnected || isChatSocketConnected;
+    return this.notifSocketConnected || this.chatSocketConnected;
   }
 
   public async disconnect(): Promise<void> {
     // Disconnect push chat socket if connected
-    if (this.pushChatSocket) {
+    if (this.pushChatSocket && this.chatSocketConnected) {
       this.pushChatSocket.disconnect();
-      //console.log('Push chat socket disconnected.');
+      console.log(
+        'RestAPI::PushStream::disconnect::Push chat socket disconnected.'
+      );
     }
 
     // Disconnect push notification socket if connected
-    if (this.pushNotificationSocket) {
+    if (this.pushNotificationSocket && this.notifSocketConnected) {
       this.pushNotificationSocket.disconnect();
-      //console.log('Push notification socket disconnected.');
+      console.log(
+        'RestAPI::PushStream::disconnect::Push notification socket disconnected.'
+      );
     }
   }
 
