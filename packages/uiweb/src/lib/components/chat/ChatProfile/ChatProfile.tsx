@@ -89,7 +89,10 @@ export const ChatProfile: React.FC<IChatProfile> = ({
 
   // To setup web3 name, asynchrounously
   const setupWeb3Name = async (address: string) => {
+    console.debug('UIWeb::ChatProfile::setupWeb3Name sending address for resolution', address);
     const result = await resolveWeb3Name(address, user);
+    console.debug('UIWeb::ChatProfile::setupWeb3Name got result as ', address, result);
+
     setInitialized((prevState) => ({
       ...prevState,
       profile: { ...prevState.profile, web3Name: result },
@@ -140,12 +143,14 @@ export const ChatProfile: React.FC<IChatProfile> = ({
             // TODO - HANDLE ERROR IN UI
           } else {
             // This is DM
+            console.debug('UIWeb::ChatProfile::user.chat.info fetched', chatInfo);
             const recipient = await deriveChatId(chatInfo.recipient, user);
 
             try {
               const profileInfo = await user.profile.info({
                 overrideAccount: recipient,
               });
+              console.debug('UIWeb::ChatProfile::user.profile.info fetched', profileInfo);
 
               profile.name = profileInfo.name;
               profile.icon = profileInfo.picture;

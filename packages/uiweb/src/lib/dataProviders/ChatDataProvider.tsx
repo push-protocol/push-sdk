@@ -26,6 +26,13 @@ import { IUser } from '@pushprotocol/restapi';
 import { IChatTheme } from '../components/chat/theme';
 
 // Constants
+// Save original console methods
+const originalConsole = {
+  log: console.log,
+  debug: console.debug,
+  warn: console.warn,
+  error: console.error,
+};
 
 // Exported Interfaces & Types
 export interface IChatUIProviderProps {
@@ -36,6 +43,7 @@ export interface IChatUIProviderProps {
   pgpPrivateKey?: string | null;
   user?: PushAPI | undefined;
   env?: ENV;
+  debug?: boolean;
 }
 
 // Exported Functions
@@ -47,6 +55,7 @@ export const ChatUIProvider = ({
   env = Constants.ENV.PROD,
   pgpPrivateKey = null,
   theme,
+  debug = false,
 }: IChatUIProviderProps) => {
   // Hooks
   // To initialize user
@@ -184,6 +193,33 @@ export const ChatUIProvider = ({
     return;
   }, [signer, account, env, pgpPrivateKey, user]);
 
+  // To setup debug parameters
+  useEffect(() => {
+    if (debug) {
+      console.debug('UIWeb::ChatDataProvider::Debug mode enabled');
+      enableConsole();
+    } else {
+      console.warn('UIWeb::ChatDataProvider::Debug mode disabled');
+      disableConsole();
+    }
+  }, [debug]);
+
+  // Function to disable console logs
+  const disableConsole = () => {
+    console.log = () => undefined;
+    console.debug = () => undefined;
+    console.warn = () => undefined;
+    console.error = () => undefined;
+  };
+
+  // Function to enable console logs
+  const enableConsole = () => {
+    console.log = originalConsole.log;
+    console.debug = originalConsole.debug;
+    console.warn = originalConsole.warn;
+    console.error = originalConsole.error;
+  };
+
   // useEffect(() => {
   //   (async () => {
 
@@ -300,28 +336,35 @@ export const ChatUIProvider = ({
 
     //Listen for chat messages, your message, request, accept, rejected,
     userInstance?.stream?.on(CONSTANTS.STREAM.CHAT, (message: any) => {
-      console.debug('UIWeb::ChatDataProvider::attachListenersAndConnect::CHAT Payload', message);
+      console.debug('UIWeb::ChatDataProvider::attachListenersAndConnect::CHAT Payload received', message);
 
       if (message.event === 'chat.request') {
-        dispatchEvent(new CustomEvent('chatRequestStream', { detail: message }));
+        // dispatchEvent(new CustomEvent('chatRequestStream', { detail: message }));
+        console.debug('UIWeb::ChatDataProvider::attachListenersAndConnect::chat.request', message);
         setChatRequestStream(message);
       } else if (message.event === 'chat.accept') {
-        dispatchEvent(new CustomEvent('chatAcceptStream', { detail: message }));
+        // dispatchEvent(new CustomEvent('chatAcceptStream', { detail: message }));
+        console.debug('UIWeb::ChatDataProvider::attachListenersAndConnect::chat.accept', message);
         setChatAcceptStream(message);
       } else if (message.event === 'chat.reject') {
-        dispatchEvent(new CustomEvent('chatRejectStream', { detail: message }));
+        // dispatchEvent(new CustomEvent('chatRejectStream', { detail: message }));
+        console.debug('UIWeb::ChatDataProvider::attachListenersAndConnect::chat.reject', message);
         setChatRejectStream(message);
       } else if (message.event === 'chat.group.participant.remove') {
-        dispatchEvent(new CustomEvent('participantRemoveStream', { detail: message }));
+        // dispatchEvent(new CustomEvent('participantRemoveStream', { detail: message }));
+        console.debug('UIWeb::ChatDataProvider::attachListenersAndConnect::chat.group.participant.remove', message);
         setParticipantRemoveStream(message);
       } else if (message.event === 'chat.group.participant.leave') {
-        dispatchEvent(new CustomEvent('participantLeaveStream', { detail: message }));
+        // dispatchEvent(new CustomEvent('participantLeaveStream', { detail: message }));
+        console.debug('UIWeb::ChatDataProvider::attachListenersAndConnect::chat.group.participant.leave', message);
         setParticipantLeaveStream(message);
       } else if (message.event === 'chat.group.participant.join') {
-        dispatchEvent(new CustomEvent('participantJoinStream', { detail: message }));
+        // dispatchEvent(new CustomEvent('participantJoinStream', { detail: message }));
+        console.debug('UIWeb::ChatDataProvider::attachListenersAndConnect::chat.group.participant.join', message);
         setParticipantJoinStream(message);
       } else if (message.event === 'chat.group.participant.role') {
-        dispatchEvent(new CustomEvent('participantRoleChangeStream', { detail: message }));
+        // dispatchEvent(new CustomEvent('participantRoleChangeStream', { detail: message }));
+        console.debug('UIWeb::ChatDataProvider::attachListenersAndConnect::chat.group.participant.role', message);
         setParticipantRoleChangeStream(message);
       } else if (message.event === 'chat.message') {
         // dispatchEvent(new CustomEvent('chatStream', { detail: message }));
@@ -333,10 +376,12 @@ export const ChatUIProvider = ({
     // Listen for group info
     userInstance?.stream?.on(CONSTANTS.STREAM.CHAT_OPS, (chatops: any) => {
       if (chatops.event === 'chat.group.update') {
-        dispatchEvent(new CustomEvent('groupUpdateStream', { detail: chatops }));
+        // dispatchEvent(new CustomEvent('groupUpdateStream', { detail: chatops }));
+        console.debug('UIWeb::ChatDataProvider::attachListenersAndConnect::chat.group.update', chatops);
         setGroupUpdateStream(chatops);
       } else if (chatops.event === 'chat.group.create') {
-        dispatchEvent(new CustomEvent('groupCreateStream', { detail: chatops }));
+        // dispatchEvent(new CustomEvent('groupCreateStream', { detail: chatops }));
+        console.debug('UIWeb::ChatDataProvider::attachListenersAndConnect::chat.group.create', chatops);
         setGroupCreateStream(chatops);
       }
     });

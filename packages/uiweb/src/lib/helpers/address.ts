@@ -1,10 +1,7 @@
 import type { InfuraProvider, Web3Provider } from '@ethersproject/providers';
 import { CONSTANTS, Env, PushAPI, SignerType } from '@pushprotocol/restapi';
 import { ethers } from 'ethers';
-import {
-  CoreContractChainId,
-  InfuraAPIKey,
-} from '../config';
+import { CoreContractChainId, InfuraAPIKey } from '../config';
 import { getUdResolver } from './udResolver';
 
 /**
@@ -77,44 +74,40 @@ export const getProvider = (user: PushAPI | undefined): any => {
   const provider = new ethers.providers.InfuraProvider(chainId, InfuraAPIKey);
 
   return provider;
-}
+};
 
-export const resolveWeb3Name = async (
-  address: string,
-  user: PushAPI | undefined,
-) => {
+export const resolveWeb3Name = async (address: string, user: PushAPI | undefined) => {
   const walletLowercase = pCAIP10ToWallet(address).toLowerCase();
   const checksumWallet = ethers.utils.getAddress(walletLowercase);
- 
+
   // get provider
   const provider = getProvider(user);
 
   let result: string | null = null;
 
   try {
-   const ens =  await provider.lookupAddress(checksumWallet)
-      if (ens) {
-        result = ens;
-        // return ens;
-      } else {
-        try {
-          const udResolver = getUdResolver(user ? user.env : CONSTANTS.ENV.PROD);
-          // attempt reverse resolution on provided address
-          const udName = await udResolver.reverse(checksumWallet);
-          if (udName) {
-            result = udName
-          } else {
-            result = null;
-          }
-        } catch (err) {
-          console.debug(err);
+    const ens = await provider.lookupAddress(checksumWallet);
+    if (ens) {
+      result = ens;
+    } else {
+      try {
+        const udResolver = getUdResolver(user ? user.env : CONSTANTS.ENV.PROD);
+        // attempt reverse resolution on provided address
+        const udName = await udResolver.reverse(checksumWallet);
+        if (udName) {
+          result = udName;
+        } else {
+          result = null;
         }
+      } catch (err) {
+        console.error('UIWeb::helpers::address::resolveWeb3Name::Error in resolving via UD', err);
       }
-
+    }
   } catch (err) {
-    console.debug(err);
+    console.error('UIWeb::helpers::address::resolveWeb3Name::Error in resolving via ENS', err);
   }
 
+  console.debug(`UIWeb::helpers::address::resolveWeb3Name::Wallet: ${checksumWallet} resolved to ${result}`);
   return result;
 };
 
@@ -123,9 +116,7 @@ export const isPCAIP = (id: string) => {
   return id?.startsWith(prefix);
 };
 
-export const getAddressFromSigner = async (
-  signer: SignerType
-): Promise<string> => {
+export const getAddressFromSigner = async (signer: SignerType): Promise<string> => {
   if ('getAddress' in signer) {
     return await signer.getAddress();
   } else {

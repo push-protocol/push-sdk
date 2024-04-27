@@ -3,6 +3,7 @@ import { ethers } from 'ethers';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
 // External Packages
+import { CONSTANTS, IFeeds, IUser } from '@pushprotocol/restapi';
 import styled from 'styled-components';
 
 // Internal Compoonents
@@ -22,13 +23,11 @@ import {
 } from '../helpers';
 
 // Internal Configs
-import { CONSTANTS } from '@pushprotocol/restapi';
 import { ThemeContext } from '../theme/ThemeProvider';
 
 // Assets
 
 // Interfaces & Types
-import { IFeeds, IUser } from '@pushprotocol/restapi';
 import {
   ChatPreviewListErrorCodes,
   Group,
@@ -114,8 +113,9 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
   const listInnerRef = useRef<HTMLDivElement>(null);
   const { chatStream } = usePushChatStream();
 
-  //event listeners
-  usePushChatStream();
+  // event listeners
+  // This should be invoked from data provider
+  // usePushChatStream();
 
   useEffect(() => {
     // window.addEventListener('chatStream', (e: any) => setChatStream(e.detail));
@@ -613,7 +613,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
           let groupProfile: Group;
 
           if (formattedChatId.includes('.')) {
-            const address = await getAddress(formattedChatId, env)!;
+            const address = await getAddress(formattedChatId, user ? user.env : CONSTANTS.ENV.PROD);
             if (address) formattedChatId = pCAIP10ToWallet(address);
             else {
               error = {
