@@ -31,6 +31,11 @@ export type UserSetting = {
 
 export type AliasOptions = Omit<GetAliasInfoOptionsType, 'env'>;
 
+export type AliasInfoOptions = {
+  raw?: boolean;
+  version?: number;
+}
+
 export enum FeedType {
   INBOX = 'INBOX',
   SPAM = 'SPAM',

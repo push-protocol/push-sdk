@@ -5,6 +5,7 @@ import {
   CreateChannelOptions,
   NotificationSettings,
   UserSetting,
+  AliasInfoOptions,
 } from './PushNotificationTypes';
 import * as config from '../config';
 import { getAccountAddress } from '../chat/helpers';
@@ -31,6 +32,7 @@ import {
 } from '../helpers';
 import { axiosGet, axiosPost } from '../utils/axiosUtil';
 import { PushAPI } from '../pushapi/PushAPI';
+import { channel } from 'diagnostics_channel';
 
 // ERROR CONSTANTS
 const ERROR_ACCOUNT_NEEDED = 'Account is required';
@@ -832,6 +834,75 @@ export class PushNotificationBaseClass {
       return channelInfo || null;
     } catch (error) {
       return null;
+    }
+  }
+
+  protected async initiateAddAlias(contract: any, alias: string) {
+    try {
+      if (!this.signer) {
+        throw new Error('Signer is not provided');
+      }
+      const pushSigner = new Signer(this.signer);
+      let addAliasRes
+      if (!pushSigner.isViemSigner(this.signer)) {
+        if (!this.signer.provider) {
+          throw new Error('ethers provider is not provided');
+        }
+
+        const addAliasTrxPromise = contract!['verifyChannelAlias'](alias);
+        const addAliasTrx = await addAliasTrxPromise;
+        await this.signer?.provider?.waitForTransaction(addAliasTrx.hash);
+        addAliasRes = addAliasTrx.hash;
+      } else {
+        if (!contract.write) {
+          throw new Error('viem signer is not provided');
+        }
+
+        const addAliasTrxPromise = contract.write.verifyChannelAlias({
+          args: [alias],
+        });
+        addAliasRes = await addAliasTrxPromise;
+      }
+      return addAliasRes;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  protected async verifyAlias(contract: any, channelAddress: string) {
+    try {
+      if (!this.signer) {
+        throw new Error('Signer is not provided');
+      }
+      const pushSigner = new Signer(this.signer);
+      let verifyAliasRes
+      if (!pushSigner.isViemSigner(this.signer)) {
+        if (!this.signer.provider) {
+          throw new Error('ethers provider is not provided');
+        }
+        const addAliasTrxPromise = contract!['verifyChannelAlias'](channelAddress);
+        const addAliasTrx = await addAliasTrxPromise;
+        await this.signer?.provider?.waitForTransaction(addAliasTrx.hash);
+        verifyAliasRes = addAliasTrx.hash;
+      } else {
+        if (!contract.write) {
+          throw new Error('viem signer is not provided');
+        }
+        const addAliasTrxPromise = contract.write.verifyChannelAlias({
+          args: [channelAddress],
+        });
+        verifyAliasRes = await addAliasTrxPromise;
+      }
+
+      const networkDetails = await pushSigner.getChainId();
+      const aliasAddress = await pushSigner.getAddress();
+
+      const aliasIncaip = `eip155:${networkDetails}:${aliasAddress}`;
+      const channelInfo = await this.getChannelOrAliasInfo(aliasIncaip);
+
+      return { verifyAliasRes, channelInfo };
+    } catch (error: any) {
+      throw new Error(error.message);
     }
   }
 
