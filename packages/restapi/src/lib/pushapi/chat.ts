@@ -26,7 +26,11 @@ import {
 import * as PUSH_USER from '../user';
 import * as PUSH_CHAT from '../chat';
 import { PGPHelper } from '../chat/helpers';
-import { convertToValidDID, isValidPushCAIP } from '../helpers';
+import {
+  convertToValidDID,
+  isValidPushCAIP,
+  walletToPCAIP10,
+} from '../helpers';
 import {
   ChatUpdateGroupProfileType,
   updateGroupProfile,
@@ -297,8 +301,22 @@ export class Chat {
     };
     try {
       const chatInfo = await PUSH_CHAT.getChatInfo(request);
-      const finalRecipient = chatInfo.meta.group ? chatInfo.chatId : recipient;
-
+      const isGroupChat = chatInfo.meta?.group ?? false;
+      let finalRecipient = recipient; // Default to recipient
+      if (isGroupChat) {
+        // If it's a group chat, use the chatId as the recipient
+        finalRecipient = chatInfo.chatId;
+      } else {
+        // If it's not a group chat, find the actual recipient among participants
+        const participants = chatInfo.participants ?? [];
+        // Find the participant that is not the account being used
+        const participant = participants.find(
+          (participant) => participant !== walletToPCAIP10(accountToUse)
+        );
+        if (participant) {
+          finalRecipient = participant;
+        }
+      }
       const response: ChatInfoResponse = {
         meta: chatInfo.meta,
         list: chatInfo.list,

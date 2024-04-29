@@ -183,7 +183,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
           zIndex="unset"
           flexDirection="row"
           gap="10px"
-          margin="0 20px 0 auto"
+          margin="0 10px 0 auto"
           alignSelf="center"
         >
           {chatProfileRightHelperComponent && !groupInfo && (
@@ -259,7 +259,6 @@ export const ChatProfile: React.FC<IChatProfile> = ({
     return null;
   }
 };
-
 const Container = styled.div`
   width: 100%;
   background: ${(props) => props.theme.backgroundColor.chatProfileBackground};
