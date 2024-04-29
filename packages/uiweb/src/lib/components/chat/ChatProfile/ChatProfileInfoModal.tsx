@@ -11,7 +11,6 @@ import { Spinner } from '../../reusables';
 import { Image, Section, Span } from '../../reusables/sharedStyling';
 import ConditionsComponent from '../CreateGroup/ConditionsComponent';
 import { Modal, ModalHeader } from '../reusables';
-import useToast from '../reusables/NewToast';
 import { AddWalletContent } from './AddWalletContent';
 import { IChatProfileUserInfo } from './ChatProfile';
 import { AcceptedMembers, PendingMembers } from './PendingMembers';
@@ -249,13 +248,12 @@ const GroupInformation = ({
   setShowAddMoreWalletModal,
   membersCount,
 }: GroupSectionProps) => {
-  const { user } = useChatData();
+  const { user, toast } = useChatData();
   const [accountStatus, setAccountStatus] = useState<ParticipantStatus | null>(null);
   const [showPendingRequests, setShowPendingRequests] = useState<boolean>(false);
 
   const [copyText, setCopyText] = useState<string>('');
   const isMobile = useMediaQuery(device.mobileL);
-  const groupInfoToast = useToast();
 
   const { fetchMemberStatus } = useGroupMemberUtilities();
 
@@ -269,11 +267,11 @@ const GroupInformation = ({
         if (status && typeof status !== 'string') {
           setAccountStatus(status);
         } else {
-          groupInfoToast.showMessageToast({
+          toast.showMessageToast({
             toastTitle: 'Error',
             toastMessage: 'Error in fetching member details',
             toastType: 'ERROR',
-            getToastIcon: (size) => (
+            getToastIcon: (size: number) => (
               <MdError
                 size={size}
                 color="red"
@@ -494,14 +492,13 @@ export const GroupInfoModal = ({
   });
 
   const isMobile = useMediaQuery(device.mobileL);
-  const groupInfoToast = useToast();
   const [groupMembers, setGroupMembers] = useState<MembersType>({
     accepted: [],
     pending: [],
     loading: false,
   });
   const { fetchMembers, loading: membersLoading } = useGroupMemberUtilities();
-  const { user } = useChatData();
+  const { user, toast } = useChatData();
   const { addMember } = useUpdateGroup();
   const { fetchMembersCount } = useGroupMemberUtilities();
   const { fetchUserProfile } = usePushUser();
@@ -874,11 +871,11 @@ export const GroupInfoModal = ({
       }
 
       if (typeof adminResponse !== 'string' && typeof memberResponse !== 'string') {
-        groupInfoToast.showMessageToast({
+        toast.showMessageToast({
           toastTitle: 'Success',
           toastMessage: 'Group Invitation sent',
           toastType: 'SUCCESS',
-          getToastIcon: (size) => (
+          getToastIcon: (size: number) => (
             <MdCheckCircle
               size={size}
               color="green"
@@ -886,11 +883,11 @@ export const GroupInfoModal = ({
           ),
         });
       } else {
-        groupInfoToast.showMessageToast({
+        toast.showMessageToast({
           toastTitle: 'Error',
           toastMessage: 'Error in adding member',
           toastType: 'ERROR',
-          getToastIcon: (size) => (
+          getToastIcon: (size: number) => (
             <MdError
               size={size}
               color="red"
@@ -900,11 +897,11 @@ export const GroupInfoModal = ({
       }
     } catch (error) {
       console.error('Error', error);
-      groupInfoToast.showMessageToast({
+      toast.showMessageToast({
         toastTitle: 'Error',
         toastMessage: 'Please, try again',
         toastType: 'ERROR',
-        getToastIcon: (size) => (
+        getToastIcon: (size: number) => (
           <MdError
             size={size}
             color="red"

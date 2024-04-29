@@ -3,7 +3,6 @@ import { createPortal } from 'react-dom';
 
 import { IUser } from '@pushprotocol/restapi';
 import { ethers } from 'ethers';
-import { ToastContainer } from 'react-toastify';
 import styled from 'styled-components';
 
 import { resolveWeb3Name, shortenText } from '../../../helpers';
@@ -153,7 +152,6 @@ export const UserProfile: React.FC<UserProfileProps> = ({
             document.body
           )}
       </Conatiner>
-      <ToastContainer />
     </>
   );
 };

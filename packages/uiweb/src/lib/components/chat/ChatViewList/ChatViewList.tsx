@@ -5,7 +5,6 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { IMessageIPFS, IMessageIPFSWithCID, IUser } from '@pushprotocol/restapi';
 import moment from 'moment';
 import { MdError } from 'react-icons/md';
-import { ToastContainer } from 'react-toastify';
 import styled from 'styled-components';
 
 // Internal Compoonents
@@ -20,7 +19,6 @@ import usePushUser from '../../../hooks/usePushUser';
 import { Section, Span, Spinner } from '../../reusables';
 import { ChatViewBubble } from '../ChatViewBubble';
 import { checkIfNewRequest, transformStreamToIMessageIPFSWithCID } from '../helpers';
-import useToast from '../reusables/NewToast';
 import { ActionRequestBubble } from './ActionRequestBubble';
 import { ENCRYPTION_KEYS, EncryptionMessage } from './MessageEncryption';
 
@@ -75,7 +73,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
   const [loading, setLoading] = useState<boolean>(true);
 
   const { chatId, limit = chatLimit, chatFilterList = [] } = options || {};
-  const { user } = useChatData();
+  const { user, toast } = useChatData();
   const [chatInfo, setChatInfo] = useState<ChatInfoResponse | null>(null);
   const [groupInfo, setGroupInfo] = useState<Group | null>(null);
   const [userInfo, setUserInfo] = useState<IUser | null>(null);
@@ -89,7 +87,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
   const { fetchUserProfile } = usePushUser();
   const { getGroupByIDnew } = useGetGroupByIDnew();
   const { fetchMemberStatus } = useGroupMemberUtilities();
-  const chatViewListToast = useToast();
 
   // setup blur
   const [blur, setBlur] = useState<boolean>(false);
@@ -330,11 +327,11 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
   //         console.error('Error in fetching account details, silently ignoring');
   //         setIsMember(false);
   //         //show toast
-  //         // chatViewListToast.showMessageToast({
+  //         // toast.showMessageToast({
   //         //   toastTitle: 'Error',
   //         //   toastMessage: 'Error in fetching member details',
   //         //   toastType: 'ERROR',
-  //         //   getToastIcon: (size) => <MdError size={size} color="red" />,
+  //         //   getToastIcon: (size: number) => <MdError size={size} color="red" />,
   //         // });
   //       }
   //     })();
@@ -582,7 +579,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
           }
         </>
       )}
-      <ToastContainer />
     </ChatViewListCard>
   );
 };

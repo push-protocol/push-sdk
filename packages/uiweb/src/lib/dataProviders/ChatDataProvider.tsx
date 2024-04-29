@@ -69,9 +69,6 @@ export const ChatUIProvider = ({
   // To initialize user
   const { initializeUser } = usePushUser();
 
-  // To initialize toast
-  const toastify = useToast(3000, 'top-right', true);
-
   // State Variables
   const [pushUser, setPushUser] = useState<PushAPI | undefined>(user);
 
@@ -89,6 +86,9 @@ export const ChatUIProvider = ({
   const { fetchUserProfile } = usePushUser();
 
   const [isPushChatStreamConnected, setIsPushChatStreamConnected] = useState<boolean>(false);
+
+  // setup toast
+  const [toastify, setToastify] = useState<any>(null);
 
   const [chatStream, setChatStream] = useState<any>({}); // to track any new messages
   const [chatAcceptStream, setChatAcceptStream] = useState<any>({}); // to track any new messages
@@ -134,6 +134,17 @@ export const ChatUIProvider = ({
       user?.readmode() === pushUser?.readmode()
     );
   };
+
+  // initialize toast hook
+  const { showLoaderToast, showMessageToast } = useToast();
+
+  // Initialize toastify but only once
+  useEffect(() => {
+    if (showLoaderToast && showMessageToast) {
+      console.debug('UIWeb::useToast::initialize::UIWeb::ChatDataProvider::Toastify initialized');
+      setToastify({ showLoaderToast: showLoaderToast, showMessageToast: showMessageToast });
+    }
+  }, []);
 
   // // If
   // useEffect(() => {

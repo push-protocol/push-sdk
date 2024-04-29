@@ -3,8 +3,6 @@ import { useContext, useState } from 'react';
 import { IUser } from '@pushprotocol/restapi';
 import { MdError } from 'react-icons/md';
 
-import useToast from '../reusables/NewToast';
-
 import { findObject } from '../helpers/helper';
 import { AddWallets } from '../reusables';
 import { useChatData } from '../../../hooks';
@@ -28,8 +26,7 @@ export const AddGroupMembers = ({
   isLoading = false,
   isPublic,
 }: AddWalletContentProps) => {
-  const groupInfoToast = useToast();
-  const { account } = useChatData();
+  const { account, toast } = useChatData();
 
   const addMemberToList = async (member: IUser) => {
     let errorMessage = '';
@@ -40,11 +37,11 @@ export const AddGroupMembers = ({
       errorMessage = 'Address is already added';
     }
     if (errorMessage) {
-      groupInfoToast.showMessageToast({
+      toast.showMessageToast({
         toastTitle: 'Error',
         toastMessage: errorMessage,
         toastType: 'ERROR',
-        getToastIcon: (size) => (
+        getToastIcon: (size: number) => (
           <MdError
             size={size}
             color="red"

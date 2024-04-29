@@ -4,7 +4,6 @@ import { IUser } from '@pushprotocol/restapi';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import GifPicker from 'gif-picker-react';
 import { MdCheckCircle, MdError } from 'react-icons/md';
-import { ToastContainer } from 'react-toastify';
 import styled from 'styled-components';
 
 import { deriveChatId, pCAIP10ToWallet, setAccessControl, walletToPCAIP10 } from '../../../helpers';
@@ -23,7 +22,6 @@ import { Div, Section, Span, Spinner } from '../../reusables';
 import { ConditionsInformation } from '../ChatProfile/ChatProfileInfoModal';
 import { ConnectButtonComp } from '../ConnectButton';
 import { Modal, ModalHeader } from '../reusables/Modal';
-import useToast from '../reusables/NewToast';
 import { ThemeContext } from '../theme/ThemeProvider';
 
 import { PUBLIC_GOOGLE_TOKEN, device } from '../../../config';
@@ -43,7 +41,7 @@ interface IThemeProps {
 }
 
 const ConnectButtonSection = ({ autoConnect }: { autoConnect: boolean }) => {
-  const { user } = useChatData();
+  const { user, toast } = useChatData();
   return (
     <Section
       width="100%"
@@ -114,9 +112,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   const { fetchMemberStatus, joinGroup, joinLoading, joinError } = useGroupMemberUtilities();
   const { fetchUserProfile } = usePushUser();
 
-  const { user, uiConfig } = useChatData();
+  const { user, toast } = useChatData();
   const { fetchChat } = useFetchChat();
-  const statusToast = useToast();
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   // setup stream
@@ -333,16 +330,11 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   };
 
   const showError = (title: string, subTitle: string) => {
-    if (uiConfig.suppressToast) {
-      console.warn('UIWeb::MessageInput::showError::Toast is suppressed | Title:', title, ' | Subtitle:', subTitle);
-      return;
-    }
-
-    statusToast.showMessageToast({
+    toast.showMessageToast({
       toastTitle: title,
       toastMessage: subTitle,
       toastType: 'ERROR',
-      getToastIcon: (size) => (
+      getToastIcon: (size: number) => (
         <MdError
           size={size}
           color="red"
@@ -352,16 +344,11 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   };
 
   const showSuccess = (title: string, subTitle: string) => {
-    if (uiConfig.suppressToast) {
-      console.warn('UIWeb::MessageInput::showSuccess::Toast is suppressed | Title:', title, ' | Subtitle:', subTitle);
-      return;
-    }
-
-    statusToast.showMessageToast({
+    toast.showMessageToast({
       toastTitle: title,
       toastMessage: subTitle,
       toastType: 'SUCCESS',
-      getToastIcon: (size) => (
+      getToastIcon: (size: number) => (
         <MdCheckCircle
           size={size}
           color="green"
@@ -698,7 +685,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({
             </SendSection>
           </>
         )}
-        <ToastContainer />
       </TypebarSection>
     </MessageInputContainer>
   ) : (

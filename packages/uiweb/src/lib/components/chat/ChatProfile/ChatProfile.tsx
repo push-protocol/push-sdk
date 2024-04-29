@@ -5,7 +5,6 @@ import { createPortal } from 'react-dom';
 
 // External Packages
 import { CONSTANTS, PushAPI } from '@pushprotocol/restapi';
-import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import styled from 'styled-components';
 
@@ -332,8 +331,6 @@ export const ChatProfile: React.FC<IChatProfile> = ({
             />,
             document.body
           )}
-
-        <ToastContainer />
       </Container>
     );
   } else {

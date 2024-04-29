@@ -9,7 +9,6 @@ import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities
 import useUpdateGroup from '../../../hooks/chat/useUpdateGroup';
 import { IChatTheme } from '../exportedTypes';
 import { DropdownValueType, ProfileContainer } from '../reusables';
-import useToast from '../reusables/NewToast';
 import { GROUP_ROLES, GroupRolesKeys } from '../types';
 import { MemberPaginationData } from './ChatProfileInfoModal';
 import { MemberProfileCard } from './MemberProfileCard';
@@ -28,9 +27,7 @@ interface ShadowedProps {
 
 type PendingMembersProps = {
   pendingMemberPaginationData: MemberPaginationData;
-  setPendingMemberPaginationData: React.Dispatch<
-    React.SetStateAction<MemberPaginationData>
-  >;
+  setPendingMemberPaginationData: React.Dispatch<React.SetStateAction<MemberPaginationData>>;
   pendingMembers: ChatMemberProfile[];
   setShowPendingRequests: React.Dispatch<React.SetStateAction<boolean>>;
   showPendingRequests: boolean;
@@ -39,9 +36,7 @@ type PendingMembersProps = {
 };
 type AcceptedMembersProps = {
   acceptedMemberPaginationData: MemberPaginationData;
-  setAcceptedMemberPaginationData: React.Dispatch<
-    React.SetStateAction<MemberPaginationData>
-  >;
+  setAcceptedMemberPaginationData: React.Dispatch<React.SetStateAction<MemberPaginationData>>;
   acceptedMembers: ChatMemberProfile[];
   chatId: string;
   theme: IChatTheme;
@@ -75,11 +70,7 @@ export const PendingMembers = ({
   const isInViewportPending = useIsInViewport(pendingMemberPageRef, '1px');
 
   useEffect(() => {
-    if (
-      !isInViewportPending ||
-      pendingMemberPaginationData.loading ||
-      pendingMemberPaginationData.finishedFetching
-    ) {
+    if (!isInViewportPending || pendingMemberPaginationData.loading || pendingMemberPaginationData.finishedFetching) {
       return;
     }
 
@@ -93,10 +84,11 @@ export const PendingMembers = ({
   if (pendingMembers && pendingMembers.length) {
     return (
       <PendingRequestWrapper theme={theme}>
-        <PendingSection
-          onClick={() => setShowPendingRequests(!showPendingRequests)}
-        >
-          <Span fontSize="18px" color={theme.textColor?.modalSubHeadingText}>
+        <PendingSection onClick={() => setShowPendingRequests(!showPendingRequests)}>
+          <Span
+            fontSize="18px"
+            color={theme.textColor?.modalSubHeadingText}
+          >
             Pending Requests
           </Span>
           <Badge>{count}</Badge>
@@ -130,17 +122,9 @@ export const PendingMembers = ({
                     icon: item?.userInfo?.profile?.picture || null,
                     chatId: null,
                     web3Name: null,
-                    recipient: shortenText(
-                      pCAIP10ToWallet(item.address?.split(':')[1]),
-                      6,
-                      true
-                    ),
-                    abbrRecipient: shortenText(
-                      pCAIP10ToWallet(item.address?.split(':')[1]),
-                      6,
-                      true
-                    ),
-                    desc: null
+                    recipient: shortenText(pCAIP10ToWallet(item.address?.split(':')[1]), 6, true),
+                    abbrRecipient: shortenText(pCAIP10ToWallet(item.address?.split(':')[1]), 6, true),
+                    desc: null,
                   }}
                   customStyle={{
                     imgHeight: '36px',
@@ -153,10 +137,16 @@ export const PendingMembers = ({
             ))}
           {pendingMemberPaginationData.loading && (
             <Section>
-              <Spinner size="20" color={theme.spinnerColor}/>
+              <Spinner
+                size="20"
+                color={theme.spinnerColor}
+              />
             </Section>
           )}
-          <div ref={pendingMemberPageRef} style={{ padding: '1px' }}></div>
+          <div
+            ref={pendingMemberPageRef}
+            style={{ padding: '1px' }}
+          ></div>
         </ProfileSection>
       </PendingRequestWrapper>
     );
@@ -172,24 +162,12 @@ export const AcceptedMembers = ({
   chatId,
   theme,
 }: AcceptedMembersProps) => {
-  const { account } = useChatData();
+  const { account, toast } = useChatData();
   const acceptedMemberPageRef = useRef<HTMLDivElement>(null);
-  const [accountStatus, setAccountStatus] = useState<ParticipantStatus | null>(
-    null
-  );
-  const [selectedMemberAddress, setSelectedMemberAddress] = useState<
-    string | null
-  >(null);
+  const [accountStatus, setAccountStatus] = useState<ParticipantStatus | null>(null);
+  const [selectedMemberAddress, setSelectedMemberAddress] = useState<string | null>(null);
   const dropdownRef = useRef<any>(null);
-  const {
-    addMember,
-    removeMember,
-    modifyLoading,
-    addLoading,
-    removeLoading,
-    modifyParticipant,
-  } = useUpdateGroup();
-  const groupInfoToast = useToast();
+  const { addMember, removeMember, modifyLoading, addLoading, removeLoading, modifyParticipant } = useUpdateGroup();
   const { fetchMemberStatus } = useGroupMemberUtilities();
 
   const isInViewportPending = useIsInViewport(acceptedMemberPageRef, '1px');
@@ -206,11 +184,7 @@ export const AcceptedMembers = ({
   }, []);
 
   useEffect(() => {
-    if (
-      !isInViewportPending ||
-      acceptedMemberPaginationData.loading ||
-      acceptedMemberPaginationData.finishedFetching
-    ) {
+    if (!isInViewportPending || acceptedMemberPaginationData.loading || acceptedMemberPaginationData.finishedFetching) {
       return;
     }
 
@@ -237,11 +211,16 @@ export const AcceptedMembers = ({
         handleError(response, SUCCESS_MESSAGE[UPDATE_KEYS.REMOVE_MEMBER]);
       }
     } catch (error) {
-      groupInfoToast.showMessageToast({
+      toast.showMessageToast({
         toastTitle: 'Error',
         toastMessage: 'Please, try again',
         toastType: 'ERROR',
-        getToastIcon: (size) => <MdError size={size} color="red" />,
+        getToastIcon: (size: number) => (
+          <MdError
+            size={size}
+            color="red"
+          />
+        ),
       });
     } finally {
       setSelectedMemberAddress(null);
@@ -262,32 +241,46 @@ export const AcceptedMembers = ({
         handleError(response, SUCCESS_MESSAGE[UPDATE_KEYS.REMOVE_ADMIN]);
       }
     } catch (error) {
-      groupInfoToast.showMessageToast({
+      toast.showMessageToast({
         toastTitle: 'Error',
         toastMessage: 'Please, try again',
         toastType: 'ERROR',
-        getToastIcon: (size) => <MdError size={size} color="red" />,
+        getToastIcon: (size: number) => (
+          <MdError
+            size={size}
+            color="red"
+          />
+        ),
       });
     } finally {
       setSelectedMemberAddress(null);
     }
   };
 
-
   const handleError = (response: any, errMessage: string) => {
     if (typeof response !== 'string') {
-      groupInfoToast.showMessageToast({
+      toast.showMessageToast({
         toastTitle: 'Success',
         toastMessage: errMessage,
         toastType: 'SUCCESS',
-        getToastIcon: (size) => <MdCheckCircle size={size} color="green" />,
+        getToastIcon: (size: number) => (
+          <MdCheckCircle
+            size={size}
+            color="green"
+          />
+        ),
       });
     } else {
-      groupInfoToast.showMessageToast({
+      toast.showMessageToast({
         toastTitle: 'Error',
         toastMessage: 'Error',
         toastType: 'ERROR',
-        getToastIcon: (size) => <MdError size={size} color="red" />,
+        getToastIcon: (size: number) => (
+          <MdError
+            size={size}
+            color="red"
+          />
+        ),
       });
     }
   };
@@ -328,8 +321,7 @@ export const AcceptedMembers = ({
             key={index}
             member={item}
             dropdownValues={
-              isAdmin(item) &&
-              accountStatus?.role === GROUP_ROLES.ADMIN.toLowerCase()
+              isAdmin(item) && accountStatus?.role === GROUP_ROLES.ADMIN.toLowerCase()
                 ? [removeAdminDropdown, removeMemberDropdown]
                 : accountStatus?.role === GROUP_ROLES.ADMIN.toLowerCase()
                 ? [addAdminDropdown, removeMemberDropdown]
@@ -340,10 +332,16 @@ export const AcceptedMembers = ({
             dropdownRef={dropdownRef}
           />
         ))}
-        <div ref={acceptedMemberPageRef} style={{ padding: '1px' }}></div>
+        <div
+          ref={acceptedMemberPageRef}
+          style={{ padding: '1px' }}
+        ></div>
         {acceptedMemberPaginationData.loading && (
           <Section>
-            <Spinner size="20" color={theme.spinnerColor} />
+            <Spinner
+              size="20"
+              color={theme.spinnerColor}
+            />
           </Section>
         )}
       </ProfileSection>
@@ -390,8 +388,7 @@ const PendingSection = styled.div`
 
 const ArrowImage = styled(Image)<ShadowedProps>`
   margin-left: auto;
-  transform: ${(props) =>
-    props?.setPosition ? 'rotate(0)' : 'rotate(180deg)'};
+  transform: ${(props) => (props?.setPosition ? 'rotate(0)' : 'rotate(180deg)')};
 `;
 
 const Badge = styled.div`

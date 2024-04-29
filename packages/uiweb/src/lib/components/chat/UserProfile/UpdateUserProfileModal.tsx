@@ -11,7 +11,6 @@ import { Button, Modal, ModalHeader, TextArea, TextInput } from '../reusables';
 import { useChatData } from '../../../hooks/chat/useChatData';
 import useUserInfoUtilities from '../../../hooks/chat/useUserInfoUtilities';
 import { MdCheckCircle, MdError } from 'react-icons/md';
-import useToast from '../reusables/NewToast';
 import AutoImageClipper from '../reusables/AutoImageClipper';
 import { device } from '../../../config';
 import useMediaQuery from '../../../hooks/useMediaQuery';
@@ -39,7 +38,7 @@ export const UpdateUserProfileModal = ({
   updateUserProfileModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
   updateUserProfileModalPositionType = MODAL_POSITION_TYPE.GLOBAL,
 }: UpdateUserProfileModalProps) => {
-  const { uiConfig } = useChatData();
+  const { toast } = useChatData();
 
   const [userProfileDetails, setUserProfileDetails] = useState<UserProfileType>({
     name: userProfile ? userProfile?.profile?.name ?? '' : '',
@@ -52,7 +51,6 @@ export const UpdateUserProfileModal = ({
   const { updateProfileLoading, updateUserProfile } = useUserInfoUtilities();
   const isMobile = useMediaQuery(device.mobileL);
   const fileUploadInputRef = useRef<HTMLInputElement>(null);
-  const userUpdateToast = useToast();
   const onClose = (): void => {
     setModal(false);
   };
@@ -72,24 +70,17 @@ export const UpdateUserProfileModal = ({
   const onUpdate = async () => {
     const isSuccess = await updateUserProfile({ userProfileDetails });
     if (typeof isSuccess != 'string') {
-      if (!uiConfig.suppressToast) {
-        userUpdateToast.showMessageToast({
-          toastTitle: 'Success',
-          toastMessage: 'User profile updated successfully',
-          toastType: 'SUCCESS',
-          getToastIcon: (size: string | number | undefined) => (
-            <MdCheckCircle
-              size={size}
-              color="green"
-            />
-          ),
-        });
-      } else {
-        console.debug(
-          'UIWeb::components::UserProfile::onUpdate::Toast suppressed with message: ',
-          'User profile updated successfully'
-        );
-      }
+      toast.showMessageToast({
+        toastTitle: 'Success',
+        toastMessage: 'User profile updated successfully',
+        toastType: 'SUCCESS',
+        getToastIcon: (size: string | number | undefined) => (
+          <MdCheckCircle
+            size={size}
+            color="green"
+          />
+        ),
+      });
 
       updateUserDetails();
       onClose();
@@ -99,21 +90,17 @@ export const UpdateUserProfileModal = ({
     }
   };
   const showError = (errorMessage: string) => {
-    if (!uiConfig.suppressToast) {
-      userUpdateToast.showMessageToast({
-        toastTitle: 'Error',
-        toastMessage: errorMessage,
-        toastType: 'ERROR',
-        getToastIcon: (size) => (
-          <MdError
-            size={size}
-            color="red"
-          />
-        ),
-      });
-    } else {
-      console.debug('UIWeb::components::UserProfile::showError::Toast suppressed with message: ', errorMessage);
-    }
+    toast.showMessageToast({
+      toastTitle: 'Error',
+      toastMessage: errorMessage,
+      toastType: 'ERROR',
+      getToastIcon: (size: number) => (
+        <MdError
+          size={size}
+          color="red"
+        />
+      ),
+    });
   };
   const handleChange = (e: Event) => {
     if (!(e.target instanceof HTMLInputElement)) {

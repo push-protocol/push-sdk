@@ -10,6 +10,7 @@ import styled, { ThemeProvider } from 'styled-components';
 import { Spinner } from '../../supportChat/spinner/Spinner';
 import useMediaQuery from '../../../hooks/useMediaQuery';
 import { ThemeContext } from '../theme/ThemeProvider';
+import { useChatData } from '../../../hooks/chat/useChatData';
 
 import { device } from '../../../config';
 
@@ -41,7 +42,6 @@ const CloseButton = ({ closeToast }: { closeToast: any }) => (
   </Button>
 );
 export type ShowLoaderToastType = ({ loaderMessage }: { loaderMessage: string }) => void;
-
 export type ShowMessageToastType = ({
   toastTitle,
   toastMessage,
@@ -56,23 +56,9 @@ export type ShowMessageToastType = ({
 
 const useToast = (
   autoClose: number = 3000,
-  position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' = 'top-right',
-  initialize: boolean = false
+  position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' = 'top-right'
 ) => {
-  if (!initialize) {
-    return;
-  }
-
-  console.debug(
-    'UIWeb::useToast::initialize::',
-    initialize,
-    'autoClose::',
-    autoClose,
-    'position::',
-    position,
-    'initialize::',
-    initialize
-  );
+  const { uiConfig } = useChatData();
 
   const toastId = useRef<any>(null);
   const theme = useContext(ThemeContext);
@@ -102,37 +88,41 @@ const useToast = (
         style: {
           background: theme.backgroundColor?.modalBackground,
           border: theme.border?.modalInnerComponents,
-          boxShadow: `8px 8px 8px ${theme.backgroundColor?.toastShadowBackground}`,
+          // boxShadow: `8px 8px 8px ${theme.backgroundColor?.toastShadowBackground}`,
           borderRadius: '20px',
         },
       });
     } else {
-      // Create new toast
-      toastId.current = toast(
-        <ThemeProvider theme={theme}>
-          <LoaderToast
-            msg={loaderMessage}
-            loaderColor={theme.spinnerColor!}
-            textColor={theme.textColor!.modalHeadingText!}
-          />
-        </ThemeProvider>,
-        {
-          position,
-          autoClose: false,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          closeButton: false,
-          style: {
-            background: theme.backgroundColor?.modalBackground,
-            border: theme.border?.modalInnerComponents,
-            boxShadow: `8px 8px 8px ${theme.backgroundColor?.toastShadowBackground}`,
-            borderRadius: '20px',
-          },
-        }
-      );
+      if (!uiConfig.suppressToast) {
+        // Create new toast
+        toastId.current = toast(
+          <ThemeProvider theme={theme}>
+            <LoaderToast
+              msg={loaderMessage}
+              loaderColor={theme.spinnerColor!}
+              textColor={theme.textColor!.modalHeadingText!}
+            />
+          </ThemeProvider>,
+          {
+            position,
+            autoClose: false,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            closeButton: false,
+            style: {
+              background: theme.backgroundColor?.modalBackground,
+              border: theme.border?.modalInnerComponents,
+              // boxShadow: `8px 8px 8px ${theme.backgroundColor?.toastShadowBackground}`,
+              borderRadius: '20px',
+            },
+          }
+        );
+      } else {
+        console.debug('UIWeb::reusables::NewToast::useToast::showLoaderToast::Toast suppressed');
+      }
     }
   };
 
@@ -176,23 +166,29 @@ const useToast = (
             : toastType === 'ERROR'
             ? theme.backgroundColor?.toastErrorBackground
             : theme.backgroundColor?.toastWarningBackground,
-        boxShadow: `10px 10px 10px ${theme.backgroundColor?.toastShadowBackground}`,
+        // boxShadow: `10px 10px 10px ${theme.backgroundColor?.toastShadowBackground}`,
         borderRadius: '20px',
         margin: isMobile ? '20px' : '0px',
       },
     };
 
-    if (toastId.current) {
-      // Update existing toast
-      toast.update(toastId.current, {
-        render: toastUI,
-        ...toastRenderParams,
-      });
-    } else {
-      // Create new toast
-      toastId.current = toast(toastUI, {
-        ...toastRenderParams,
-      });
+    if (!toast.isActive(toastId.current)) {
+      if (!uiConfig.suppressToast) {
+        if (toastId.current) {
+          // Update existing toast
+          toast.update(toastId.current, {
+            render: toastUI,
+            ...toastRenderParams,
+          });
+        } else {
+          // Create new toast
+          toastId.current = toast(toastUI, {
+            ...toastRenderParams,
+          });
+        }
+      } else {
+        console.debug('UIWeb::reusables::NewToast::useToast::showMessageToast::Toast suppressed');
+      }
     }
   };
 

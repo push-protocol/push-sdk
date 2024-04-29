@@ -16,17 +16,18 @@ const useRejectChatRequest = () => {
       const { chatId } = options || {};
       setLoading(true);
       try {
-        // const response = await user?.chat.reject(chatId);
+        const response = await user?.chat.reject(chatId);
 
-        // setLoading(false);
-        // return response;
+        setLoading(false);
+        return response;
 
-        return new Promise((resolve) => {
-          setTimeout(() => {
-            setLoading(false);
-            resolve({ status: 200, message: 'OK' });
-          }, 4000);
-        });
+        // To test false response
+        // return new Promise((resolve) => {
+        //   setTimeout(() => {
+        //     setLoading(false);
+        //     resolve({ status: 200, message: 'OK' });
+        //   }, 4000);
+        // });
       } catch (error: Error | any) {
         setLoading(false);
         setError(error.message);

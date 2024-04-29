@@ -10,7 +10,6 @@ import { AddUserDarkIcon } from '../../../icons/Adddark';
 import { MoreDarkIcon } from '../../../icons/MoreDark';
 import { Image, Section, Span } from '../../reusables/sharedStyling';
 import { Spinner } from '../../supportChat/spinner/Spinner';
-import useToast from '../reusables/NewToast';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { MemberListContainer } from './MemberListContainer';
 
@@ -19,11 +18,7 @@ import { getNewChatUser } from '../../../helpers';
 import useChatProfile from '../../../hooks/chat/useChatProfile';
 import usePushUser from '../../../hooks/usePushUser';
 import { Group, IChatTheme, ModalButtonProps } from '../exportedTypes';
-import {
-  ChatSearchInput,
-  CustomStyleParamsType,
-  ModalHeader,
-} from '../reusables';
+import { ChatSearchInput, CustomStyleParamsType, ModalHeader } from '../reusables';
 
 type AddWalletProps = {
   onSubmit: () => void;
@@ -54,10 +49,10 @@ export const AddWallets = ({
   const theme = useContext(ThemeContext);
 
   const [filteredUserData, setFilteredUserData] = useState<any>(null);
-  const { env,user } = useChatData();
+  const { env, user } = useChatData();
   const isMobile = useMediaQuery(device.mobileL);
   const { fetchUserProfile } = usePushUser();
-  const groupInfoToast = useToast();
+  const { toast } = useChatData();
   const customSearchStyle: CustomStyleParamsType = {
     background: theme.backgroundColor?.modalInputBackground,
     border: theme.border?.modalInnerComponents,
@@ -66,26 +61,27 @@ export const AddWallets = ({
     fontWeight: '400',
   };
 
-  const handleSearch = async ({
-    searchedText,
-  }: {
-    searchedText: string;
-  }): Promise<void> => {
+  const handleSearch = async ({ searchedText }: { searchedText: string }): Promise<void> => {
     //fix ens search
     const newChatUser = await getNewChatUser({
       searchText: searchedText,
-      fetchChatProfile:fetchUserProfile,
+      fetchChatProfile: fetchUserProfile,
       env,
-      user
+      user,
     });
     if (newChatUser) {
       setFilteredUserData(newChatUser);
     } else {
-      groupInfoToast.showMessageToast({
+      toast.showMessageToast({
         toastTitle: 'Error',
         toastMessage: 'Invalid Address',
         toastType: 'ERROR',
-        getToastIcon: (size) => <MdError size={size} color="red" />,
+        getToastIcon: (size: number) => (
+          <MdError
+            size={size}
+            color="red"
+          />
+        ),
       });
     }
   };
@@ -120,18 +116,20 @@ export const AddWallets = ({
         flexDirection="row"
         justifyContent="space-between"
       >
-        <Span fontSize="18px" color={theme.textColor?.modalSubHeadingText}>
+        <Span
+          fontSize="18px"
+          color={theme.textColor?.modalSubHeadingText}
+        >
           Add Wallets
         </Span>
 
-        <Span fontSize="14px" color={theme.textColor?.modalSubHeadingText}>
+        <Span
+          fontSize="14px"
+          color={theme.textColor?.modalSubHeadingText}
+        >
           {groupMembers
-            ? `${memberList?.length + groupMembers?.length} / ${
-                totalAllowedMembers
-              } Members`
-            : `${memberList?.length} / ${
-                totalAllowedMembers
-              } Members`}
+            ? `${memberList?.length + groupMembers?.length} / ${totalAllowedMembers} Members`
+            : `${memberList?.length} / ${totalAllowedMembers} Members`}
         </Span>
       </Section>
 
@@ -175,15 +173,23 @@ export const AddWallets = ({
         ))}
       </MultipleMemberList>
 
-      <Section flex="1" alignSelf="center">
+      <Section
+        flex="1"
+        alignSelf="center"
+      >
         <ModalConfirmButton
           onClick={() => onSubmit()}
           isLoading={isLoading}
           // memberListCount={memberList?.length > 0}
           theme={theme}
         >
-          {!isLoading  ? submitButtonTitle : ''}{' '}
-          {isLoading && <Spinner size="30" color="#fff" />}
+          {!isLoading ? submitButtonTitle : ''}{' '}
+          {isLoading && (
+            <Spinner
+              size="30"
+              color="#fff"
+            />
+          )}
         </ModalConfirmButton>
       </Section>
     </Section>
@@ -240,17 +246,12 @@ const MultipleMemberList = styled(Section)`
   }
 `;
 
-const ModalConfirmButton = styled.button<
-  ModalButtonProps & { theme: IChatTheme }
->`
+const ModalConfirmButton = styled.button<ModalButtonProps & { theme: IChatTheme }>`
   margin: 60px 0 0 0;
   width: 197px;
-  background: ${(props) =>
-    props.theme.backgroundColor!.buttonBackground};
-  color: ${(props) =>
-    props.theme.textColor!.buttonText};
-  border: ${(props) =>
-    'none'};
+  background: ${(props) => props.theme.backgroundColor!.buttonBackground};
+  color: ${(props) => props.theme.textColor!.buttonText};
+  border: ${(props) => 'none'};
   min-width: 50%;
   box-sizing: border-box;
   cursor: pointer;

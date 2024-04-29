@@ -113,7 +113,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
   const listInnerRef = useRef<HTMLDivElement>(null);
 
   // setup stream
-  const { chatStream, chatAcceptStream, chatRequestStream, groupCreateStream } = useChatData();
+  const { chatStream, chatAcceptStream, chatRequestStream, chatRejectStream, groupCreateStream } = useChatData();
 
   // event listeners
   // This should be invoked from data provider
@@ -565,6 +565,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
   }, [chatPreviewList.items]);
 
   // Define stream objects
+  // When chat comes in
   useEffect(() => {
     if (Object.keys(chatStream || {}).length > 0 && chatStream.constructor === Object) {
       if (options.listType === CONSTANTS.CHAT.LIST_TYPE.CHATS) {
@@ -573,6 +574,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
     }
   }, [chatStream]);
 
+  // When group is created
   useEffect(() => {
     if (Object.keys(groupCreateStream).length > 0 && groupCreateStream.constructor === Object) {
       if (options.listType === CONSTANTS.CHAT.LIST_TYPE.CHATS && groupCreateStream.origin === 'self') {
@@ -583,6 +585,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
     }
   }, [groupCreateStream]);
 
+  // When chat request comes in
   useEffect(() => {
     if (Object.keys(chatRequestStream || {}).length > 0 && chatRequestStream.constructor === Object) {
       if (options.listType === CONSTANTS.CHAT.LIST_TYPE.CHATS && chatRequestStream.origin === 'self') {
@@ -592,12 +595,20 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
       }
     }
   }, [chatRequestStream]);
-  console.debug(chatStream, 'chat preview list chat stream event');
+
+  // When chat accept comes in
   useEffect(() => {
     if (Object.keys(chatAcceptStream || {}).length > 0 && chatAcceptStream.constructor === Object) {
       transformAcceptedRequest(chatAcceptStream);
     }
   }, [chatAcceptStream]);
+
+  // When chat reject comes in, this applies for groups as well
+  useEffect(() => {
+    if (Object.keys(chatRejectStream || {}).length > 0 && chatRejectStream.constructor === Object) {
+      removeChatItems([chatRejectStream.chatId]);
+    }
+  }, [chatRejectStream]);
 
   //search method for a chatId
   const handleSearch = async (currentNonce: string) => {
