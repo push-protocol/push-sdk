@@ -1,4 +1,4 @@
-import Constants, { ENV, PACKAGE_BUILD } from '../constants';
+import Constants, { ENCRYPTION_TYPE, ENV, PACKAGE_BUILD } from '../constants';
 import { SignerType, ProgressHookType } from '../types';
 import { InfoOptions, PushAPIInitializeProps } from './pushAPITypes';
 import * as PUSH_USER from '../user';
@@ -165,7 +165,7 @@ export class PushAPI {
       // Default options
       const defaultOptions: PushAPIInitializeProps = {
         env: ENV.STAGING,
-        version: Constants.ENC_TYPE_V3,
+        version: Constants.ENC_TYPE_V3 as `${ENCRYPTION_TYPE}`,
         autoUpgrade: true,
         account: null,
       };
@@ -315,7 +315,7 @@ export class PushAPI {
     this.pgpPublicKey = newUser.publicKey;
     this.readMode = false;
     this.errors = [];
-    this.uid = uuidv4(); 
+    this.uid = uuidv4();
     // Initialize the instances of the four classes
     this.chat = new Chat(
       this.account,

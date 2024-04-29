@@ -40,9 +40,9 @@ export const getChatInfo = async (
 
     const API_BASE_URL = getAPIBaseUrls(env);
     const requestUrl = `${API_BASE_URL}/v1/chat/${await convertToValidDID(
-      receipient,
+      recipient,
       env
-    )}/address/${await convertToValidDID(sender, env)}`;
+    )}/address/${await convertToValidDID(account, env)}`;
     const response = await axiosGet<ChatInfoResponse>(requestUrl);
     return response.data;
   } catch (err) {

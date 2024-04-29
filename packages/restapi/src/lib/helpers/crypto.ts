@@ -5,11 +5,8 @@ import {
 } from '@metamask/eth-sig-util';
 import * as CryptoJS from 'crypto-js';
 import {
-  aesDecrypt,
   getAccountAddress,
   getWallet,
-  pgpDecrypt,
-  verifySignature,
   getEip712Signature,
   getEip191Signature,
 } from '../chat/helpers';
@@ -19,7 +16,6 @@ import {
   walletType,
   encryptedPrivateKeyType,
   encryptedPrivateKeyTypeV2,
-  IMessageIPFS,
   ProgressHookType,
   ProgressHookTypeFunction,
 } from '../types';
@@ -30,6 +26,8 @@ import PROGRESSHOOK from '../progressHook';
 import { Signer } from './signer';
 import * as viem from 'viem';
 import { mainnet } from 'viem/chains';
+import { split } from 'shamir-secret-sharing';
+import { Lit } from './lit';
 
 const KDFSaltSize = 32; // bytes
 const AESGCMNonceSize = 12; // property iv
@@ -238,12 +236,21 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
         privateKey = dec.decode(encodedPrivateKey);
         break;
       }
+      case Constants.ENC_TYPE_V5: {
+        // TODO
+        break;
+      }
       default:
         throw new Error('Invalid Encryption Type');
     }
 
     // try key upgradation
-    if (signer && toUpgrade && encryptionType !== Constants.ENC_TYPE_V4) {
+    if (
+      signer &&
+      toUpgrade &&
+      encryptionType !== Constants.ENC_TYPE_V4 &&
+      encryptionType !== Constants.ENC_TYPE_V5
+    ) {
       try {
         await upgrade({ env, account: address, signer, progressHook });
       } catch (err) {
@@ -380,7 +387,11 @@ export const encryptPGPKey = async (
     NFTPGP_V1?: {
       password: string;
     };
-  }
+    SCWPGP_V1?: {
+      password: string;
+    };
+  },
+  env: ENV = ENV.STAGING
 ): Promise<encryptedPrivateKeyType> => {
   let encryptedPrivateKey: encryptedPrivateKeyType;
   switch (encryptionType) {
@@ -457,23 +468,63 @@ export const encryptPGPKey = async (
       break;
     }
     case Constants.ENC_TYPE_V5: {
-      // TODO
-      // if (!additionalMeta?.SCWPGP_V1?.password) {
-      //   throw new Error('Password is required!');
-      // }
-      // const enc = new TextEncoder();
-      // const encodedPrivateKey = enc.encode(privateKey);
-      // encryptedPrivateKey = await encryptV2(
-      //   encodedPrivateKey,
-      //   hexToBytes(stringToHex(additionalMeta.NFTPGP_V1.password))
-      // );
-      // encryptedPrivateKey.version = Constants.ENC_TYPE_V4;
-      // encryptedPrivateKey.preKey = '';
-      // encryptedPrivateKey.encryptedPassword = await encryptPGPKey(
-      //   Constants.ENC_TYPE_V3,
-      //   additionalMeta.NFTPGP_V1.password,
-      //   wallet
-      // );
+      // 1. Generate secret to encrypt private key
+      const encryptionSecret = await getRandomValues(new Uint8Array(32));
+      // 2. Split secret into 3 shards ( Combining any 2 shards can decrypt the secret )
+      const PARTS = 3;
+      const QUORUM = 2;
+      const [shard1, shard2, shard3] = await split(
+        encryptionSecret,
+        PARTS,
+        QUORUM
+      );
+      // 3. Encrypt private key with secret
+      const enc = new TextEncoder();
+      const encodedPrivateKey = enc.encode(privateKey);
+      encryptedPrivateKey = await encryptV2(
+        encodedPrivateKey,
+        encryptionSecret
+      );
+
+      encryptedPrivateKey.version = encryptionType;
+
+      // 4. Store shard1 on Push nodes
+      const pushShard = bytesToHex(shard1);
+
+      // 5. Encrypt and store shard2 on lit nodes
+      const LitInstance = await Lit.createInstance(
+        wallet.signer as SignerType,
+        wallet.account as string,
+        'ethereum',
+        env
+      );
+
+      const litEncryptedShard = await LitInstance.encrypt(bytesToHex(shard2));
+
+      // 6. Encrypt and store shard3 on push nodes
+      const encodedShard3 = enc.encode(bytesToHex(shard3));
+      const pushEncryptedShard = await encryptV2(
+        encodedShard3,
+        hexToBytes(stringToHex(additionalMeta?.SCWPGP_V1?.password as string))
+      );
+
+      encryptedPrivateKey.pushShard = {
+        shards: [
+          {
+            shard: pushShard,
+            type: 'PUSH_SHARD',
+          },
+          {
+            shard: litEncryptedShard,
+            type: 'LIT_SHARD_ENC_V1',
+          },
+          {
+            shard: pushEncryptedShard,
+            type: 'PUSH_SHARD_ENC_V1',
+          },
+        ],
+        pattern: `${QUORUM}-${PARTS}`,
+      };
       break;
     }
     default:
