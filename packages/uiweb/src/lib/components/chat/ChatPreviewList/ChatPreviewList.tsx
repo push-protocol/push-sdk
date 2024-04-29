@@ -177,7 +177,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
       items.forEach((item) => {
         // only increment if not selected
         if (chatPreviewListMeta.selectedChatId !== item.chatId) {
-          console.debug('::ChatPreviewList::incrementing badge', item.chatId);
+          console.debug('::ChatPreviewList::incrementing badge', item);
           setBadge(
             item.chatId!,
             chatPreviewListMeta.badges[item.chatId!] ? chatPreviewListMeta.badges[item.chatId!] + 1 : 1
@@ -498,12 +498,12 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
     if (options?.onLoading) {
       options?.onLoading({
         preload: chatPreviewList.preloading,
-        loading: chatPreviewList.loading,
+        loading: chatPreviewList.loading || chatPreviewList.preloading,
         finished: chatPreviewList.loaded,
-        paging: chatPreviewList.loading || chatPreviewList.resume,
+        paging: chatPreviewList.page > 1,
       });
     }
-  }, [chatPreviewList.loading, chatPreviewList.preloading, chatPreviewList.loaded, chatPreviewList.resume]);
+  }, [chatPreviewList.loading, chatPreviewList.preloading, chatPreviewList.loaded, chatPreviewList.page]);
 
   useEffect(() => {
     if (
@@ -555,6 +555,14 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
       options.onUnreadCountChange(count);
     }
   }, [chatPreviewListMeta.badges]);
+
+  // If conversation count change
+  useEffect(() => {
+    // Call onConversationCountChange if present
+    if (options?.onChatsCountChange) {
+      options.onChatsCountChange(chatPreviewList.items.length);
+    }
+  }, [chatPreviewList.items]);
 
   // Define stream objects
   useEffect(() => {

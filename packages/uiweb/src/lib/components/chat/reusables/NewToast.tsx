@@ -7,25 +7,20 @@ import { toast } from 'react-toastify';
 import { MdOutlineClose } from 'react-icons/md';
 import styled, { ThemeProvider } from 'styled-components';
 
-
 import { Spinner } from '../../supportChat/spinner/Spinner';
 import useMediaQuery from '../../../hooks/useMediaQuery';
 import { ThemeContext } from '../theme/ThemeProvider';
 
-
 import { device } from '../../../config';
-
 
 // Types
 type LoaderToastType = { msg: string; loaderColor: string; textColor: string };
-
-
 
 const LoaderToast = ({ msg, loaderColor, textColor }: LoaderToastType) => (
   <LoaderNotification>
     <Spinner
       color={loaderColor}
-      size='35px'
+      size="35px"
     />
     <LoaderMessage
       style={{
@@ -37,7 +32,7 @@ const LoaderToast = ({ msg, loaderColor, textColor }: LoaderToastType) => (
   </LoaderNotification>
 );
 
-const CloseButton = ({ closeToast }:{ closeToast: any }) => (
+const CloseButton = ({ closeToast }: { closeToast: any }) => (
   <Button onClick={closeToast}>
     <MdOutlineClose
       color="#657795"
@@ -45,8 +40,7 @@ const CloseButton = ({ closeToast }:{ closeToast: any }) => (
     />
   </Button>
 );
-
-export type ShowLoaderToastType = ({ loaderMessage }: { loaderMessage: string }) => React.ReactText;
+export type ShowLoaderToastType = ({ loaderMessage }: { loaderMessage: string }) => void;
 
 export type ShowMessageToastType = ({
   toastTitle,
@@ -56,31 +50,47 @@ export type ShowMessageToastType = ({
 }: {
   toastTitle: string;
   toastMessage: string;
-  toastType: 'SUCCESS' | 'ERROR';
+  toastType: 'SUCCESS' | 'ERROR' | 'WARNING';
   getToastIcon?: (size: number) => JSX.Element;
 }) => void;
 
 const useToast = (
   autoClose: number = 3000,
-  position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' = 'top-right'
+  position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' = 'top-right',
+  initialize: boolean = false
 ) => {
+  if (!initialize) {
+    return;
+  }
+
+  console.debug(
+    'UIWeb::useToast::initialize::',
+    initialize,
+    'autoClose::',
+    autoClose,
+    'position::',
+    position,
+    'initialize::',
+    initialize
+  );
+
   const toastId = useRef<any>(null);
   const theme = useContext(ThemeContext);
   const isMobile = useMediaQuery(device.tablet);
 
-  let isLoaderToastShown = false;
-
   const showLoaderToast: ShowLoaderToastType = ({ loaderMessage }) => {
-    isLoaderToastShown = true;
-    return (toastId.current = toast(
-      <ThemeProvider theme={theme}>
-        <LoaderToast
-          msg={loaderMessage}
-          loaderColor={theme.spinnerColor!}
-          textColor={theme.textColor!.modalHeadingText!}
-        />
-      </ThemeProvider>,
-      {
+    if (toastId.current) {
+      // Update existing toast
+      toast.update(toastId.current, {
+        render: (
+          <ThemeProvider theme={theme}>
+            <LoaderToast
+              msg={loaderMessage}
+              loaderColor={theme.spinnerColor!}
+              textColor={theme.textColor!.modalHeadingText!}
+            />
+          </ThemeProvider>
+        ),
         position,
         autoClose: false,
         hideProgressBar: true,
@@ -95,8 +105,35 @@ const useToast = (
           boxShadow: `8px 8px 8px ${theme.backgroundColor?.toastShadowBackground}`,
           borderRadius: '20px',
         },
-      }
-    ));
+      });
+    } else {
+      // Create new toast
+      toastId.current = toast(
+        <ThemeProvider theme={theme}>
+          <LoaderToast
+            msg={loaderMessage}
+            loaderColor={theme.spinnerColor!}
+            textColor={theme.textColor!.modalHeadingText!}
+          />
+        </ThemeProvider>,
+        {
+          position,
+          autoClose: false,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          closeButton: false,
+          style: {
+            background: theme.backgroundColor?.modalBackground,
+            border: theme.border?.modalInnerComponents,
+            boxShadow: `8px 8px 8px ${theme.backgroundColor?.toastShadowBackground}`,
+            borderRadius: '20px',
+          },
+        }
+      );
+    }
   };
 
   const showMessageToast: ShowMessageToastType = ({ toastTitle, toastMessage, toastType, getToastIcon }) => {
@@ -133,25 +170,30 @@ const useToast = (
       closeButton: CloseButton,
       autoClose: autoClose,
       style: {
-        background: toastType === 'SUCCESS' ? theme.backgroundColor?.toastSuccessBackground : theme.backgroundColor?.toastErrorBackground,
+        background:
+          toastType === 'SUCCESS'
+            ? theme.backgroundColor?.toastSuccessBackground
+            : toastType === 'ERROR'
+            ? theme.backgroundColor?.toastErrorBackground
+            : theme.backgroundColor?.toastWarningBackground,
         boxShadow: `10px 10px 10px ${theme.backgroundColor?.toastShadowBackground}`,
         borderRadius: '20px',
         margin: isMobile ? '20px' : '0px',
       },
     };
 
-    if (!isLoaderToastShown) {
-      // render a new toast
+    if (toastId.current) {
+      // Update existing toast
+      toast.update(toastId.current, {
+        render: toastUI,
+        ...toastRenderParams,
+      });
+    } else {
+      // Create new toast
       toastId.current = toast(toastUI, {
         ...toastRenderParams,
       });
     }
-
-    // update the old toast
-    toast.update(toastId.current, {
-      render: toastUI,
-      ...toastRenderParams,
-    });
   };
 
   return {

@@ -33,29 +33,29 @@ export const AddGroupMembers = ({
 
   const addMemberToList = async (member: IUser) => {
     let errorMessage = '';
-    if (
-      pCAIP10ToWallet(member.wallets.toLowerCase()) ===
-      pCAIP10ToWallet((account?? '').toLowerCase())
-    )
-    {
-        errorMessage = 'Group Creator cannot be added as member';
+    if (pCAIP10ToWallet(member.wallets.toLowerCase()) === pCAIP10ToWallet((account ?? '').toLowerCase())) {
+      errorMessage = 'Group Creator cannot be added as member';
     }
-    if(findObject(member, memberList, 'wallets')){
-        errorMessage = 'Address is already added';
+    if (findObject(member, memberList, 'wallets')) {
+      errorMessage = 'Address is already added';
     }
-      if (errorMessage) {
-       
-        groupInfoToast.showMessageToast({
-          toastTitle: 'Error',
-          toastMessage: errorMessage,
-          toastType: 'ERROR',
-          getToastIcon: (size) => <MdError size={size} color="red" />,
-        });
-      } else {
-        const updatedMemberList = memberList;
-        updatedMemberList.push( { ...member, isAdmin: false }) 
-        handleMemberList(updatedMemberList);
-      }
+    if (errorMessage) {
+      groupInfoToast.showMessageToast({
+        toastTitle: 'Error',
+        toastMessage: errorMessage,
+        toastType: 'ERROR',
+        getToastIcon: (size) => (
+          <MdError
+            size={size}
+            color="red"
+          />
+        ),
+      });
+    } else {
+      const updatedMemberList = memberList;
+      updatedMemberList.push({ ...member, isAdmin: false });
+      handleMemberList(updatedMemberList);
+    }
   };
 
   return (

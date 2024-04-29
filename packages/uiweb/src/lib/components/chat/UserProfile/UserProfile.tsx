@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 import { IUser } from '@pushprotocol/restapi';
 import { ethers } from 'ethers';
@@ -32,14 +33,14 @@ interface IThemeProps {
 export const UserProfile: React.FC<UserProfileProps> = ({
   updateUserProfileModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
   updateUserProfileModalPositionType = MODAL_POSITION_TYPE.GLOBAL,
+  onUserProfileUpdateModalOpen,
 }) => {
-  const { user, env } = useChatData();
+  const { user } = useChatData();
   const [userProfile, setUserProfile] = useState<IUser>();
   const [web3Name, setWeb3Name] = useState<string | null>(null);
   const [options, setOptions] = useState<boolean>();
   const [showUpdateUserProfileModal, setShowUpdateUserProfileModal] = useState<boolean>(false);
   const DropdownRef = useRef(null);
-  const provider = new ethers.providers.InfuraProvider(CoreContractChainId[env], InfuraAPIKey);
 
   const theme = useContext(ThemeContext);
   const { fetchChatProfile } = useChatProfile();
@@ -60,6 +61,24 @@ export const UserProfile: React.FC<UserProfileProps> = ({
   useClickAway(DropdownRef, () => {
     setOptions(false);
   });
+
+  // to hook for when profile is visible
+  useEffect(() => {
+    if (onUserProfileUpdateModalOpen) {
+      onUserProfileUpdateModalOpen(showUpdateUserProfileModal);
+    }
+  }, [showUpdateUserProfileModal]);
+
+  // TODO: Route hook from here
+  // when user profile is updated
+  // const updateUserProfile = (newUserProfile: IUser | undefined) => {
+  //   if (newUserProfile) {
+  //     setUserProfile(newUserProfile);
+  //     if (onUserProfileUpdate) {
+  //       onUserProfileUpdate(newUserProfile);
+  //     }
+  //   }
+  // };
 
   return (
     <>
@@ -121,16 +140,18 @@ export const UserProfile: React.FC<UserProfileProps> = ({
             </DropDownItem>
           </DropDownBar>
         )}
-        {showUpdateUserProfileModal && (
-          <UpdateUserProfileModal
-            theme={theme}
-            setModal={setShowUpdateUserProfileModal}
-            userProfile={userProfile!}
-            setUserProfile={setUserProfile}
-            updateUserProfileModalBackground={updateUserProfileModalBackground}
-            updateUserProfileModalPositionType={updateUserProfileModalPositionType}
-          />
-        )}
+        {showUpdateUserProfileModal &&
+          createPortal(
+            <UpdateUserProfileModal
+              theme={theme}
+              setModal={setShowUpdateUserProfileModal}
+              userProfile={userProfile!}
+              setUserProfile={setUserProfile}
+              updateUserProfileModalBackground={updateUserProfileModalBackground}
+              updateUserProfileModalPositionType={updateUserProfileModalPositionType}
+            />,
+            document.body
+          )}
       </Conatiner>
       <ToastContainer />
     </>

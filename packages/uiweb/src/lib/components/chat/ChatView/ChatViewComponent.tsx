@@ -35,7 +35,6 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (options: IC
     gif = true,
     isConnected = true,
     autoConnect = false,
-    suppressToast = false,
     onVerificationFail,
     groupInfoModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
     groupInfoModalPositionType = MODAL_POSITION_TYPE.GLOBAL,
@@ -156,7 +155,6 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (options: IC
                 verificationFailModalBackground={verificationFailModalBackground}
                 verificationFailModalPosition={verificationFailModalPosition}
                 autoConnect={autoConnect}
-                suppressToast={suppressToast}
               />
             </Section>
           )}

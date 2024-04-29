@@ -74,7 +74,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   file = true,
   isConnected = true,
   autoConnect = false,
-  suppressToast = false,
   verificationFailModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
   verificationFailModalPosition = MODAL_POSITION_TYPE.GLOBAL,
   onVerificationFail,
@@ -115,7 +114,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   const { fetchMemberStatus, joinGroup, joinLoading, joinError } = useGroupMemberUtilities();
   const { fetchUserProfile } = usePushUser();
 
-  const { user } = useChatData();
+  const { user, uiConfig } = useChatData();
   const { fetchChat } = useFetchChat();
   const statusToast = useToast();
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -246,12 +245,32 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     participantLeaveStream,
     participantRemoveStream,
   ]);
+
   useEffect(() => {
     if (!user) return;
     if (user && chatId && groupInfo) {
       setIsRules(checkIfAccessVerifiedGroup(groupInfo));
     }
   }, [chatId, groupInfo, user]);
+
+  // to change chatInfo when user action changes if chat info matches
+  useEffect(() => {
+    if (chatInfo && chatInfo.chatId === chatAcceptStream.chatId && chatInfo?.list === 'REQUESTS') {
+      setChatInfo((prevInfo) => {
+        if (!prevInfo) return null; // Handle the case where prevInfo is null
+
+        return {
+          ...prevInfo,
+          list: 'CHATS', // Example of updating the list
+          chatId: prevInfo.chatId, // Directly use the existing chatId, ensuring it's not undefined
+          meta: {
+            group: prevInfo.meta?.group ?? false, // Provide default value if undefined
+            encrypted: prevInfo.meta?.encrypted ?? false,
+          },
+        };
+      });
+    }
+  }, [chatAcceptStream]);
 
   const transformGroupDetails = (item: any): void => {
     if (groupInfo?.chatId === item?.chatId) {
@@ -314,7 +333,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   };
 
   const showError = (title: string, subTitle: string) => {
-    if (suppressToast) {
+    if (uiConfig.suppressToast) {
       console.warn('UIWeb::MessageInput::showError::Toast is suppressed | Title:', title, ' | Subtitle:', subTitle);
       return;
     }
@@ -333,7 +352,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   };
 
   const showSuccess = (title: string, subTitle: string) => {
-    if (suppressToast) {
+    if (uiConfig.suppressToast) {
       console.warn('UIWeb::MessageInput::showSuccess::Toast is suppressed | Title:', title, ' | Subtitle:', subTitle);
       return;
     }
@@ -441,240 +460,247 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     >
       <ConnectButtonSection autoConnect={autoConnect} />
     </TypebarSection>
-  ) : Object.keys(chatInfo || {}).length && chatInfo?.list !== 'REQUESTS' ? (
-    <TypebarSection
+  ) : Object.keys(chatInfo || {}).length ? (
+    <MessageInputContainer
       width="100%"
-      overflow="hidden"
-      borderRadius={theme.borderRadius?.messageInput}
-      position="static"
-      border={theme.border?.messageInput}
-      padding={` ${user && !user?.readmode() ? '13px 16px' : ''}`}
-      background={`${theme.backgroundColor?.messageInputBackground}`}
-      alignItems="center"
       justifyContent="space-between"
+      alignItems="center"
+      className={chatInfo?.list === 'REQUESTS' ? 'hide' : ''}
     >
-      {Object.keys(chatInfo || {}).length && groupInfo ? (
-        <>
-          {(isJoinGroup() || isNotVerified()) && (
-            <Section
-              width="100%"
-              justifyContent="space-between"
-              alignItems="center"
-            >
-              <Span
-                padding="8px 8px 8px 0px"
-                color={theme.textColor?.chatReceivedBubbleText}
-                fontSize="15px"
-                fontWeight="500"
-                textAlign="start"
+      <TypebarSection
+        width="100%"
+        overflow="hidden"
+        borderRadius={theme.borderRadius?.messageInput}
+        position="static"
+        border={theme.border?.messageInput}
+        padding={` ${user && !user?.readmode() ? '13px 16px' : ''}`}
+        background={`${theme.backgroundColor?.messageInputBackground}`}
+        alignItems="center"
+        justifyContent="space-between"
+      >
+        {Object.keys(chatInfo || {}).length && groupInfo ? (
+          <>
+            {(isJoinGroup() || isNotVerified()) && (
+              <Section
+                width="100%"
+                justifyContent="space-between"
+                alignItems="center"
               >
-                {isJoinGroup() && 'Click on the button to join the group'}
-                {isNotVerified() && (
-                  <>
-                    Sending messages requires to staisfy the group rules.{' '}
-                    <Link
-                      href="https://push.org/docs/chat/build/conditional-rules-for-group/"
-                      target="_blank"
-                      color={theme.backgroundColor?.chatSentBubbleBackground}
-                    >
-                      Learn More <OpenLink />
-                    </Link>
-                  </>
-                )}
-              </Span>
-              <ConnectWrapper>
-                <Connect onClick={async () => (isJoinGroup() ? await handleJoinGroup() : await checkVerification())}>
-                  {isJoinGroup() && (
-                    <>
-                      {joinLoading ? (
-                        <Spinner
-                          color="#fff"
-                          size="24"
-                        />
-                      ) : (
-                        ' Join Group '
-                      )}
-                    </>
-                  )}
+                <Span
+                  padding="8px 8px 8px 0px"
+                  color={theme.textColor?.chatReceivedBubbleText}
+                  fontSize="15px"
+                  fontWeight="500"
+                  textAlign="start"
+                >
+                  {isJoinGroup() && 'Click on the button to join the group'}
                   {isNotVerified() && (
                     <>
-                      {accessLoading ? (
-                        <Spinner
-                          color="#fff"
-                          size="24"
-                        />
-                      ) : (
-                        'Verify Access'
-                      )}
+                      Sending messages requires to staisfy the group rules.{' '}
+                      <Link
+                        href="https://push.org/docs/chat/build/conditional-rules-for-group/"
+                        target="_blank"
+                        color={theme.backgroundColor?.chatSentBubbleBackground}
+                      >
+                        Learn More <OpenLink />
+                      </Link>
                     </>
                   )}
-                </Connect>
-              </ConnectWrapper>
-            </Section>
-          )}
-          {!!user && !user?.readmode() && !verificationSuccessfull && (
-            <Modal
-              width="550px"
-              modalBackground={verificationFailModalBackground}
-              modalPositionType={verificationFailModalPosition}
-            >
-              <Section
-                margin="5px 0px 0px 0px"
-                gap="16px"
-                flexDirection="column"
-                width="100%"
+                </Span>
+                <ConnectWrapper>
+                  <Connect onClick={async () => (isJoinGroup() ? await handleJoinGroup() : await checkVerification())}>
+                    {isJoinGroup() && (
+                      <>
+                        {joinLoading ? (
+                          <Spinner
+                            color="#fff"
+                            size="24"
+                          />
+                        ) : (
+                          ' Join Group '
+                        )}
+                      </>
+                    )}
+                    {isNotVerified() && (
+                      <>
+                        {accessLoading ? (
+                          <Spinner
+                            color="#fff"
+                            size="24"
+                          />
+                        ) : (
+                          'Verify Access'
+                        )}
+                      </>
+                    )}
+                  </Connect>
+                </ConnectWrapper>
+              </Section>
+            )}
+            {!!user && !user?.readmode() && !verificationSuccessfull && (
+              <Modal
+                width="550px"
+                modalBackground={verificationFailModalBackground}
+                modalPositionType={verificationFailModalPosition}
               >
-                <ModalHeader title="Access Failed" />
-                <ConditionsInformation
-                  theme={theme}
-                  groupInfo={groupInfo}
-                  subheader="Please make sure the following conditions
-                   are met to pariticpate and send messages."
-                  alert={true}
-                />
-                <ConnectWrapperClose
-                  onClick={() => {
-                    if (onVerificationFail) {
-                      onVerificationFail();
-                    }
-                    setVerificationSuccessfull(true);
-                  }}
+                <Section
+                  margin="5px 0px 0px 0px"
+                  gap="16px"
+                  flexDirection="column"
+                  width="100%"
                 >
-                  <ConnectClose>Cancel</ConnectClose>
-                </ConnectWrapperClose>
-                <InfoContainer
-                  cta="https://push.org/docs/chat/build/conditional-rules-for-group/"
-                  label="Learn more about access gating rules"
-                />
-              </Section>
-              {/* </Section> */}
-            </Modal>
-          )}
-        </>
-      ) : null}
-      {user && !user?.readmode() && (((isRules ? verified : true) && isMember) || (chatInfo && !groupInfo)) && (
-        <>
-          <Section
-            gap="8px"
-            flex="1"
-            position="static"
-          >
-            {emoji && (
-              <Div
-                width="25px"
-                cursor="pointer"
-                height="25px"
-                alignSelf="end"
-                onClick={() => setShowEmojis(!showEmojis)}
-              >
-                <EmojiIcon color={theme.iconColor?.emoji} />
-              </Div>
-            )}
-            {showEmojis && (
-              <Section
-                ref={modalRef}
-                position="absolute"
-                bottom="2.5rem"
-                left="2.5rem"
-                zIndex="700"
-              >
-                <EmojiPicker
-                  width={isMobile ? 260 : 320}
-                  height={370}
-                  onEmojiClick={addEmoji}
-                />
-              </Section>
-            )}
-            <MultiLineInput
-              disabled={loading ? true : false}
-              theme={theme}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter' && !event.shiftKey) {
-                  event.preventDefault();
-                  sendTextMsg();
-                }
-              }}
-              placeholder="Type your message..."
-              onChange={(e) => onChangeTypedMessage(e.target.value)}
-              value={typedMessage}
-              ref={textAreaRef}
-              rows={1}
-            />
-          </Section>
-          <SendSection position="static">
-            {gif && (
-              <Section
-                width="34px"
-                height="24px"
-                cursor="pointer"
-                alignSelf="end"
-                onClick={() => setGifOpen(!gifOpen)}
-              >
-                <GifIcon />
-              </Section>
-            )}
-            {gifOpen && (
-              <Section
-                position="absolute"
-                bottom="2.5rem"
-                zIndex="1"
-                right={isMobile ? '7rem' : '8rem'}
-                ref={modalRef}
-              >
-                <GifPicker
-                  onGifClick={sendGIF}
-                  width={isMobile ? 260 : 320}
-                  height={370}
-                  tenorApiKey={String(PUBLIC_GOOGLE_TOKEN)}
-                />
-              </Section>
-            )}
-            <Section onClick={handleUploadFile}>
-              {!fileUploading && file && (
-                <>
-                  <Section
-                    width="17"
-                    height="24px"
-                    cursor="pointer"
-                    alignSelf="end"
-                  >
-                    <AttachmentIcon color={theme.iconColor?.attachment} />
-                  </Section>
-                  <FileInput
-                    type="file"
-                    ref={fileUploadInputRef}
-                    onChange={(e) => uploadFile(e)}
+                  <ModalHeader title="Access Failed" />
+                  <ConditionsInformation
+                    theme={theme}
+                    groupInfo={groupInfo}
+                    subheader="Please make sure the following conditions
+                    are met to pariticpate and send messages."
+                    alert={true}
                   />
-                </>
+                  <ConnectWrapperClose
+                    onClick={() => {
+                      if (onVerificationFail) {
+                        onVerificationFail();
+                      }
+                      setVerificationSuccessfull(true);
+                    }}
+                  >
+                    <ConnectClose>Cancel</ConnectClose>
+                  </ConnectWrapperClose>
+                  <InfoContainer
+                    cta="https://push.org/docs/chat/build/conditional-rules-for-group/"
+                    label="Learn more about access gating rules"
+                  />
+                </Section>
+                {/* </Section> */}
+              </Modal>
+            )}
+          </>
+        ) : null}
+        {user && !user?.readmode() && (((isRules ? verified : true) && isMember) || (chatInfo && !groupInfo)) && (
+          <>
+            <Section
+              gap="8px"
+              flex="1"
+              position="static"
+            >
+              {emoji && (
+                <Div
+                  width="25px"
+                  cursor="pointer"
+                  height="25px"
+                  alignSelf="end"
+                  onClick={() => setShowEmojis(!showEmojis)}
+                >
+                  <EmojiIcon color={theme.iconColor?.emoji} />
+                </Div>
               )}
+              {showEmojis && (
+                <Section
+                  ref={modalRef}
+                  position="absolute"
+                  bottom="2.5rem"
+                  left="2.5rem"
+                  zIndex="700"
+                >
+                  <EmojiPicker
+                    width={isMobile ? 260 : 320}
+                    height={370}
+                    onEmojiClick={addEmoji}
+                  />
+                </Section>
+              )}
+              <MultiLineInput
+                disabled={loading ? true : false}
+                theme={theme}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' && !event.shiftKey) {
+                    event.preventDefault();
+                    sendTextMsg();
+                  }
+                }}
+                placeholder="Type your message..."
+                onChange={(e) => onChangeTypedMessage(e.target.value)}
+                value={typedMessage}
+                ref={textAreaRef}
+                rows={1}
+              />
             </Section>
-            {!(loading || fileUploading) && (
-              <Section
-                cursor="pointer"
-                alignSelf="end"
-                height="24px"
-                onClick={() => sendTextMsg()}
-              >
-                <SendCompIcon color={theme.iconColor?.sendButton} />
+            <SendSection position="static">
+              {gif && (
+                <Section
+                  width="34px"
+                  height="24px"
+                  cursor="pointer"
+                  alignSelf="end"
+                  onClick={() => setGifOpen(!gifOpen)}
+                >
+                  <GifIcon />
+                </Section>
+              )}
+              {gifOpen && (
+                <Section
+                  position="absolute"
+                  bottom="2.5rem"
+                  zIndex="1"
+                  right={isMobile ? '7rem' : '8rem'}
+                  ref={modalRef}
+                >
+                  <GifPicker
+                    onGifClick={sendGIF}
+                    width={isMobile ? 260 : 320}
+                    height={370}
+                    tenorApiKey={String(PUBLIC_GOOGLE_TOKEN)}
+                  />
+                </Section>
+              )}
+              <Section onClick={handleUploadFile}>
+                {!fileUploading && file && (
+                  <>
+                    <Section
+                      width="17"
+                      height="24px"
+                      cursor="pointer"
+                      alignSelf="end"
+                    >
+                      <AttachmentIcon color={theme.iconColor?.attachment} />
+                    </Section>
+                    <FileInput
+                      type="file"
+                      ref={fileUploadInputRef}
+                      onChange={(e) => uploadFile(e)}
+                    />
+                  </>
+                )}
               </Section>
-            )}
+              {!(loading || fileUploading) && (
+                <Section
+                  cursor="pointer"
+                  alignSelf="end"
+                  height="24px"
+                  onClick={() => sendTextMsg()}
+                >
+                  <SendCompIcon color={theme.iconColor?.sendButton} />
+                </Section>
+              )}
 
-            {(loading || fileUploading) && (
-              <Section
-                alignSelf="end"
-                height="24px"
-              >
-                <Spinner
-                  color={theme.spinnerColor}
-                  size="22"
-                />
-              </Section>
-            )}
-          </SendSection>
-        </>
-      )}
-      <ToastContainer />
-    </TypebarSection>
+              {(loading || fileUploading) && (
+                <Section
+                  alignSelf="end"
+                  height="24px"
+                >
+                  <Spinner
+                    color={theme.spinnerColor}
+                    size="22"
+                  />
+                </Section>
+              )}
+            </SendSection>
+          </>
+        )}
+        <ToastContainer />
+      </TypebarSection>
+    </MessageInputContainer>
   ) : (
     <></>
   );
@@ -687,6 +713,16 @@ const TypebarSection = styled(Section)<{ border?: string }>`
     gap: 0px;
   }
 `;
+
+const MessageInputContainer = styled(Section)`
+  transition: transform 0.3s ease-in-out;
+  transform: translateY(0);
+
+  &.hide {
+    transform: translateY(calc(100% + 20px));
+  }
+`;
+
 const SendSection = styled(Section)`
   gap: 11.5px;
   @media ${device.mobileL} {

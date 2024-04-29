@@ -30,8 +30,9 @@ export interface IChatPreviewListProps {
   listType?: 'CHATS' | 'REQUESTS' | 'SEARCH';
   prefillChatPreviewList?: Array<IChatPreviewProps>;
   searchParamter?: string;
-  onChatSelected?: (chatId: string, chatParticipant: string) => void;
   onUnreadCountChange?: (count: number) => void;
+  onChatsCountChange?: (count: number) => void;
+  onChatSelected?: (chatId: string, chatParticipant: string) => void;
   onPreload?: (chats: Array<IChatPreviewPayload>) => void;
   onPaging?: (chats: Array<IChatPreviewPayload>) => void;
   onLoading?: (loadingData: { loading: boolean; preload: boolean; paging: boolean; finished: boolean }) => void;
@@ -55,7 +56,6 @@ export interface IChatViewComponentProps {
   file?: boolean;
   isConnected?: boolean;
   autoConnect?: boolean;
-  suppressToast?: boolean;
   groupInfoModalBackground?: ModalBackgroundType;
   groupInfoModalPositionType?: ModalPositionType;
   verificationFailModalBackground?: ModalBackgroundType;
@@ -104,7 +104,6 @@ export interface MessageInputProps {
   file?: boolean;
   isConnected?: boolean;
   autoConnect?: boolean;
-  suppressToast?: boolean;
   verificationFailModalBackground?: ModalBackgroundType;
   verificationFailModalPosition?: ModalPositionType;
   onVerificationFail?: () => void;
@@ -169,6 +168,7 @@ export interface CreateGroupModalProps {
 export interface UserProfileProps {
   updateUserProfileModalBackground?: ModalBackgroundType;
   updateUserProfileModalPositionType?: ModalPositionType;
+  onUserProfileUpdateModalOpen?: (open: boolean) => void;
 }
 
 export interface ModalButtonProps {

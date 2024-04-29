@@ -13,6 +13,7 @@ import useCreateChatProfile from '../hooks/useCreateChatProfile';
 import useDecryptPGPKey from '../hooks/useDecryptPGPKey';
 import useGetChatProfile from '../hooks/useGetChatProfile';
 import usePushUser from '../hooks/usePushUser';
+import useToast from '../components/chat/reusables/NewToast'; // Re-write this later
 
 // Internal Configs
 import { lightChatTheme } from '../components/chat/theme';
@@ -44,6 +45,9 @@ export interface IChatUIProviderProps {
   user?: PushAPI | undefined;
   env?: ENV;
   debug?: boolean;
+  uiConfig?: {
+    suppressToast?: boolean;
+  };
 }
 
 // Exported Functions
@@ -56,10 +60,17 @@ export const ChatUIProvider = ({
   pgpPrivateKey = null,
   theme,
   debug = false,
+  uiConfig = {},
 }: IChatUIProviderProps) => {
+  // Now destructure with a default value for suppressToast
+  const { suppressToast = false } = uiConfig;
+
   // Hooks
   // To initialize user
   const { initializeUser } = usePushUser();
+
+  // To initialize toast
+  const toastify = useToast(3000, 'top-right', true);
 
   // State Variables
   const [pushUser, setPushUser] = useState<PushAPI | undefined>(user);
@@ -386,23 +397,23 @@ export const ChatUIProvider = ({
       }
     });
 
-    setTimeout(async () => {
-      console.debug('UIWeb::ChatDataProvider::attachListenersAndConnect::Timeout Connect', userInstance?.stream?.uid);
-      if (!userInstance.stream?.connected()) {
-        console.debug('UIWeb::ChatDataProvider::attachListenersAndConnect::Stream not connected', userInstance);
+    // setTimeout(async () => {
+    //   console.debug('UIWeb::ChatDataProvider::attachListenersAndConnect::Timeout Connect', userInstance?.stream?.uid);
+    if (!userInstance.stream?.connected()) {
+      console.debug('UIWeb::ChatDataProvider::attachListenersAndConnect::Stream not connected', userInstance);
 
-        await userInstance.stream?.connect();
-        console.debug(
-          'UIWeb::ChatDataProvider::attachListenersAndConnect::Stream listeners attached and stream connected',
-          userInstance?.stream?.uid
-        );
-      } else {
-        console.debug(
-          'UIWeb::ChatDataProvider::attachListenersAndConnect::Stream listeners attached',
-          userInstance?.stream?.uid
-        );
-      }
-    }, 1000);
+      await userInstance.stream?.connect();
+      console.debug(
+        'UIWeb::ChatDataProvider::attachListenersAndConnect::Stream listeners attached and stream connected',
+        userInstance?.stream?.uid
+      );
+    } else {
+      console.debug(
+        'UIWeb::ChatDataProvider::attachListenersAndConnect::Stream listeners attached',
+        userInstance?.stream?.uid
+      );
+    }
+    // }, 1000);
   };
 
   const value: IChatDataContextValues = {
@@ -426,6 +437,8 @@ export const ChatUIProvider = ({
     setIsPushChatStreamConnected,
     user: pushUser,
     setUser: setPushUser,
+    toast: toastify,
+    uiConfig: uiConfig,
     chatStream,
     chatRequestStream,
     chatAcceptStream,

@@ -1,6 +1,7 @@
 // React + Web3 Essentials
 import { ethers } from 'ethers';
 import { useContext, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 // External Packages
 import { CONSTANTS, PushAPI } from '@pushprotocol/restapi';
@@ -31,7 +32,7 @@ import { CoreContractChainId, InfuraAPIKey, allowedNetworks, device } from '../.
 import { ThemeContext } from '../theme/ThemeProvider';
 
 // Assets
-import { ICON_COLOR, PublicChatIcon, TokenGatedIcon } from '../../../icons/PushIcons';
+import { PublicChatIcon, TokenGatedIcon } from '../../../icons/PushIcons';
 import VerticalEllipsisIcon from '../../../icons/VerticalEllipsis.svg';
 import InfoIcon from '../../../icons/infodark.svg';
 
@@ -263,7 +264,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
             <Tooltip content={'Token Gated Group'}>
               <TokenGatedIcon
                 size={20}
-                color={ICON_COLOR.BLUISH_GRAY}
+                color={theme?.iconColor?.subtleColor}
               />
             </Tooltip>
           )}
@@ -272,7 +273,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
             <Tooltip content={'Token Gated Group'}>
               <PublicChatIcon
                 size={{ height: 20 }}
-                color={ICON_COLOR.BLUISH_GRAY}
+                color={theme?.iconColor?.subtleColor}
               />
             </Tooltip>
           )}
@@ -313,22 +314,24 @@ export const ChatProfile: React.FC<IChatProfile> = ({
         </Section>
 
         {/* For showing chat info modal | modal && */}
-        {modal && (
-          <GroupInfoModal
-            theme={theme}
-            setModal={setModal}
-            groupInfo={initialized.groupInfo!}
-            chatProfileInfo={initialized.profile}
-            setGroupInfo={(mutatedGroupInfo) =>
-              setInitialized((prevState) => ({
-                ...prevState,
-                mutatedGroupInfo,
-              }))
-            }
-            groupInfoModalBackground={groupInfoModalBackground}
-            groupInfoModalPositionType={groupInfoModalPositionType}
-          />
-        )}
+        {modal &&
+          createPortal(
+            <GroupInfoModal
+              theme={theme}
+              setModal={setModal}
+              groupInfo={initialized.groupInfo!}
+              chatProfileInfo={initialized.profile}
+              setGroupInfo={(mutatedGroupInfo) =>
+                setInitialized((prevState) => ({
+                  ...prevState,
+                  mutatedGroupInfo,
+                }))
+              }
+              groupInfoModalBackground={groupInfoModalBackground}
+              groupInfoModalPositionType={groupInfoModalPositionType}
+            />,
+            document.body
+          )}
 
         <ToastContainer />
       </Container>

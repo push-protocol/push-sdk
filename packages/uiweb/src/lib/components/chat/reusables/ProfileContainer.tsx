@@ -11,7 +11,7 @@ import { Div, Image, Section, Span, Tooltip } from '../../reusables';
 // Internal Configs
 
 // Assets
-import { CopyIcon, ICON_COLOR } from '../../../icons/PushIcons';
+import { CopyIcon } from '../../../icons/PushIcons';
 
 // Interfaces & Types
 import { IChatTheme } from '../theme';
@@ -154,7 +154,7 @@ export const ProfileContainer = ({ theme, member, copy, customStyle, loading }: 
                 <Div cursor="pointer">
                   <CopyIcon
                     size={16}
-                    color={ICON_COLOR.PINK}
+                    color={theme?.iconColor?.primaryColor}
                   />
                 </Div>
               )}

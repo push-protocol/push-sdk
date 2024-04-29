@@ -4,13 +4,11 @@ import { AiTwotoneCamera } from 'react-icons/ai';
 import styled from 'styled-components';
 import { IUser } from '@pushprotocol/restapi';
 
-import {
-  IChatTheme,
- 
-} from '../exportedTypes';
-import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE,ModalBackgroundType,ModalPositionType } from '../../../types';
+import { IChatTheme } from '../exportedTypes';
+import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, ModalBackgroundType, ModalPositionType } from '../../../types';
 
 import { Button, Modal, ModalHeader, TextArea, TextInput } from '../reusables';
+import { useChatData } from '../../../hooks/chat/useChatData';
 import useUserInfoUtilities from '../../../hooks/chat/useUserInfoUtilities';
 import { MdCheckCircle, MdError } from 'react-icons/md';
 import useToast from '../reusables/NewToast';
@@ -41,13 +39,13 @@ export const UpdateUserProfileModal = ({
   updateUserProfileModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
   updateUserProfileModalPositionType = MODAL_POSITION_TYPE.GLOBAL,
 }: UpdateUserProfileModalProps) => {
-  const [userProfileDetails, setUserProfileDetails] = useState<UserProfileType>(
-    {
-      name: userProfile ? userProfile?.profile?.name ?? '' : '',
-      description: userProfile ? userProfile?.profile?.desc ?? '' : '',
-      picture: userProfile ? userProfile?.profile?.picture ?? '' : '',
-    }
-  );
+  const { uiConfig } = useChatData();
+
+  const [userProfileDetails, setUserProfileDetails] = useState<UserProfileType>({
+    name: userProfile ? userProfile?.profile?.name ?? '' : '',
+    description: userProfile ? userProfile?.profile?.desc ?? '' : '',
+    picture: userProfile ? userProfile?.profile?.picture ?? '' : '',
+  });
   const [imageSrc, setImageSrc] = useState<string | null>();
 
   const [isImageUploaded, setIsImageUploaded] = useState<boolean>(false || !!userProfileDetails.picture);
@@ -61,7 +59,7 @@ export const UpdateUserProfileModal = ({
 
   const updateUserDetails = () => {
     setUserProfile((prev) => ({
-      ...prev as IUser,
+      ...(prev as IUser),
       profile: {
         ...prev!.profile,
         name: userProfileDetails.name,
@@ -70,17 +68,29 @@ export const UpdateUserProfileModal = ({
       },
     }));
   };
+
   const onUpdate = async () => {
     const isSuccess = await updateUserProfile({ userProfileDetails });
     if (typeof isSuccess != 'string') {
-      userUpdateToast.showMessageToast({
-        toastTitle: 'Success',
-        toastMessage: 'User profile updated successfully',
-        toastType: 'SUCCESS',
-        getToastIcon: (size: string | number | undefined) => (
-          <MdCheckCircle size={size} color="green" />
-        ),
-      });
+      if (!uiConfig.suppressToast) {
+        userUpdateToast.showMessageToast({
+          toastTitle: 'Success',
+          toastMessage: 'User profile updated successfully',
+          toastType: 'SUCCESS',
+          getToastIcon: (size: string | number | undefined) => (
+            <MdCheckCircle
+              size={size}
+              color="green"
+            />
+          ),
+        });
+      } else {
+        console.debug(
+          'UIWeb::components::UserProfile::onUpdate::Toast suppressed with message: ',
+          'User profile updated successfully'
+        );
+      }
+
       updateUserDetails();
       onClose();
       //set new user profile
@@ -89,12 +99,21 @@ export const UpdateUserProfileModal = ({
     }
   };
   const showError = (errorMessage: string) => {
-    userUpdateToast.showMessageToast({
-      toastTitle: 'Error',
-      toastMessage: errorMessage,
-      toastType: 'ERROR',
-      getToastIcon: (size) => <MdError size={size} color="red" />,
-    });
+    if (!uiConfig.suppressToast) {
+      userUpdateToast.showMessageToast({
+        toastTitle: 'Error',
+        toastMessage: errorMessage,
+        toastType: 'ERROR',
+        getToastIcon: (size) => (
+          <MdError
+            size={size}
+            color="red"
+          />
+        ),
+      });
+    } else {
+      console.debug('UIWeb::components::UserProfile::showError::Toast suppressed with message: ', errorMessage);
+    }
   };
   const handleChange = (e: Event) => {
     if (!(e.target instanceof HTMLInputElement)) {
@@ -148,11 +167,18 @@ export const UpdateUserProfileModal = ({
         gap="16px"
         overflow="hidden auto"
         justifyContent="start"
-        padding='5px'
+        padding="5px"
         width={!isMobile ? '400px' : '300px'}
       >
-        <ModalHeader title="Edit Profile" handleClose={onClose} />
-        <Section alignItems="center" gap="20px" justifyContent="start">
+        <ModalHeader
+          title="Edit Profile"
+          handleClose={onClose}
+        />
+        <Section
+          alignItems="center"
+          gap="20px"
+          justifyContent="start"
+        >
           <UploadContainer onClick={handleUpload}>
             {isImageUploaded ? (
               userProfileDetails.picture ? (
@@ -180,7 +206,10 @@ export const UpdateUserProfileModal = ({
               )
             ) : (
               <ImageContainer theme={theme}>
-                <AiTwotoneCamera fontSize={40} color={'rgba(87, 93, 115, 1)'} />
+                <AiTwotoneCamera
+                  fontSize={40}
+                  color={'rgba(87, 93, 115, 1)'}
+                />
               </ImageContainer>
             )}
             <FileInput
@@ -192,7 +221,11 @@ export const UpdateUserProfileModal = ({
             />
           </UploadContainer>
 
-          <Section flexDirection="column" gap="20px" alignItems='center'>
+          <Section
+            flexDirection="column"
+            gap="20px"
+            alignItems="center"
+          >
             <Button
               width="auto"
               height="auto"
@@ -209,7 +242,7 @@ export const UpdateUserProfileModal = ({
               Upload Photo
             </Button>
             <Span
-              cursor='pointer'
+              cursor="pointer"
               color={theme?.textColor?.modalSubHeadingText}
               fontSize="14px"
               fontWeight="400"
@@ -219,7 +252,11 @@ export const UpdateUserProfileModal = ({
             </Span>
           </Section>
         </Section>
-        <Section gap="10px" flexDirection="column" alignItems="start">
+        <Section
+          gap="10px"
+          flexDirection="column"
+          alignItems="start"
+        >
           <TextInput
             labelName="Display Name"
             charCount={50}
@@ -232,7 +269,11 @@ export const UpdateUserProfileModal = ({
             }
           />
         </Section>
-        <Section gap="10px" flexDirection="column" alignItems="start">
+        <Section
+          gap="10px"
+          flexDirection="column"
+          alignItems="start"
+        >
           <TextArea
             labelName="Bio"
             charCount={150}
@@ -246,11 +287,17 @@ export const UpdateUserProfileModal = ({
           />
         </Section>
 
-        <Button width="197px" onClick={() => onUpdate()}>
+        <Button
+          width="197px"
+          onClick={() => onUpdate()}
+        >
           {!updateProfileLoading ? (
             'Save Changes'
           ) : (
-            <Spinner size="20" color="#fff" />
+            <Spinner
+              size="20"
+              color="#fff"
+            />
           )}
         </Button>
       </Section>

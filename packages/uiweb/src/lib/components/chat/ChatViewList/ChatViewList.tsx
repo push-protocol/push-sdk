@@ -21,7 +21,7 @@ import { Section, Span, Spinner } from '../../reusables';
 import { ChatViewBubble } from '../ChatViewBubble';
 import { checkIfNewRequest, transformStreamToIMessageIPFSWithCID } from '../helpers';
 import useToast from '../reusables/NewToast';
-import { ApproveRequestBubble } from './ApproveRequestBubble';
+import { ActionRequestBubble } from './ActionRequestBubble';
 import { ENCRYPTION_KEYS, EncryptionMessage } from './MessageEncryption';
 
 // Internal Configs
@@ -576,10 +576,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
                 })}
 
               {initialized.chatInfo && initialized.chatInfo?.list === 'REQUESTS' && (
-                <ApproveRequestBubble
-                  groupInfo={initialized.groupInfo}
-                  chatId={chatId}
-                />
+                <ActionRequestBubble chatInfo={initialized.chatInfo} />
               )}
             </ChatViewListCardInner>
           }

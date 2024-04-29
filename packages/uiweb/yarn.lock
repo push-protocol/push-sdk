@@ -1505,6 +1505,7 @@ __metadata:
     react-easy-crop: ^4.1.4
     react-icons: ^4.10.1
     react-image-file-resizer: ^0.4.7
+    react-particle-effect-button: ^1.0.1
     react-toastify: ^9.1.3
     react-twitter-embed: ^4.0.4
     uuid: ^9.0.1
@@ -3084,6 +3085,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"animejs@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "animejs@npm:2.2.0"
+  checksum: a95d6964a0af4fb1ad500deea11a3e984d0b5ea253cd99f4c07706db666d0784c67fb5e7e36f84aea58b1c2a1d8e3958f03ba9f31998f79d86f492edc909f1ba
+  languageName: node
+  linkType: hard
+
 "ansi-regex@npm:^4.1.0":
   version: 4.1.1
   resolution: "ansi-regex@npm:4.1.1"
@@ -3403,6 +3411,13 @@ __metadata:
   version: 2.0.0
   resolution: "chownr@npm:2.0.0"
   checksum: c57cf9dd0791e2f18a5ee9c1a299ae6e801ff58fee96dc8bfd0dcb4738a6ce58dd252a3605b1c93c6418fe4f9d5093b28ffbf4d66648cb2a9c67eaef9679be2f
+  languageName: node
+  linkType: hard
+
+"classnames@npm:^2.2.5":
+  version: 2.5.1
+  resolution: "classnames@npm:2.5.1"
+  checksum: da424a8a6f3a96a2e87d01a432ba19315503294ac7e025f9fece656db6b6a0f7b5003bb1fbb51cbb0d9624d964f1b9bb35a51c73af9b2434c7b292c42231c1e5
   languageName: node
   linkType: hard
 
@@ -5477,6 +5492,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"performance-now@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "performance-now@npm:2.1.0"
+  checksum: 534e641aa8f7cba160f0afec0599b6cecefbb516a2e837b512be0adbe6c1da5550e89c78059c7fabc5c9ffdf6627edabe23eb7c518c4500067a898fa65c2b550
+  languageName: node
+  linkType: hard
+
 "pify@npm:^3.0.0":
   version: 3.0.0
   resolution: "pify@npm:3.0.0"
@@ -5676,6 +5698,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"raf@npm:^3.4.0":
+  version: 3.4.1
+  resolution: "raf@npm:3.4.1"
+  dependencies:
+    performance-now: ^2.1.0
+  checksum: 50ba284e481c8185dbcf45fc4618ba3aec580bb50c9121385d5698cb6012fe516d2015b1df6dd407a7b7c58d44be8086108236affbce1861edd6b44637c8cd52
+  languageName: node
+  linkType: hard
+
 "randombytes@npm:^2.1.0":
   version: 2.1.0
   resolution: "randombytes@npm:2.1.0"
@@ -5711,6 +5742,21 @@ __metadata:
   version: 0.4.8
   resolution: "react-image-file-resizer@npm:0.4.8"
   checksum: b8f169bc816dd3c10910868e1049ec356e3cd063a87a0eaaf9801c96560fbf21b71019054da91c757ee85ed1ef7b1987821636c81f4f8eae1f8fe3be088ae2ea
+  languageName: node
+  linkType: hard
+
+"react-particle-effect-button@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "react-particle-effect-button@npm:1.0.1"
+  dependencies:
+    animejs: ^2.2.0
+    classnames: ^2.2.5
+    raf: ^3.4.0
+  peerDependencies:
+    prop-types: ^15.5.4
+    react: ^15.0.0 || ^16.0.0
+    react-dom: ^15.0.0 || ^16.0.0
+  checksum: ce0141d8f181cfc2935a1d26cf820ad5dca85509abe7d5fd84a2fef112eeda7409b8b61225e4f98b51babc70a603a5d6e91f1dd19d367ffdf4c78806016f59bb
   languageName: node
   linkType: hard
 

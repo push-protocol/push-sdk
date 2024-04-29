@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useDeviceWidthCheck } from '../../../hooks';
 import { EncryptionIcon } from '../../../icons/Encryption';
 import { NoEncryptionIcon } from '../../../icons/NoEncryption';
-import { ICON_COLOR, PublicChatIcon } from '../../../icons/PushIcons';
+import { PublicChatIcon } from '../../../icons/PushIcons';
 import { Div, Section, Span } from '../../reusables';
 import { ThemeContext } from '../theme/ThemeProvider';
 
@@ -17,36 +17,38 @@ export const ENCRYPTION_KEYS = {
 
 export type EncryptionKeys = typeof ENCRYPTION_KEYS[keyof typeof ENCRYPTION_KEYS];
 
-const EncryptionMessageContent = {
-  ENCRYPTED: {
-    IconComponent: <EncryptionIcon size="15" />,
-    text: 'Messages are end-to-end encrypted. Only users in this chat can view or listen to them. Click to learn more.',
-  },
-  NO_ENCRYPTED: {
-    IconComponent: <NoEncryptionIcon size="15" />,
-    text: `Messages are not encrypted`,
-  },
-  NO_ENCRYPTED_GROUP: {
-    IconComponent: <NoEncryptionIcon size="15" />,
-    text: `Messages in this group are not encrypted`,
-  },
-  PREVIEW: {
-    IconComponent: (
-      <PublicChatIcon
-        size={15}
-        color={ICON_COLOR.BLUISH_GRAY}
-      />
-    ),
-    text: `Chat in preview mode. Only public groups messages are visible.`,
-  },
-  LOADING: {
-    IconComponent: null,
-    text: `Please wait while Push Chat loads the status of this chat...`,
-  },
-};
 export const EncryptionMessage = ({ id, className }: { id: EncryptionKeys; className?: string }) => {
   const theme = useContext(ThemeContext);
   const isMobile = useDeviceWidthCheck(771);
+
+  const EncryptionMessageContent = {
+    ENCRYPTED: {
+      IconComponent: <EncryptionIcon size="15" />,
+      text: 'Messages are end-to-end encrypted. Only users in this chat can view or listen to them. Click to learn more.',
+    },
+    NO_ENCRYPTED: {
+      IconComponent: <NoEncryptionIcon size="15" />,
+      text: `Messages are not encrypted`,
+    },
+    NO_ENCRYPTED_GROUP: {
+      IconComponent: <NoEncryptionIcon size="15" />,
+      text: `Messages in this group are not encrypted`,
+    },
+    PREVIEW: {
+      IconComponent: (
+        <PublicChatIcon
+          size={15}
+          color={theme?.iconColor?.subtleColor}
+        />
+      ),
+      text: `Chat in preview mode. Only public groups messages are visible.`,
+    },
+    LOADING: {
+      IconComponent: null,
+      text: `Please wait while Push Chat loads the status of this chat...`,
+    },
+  };
+
   return (
     <Section
       padding="10px"

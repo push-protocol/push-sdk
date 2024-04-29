@@ -2,21 +2,21 @@ import * as PushAPI from '@pushprotocol/restapi';
 import { useCallback, useContext, useState } from 'react';
 import { useChatData } from './useChatData';
 
-interface ApproveChatParams {
+interface RejectChatParams {
   chatId: string;
 }
 
-const useApproveChatRequest = () => {
+const useRejectChatRequest = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
   const { user } = useChatData();
 
-  const approveChatRequest = useCallback(
-    async (options: ApproveChatParams) => {
+  const rejectChatRequest = useCallback(
+    async (options: RejectChatParams) => {
       const { chatId } = options || {};
       setLoading(true);
       try {
-        // const response = await user?.chat.accept(chatId);
+        // const response = await user?.chat.reject(chatId);
 
         // setLoading(false);
         // return response;
@@ -38,7 +38,7 @@ const useApproveChatRequest = () => {
     [user]
   );
 
-  return { approveChatRequest, error, loading };
+  return { rejectChatRequest, error, loading };
 };
 
-export default useApproveChatRequest;
+export default useRejectChatRequest;
