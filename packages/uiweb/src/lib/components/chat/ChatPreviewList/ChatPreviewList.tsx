@@ -604,6 +604,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
   }, [chatAcceptStream]);
 
   // When chat reject comes in, this applies for groups as well
+  // chat should be removed from both sender and receiver
   useEffect(() => {
     if (Object.keys(chatRejectStream || {}).length > 0 && chatRejectStream.constructor === Object) {
       removeChatItems([chatRejectStream.chatId]);
