@@ -19,7 +19,7 @@ import { IMessagePayload, TwitterFeedReturnType } from '../exportedTypes';
 const SenderMessageAddress = ({ chat }: { chat: IMessagePayload }) => {
   const { user } = useContext(ChatDataContext);
   const theme = useContext(ThemeContext);
-  return chat.fromCAIP10.split(':')[1] !== user?.account ? (
+  return chat.fromCAIP10?.split(':')[1] !== user?.account ? (
     <Span
       theme={theme}
       alignSelf="start"
@@ -28,8 +28,8 @@ const SenderMessageAddress = ({ chat }: { chat: IMessagePayload }) => {
       fontWeight={theme.fontWeight?.chatReceivedBubbleAddressText}
       color={theme.textColor?.chatReceivedBubbleAddressText}
     >
-      {chat.fromDID.split(':')[1].slice(0, 6)}...
-      {chat.fromDID.split(':')[1].slice(-6)}
+      {chat.fromDID?.split(':')[1].slice(0, 6)}...
+      {chat.fromDID?.split(':')[1].slice(-6)}
     </Span>
   ) : null;
 };
@@ -40,7 +40,7 @@ const SenderMessageProfilePicture = ({ chat }: { chat: IMessagePayload }) => {
   const getUserPfp = async () => {
     const pfp = await getPfp({
       user: user,
-      recipient: chat.fromCAIP10.split(':')[1],
+      recipient: chat.fromCAIP10?.split(':')[1],
     });
     if (pfp) {
       setPfp(pfp);
@@ -55,7 +55,7 @@ const SenderMessageProfilePicture = ({ chat }: { chat: IMessagePayload }) => {
       justifyContent="start"
       alignItems="start"
     >
-      {chat.fromCAIP10.split(':')[1] !== user?.account && (
+      {chat.fromCAIP10?.split(':')[1] !== user?.account && (
         <Section alignItems="start">
           {pfp && (
             <Image
@@ -137,7 +137,7 @@ const MessageCard = ({ chat, position, isGroup }: { chat: IMessagePayload; posit
           flexDirection="column"
           padding="5px 0 15px 0"
         >
-          {chat.messageContent.split('\n').map((str) => (
+          {chat?.messageContent?.split('\n').map((str) => (
             <Span
               key={Math.random().toString()}
               alignSelf="start"
@@ -178,7 +178,7 @@ const MessageCard = ({ chat, position, isGroup }: { chat: IMessagePayload; posit
 };
 
 const FileCard = ({ chat, isGroup }: { chat: IMessagePayload; position: number; isGroup: boolean }) => {
-  const fileContent: FileMessageContent = JSON.parse(chat.messageContent);
+  const fileContent: FileMessageContent = JSON.parse(chat?.messageContent);
   const name = fileContent.name;
 
   const content = fileContent.content as string;
@@ -202,7 +202,7 @@ const FileCard = ({ chat, isGroup }: { chat: IMessagePayload; position: number; 
         width="fit-content"
       >
         <Image
-          src={FILE_ICON(name.split('.').slice(-1)[0])}
+          src={FILE_ICON(name?.split('.').slice(-1)[0])}
           alt="extension icon"
           width="20px"
           height="20px"
@@ -250,7 +250,7 @@ const ImageCard = ({ chat, position, isGroup }: { chat: IMessagePayload; positio
         margin="5px 0"
       >
         <Image
-          src={JSON.parse(chat.messageContent).content}
+          src={JSON.parse(chat?.messageContent)?.content}
           alt=""
           width="100%"
           borderRadius={position ? '12px 0px 12px 12px' : '0px 12px 12px 12px'}
@@ -274,7 +274,7 @@ const GIFCard = ({ chat, position, isGroup }: { chat: IMessagePayload; position:
         width="fit-content"
       >
         <Image
-          src={chat.messageContent}
+          src={chat?.messageContent}
           alt=""
           width="100%"
           borderRadius={position ? '12px 0px 12px 12px' : '0px 12px 12px 12px'}
