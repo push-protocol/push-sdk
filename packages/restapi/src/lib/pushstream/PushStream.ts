@@ -31,6 +31,10 @@ export class PushStream extends EventEmitter {
   private listen: StreamType[];
   private disconnected: boolean;
   public uid: string;
+  public chatSocketCount: number;
+  public notifSocketCount: number;
+  public chatSocketConnected: boolean;
+  public notifSocketConnected: boolean;
   constructor(
     account: string,
     private _listen: StreamType[],
@@ -48,6 +52,10 @@ export class PushStream extends EventEmitter {
     this.listen = _listen;
     this.disconnected = false;
     this.uid = uuidv4();
+    this.chatSocketCount = 0;
+    this.notifSocketCount = 0;
+    this.chatSocketConnected = false;
+    this.notifSocketConnected = false;
     this.chatInstance = new Chat(
       this.account,
       this.options.env as ENV,
@@ -116,372 +124,428 @@ export class PushStream extends EventEmitter {
   }
 
   public async connect(): Promise<void> {
-    const shouldInitializeChatSocket =
-      !this.listen ||
-      this.listen.length === 0 ||
-      this.listen.includes(STREAM.CHAT) ||
-      this.listen.includes(STREAM.CHAT_OPS) ||
-      this.listen.includes(STREAM.SPACE) ||
-      this.listen.includes(STREAM.SPACE_OPS);
-    const shouldInitializeNotifSocket =
-      !this.listen ||
-      this.listen.length === 0 ||
-      this.listen.includes(STREAM.NOTIF) ||
-      this.listen.includes(STREAM.NOTIF_OPS) ||
-      this.listen.includes(STREAM.VIDEO);
+    return new Promise<void>(async (resolve, reject) => {
+      const shouldInitializeChatSocket =
+        !this.listen ||
+        this.listen.length === 0 ||
+        this.listen.includes(STREAM.CHAT) ||
+        this.listen.includes(STREAM.CHAT_OPS) ||
+        this.listen.includes(STREAM.SPACE) ||
+        this.listen.includes(STREAM.SPACE_OPS);
+      const shouldInitializeNotifSocket =
+        !this.listen ||
+        this.listen.length === 0 ||
+        this.listen.includes(STREAM.NOTIF) ||
+        this.listen.includes(STREAM.NOTIF_OPS) ||
+        this.listen.includes(STREAM.VIDEO);
 
-    let isChatSocketConnected = false;
-    let isNotifSocketConnected = false;
-
-    // Function to check and emit the STREAM.CONNECT event
-    const checkAndEmitConnectEvent = () => {
-      if (
-        ((shouldInitializeChatSocket && isChatSocketConnected) ||
-          !shouldInitializeChatSocket) &&
-        ((shouldInitializeNotifSocket && isNotifSocketConnected) ||
-          !shouldInitializeNotifSocket)
-      ) {
-        this.emit(STREAM.CONNECT);
-        //console.log('Emitted STREAM.CONNECT');
-      }
-    };
-
-    const handleSocketDisconnection = async (socketType: 'chat' | 'notif') => {
-      //console.log(`${socketType.toUpperCase()} Socket Disconnected`);
-
-      if (socketType === 'chat') {
-        isChatSocketConnected = false;
-        if (isNotifSocketConnected) {
-          if (
-            this.pushNotificationSocket &&
-            this.pushNotificationSocket.connected
-          ) {
-            //console.log('Disconnecting Notification Socket...');
-            this.pushNotificationSocket.disconnect();
-          }
-        } else {
-          // Emit STREAM.DISCONNECT only if the notification socket was already disconnected
-          this.emit(STREAM.DISCONNECT);
-          //console.log('Emitted STREAM.DISCONNECT ');
+      let isChatSocketConnected = false;
+      let isNotifSocketConnected = false;
+      // Function to check and emit the STREAM.CONNECT event
+      const checkAndEmitConnectEvent = () => {
+        if (
+          ((shouldInitializeChatSocket && isChatSocketConnected) ||
+            !shouldInitializeChatSocket) &&
+          ((shouldInitializeNotifSocket && isNotifSocketConnected) ||
+            !shouldInitializeNotifSocket)
+        ) {
+          this.emit(STREAM.CONNECT);
+          console.log('RestAPI::PushStream::connect - Emitted STREAM.CONNECT');
+          resolve();
         }
-      } else if (socketType === 'notif') {
-        isNotifSocketConnected = false;
-        if (isChatSocketConnected) {
-          if (this.pushChatSocket && this.pushChatSocket.connected) {
-            //console.log('Disconnecting Chat Socket...');
-            this.pushChatSocket.disconnect();
-          }
-        } else {
-          // Emit STREAM.DISCONNECT only if the chat socket was already disconnected
-          this.emit(STREAM.DISCONNECT);
-          //console.log('Emitted STREAM.DISCONNECT');
+      };
+
+      const TIMEOUT_DURATION = 5000; // Timeout duration in milliseconds
+      setTimeout(() => {
+        if (!(this.notifSocketConnected || this.chatSocketConnected)) {
+          reject(new Error('Connection timeout')); // Reject the promise if connect event is not emitted within the timeout
         }
-      }
-    };
+      }, TIMEOUT_DURATION);
 
-    if (shouldInitializeChatSocket) {
-      if (!this.pushChatSocket) {
-        // If pushChatSocket does not exist, create a new socket connection
-        this.pushChatSocket = await createSocketConnection({
-          user: walletToPCAIP10(this.account),
-          socketType: 'chat',
-          socketOptions: {
-            autoConnect: this.options?.connection?.auto ?? true,
-            reconnectionAttempts: this.options?.connection?.retries ?? 3,
-          },
-          env: this.options?.env as ENV,
-        });
+      const handleSocketDisconnection = async (
+        socketType: 'chat' | 'notif'
+      ) => {
+        if (socketType === 'chat') {
+          isChatSocketConnected = false;
+          this.chatSocketConnected = false;
+          this.chatSocketCount--;
+          if (isNotifSocketConnected) {
+            if (
+              this.pushNotificationSocket &&
+              this.pushNotificationSocket.connected
+            ) {
+              console.log(
+                'RestAPI::PushStream::handleSocketDisconnection - Disconnecting Notification Socket...'
+              );
+              this.pushNotificationSocket.disconnect();
+            }
+          } else {
+            // Emit STREAM.DISCONNECT only if the notification socket was already disconnected
+            this.emit(STREAM.DISCONNECT);
+            console.log(
+              'RestAPI::PushStream::handleSocketDisconnection - Emitted STREAM.DISCONNECT for chat.'
+            );
+          }
+        } else if (socketType === 'notif') {
+          isNotifSocketConnected = false;
+          this.notifSocketConnected = false;
+          this.notifSocketCount--;
+          if (isChatSocketConnected) {
+            if (this.pushChatSocket && this.pushChatSocket.connected) {
+              console.log(
+                'RestAPI::PushStream::handleSocketDisconnection - Disconnecting Chat Socket...'
+              );
+              this.pushChatSocket.disconnect();
+            }
+          } else {
+            // Emit STREAM.DISCONNECT only if the chat socket was already disconnected
+            this.emit(STREAM.DISCONNECT);
+            console.log(
+              'RestAPI::PushStream::handleSocketDisconnection - Emitted STREAM.DISCONNECT for notification.'
+            );
+          }
+        }
+      };
 
+      if (shouldInitializeChatSocket) {
         if (!this.pushChatSocket) {
-          throw new Error('Push chat socket not connected');
-        }
-      } else if (!this.pushChatSocket.connected) {
-        // If pushChatSocket exists but is not connected, attempt to reconnect
-        //console.log('Attempting to reconnect push chat socket...');
-        this.pushChatSocket.connect(); // Assuming connect() is the method to re-establish connection
-      } else {
-        // If pushChatSocket is already connected
-        //console.log('Push chat socket already connected');
-      }
-    }
+          // If pushChatSocket does not exist, create a new socket connection
+          console.log(
+            'RestAPI::PushStream::ChatSocket::Create - pushChatSocket does not exist, creating new socket connection...'
+          );
 
-    if (shouldInitializeNotifSocket) {
-      if (!this.pushNotificationSocket) {
-        // If pushNotificationSocket does not exist, create a new socket connection
-        this.pushNotificationSocket = await createSocketConnection({
-          user: pCAIP10ToWallet(this.account),
-          env: this.options?.env as ENV,
-          socketOptions: {
-            autoConnect: this.options?.connection?.auto ?? true,
-            reconnectionAttempts: this.options?.connection?.retries ?? 3,
-          },
+          this.pushChatSocket = await createSocketConnection({
+            user: walletToPCAIP10(this.account),
+            socketType: 'chat',
+            socketOptions: {
+              autoConnect: this.options?.connection?.auto ?? true,
+              reconnectionAttempts: this.options?.connection?.retries ?? 3,
+            },
+            env: this.options?.env as ENV,
+          });
+
+          if (!this.pushChatSocket) {
+            reject(
+              new Error(
+                'RestAPI::PushStream::ChatSocket::Error - Push chat socket not connected'
+              )
+            );
+          }
+        } else if (this.pushChatSocket && !this.chatSocketConnected) {
+          // If pushChatSocket exists but is not connected, attempt to reconnect
+          console.log(
+            'RestAPI::PushStream::ChatSocket::Reconnect - Attempting to reconnect push chat socket...'
+          );
+          this.pushChatSocket.connect(); // Assuming connect() is the method to re-establish connection
+        } else {
+          console.log(
+            'RestAPI::PushStream::ChatSocket::Status - Push chat socket already connected'
+          );
+        }
+      }
+
+      if (shouldInitializeNotifSocket) {
+        if (!this.pushNotificationSocket) {
+          // If pushNotificationSocket does not exist, create a new socket connection
+          console.log(
+            'RestAPI::PushStream::NotifSocket::Create - pushNotificationSocket does not exist, creating new socket connection...'
+          );
+          this.pushNotificationSocket = await createSocketConnection({
+            user: pCAIP10ToWallet(this.account),
+            env: this.options?.env as ENV,
+            socketOptions: {
+              autoConnect: this.options?.connection?.auto ?? true,
+              reconnectionAttempts: this.options?.connection?.retries ?? 3,
+            },
+          });
+
+          if (!this.pushNotificationSocket) {
+            reject(
+              new Error(
+                'RestAPI::PushStream::NotifSocket::Error - Push notification socket not connected'
+              )
+            );
+          }
+        } else if (this.pushNotificationSocket && !this.notifSocketConnected) {
+          // If pushNotificationSocket exists but is not connected, attempt to reconnect
+          console.log(
+            'RestAPI::PushStream::NotifSocket::Reconnect - Attempting to reconnect push notification socket...'
+          );
+          this.notifSocketCount++;
+          this.pushNotificationSocket.connect(); // Assuming connect() is the method to re-establish connection
+        } else {
+          // If pushNotificationSocket is already connected
+          console.log(
+            'RestAPI::PushStream::NotifSocket::Status - Push notification socket already connected'
+          );
+        }
+      }
+
+      const shouldEmit = (eventType: STREAM): boolean => {
+        if (!this.listen || this.listen.length === 0) {
+          return true;
+        }
+        return this.listen.includes(eventType);
+      };
+
+      if (this.pushChatSocket) {
+        this.pushChatSocket.on(EVENTS.CONNECT, async () => {
+          isChatSocketConnected = true;
+          this.chatSocketCount++;
+          this.chatSocketConnected = true;
+          checkAndEmitConnectEvent();
+          console.log(
+            `RestAPI::PushStream::EVENTS.CONNECT::Chat Socket Connected (ID: ${this.pushChatSocket.id})`
+          );
         });
 
-        if (!this.pushNotificationSocket) {
-          throw new Error('Push notification socket not connected');
-        }
-      } else if (!this.pushNotificationSocket.connected) {
-        // If pushNotificationSocket exists but is not connected, attempt to reconnect
-        //console.log('Attempting to reconnect push notification socket...');
-        this.pushNotificationSocket.connect(); // Assuming connect() is the method to re-establish connection
-      } else {
-        // If pushNotificationSocket is already connected
-        //console.log('Push notification socket already connected');
-      }
-    }
+        this.pushChatSocket.on(EVENTS.DISCONNECT, async () => {
+          await handleSocketDisconnection('chat');
+        });
 
-    const shouldEmit = (eventType: STREAM): boolean => {
-      if (!this.listen || this.listen.length === 0) {
-        return true;
-      }
-      return this.listen.includes(eventType);
-    };
-
-    if (this.pushChatSocket) {
-      this.pushChatSocket.on(EVENTS.CONNECT, async () => {
-        isChatSocketConnected = true;
-        checkAndEmitConnectEvent();
-        //console.log(`Chat Socket Connected (ID: ${this.pushChatSocket.id})`);
-      });
-
-      this.pushChatSocket.on(EVENTS.DISCONNECT, async () => {
-        await handleSocketDisconnection('chat');
-      });
-
-      this.pushChatSocket.on(EVENTS.CHAT_GROUPS, (data: any) => {
-        try {
-          const modifiedData = DataModifier.handleChatGroupEvent(
-            data,
-            this.raw
-          );
-          modifiedData.event = DataModifier.convertToProposedName(
-            modifiedData.event
-          );
-          modifiedData.streamUid = this.uid;
-          DataModifier.handleToField(modifiedData);
-          if (this.shouldEmitChat(data.chatId)) {
-            if (
-              data.eventType === GroupEventType.JoinGroup ||
-              data.eventType === GroupEventType.LeaveGroup ||
-              data.eventType === MessageEventType.Request ||
-              data.eventType === GroupEventType.Remove ||
-              data.eventType === GroupEventType.RoleChange
-            ) {
-              if (shouldEmit(STREAM.CHAT)) {
-                this.emit(STREAM.CHAT, modifiedData);
-              }
-            } else {
-              if (shouldEmit(STREAM.CHAT_OPS)) {
-                this.emit(STREAM.CHAT_OPS, modifiedData);
-              }
-            }
-          }
-        } catch (error) {
-          console.error(
-            'Error handling CHAT_GROUPS event:',
-            error,
-            'Data:',
-            data
-          );
-        }
-      });
-
-      this.pushChatSocket.on(
-        EVENTS.CHAT_RECEIVED_MESSAGE,
-        async (data: any) => {
+        this.pushChatSocket.on(EVENTS.CHAT_GROUPS, (data: any) => {
           try {
-            if (
-              data.messageCategory == 'Chat' ||
-              data.messageCategory == 'Request'
-            ) {
-              // Dont call this if read only mode ?
-              if (this.decryptedPgpPvtKey) {
-                data = await this.chatInstance.decrypt([data]);
-                data = data[0];
-              }
-            }
-
-            const modifiedData = DataModifier.handleChatEvent(data, this.raw);
+            const modifiedData = DataModifier.handleChatGroupEvent(
+              data,
+              this.raw
+            );
             modifiedData.event = DataModifier.convertToProposedName(
               modifiedData.event
             );
             modifiedData.streamUid = this.uid;
             DataModifier.handleToField(modifiedData);
             if (this.shouldEmitChat(data.chatId)) {
-              if (shouldEmit(STREAM.CHAT)) {
-                this.emit(STREAM.CHAT, modifiedData);
+              if (
+                data.eventType === GroupEventType.JoinGroup ||
+                data.eventType === GroupEventType.LeaveGroup ||
+                data.eventType === MessageEventType.Request ||
+                data.eventType === GroupEventType.Remove ||
+                data.eventType === GroupEventType.RoleChange
+              ) {
+                if (shouldEmit(STREAM.CHAT)) {
+                  this.emit(STREAM.CHAT, modifiedData);
+                }
+              } else {
+                if (shouldEmit(STREAM.CHAT_OPS)) {
+                  this.emit(STREAM.CHAT_OPS, modifiedData);
+                }
               }
             }
           } catch (error) {
             console.error(
-              'Error handling CHAT_RECEIVED_MESSAGE event:',
+              'Error handling CHAT_GROUPS event:',
               error,
               'Data:',
               data
             );
           }
-        }
-      );
+        });
 
-      this.pushChatSocket.on('SPACES', (data: any) => {
-        try {
-          const modifiedData = DataModifier.handleSpaceEvent(data, this.raw);
-          modifiedData.event = DataModifier.convertToProposedNameForSpace(
-            modifiedData.event
-          );
+        this.pushChatSocket.on(
+          EVENTS.CHAT_RECEIVED_MESSAGE,
+          async (data: any) => {
+            try {
+              if (
+                data.messageCategory == 'Chat' ||
+                data.messageCategory == 'Request'
+              ) {
+                // Dont call this if read only mode ?
+                if (this.decryptedPgpPvtKey) {
+                  data = await this.chatInstance.decrypt([data]);
+                  data = data[0];
+                }
+              }
 
-          DataModifier.handleToField(modifiedData);
-          modifiedData.streamUid = this.uid;
+              const modifiedData = DataModifier.handleChatEvent(data, this.raw);
+              modifiedData.event = DataModifier.convertToProposedName(
+                modifiedData.event
+              );
+              DataModifier.handleToField(modifiedData);
+              if (this.shouldEmitChat(data.chatId)) {
+                if (shouldEmit(STREAM.CHAT)) {
+                  this.emit(STREAM.CHAT, modifiedData);
+                }
+              }
+            } catch (error) {
+              console.error(
+                'Error handling CHAT_RECEIVED_MESSAGE event:',
+                error,
+                'Data:',
+                data
+              );
+            }
+          }
+        );
 
-          if (this.shouldEmitSpace(data.spaceId)) {
-            if (
-              data.eventType === SpaceEventType.Join ||
-              data.eventType === SpaceEventType.Leave ||
-              data.eventType === MessageEventType.Request ||
-              data.eventType === SpaceEventType.Remove ||
-              data.eventType === SpaceEventType.Start ||
-              data.eventType === SpaceEventType.Stop
-            ) {
+        this.pushChatSocket.on('SPACES', (data: any) => {
+          try {
+            const modifiedData = DataModifier.handleSpaceEvent(data, this.raw);
+            modifiedData.event = DataModifier.convertToProposedNameForSpace(
+              modifiedData.event
+            );
+
+            DataModifier.handleToField(modifiedData);
+
+            if (this.shouldEmitSpace(data.spaceId)) {
+              if (
+                data.eventType === SpaceEventType.Join ||
+                data.eventType === SpaceEventType.Leave ||
+                data.eventType === MessageEventType.Request ||
+                data.eventType === SpaceEventType.Remove ||
+                data.eventType === SpaceEventType.Start ||
+                data.eventType === SpaceEventType.Stop
+              ) {
+                if (shouldEmit(STREAM.SPACE)) {
+                  this.emit(STREAM.SPACE, modifiedData);
+                }
+              } else {
+                if (shouldEmit(STREAM.SPACE_OPS)) {
+                  this.emit(STREAM.SPACE_OPS, modifiedData);
+                }
+              }
+            }
+          } catch (error) {
+            console.error('Error handling SPACES event:', error, 'Data:', data);
+          }
+        });
+
+        this.pushChatSocket.on('SPACES_MESSAGES', (data: any) => {
+          try {
+            const modifiedData = DataModifier.handleSpaceEvent(data, this.raw);
+            modifiedData.event = DataModifier.convertToProposedNameForSpace(
+              modifiedData.event
+            );
+
+            DataModifier.handleToField(modifiedData);
+
+            if (this.shouldEmitSpace(data.spaceId)) {
               if (shouldEmit(STREAM.SPACE)) {
                 this.emit(STREAM.SPACE, modifiedData);
               }
+            }
+          } catch (error) {
+            console.error('Error handling SPACES event:', error, 'Data:', data);
+          }
+        });
+      }
+
+      if (this.pushNotificationSocket) {
+        this.pushNotificationSocket.on(EVENTS.CONNECT, async () => {
+          console.log(
+            `RestAPI::PushStream::NotifSocket::Connect - Notification Socket Connected (ID: ${this.pushNotificationSocket.id})`
+          );
+          isNotifSocketConnected = true;
+          this.notifSocketCount++;
+          this.notifSocketConnected = true;
+          checkAndEmitConnectEvent();
+        });
+
+        this.pushNotificationSocket.on(EVENTS.DISCONNECT, async () => {
+          console.log(
+            'RestAPI::PushStream::NotifSocket::Disconnect - Notification socket disconnected.'
+          );
+          await handleSocketDisconnection('notif');
+        });
+
+        this.pushNotificationSocket.on(EVENTS.USER_FEEDS, (data: any) => {
+          try {
+            if (
+              data.payload.data.additionalMeta?.type ===
+                `${ADDITIONAL_META_TYPE.PUSH_VIDEO}+1` &&
+              shouldEmit(STREAM.VIDEO) &&
+              this.shouldEmitVideo(data.sender)
+            ) {
+              // Video Notification
+              const modifiedData = DataModifier.mapToVideoEvent(
+                data,
+                this.account === data.sender
+                  ? MessageOrigin.Self
+                  : MessageOrigin.Other,
+                this.raw
+              );
+
+              this.emit(STREAM.VIDEO, modifiedData);
             } else {
-              if (shouldEmit(STREAM.SPACE_OPS)) {
-                this.emit(STREAM.SPACE_OPS, modifiedData);
+              // Channel Notification
+              const modifiedData = DataModifier.mapToNotificationEvent(
+                data,
+                NotificationEventType.INBOX,
+                this.account === data.sender ? 'self' : 'other',
+                this.raw
+              );
+
+              if (this.shouldEmitChannel(modifiedData.from)) {
+                if (shouldEmit(STREAM.NOTIF)) {
+                  this.emit(STREAM.NOTIF, modifiedData);
+                }
               }
             }
-          }
-        } catch (error) {
-          console.error('Error handling SPACES event:', error, 'Data:', data);
-        }
-      });
-
-      this.pushChatSocket.on('SPACES_MESSAGES', (data: any) => {
-        try {
-          const modifiedData = DataModifier.handleSpaceEvent(data, this.raw);
-          modifiedData.event = DataModifier.convertToProposedNameForSpace(
-            modifiedData.event
-          );
-
-          DataModifier.handleToField(modifiedData);
-          modifiedData.streamUid = this.uid;
-
-          if (this.shouldEmitSpace(data.spaceId)) {
-            if (shouldEmit(STREAM.SPACE)) {
-              this.emit(STREAM.SPACE, modifiedData);
-            }
-          }
-        } catch (error) {
-          console.error('Error handling SPACES event:', error, 'Data:', data);
-        }
-      });
-    }
-
-    if (this.pushNotificationSocket) {
-      this.pushNotificationSocket.on(EVENTS.CONNECT, async () => {
-        /*console.log(
-          `Notification Socket Connected (ID: ${this.pushNotificationSocket.id})`
-        );*/
-        isNotifSocketConnected = true;
-        checkAndEmitConnectEvent();
-      });
-
-      this.pushNotificationSocket.on(EVENTS.DISCONNECT, async () => {
-        await handleSocketDisconnection('notif');
-        //console.log(`Notification Socket Disconnected`);
-      });
-
-      this.pushNotificationSocket.on(EVENTS.USER_FEEDS, (data: any) => {
-        try {
-          if (
-            data.payload.data.additionalMeta?.type ===
-              `${ADDITIONAL_META_TYPE.PUSH_VIDEO}+1` &&
-            shouldEmit(STREAM.VIDEO) &&
-            this.shouldEmitVideo(data.sender)
-          ) {
-            // Video Notification
-            const modifiedData = DataModifier.mapToVideoEvent(
-              data,
-              this.account === data.sender
-                ? MessageOrigin.Self
-                : MessageOrigin.Other,
-              this.raw
+          } catch (error) {
+            console.error(
+              `RestAPI::PushStream::NotifSocket::UserFeeds::Error - Error handling event: ${error}, Data: ${JSON.stringify(
+                data
+              )}`
             );
-            modifiedData.streamUid = this.uid;
-            this.emit(STREAM.VIDEO, modifiedData);
-          } else {
-            // Channel Notification
+          }
+        });
+
+        this.pushNotificationSocket.on(EVENTS.USER_SPAM_FEEDS, (data: any) => {
+          try {
             const modifiedData = DataModifier.mapToNotificationEvent(
               data,
-              NotificationEventType.INBOX,
+              NotificationEventType.SPAM,
               this.account === data.sender ? 'self' : 'other',
               this.raw
             );
-            modifiedData.streamUid = this.uid;
-
+            modifiedData.origin =
+              this.account === modifiedData.from ? 'self' : 'other';
             if (this.shouldEmitChannel(modifiedData.from)) {
               if (shouldEmit(STREAM.NOTIF)) {
                 this.emit(STREAM.NOTIF, modifiedData);
               }
             }
+          } catch (error) {
+            console.error(
+              'Error handling USER_SPAM_FEEDS event:',
+              error,
+              'Data:',
+              data
+            );
           }
-        } catch (error) {
-          console.error(
-            'Error handling USER_FEEDS event:',
-            error,
-            'Data:',
-            data
-          );
-        }
-      });
+        });
+      }
 
-      this.pushNotificationSocket.on(EVENTS.USER_SPAM_FEEDS, (data: any) => {
-        try {
-          const modifiedData = DataModifier.mapToNotificationEvent(
-            data,
-            NotificationEventType.SPAM,
-            this.account === data.sender ? 'self' : 'other',
-            this.raw
-          );
-          modifiedData.origin =
-            this.account === modifiedData.from ? 'self' : 'other';
-          if (this.shouldEmitChannel(modifiedData.from)) {
-            if (shouldEmit(STREAM.NOTIF)) {
-              this.emit(STREAM.NOTIF, modifiedData);
-            }
-          }
-        } catch (error) {
-          console.error(
-            'Error handling USER_SPAM_FEEDS event:',
-            error,
-            'Data:',
-            data
-          );
-        }
-      });
-    }
-
-    this.disconnected = false;
+      this.disconnected = false;
+    });
   }
 
   public connected(): boolean {
-    return (
-      (this.pushNotificationSocket && this.pushNotificationSocket.connected) ||
-      (this.pushChatSocket && this.pushChatSocket.connected)
+    // Log the connection status of both sockets with detailed prefix
+    console.log(
+      `RestAPI::PushStream::connected::Notification Socket Connected: ${this.notifSocketConnected}`
     );
+    console.log(
+      `RestAPI::PushStream::connected::Chat Socket Connected: ${this.chatSocketConnected}`
+    );
+
+    return this.notifSocketConnected || this.chatSocketConnected;
   }
 
   public async disconnect(): Promise<void> {
     // Disconnect push chat socket if connected
-    if (this.pushChatSocket) {
+    if (this.pushChatSocket && this.chatSocketConnected) {
       this.pushChatSocket.disconnect();
-      //console.log('Push chat socket disconnected.');
+      console.log(
+        'RestAPI::PushStream::disconnect::Push chat socket disconnected.'
+      );
     }
 
     // Disconnect push notification socket if connected
-    if (this.pushNotificationSocket) {
+    if (this.pushNotificationSocket && this.notifSocketConnected) {
       this.pushNotificationSocket.disconnect();
-      //console.log('Push notification socket disconnected.');
+      console.log(
+        'RestAPI::PushStream::disconnect::Push notification socket disconnected.'
+      );
     }
   }
 
