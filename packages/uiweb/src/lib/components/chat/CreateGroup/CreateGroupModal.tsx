@@ -57,7 +57,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
     CREATE_GROUP_STEP_KEYS.INPUT_DETAILS
   );
   const { createGatedGroup, loading } = useCreateGatedGroup();
-  const { toast } = useChatData();
+  const { toast, user } = useChatData();
   const handleNext = () => {
     setActiveComponent((activeComponent + 1) as CreateGroupStepKeys);
   };
@@ -109,7 +109,6 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   };
 
   const getEncryptionType = () => {
-    console.debug(groupInputDetails.groupEncryptionType, 'encryptionTypeee');
     if (groupInputDetails.groupEncryptionType === 'encrypted') {
       return false;
     }
@@ -117,36 +116,53 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   };
 
   const createGroupService = async () => {
-    const groupInfo = {
-      groupName: groupInputDetails.groupName,
-      groupDescription: groupInputDetails.groupDescription,
-      groupImage: groupInputDetails.groupImage || ProfilePicture,
-      isPublic: getEncryptionType(),
-      members: groupInputDetails.groupMembers
-        .filter((member: any) => !member.isAdmin)
-        .map((member: any) => member.wallets),
-      admins: groupInputDetails.groupMembers
-        .filter((member: any) => member.isAdmin)
-        .map((member: any) => member.wallets),
-    };
-    const rules: any = checked ? criteriaStateManager.generateRule() : {};
-    const { success: isGroupCreated, data: APIResponse } = await createGatedGroup(groupInfo, rules);
-    if (isGroupCreated === true) {
-      onSuccess && onSuccess(APIResponse);
-      toast.showMessageToast({
-        toastTitle: 'Success',
-        toastMessage: 'Group created successfully',
-        toastType: 'SUCCESS',
-        getToastIcon: (size: string | number | undefined) => (
-          <MdCheckCircle
-            size={size}
-            color="green"
-          />
-        ),
-      });
-      onClose();
-    } else {
-      showError('Group creation failed');
+    if (user) {
+      if (user.readmode()) {
+        console.error('UIWeb::CreateGroupModal::createGroupService::User is in read mode.Switch to write mode');
+        toast.showMessageToast({
+          toastTitle: 'Error',
+          toastMessage: 'Unable to create group in readMode. Switch to write mode',
+          toastType: 'ERROR',
+          getToastIcon: (size: number) => (
+            <MdError
+              size={size}
+              color="red"
+            />
+          ),
+        });
+      } else {
+        const groupInfo = {
+          groupName: groupInputDetails.groupName,
+          groupDescription: groupInputDetails.groupDescription,
+          groupImage: groupInputDetails.groupImage || ProfilePicture,
+          isPublic: getEncryptionType(),
+          members: groupInputDetails.groupMembers
+            .filter((member: any) => !member.isAdmin)
+            .map((member: any) => member.wallets),
+          admins: groupInputDetails.groupMembers
+            .filter((member: any) => member.isAdmin)
+            .map((member: any) => member.wallets),
+        };
+        const rules: any = checked ? criteriaStateManager.generateRule() : {};
+        const { success: isGroupCreated, data: APIResponse } = await createGatedGroup(groupInfo, rules);
+        if (isGroupCreated === true) {
+          onSuccess && onSuccess(APIResponse);
+          toast.showMessageToast({
+            toastTitle: 'Success',
+            toastMessage: 'Group created successfully',
+            toastType: 'SUCCESS',
+            getToastIcon: (size: string | number | undefined) => (
+              <MdCheckCircle
+                size={size}
+                color="green"
+              />
+            ),
+          });
+          onClose();
+        } else {
+          showError('Group creation failed');
+        }
+      }
     }
   };
 

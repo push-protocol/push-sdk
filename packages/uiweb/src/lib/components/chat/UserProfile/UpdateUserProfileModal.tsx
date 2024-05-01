@@ -38,7 +38,7 @@ export const UpdateUserProfileModal = ({
   updateUserProfileModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
   updateUserProfileModalPositionType = MODAL_POSITION_TYPE.GLOBAL,
 }: UpdateUserProfileModalProps) => {
-  const { toast } = useChatData();
+  const { toast, user } = useChatData();
 
   const [userProfileDetails, setUserProfileDetails] = useState<UserProfileType>({
     name: userProfile ? userProfile?.profile?.name ?? '' : '',
@@ -68,25 +68,42 @@ export const UpdateUserProfileModal = ({
   };
 
   const onUpdate = async () => {
-    const isSuccess = await updateUserProfile({ userProfileDetails });
-    if (typeof isSuccess != 'string') {
-      toast.showMessageToast({
-        toastTitle: 'Success',
-        toastMessage: 'User profile updated successfully',
-        toastType: 'SUCCESS',
-        getToastIcon: (size: string | number | undefined) => (
-          <MdCheckCircle
-            size={size}
-            color="green"
-          />
-        ),
-      });
+    if (user) {
+      if (user.readmode()) {
+        console.error('UIWeb::UserProfile::onUpdate::User is in read mode.Switch to write mode');
+        toast.showMessageToast({
+          toastTitle: 'Error',
+          toastMessage: 'Unable to edit in readMode. Switch to write mode',
+          toastType: 'ERROR',
+          getToastIcon: (size: number) => (
+            <MdError
+              size={size}
+              color="red"
+            />
+          ),
+        });
+      } else {
+        const isSuccess = await updateUserProfile({ userProfileDetails });
+        if (typeof isSuccess != 'string') {
+          toast.showMessageToast({
+            toastTitle: 'Success',
+            toastMessage: 'User profile updated successfully',
+            toastType: 'SUCCESS',
+            getToastIcon: (size: string | number | undefined) => (
+              <MdCheckCircle
+                size={size}
+                color="green"
+              />
+            ),
+          });
 
-      updateUserDetails();
-      onClose();
-      //set new user profile
-    } else {
-      showError('User profile updation failed');
+          updateUserDetails();
+          onClose();
+          //set new user profile
+        } else {
+          showError('User profile updation failed');
+        }
+      }
     }
   };
   const showError = (errorMessage: string) => {

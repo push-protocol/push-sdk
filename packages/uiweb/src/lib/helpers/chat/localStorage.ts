@@ -63,16 +63,20 @@ export const setPfp = ({ account, image }: { account: string; image: string }) =
 export const getCacheData = (key: string, expiry: number): any | null => {
   const dataStr = localStorage.getItem(key);
   if (!dataStr) return null;
+  try {
+    const data = JSON.parse(dataStr);
 
-  const data = JSON.parse(dataStr);
-  const now = new Date().getTime();
+    const now = new Date().getTime();
 
-  if (now > data.timestamp + expiry) {
-    localStorage.removeItem(key); // Invalidate the cache
-    return null;
+    if (now > data.timestamp + expiry) {
+      localStorage.removeItem(key); // Invalidate the cache
+      return null;
+    }
+
+    return data.value;
+  } catch (e) {
+    console.debug(`UIWeb::getCacheData::error - ${new Date().toISOString()}`, e);
   }
-
-  return data.value;
 };
 
 export const setAccessControl = (chatId: string, toRemove: boolean) => {

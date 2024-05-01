@@ -82,25 +82,10 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
   const [messages, setMessages] = useState<IMessageIPFSWithCID[]>([]);
   const { historyMessages, historyLoading: messageLoading } = useFetchMessageUtilities();
   const listInnerRef = useRef<HTMLDivElement>(null);
-  const [isMember, setIsMember] = useState<boolean>(false);
+  const [stopPagination, setStopPagination] = useState<boolean>(false);
   const { fetchChat } = useFetchChat();
-  const { fetchUserProfile } = usePushUser();
   const { getGroupByIDnew } = useGetGroupByIDnew();
   const { fetchMemberStatus } = useGroupMemberUtilities();
-
-  // setup blur
-  const [blur, setBlur] = useState<boolean>(false);
-
-  //hack for stream not working
-  // const [chatStream, setChatStream] = useState<any>({}); // to track any new messages
-  // const [chatRequestStream, setChatRequestStream] = useState<any>({}); // to track any new messages
-
-  // const [chatAcceptStream, setChatAcceptStream] = useState<any>({}); // to track any new messages
-  // const [participantRemoveStream, setParticipantRemoveStream] = useState<any>({}); // to track if a participant is removed from group
-  // const [participantLeaveStream, setParticipantLeaveStream] = useState<any>({}); // to track if a participant leaves a group
-  // const [participantJoinStream, setParticipantJoinStream] = useState<any>({}); // to track if a participant joins a group
-
-  // const [groupUpdateStream, setGroupUpdateStream] = useState<any>({});
 
   // for stream
   const {
@@ -113,49 +98,8 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
     groupUpdateStream,
   } = useChatData();
 
-  // const {
-  //   chatStream,
-  //   groupUpdateStream,
-  //   chatAcceptStream,
-  //   participantJoinStream,
-  //   participantLeaveStream,
-  //   participantRemoveStream,
-  // } = usePushChatStream();
-
-  //event listeners
-  // This should be invoked from data provider
-  // usePushChatStream();
-
-  // useEffect(() => {
-  //   window.addEventListener('chatStream', (e: any) => setChatStream(e.detail));
-  //   window.addEventListener('chatRequestStream', (e: any) => setChatRequestStream(e.detail));
-  //   window.addEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
-  //   window.addEventListener('participantRemoveStream', (e: any) => setParticipantRemoveStream(e.detail));
-  //   window.addEventListener('participantLeaveStream', (e: any) => setParticipantLeaveStream(e.detail));
-  //   window.addEventListener('participantJoinStream', (e: any) => setParticipantJoinStream(e.detail));
-  //   window.addEventListener('groupUpdateStream', (e: any) => setGroupUpdateStream(e.detail));
-  //   return () => {
-  //     window.removeEventListener('chatStream', (e: any) => setChatStream(e.detail));
-  //     window.removeEventListener('chatRequestStream', (e: any) => setChatRequestStream(e.detail));
-
-  //     window.removeEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
-  //     window.removeEventListener('participantRemoveStream', (e: any) => setParticipantRemoveStream(e.detail));
-  //     window.removeEventListener('participantLeaveStream', (e: any) => setParticipantLeaveStream(e.detail));
-  //     window.removeEventListener('participantJoinStream', (e: any) => setParticipantJoinStream(e.detail));
-  //     window.removeEventListener('groupUpdateStream', (e: any) => setGroupUpdateStream(e.detail));
-  //   };
-  // }, []);
   const theme = useContext(ThemeContext);
   const dates = new Set();
-  // useEffect(() => {
-  //   setChatStatusText('');
-  // }, [chatId, account, env, user]);
-
-  // useEffect(() => {
-  //   setChatInfo(null);
-  //   setMessages([]);
-  //   setGroupInfo(null);
-  // }, [chatId, account, user, env]);
 
   // Primary Hook that fetches and sets ChatInfo which then fetches and sets UserInfo or GroupInfo
   // Which then calls await getMessagesCall(); to fetch messages
@@ -180,11 +124,11 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
         // also find out if chat is encrypted
         let hidden = false;
         if (
-          (user &&
-            !user.readmode() &&
-            ((info?.meta?.group && status?.participant) ||
-              (!info?.meta?.group && (info?.list === 'CHATS' || info?.list === 'REQUESTS')))) ||
-          (info?.meta?.group && groupMeta?.isPublic)
+          user &&
+          !user.readmode() &&
+          ((info?.meta?.group && status?.participant) ||
+            (!info?.meta?.group && (info?.list === 'CHATS' || info?.list === 'REQUESTS')) ||
+            (info?.meta?.group && groupMeta?.isPublic))
         ) {
           hidden = false;
         } else {
@@ -214,7 +158,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
         invalidChat: false,
       });
     };
-  }, [chatId, user]);
+  }, [chatId, user, chatAcceptStream, participantJoinStream, participantLeaveStream, participantRemoveStream]);
 
   // When loading is done
   useEffect(() => {
@@ -224,19 +168,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
       await getMessagesCall();
     })();
   }, [initialized.loading]);
-
-  // useEffect(() => {
-  //   (async () => {
-  //     let GroupProfile;
-  //     if (chatInfo && chatInfo?.meta?.group) {
-  //       GroupProfile = await getGroupByIDnew({ groupId: chatId });
-  //       if (GroupProfile) setGroupInfo(GroupProfile);
-  //       else {
-  //         setChatStatusText(ChatStatus.INVALID_CHAT);
-  //       }
-  //     }
-  //   })();
-  // }, [chatInfo]);
 
   //moniters stream changes
   useEffect(() => {
@@ -298,111 +229,12 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
     }
   };
 
-  // maybe not needed, retrieves messages
-  // useEffect(() => {
-  //   if (chatInfo) {
-  //     (async function () {
-  //       await getMessagesCall();
-  //     })();
-  //   }
-  // }, [chatInfo, user?.readmode(), account, env, chatId]);
-
   useEffect(() => {
     if (messages && messages?.length && messages?.length <= limit) {
       // setChatStatusText('');
       scrollToBottom();
     }
   }, [messages]);
-
-  // useEffect(() => {
-  //   if (user && groupInfo) {
-  //     (async () => {
-  //       const status = await fetchMemberStatus({
-  //         chatId: groupInfo.chatId!,
-  //         accountId: user?.account || '',
-  //       });
-  //       if (status && typeof status !== 'string') {
-  //         setIsMember(status?.participant);
-  //       } else {
-  //         console.error('Error in fetching account details, silently ignoring');
-  //         setIsMember(false);
-  //         //show toast
-  //         // toast.showMessageToast({
-  //         //   toastTitle: 'Error',
-  //         //   toastMessage: 'Error in fetching member details',
-  //         //   toastType: 'ERROR',
-  //         //   getToastIcon: (size: number) => <MdError size={size} color="red" />,
-  //         // });
-  //       }
-  //     })();
-  //   }
-  // }, [groupInfo, chatInfo, chatAcceptStream, participantJoinStream, participantLeaveStream, participantRemoveStream]);
-
-  // // To update blur based on group info
-  // useEffect(() => {
-  //   const checkPrivacy = async () => {
-  //     const isPrivate = await isConversationPrivate();
-  //     // console log with timestamp and chatid for debugging
-  //     const timestamp = new Date().toISOString();
-  //     console.log(
-  //       `::ChatViewList::isConversationPrivate::timestamp: ${timestamp}::chatId: ${chatId}::isPrivate: ${isPrivate}`
-  //     );
-  //     setBlur(false);
-  //   };
-
-  //   checkPrivacy();
-  // }, [groupInfo, user, chatStatusText, chatId]);
-
-  // const isConversationPrivate = async () => {
-  //   // if user is not logged in
-  //   if (!user) {
-  //     if (groupInfo && groupInfo?.isPublic) {
-  //       return false;
-  //     }
-
-  //     return true;
-  //   }
-  //   // if user is in read mode
-  //   else if (user.readmode()) {
-  //     // if group is public or if it's dm and FIRST CHAT
-  //     if (groupInfo && groupInfo?.isPublic) {
-  //       return false;
-  //     }
-
-  //     if (!groupInfo && chatStatusText === ChatStatus.FIRST_CHAT) {
-  //       return false;
-  //     }
-
-  //     return true;
-  //   }
-  //   // If user is logged in
-  //   else {
-  //     // user logged in, use API
-  //     console.log('USERLOGGEDIN');
-  //     user.chat
-  //       .info(chatId)
-  //       .then((chatInfo) => {
-  //         console.log('CHATINFO', chatInfo);
-  //         if (chatInfo.list === 'CHATS') {
-  //           return false;
-  //         } else if (!chatInfo.meta.group) {
-  //           // normal dm
-  //           return false;
-  //         } else if (groupInfo && groupInfo?.isPublic) {
-  //           return false;
-  //         }
-
-  //         return true;
-  //       })
-  //       .catch((e) => {
-  //         console.error('::ChatViewList::isConversationPrivate::Error in fetching chat info', e);
-  //         return true;
-  //       });
-  //   }
-
-  //   // All other cases are private
-  //   return true;
-  // };
 
   //methods
   const scrollToBottom = () => {
@@ -431,22 +263,29 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
 
   const getMessagesCall = async () => {
     let reference = null;
+    let stopFetchingChats = false;
     if (messages && messages?.length) {
       reference = messages[0].link;
+      if (!reference) {
+        stopFetchingChats = true;
+        setStopPagination(stopFetchingChats);
+      }
     }
 
-    if (user) {
+    if (user && !stopFetchingChats) {
       const chatHistory = await historyMessages({
         limit: limit,
         chatId: chatId,
         reference,
       });
+
       if (chatHistory?.length) {
+        const reversedChatHistory = chatHistory?.reverse();
         if (messages && messages?.length) {
-          const newChatViewList = appendUniqueMessages(messages, chatHistory.reverse(), true);
+          const newChatViewList = appendUniqueMessages(messages, reversedChatHistory, true);
           setFilteredMessages(newChatViewList as IMessageIPFSWithCID[]);
         } else {
-          setFilteredMessages(chatHistory.reverse() as IMessageIPFSWithCID[]);
+          setFilteredMessages(reversedChatHistory as IMessageIPFSWithCID[]);
         }
       }
     }
@@ -482,6 +321,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
 
   return (
     <ChatViewListCard
+      blur={false}
       overflow="hidden scroll"
       flexDirection="column"
       ref={listInnerRef}
@@ -492,7 +332,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
       theme={theme}
       onScroll={(e) => {
         e.stopPropagation();
-        onScroll();
+        if (!stopPagination) onScroll();
       }}
     >
       <Section
@@ -566,6 +406,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
                         <ChatViewBubble
                           decryptedMessagePayload={chat}
                           key={index}
+                          isGroup={chatInfo?.meta?.group ?? false}
                         />
                       </Section>
                     </>

@@ -19,6 +19,7 @@ export interface IChatDataContextValues {
   setConnectedProfile: (connectedProfile: IUser) => void;
   user: PushAPI | undefined;
   setUser: React.Dispatch<React.SetStateAction<PushAPI | undefined>>;
+  preInitializeUser: (account: string | null | undefined, signer: SignerType | undefined) => void;
   pushChatStream: any;
   setPushChatStream: React.Dispatch<React.SetStateAction<any>>;
   isPushChatStreamConnected: boolean;
@@ -66,6 +67,9 @@ export const initialChatDataContextValues: IChatDataContextValues = {
   },
   connectedProfile: undefined,
   setConnectedProfile: () => {
+    /**  */
+  },
+  preInitializeUser: () => {
     /**  */
   },
   user: undefined,

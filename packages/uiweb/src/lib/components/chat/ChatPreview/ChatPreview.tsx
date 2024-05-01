@@ -24,9 +24,7 @@ interface IThemeProps {
   blur?: boolean;
 }
 
-export const ChatPreview: React.FC<IChatPreviewProps> = (
-  options: IChatPreviewProps
-) => {
+export const ChatPreview: React.FC<IChatPreviewProps> = (options: IChatPreviewProps) => {
   // get hooks
   const { user } = useChatData();
 
@@ -50,21 +48,18 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
   }, []);
 
   const getProfileName = (formattedAddress: string) => {
-    return options.chatPreviewPayload?.chatGroup
-      ? formattedAddress
-      : web3Name
-      ? web3Name
-      : formattedAddress;
+    return options.chatPreviewPayload?.chatGroup ? formattedAddress : web3Name ? web3Name : formattedAddress;
   };
 
   return (
-    <ChatPreviewContainer>
+    <ChatPreviewContainer cursor="pointer">
       <Button
         display="flex"
         width="100%"
         height="70px"
         minHeight="70px"
         padding="10px"
+        cursor="pointer"
         borderRadius={theme.borderRadius?.chatPreview}
         border={theme.border?.chatPreview}
         flexDirection="row"
@@ -92,6 +87,7 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
           overflow="hidden"
           width="48px"
           height="48px"
+          cursor="pointer"
         >
           <Image
             src={options.chatPreviewPayload?.chatPic || undefined}
@@ -102,6 +98,7 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
         <Section
           justifyContent="center"
           gap="6px"
+          cursor="pointer"
           flexDirection="column"
           alignItems="center"
           alignSelf="stretch"
@@ -116,13 +113,10 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
             alignItems="flex-start"
             alignSelf="stretch"
             overflow="hidden"
+            cursor="pointer"
           >
-            <Account theme={theme}>
-              {getProfileName(formattedAddress)}
-            </Account>
-            <Dated theme={theme}>
-              {formatDate(options.chatPreviewPayload)}
-            </Dated>
+            <Account theme={theme}>{getProfileName(formattedAddress)}</Account>
+            <Dated theme={theme}>{formatDate(options.chatPreviewPayload)}</Dated>
           </Section>
           <Section
             justifyContent="flex-start"
@@ -131,13 +125,13 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
             alignSelf="stretch"
             overflow="hidden"
             flex="initial"
+            cursor="pointer"
             className={options.readmode ? 'skeleton' : ''}
           >
             <Message theme={theme}>
               {options?.chatPreviewPayload?.chatMsg?.messageType === 'Image' ||
               options?.chatPreviewPayload?.chatMsg?.messageType === 'GIF' ||
-              options?.chatPreviewPayload?.chatMsg?.messageType ===
-                'MediaEmbed' ? (
+              options?.chatPreviewPayload?.chatMsg?.messageType === 'MediaEmbed' ? (
                 <Section
                   justifyContent="flex-start"
                   flexDirection="row"
@@ -150,8 +144,7 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
                   <CiImageOn />
                   Media
                 </Section>
-              ) : options?.chatPreviewPayload?.chatMsg?.messageType ===
-                'File' ? (
+              ) : options?.chatPreviewPayload?.chatMsg?.messageType === 'File' ? (
                 <Section
                   justifyContent="flex-start"
                   flexDirection="row"
@@ -168,9 +161,7 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
                 options?.chatPreviewPayload?.chatMsg?.messageContent
               )}
             </Message>
-            {!!options?.badge?.count && (
-              <Badge theme={theme}>{options.badge.count}</Badge>
-            )}
+            {!!options?.badge?.count && <Badge theme={theme}>{options.badge.count}</Badge>}
           </Section>
         </Section>
       </Button>
@@ -232,8 +223,7 @@ const Message = styled.div<IThemeProps>`
 `;
 
 const Badge = styled.div<IThemeProps>`
-  background: ${(props) =>
-    props.theme.backgroundColor?.chatPreviewBadgeBackground};
+  background: ${(props) => props.theme.backgroundColor?.chatPreviewBadgeBackground};
   font-weight: ${(props) => props.theme.fontWeight?.chatPreviewBadgeText};
   font-size: ${(props) => props.theme.fontSize?.chatPreviewBadgeText};
   color: ${(props) => props.theme.textColor?.chatPreviewBadgeText};

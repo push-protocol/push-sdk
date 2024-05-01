@@ -16,7 +16,6 @@ import DismissAdmin from '../../../icons/dismissadmin.svg';
 import Remove from '../../../icons/remove.svg';
 import { findObject } from '../helpers/helper';
 
-
 type MemberListContainerType = {
   key?: number;
   memberData: any;
@@ -30,7 +29,7 @@ export interface WalletProfileContainerProps {
   id?: any;
   background?: any;
   border?: string;
-};
+}
 
 export const MemberListContainer = ({
   key,
@@ -70,9 +69,7 @@ export const MemberListContainer = ({
 
   const dismissGroupAdmin = () => {
     const updatedMembers = memberList.map((member: any) =>
-      member?.wallets?.toLowerCase() == memberData?.wallets?.toLowerCase()
-        ? { ...member, isAdmin: false }
-        : member
+      member?.wallets?.toLowerCase() == memberData?.wallets?.toLowerCase() ? { ...member, isAdmin: false } : member
     );
     handleMembers?.(updatedMembers);
     setSelectedWallet(null);
@@ -80,9 +77,7 @@ export const MemberListContainer = ({
 
   const makeGroupAdmin = () => {
     const updatedMembers = memberList.map((member: any) =>
-      member?.wallets?.toLowerCase() == memberData?.wallets?.toLowerCase()
-        ? { ...member, isAdmin: true }
-        : member
+      member?.wallets?.toLowerCase() == memberData?.wallets?.toLowerCase() ? { ...member, isAdmin: true } : member
     );
     handleMembers?.(updatedMembers);
     setSelectedWallet(null);
@@ -94,32 +89,26 @@ export const MemberListContainer = ({
   };
 
   const handleHeight = (id: any) => {
-    const containerHeight = document
-      .getElementById(id)
-      ?.getBoundingClientRect();
+    const containerHeight = document.getElementById(id)?.getBoundingClientRect();
     setDropdownHeight(containerHeight?.top);
   };
   return (
     <WalletProfileContainer
       id={memberData?.wallets}
-      background={
-        memberList ? 'transparent' : theme.backgroundColor?.modalHoverBackground
-      }
-      border={
-        memberList ? theme.border?.modalInnerComponents:'none' 
-      }
+      background={memberList ? 'transparent' : theme.backgroundColor?.modalHoverBackground}
+      border={memberList ? theme.border?.modalInnerComponents : 'none'}
       borderRadius={theme.borderRadius?.modalInnerComponents}
     >
       <ProfileContainer
         theme={theme}
         member={{
-          name: memberData.wallets?.split(':')[1],
+          name: null,
           icon: memberData.profile?.picture || '',
           chatId: null,
           recipient: memberData.wallets?.split(':')[1],
           abbrRecipient: shortenText(memberData.wallets?.split(':')[1], 6, true),
-          web3Name: memberData.wallets?.split(':')[1],
-          desc: null
+          web3Name: null,
+          desc: null,
         }}
       />
 
@@ -160,9 +149,7 @@ export const MemberListContainer = ({
         >
           <Dropdown
             dropdownValues={
-              memberData?.isAdmin
-                ? [removeAdminDropdown, removeUserDropdown]
-                : [addAdminDropdown, removeUserDropdown]
+              memberData?.isAdmin ? [removeAdminDropdown, removeUserDropdown] : [addAdminDropdown, removeUserDropdown]
             }
             hoverBGColor={theme.backgroundColor?.modalHoverBackground}
           />
@@ -175,7 +162,7 @@ export const MemberListContainer = ({
 const WalletProfileContainer = styled(Section)<WalletProfileContainerProps>`
   justify-content: space-between;
   padding: 8px 16px;
-    border: ${(props) => props.border};
+  border: ${(props) => props.border};
   position: relative;
   box-sizing: border-box;
   width: 100%;

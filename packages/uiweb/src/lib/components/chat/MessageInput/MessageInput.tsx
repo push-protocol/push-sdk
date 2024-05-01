@@ -1,10 +1,10 @@
 import { ChangeEvent, useContext, useEffect, useRef, useState } from 'react';
 
-import { IUser } from '@pushprotocol/restapi';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import GifPicker from 'gif-picker-react';
 import { MdCheckCircle, MdError } from 'react-icons/md';
 import styled from 'styled-components';
+import { createPortal } from 'react-dom';
 
 import { deriveChatId, pCAIP10ToWallet, setAccessControl, walletToPCAIP10 } from '../../../helpers';
 import { useChatData, useClickAway, useDeviceWidthCheck, usePushChatStream } from '../../../hooks';
@@ -86,14 +86,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   const [isMember, setIsMember] = useState<boolean>(false);
   const [formattedChatId, setFormattedChatId] = useState<string>('');
 
-  //hack for stream not working
-  // const [chatAcceptStream, setChatAcceptStream] = useState<any>({}); // to track any new messages
-  // const [participantRemoveStream, setParticipantRemoveStream] = useState<any>({}); // to track if a participant is removed from group
-  // const [participantLeaveStream, setParticipantLeaveStream] = useState<any>({}); // to track if a participant leaves a group
-  // const [participantJoinStream, setParticipantJoinStream] = useState<any>({}); // to track if a participant joins a group
-
-  // const [groupUpdateStream, setGroupUpdateStream] = useState<any>({});
-
   const { getGroupByIDnew } = useGetGroupByIDnew();
   const [groupInfo, setGroupInfo] = useState<Group | null>(null);
 
@@ -124,24 +116,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     participantJoinStream,
     groupUpdateStream,
   } = useChatData();
-
-  //event listners
-  // This should be invoked from data provider
-  // usePushChatStream();
-  // useEffect(() => {
-  //   window.addEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
-  //   window.addEventListener('participantRemoveStream', (e: any) => setParticipantRemoveStream(e.detail));
-  //   window.addEventListener('participantLeaveStream', (e: any) => setParticipantLeaveStream(e.detail));
-  //   window.addEventListener('participantJoinStream', (e: any) => setParticipantJoinStream(e.detail));
-  //   window.addEventListener('groupUpdateStream', (e: any) => setGroupUpdateStream(e.detail));
-  //   return () => {
-  //     window.removeEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
-  //     window.removeEventListener('participantRemoveStream', (e: any) => setParticipantRemoveStream(e.detail));
-  //     window.removeEventListener('participantLeaveStream', (e: any) => setParticipantLeaveStream(e.detail));
-  //     window.removeEventListener('participantJoinStream', (e: any) => setParticipantJoinStream(e.detail));
-  //     window.removeEventListener('groupUpdateStream', (e: any) => setGroupUpdateStream(e.detail));
-  //   };
-  // }, []);
 
   const onChangeTypedMessage = (val: string) => {
     setTypedMessage(val);
@@ -524,44 +498,49 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                 </ConnectWrapper>
               </Section>
             )}
-            {!!user && !user?.readmode() && !verificationSuccessfull && (
-              <Modal
-                width="550px"
-                modalBackground={verificationFailModalBackground}
-                modalPositionType={verificationFailModalPosition}
-              >
-                <Section
-                  margin="5px 0px 0px 0px"
-                  gap="16px"
-                  flexDirection="column"
-                  width="100%"
+            {!!user &&
+              !user?.readmode() &&
+              !verificationSuccessfull &&
+              createPortal(
+                <Modal
+                  width="550px"
+                  modalBackground={verificationFailModalBackground}
+                  modalPositionType={verificationFailModalPosition}
                 >
-                  <ModalHeader title="Access Failed" />
-                  <ConditionsInformation
-                    theme={theme}
-                    groupInfo={groupInfo}
-                    subheader="Please make sure the following conditions
-                    are met to pariticpate and send messages."
-                    alert={true}
-                  />
-                  <ConnectWrapperClose
-                    onClick={() => {
-                      if (onVerificationFail) {
-                        onVerificationFail();
-                      }
-                      setVerificationSuccessfull(true);
-                    }}
+                  <Section
+                    margin="5px 0px 0px 0px"
+                    gap="16px"
+                    flexDirection="column"
+                    width="100%"
                   >
-                    <ConnectClose>Cancel</ConnectClose>
-                  </ConnectWrapperClose>
-                  <InfoContainer
-                    cta="https://push.org/docs/chat/build/conditional-rules-for-group/"
-                    label="Learn more about access gating rules"
-                  />
-                </Section>
-                {/* </Section> */}
-              </Modal>
-            )}
+                    <ModalHeader title="Access Failed" />
+                    <ConditionsInformation
+                      theme={theme}
+                      groupInfo={groupInfo}
+                      subheader="Please make sure the following conditions
+                    are met to pariticpate and send messages."
+                      alert={true}
+                    />
+                    <ConnectWrapperClose
+                      onClick={() => {
+                        if (onVerificationFail) {
+                          onVerificationFail();
+                        }
+                        setVerificationSuccessfull(true);
+                      }}
+                    >
+                      <ConnectClose>Cancel</ConnectClose>
+                    </ConnectWrapperClose>
+                    <InfoContainer
+                      cta="https://push.org/docs/chat/build/conditional-rules-for-group/"
+                      label="Learn more about access gating rules"
+                    />
+                  </Section>
+                  {/* </Section> */}
+                </Modal>,
+
+                document.body
+              )}
           </>
         ) : null}
         {user && !user?.readmode() && (((isRules ? verified : true) && isMember) || (chatInfo && !groupInfo)) && (

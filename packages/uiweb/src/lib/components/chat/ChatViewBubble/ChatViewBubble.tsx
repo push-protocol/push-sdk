@@ -3,6 +3,7 @@ import { ReactElement, ReactNode, useContext, useEffect, useState } from 'react'
 import moment from 'moment';
 import { TwitterTweetEmbed } from 'react-twitter-embed';
 import styled from 'styled-components';
+import { MdDownload } from 'react-icons/md';
 
 import { ChatDataContext } from '../../../context';
 import { useChatData } from '../../../hooks';
@@ -229,10 +230,7 @@ const FileCard = ({ chat, isGroup }: { chat: IMessagePayload; position: number; 
           rel="noopener noreferrer"
           download
         >
-          <FileDownloadIcon
-            className="fa fa-download"
-            aria-hidden="true"
-          />
+          <MdDownload color="#575757" />
         </FileDownloadIconAnchor>
       </Section>
     </MessageWrapper>
@@ -315,25 +313,19 @@ const TwitterCard = ({
   );
 };
 
-export const ChatViewBubble = ({ decryptedMessagePayload }: { decryptedMessagePayload: IMessagePayload }) => {
+export const ChatViewBubble = ({
+  decryptedMessagePayload,
+  isGroup = false,
+}: {
+  decryptedMessagePayload: IMessagePayload;
+  isGroup?: boolean;
+}) => {
   const { user } = useChatData();
   const position =
     pCAIP10ToWallet(decryptedMessagePayload.fromDID).toLowerCase() !== user?.account?.toLowerCase() ? 0 : 1;
   const { tweetId, messageType }: TwitterFeedReturnType = checkTwitterUrl({
     message: decryptedMessagePayload?.messageContent,
   });
-  const [isGroup, setIsGroup] = useState<boolean>(false);
-  useEffect(() => {
-    if (decryptedMessagePayload.toDID.split(':')[0] === 'eip155') {
-      if (isGroup) {
-        setIsGroup(false);
-      }
-    } else {
-      if (!isGroup) {
-        setIsGroup(true);
-      }
-    }
-  }, [decryptedMessagePayload.toDID, isGroup]);
 
   if (messageType === 'TwitterFeedLink') {
     decryptedMessagePayload.messageType = 'TwitterFeedLink';
@@ -384,10 +376,6 @@ export const ChatViewBubble = ({ decryptedMessagePayload }: { decryptedMessagePa
     />
   );
 };
-
-const FileDownloadIcon = styled.i`
-  color: #575757;
-`;
 
 const FileDownloadIconAnchor = styled.a`
   font-size: 20px;

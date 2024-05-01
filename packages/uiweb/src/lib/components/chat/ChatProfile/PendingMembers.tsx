@@ -38,6 +38,7 @@ type AcceptedMembersProps = {
   acceptedMemberPaginationData: MemberPaginationData;
   setAcceptedMemberPaginationData: React.Dispatch<React.SetStateAction<MemberPaginationData>>;
   acceptedMembers: ChatMemberProfile[];
+  accountStatus: ParticipantStatus | null;
   chatId: string;
   theme: IChatTheme;
 };
@@ -159,29 +160,17 @@ export const AcceptedMembers = ({
   acceptedMembers,
   setAcceptedMemberPaginationData,
   acceptedMemberPaginationData,
+  accountStatus,
   chatId,
   theme,
 }: AcceptedMembersProps) => {
-  const { account, toast } = useChatData();
+  const { toast } = useChatData();
   const acceptedMemberPageRef = useRef<HTMLDivElement>(null);
-  const [accountStatus, setAccountStatus] = useState<ParticipantStatus | null>(null);
   const [selectedMemberAddress, setSelectedMemberAddress] = useState<string | null>(null);
   const dropdownRef = useRef<any>(null);
   const { addMember, removeMember, modifyLoading, addLoading, removeLoading, modifyParticipant } = useUpdateGroup();
-  const { fetchMemberStatus } = useGroupMemberUtilities();
 
   const isInViewportPending = useIsInViewport(acceptedMemberPageRef, '1px');
-
-  useEffect(() => {
-    if (account && chatId) {
-      (async () => {
-        const status = await fetchMemberStatus({ chatId, accountId: account });
-        if (status) {
-          setAccountStatus(status);
-        }
-      })();
-    }
-  }, []);
 
   useEffect(() => {
     if (!isInViewportPending || acceptedMemberPaginationData.loading || acceptedMemberPaginationData.finishedFetching) {

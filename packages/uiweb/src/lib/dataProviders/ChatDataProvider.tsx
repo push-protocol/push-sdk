@@ -25,6 +25,7 @@ import { Constants, ENV, GUEST_MODE_ACCOUNT } from '../config';
 // Interfaces & Types
 import { IUser } from '@pushprotocol/restapi';
 import { IChatTheme } from '../components/chat/theme';
+import { GlobalStyle } from '../components/reusables';
 
 // Constants
 // Save original console methods
@@ -178,8 +179,7 @@ export const ChatUIProvider = ({
   //   })();
   // }, [user]);
 
-  // Initializer if user is not passed but env, signer, account is passed
-  useEffect(() => {
+  const preInitializeUser = (account: string | null | undefined, signer: SignerType | undefined) => {
     // if user is there then ignore everything else
     if (user) {
       initialize(user);
@@ -213,6 +213,10 @@ export const ChatUIProvider = ({
       initialize(user);
     })();
     return;
+  };
+  // Initializer if user is not passed but env, signer, account is passed
+  useEffect(() => {
+    preInitializeUser(account, signer);
   }, [signer, account, env, pgpPrivateKey, user]);
 
   // To setup debug parameters
@@ -284,58 +288,58 @@ export const ChatUIProvider = ({
   // }, [account, env, pgpPrivateKey]);
 
   const initStream = async (userInstance: PushAPI) => {
-    // let status = 0; // 0 - no change, 1 - new init, 2 - reinit
+    let status = 0; // 0 - no change, 1 - new init, 2 - reinit
 
-    // // if user stream is not initialized
-    // if (!userInstance.stream) {
-    //   await userInstance?.initStream(
-    //     [CONSTANTS.STREAM.CHAT, CONSTANTS.STREAM.CHAT_OPS, CONSTANTS.STREAM.CONNECT, CONSTANTS.STREAM.DISCONNECT],
-    //     {
-    //       connection: {
-    //         retries: 3, // number of retries in case of error
-    //       },
-    //       raw: true,
-    //     }
-    //   );
+    // if user stream is not initialized
+    if (!userInstance.stream) {
+      await userInstance?.initStream(
+        [CONSTANTS.STREAM.CHAT, CONSTANTS.STREAM.CHAT_OPS, CONSTANTS.STREAM.CONNECT, CONSTANTS.STREAM.DISCONNECT],
+        {
+          connection: {
+            retries: 3, // number of retries in case of error
+          },
+          raw: true,
+        }
+      );
 
-    //   // new init
-    //   status = 1;
-    // }
-    // // if user stream is already initialized
-    // else if (userInstance.stream && !userInstance?.readmode()) {
-    //   // check what streams are already connected
-    //   const connectedStreams = await userInstance.stream.info();
-    //   const streams = [
-    //     CONSTANTS.STREAM.CHAT,
-    //     CONSTANTS.STREAM.CHAT_OPS,
-    //     CONSTANTS.STREAM.CONNECT,
-    //     CONSTANTS.STREAM.DISCONNECT,
-    //   ];
+      // new init
+      status = 1;
+    }
+    // if user stream is already initialized
+    else if (userInstance.stream && !userInstance?.readmode()) {
+      // check what streams are already connected
+      const connectedStreams = await userInstance.stream.info();
+      const streams = [
+        CONSTANTS.STREAM.CHAT,
+        CONSTANTS.STREAM.CHAT_OPS,
+        CONSTANTS.STREAM.CONNECT,
+        CONSTANTS.STREAM.DISCONNECT,
+      ];
 
-    //   // check and filter out the streams which are not connected
-    //   const streamsToConnect = streams.filter((stream) => !connectedStreams.listen?.includes(stream));
+      // check and filter out the streams which are not connected
+      const streamsToConnect = streams.filter((stream) => !connectedStreams.listen?.includes(stream));
 
-    //   if (streamsToConnect.length) {
-    //     await userInstance.stream?.reinit(streams, {
-    //       connection: {
-    //         retries: 3, // number of retries in case of error
-    //       },
-    //     });
+      if (streamsToConnect.length) {
+        await userInstance.stream?.reinit(streams, {
+          connection: {
+            retries: 3, // number of retries in case of error
+          },
+        });
 
-    //     // reinit
-    //     status = 2;
-    //   }
-    // }
+        // reinit
+        status = 2;
+      }
+    }
 
     // attach listeners and connect if status is changed
     await attachListenersAndConnect(userInstance);
 
     // establish a new connection
-    // console.debug(
-    //   `UIWeb::ChatDataProvider::initStream with ${
-    //     status === 2 ? 'reinit' : status === 1 ? 'new init' : 'no change'
-    //   } - ${new Date().toISOString()} | ${userInstance?.uid} | ${userInstance?.stream?.uid}`
-    // );
+    console.debug(
+      `UIWeb::ChatDataProvider::initStream with ${
+        status === 2 ? 'reinit' : status === 1 ? 'new init' : 'no change'
+      } - ${new Date().toISOString()} | ${userInstance?.uid} | ${userInstance?.stream?.uid}`
+    );
   };
 
   const attachListenersAndConnect = async (userInstance: PushAPI) => {
@@ -442,6 +446,7 @@ export const ChatUIProvider = ({
     setIsPushChatSocketConnected,
     connectedProfile,
     setConnectedProfile,
+    preInitializeUser,
     pushChatStream,
     setPushChatStream,
     isPushChatStreamConnected,
@@ -465,6 +470,7 @@ export const ChatUIProvider = ({
   const PROVIDER_THEME = Object.assign({}, lightChatTheme, theme);
   return (
     <ThemeContext.Provider value={PROVIDER_THEME}>
+      <GlobalStyle />
       <ChatDataContext.Provider value={value}>{children}</ChatDataContext.Provider>
     </ThemeContext.Provider>
   );

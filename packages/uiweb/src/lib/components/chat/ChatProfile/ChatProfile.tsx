@@ -38,6 +38,7 @@ import InfoIcon from '../../../icons/infodark.svg';
 // Interfaces & Types
 import { Group, IChatProfile } from '../exportedTypes';
 import { ChatInfoResponse } from '../types';
+import useUserInfoUtilities from '../../../hooks/chat/useUserInfoUtilities';
 
 // Constants
 
@@ -64,6 +65,9 @@ export const ChatProfile: React.FC<IChatProfile> = ({
   const theme = useContext(ThemeContext);
   const { user } = useChatData();
   const [showoptions, setShowOptions] = useState(false);
+  const { fetchChat } = useFetchChat();
+  const { getGroupByIDnew } = useGetGroupByIDnew();
+  const { fetchProfileInfo } = useUserInfoUtilities();
 
   const [initialized, setInitialized] = useState({
     loading: false,
@@ -121,7 +125,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
         const derivedChatId = await deriveChatId(chatId, user);
 
         // We have derived chatId, fetch chat info to see if it's group or dm
-        const chatInfo = await user.chat.info(derivedChatId);
+        const chatInfo = await fetchChat({ chatId: derivedChatId });
 
         if (chatInfo) {
           let groupInfo;
@@ -131,14 +135,16 @@ export const ChatProfile: React.FC<IChatProfile> = ({
 
           // If group
           if (chatInfo.meta && chatInfo.meta.group) {
-            groupInfo = await user.chat.group.info(derivedChatId);
-            profile.name = groupInfo.groupName;
-            profile.icon = groupInfo.groupImage;
-            profile.chatId = chatInfo.chatId;
-            profile.recipient = derivedChatId;
-            profile.abbrRecipient = getAbbreiatedRecipient(derivedChatId);
-            profile.desc = groupInfo.groupDescription;
-            profile.isGroup = true;
+            groupInfo = await getGroupByIDnew({ groupId: derivedChatId });
+            if (groupInfo) {
+              profile.name = groupInfo.groupName;
+              profile.icon = groupInfo.groupImage;
+              profile.chatId = chatInfo.chatId;
+              profile.recipient = derivedChatId;
+              profile.abbrRecipient = getAbbreiatedRecipient(derivedChatId);
+              profile.desc = groupInfo.groupDescription;
+              profile.isGroup = true;
+            }
 
             // TODO - HANDLE ERROR IN UI
           } else {
@@ -147,18 +153,20 @@ export const ChatProfile: React.FC<IChatProfile> = ({
             console.debug('UIWeb::ChatProfile::user.chat.info fetched', chatInfo, recipient);
 
             try {
-              const profileInfo = await user.profile.info({
-                overrideAccount: recipient,
+              const profileInfo = await fetchProfileInfo({
+                recipient,
               });
-              console.debug('UIWeb::ChatProfile::user.profile.info fetched', profileInfo);
+              if (profileInfo) {
+                console.debug('UIWeb::ChatProfile::user.profile.info fetched', profileInfo);
 
-              profile.name = profileInfo.name;
-              profile.icon = profileInfo.picture;
-              profile.chatId = chatInfo.chatId;
-              profile.recipient = recipient;
-              profile.abbrRecipient = getAbbreiatedRecipient(recipient);
-              profile.desc = profileInfo.profile?.desc;
-              profile.isGroup = false;
+                profile.name = profileInfo.name;
+                profile.icon = profileInfo.picture;
+                profile.chatId = chatInfo.chatId;
+                profile.recipient = recipient;
+                profile.abbrRecipient = getAbbreiatedRecipient(recipient);
+                profile.desc = profileInfo.profile?.desc;
+                profile.isGroup = false;
+              }
             } catch (error) {
               console.warn(
                 'UIWeb::ChatProfile::user.profile.info fetch error, possible push user does not exist.',

@@ -45,6 +45,7 @@ import {
   validationCriteria,
 } from '../helpers';
 import { IChatTheme } from '../exportedTypes';
+import { CONSTANTS } from '@pushprotocol/restapi';
 
 const AddCriteria = ({ handlePrevious, onClose, criteriaStateManager }: ModalHeaderProps) => {
   const [selectedTypeValue, setSelectedTypeValue] = useState<number>(0);
@@ -69,7 +70,8 @@ const AddCriteria = ({ handlePrevious, onClose, criteriaStateManager }: ModalHea
     value: 0,
     range: 0,
   });
-  const { env, toast } = useChatData();
+  const { user, toast } = useChatData();
+  const env = user ? user.env : CONSTANTS.ENV.PROD;
   const theme = useContext(ThemeContext);
 
   const isMobile = useMediaQuery(device.mobileL);

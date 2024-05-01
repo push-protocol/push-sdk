@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react';
 
-import { ChatMemberProfile, IUser } from '@pushprotocol/restapi';
+import { CONSTANTS, ChatMemberProfile, IUser } from '@pushprotocol/restapi';
 import { MdError } from 'react-icons/md';
 import styled from 'styled-components';
 
@@ -49,10 +49,10 @@ export const AddWallets = ({
   const theme = useContext(ThemeContext);
 
   const [filteredUserData, setFilteredUserData] = useState<any>(null);
-  const { env, user } = useChatData();
+  const { user, toast } = useChatData();
+  const env = user ? user.env : CONSTANTS.ENV.PROD;
   const isMobile = useMediaQuery(device.mobileL);
   const { fetchUserProfile } = usePushUser();
-  const { toast } = useChatData();
   const customSearchStyle: CustomStyleParamsType = {
     background: theme.backgroundColor?.modalInputBackground,
     border: theme.border?.modalInnerComponents,

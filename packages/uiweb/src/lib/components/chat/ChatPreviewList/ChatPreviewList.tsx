@@ -99,12 +99,6 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
     badges: {},
   });
 
-  //hack to fix stream
-  // const [chatStream, setChatStream] = useState<any>({}); // to track any new messages
-  // const [chatAcceptStream, setChatAcceptStream] = useState<any>({}); // to track any new messages
-  // const [chatRequestStream, setChatRequestStream] = useState<any>({}); // any message in request
-  // const [groupCreateStream, setGroupCreateStream] = useState<any>({}); // any message in request
-
   // set theme
   const theme = useContext(ThemeContext);
   const { fetchChat } = useFetchChat();
@@ -114,25 +108,6 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
 
   // setup stream
   const { chatStream, chatAcceptStream, chatRequestStream, chatRejectStream, groupCreateStream } = useChatData();
-
-  // event listeners
-  // This should be invoked from data provider
-  // usePushChatStream();
-
-  // useEffect(() => {
-  //   // window.addEventListener('chatStream', (e: any) => setChatStream(e.detail));
-  //   window.addEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
-  //   window.addEventListener('chatRequestStream', (e: any) => setChatRequestStream(e.detail));
-  //   window.addEventListener('groupCreateStream', (e: any) => setGroupCreateStream(e.detail));
-  //   return () => {
-  //     // window.removeEventListener('chatStream', (e: any) =>
-  //     //   setChatStream(e.detail)
-  //     // );
-  //     window.removeEventListener('chatAcceptStream', (e: any) => setChatAcceptStream(e.detail));
-  //     window.removeEventListener('chatRequestStream', (e: any) => setChatRequestStream(e.detail));
-  //     window.removeEventListener('groupCreateStream', (e: any) => setGroupCreateStream(e.detail));
-  //   };
-  // }, []);
 
   // If push user changes or if options param changes
   useEffect(() => {
@@ -794,6 +769,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
   return (
     <ChatPreviewListContainer
       key={user?.uid}
+      blur={false}
       ref={listInnerRef}
       theme={theme}
       onScroll={!options?.prefillChatPreviewList ? onScroll : undefined}

@@ -80,8 +80,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({
   // };
 
   return (
-    <>
-      <Conatiner
+    <Conatiner
         height="inherit"
         justifyContent="space-between"
         overflow="hidden"
@@ -95,7 +94,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({
           theme={theme}
           member={{
             web3Name: web3Name,
-            abbrRecipient: shortenText(user!.account || '', 8, true) as string,
+            abbrRecipient: shortenText(user?.account || '', 8, true) as string,
             recipient: user!.account,
             icon: userProfile?.profile?.picture || null,
           }}
@@ -152,7 +151,6 @@ export const UserProfile: React.FC<UserProfileProps> = ({
             document.body
           )}
       </Conatiner>
-    </>
   );
 };
 

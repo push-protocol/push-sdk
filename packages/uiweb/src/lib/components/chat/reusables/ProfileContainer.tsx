@@ -95,6 +95,7 @@ export const ProfileContainer = ({ theme, member, copy, customStyle, loading }: 
         alignItems="start"
         whiteSpace="nowrap"
         minWidth="150px"
+        cursor="pointer"
       >
         <>
           {member?.name ||
@@ -110,6 +111,7 @@ export const ProfileContainer = ({ theme, member, copy, customStyle, loading }: 
                   fontWeight={customStyle?.fontWeight ?? '400'}
                   color={customStyle?.textColor ?? theme.textColor?.modalSubHeadingText}
                   position="relative"
+                  cursor="pointer"
                 >
                   {/* If name and web3 name then show push user name else show web3 name */}
                   {member.name && member.web3Name ? member.name : member.name ? member.name : member.web3Name}
@@ -145,6 +147,7 @@ export const ProfileContainer = ({ theme, member, copy, customStyle, loading }: 
                 }
                 position="relative"
                 whiteSpace="nowrap"
+                cursor="pointer"
               >
                 {member?.name && member?.web3Name
                   ? `${member?.web3Name} | ${member.abbrRecipient}`

@@ -26,11 +26,11 @@ export const AddGroupMembers = ({
   isLoading = false,
   isPublic,
 }: AddWalletContentProps) => {
-  const { account, toast } = useChatData();
+  const { user, toast } = useChatData();
 
   const addMemberToList = async (member: IUser) => {
     let errorMessage = '';
-    if (pCAIP10ToWallet(member.wallets.toLowerCase()) === pCAIP10ToWallet((account ?? '').toLowerCase())) {
+    if (pCAIP10ToWallet(member.wallets.toLowerCase()) === pCAIP10ToWallet((user?.account ?? '').toLowerCase())) {
       errorMessage = 'Group Creator cannot be added as member';
     }
     if (findObject(member, memberList, 'wallets')) {
