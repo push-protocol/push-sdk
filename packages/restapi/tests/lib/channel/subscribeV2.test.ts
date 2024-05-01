@@ -30,6 +30,7 @@ describe('PUSH_CHANNEL.subscribeV2 functionality', () => {
       channelAddress: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
       userAddress: `eip155:11155111:${account1}`,
       env: _env,
+      origin: 'test'
     });
     expect(res.status).to.be.equal(204);
   });
