@@ -18,6 +18,8 @@ import { ProgressHookType, SignerType } from '../types';
 import { ALPHA_FEATURE_CONFIG } from '../config';
 import { ADDITIONAL_META_TYPE } from '../payloads';
 import { v4 as uuidv4 } from 'uuid';
+
+export type StreamType = STREAM | '*';
 export class PushStream extends EventEmitter {
   private pushChatSocket: any;
   private pushNotificationSocket: any;
@@ -26,7 +28,7 @@ export class PushStream extends EventEmitter {
   private raw: boolean;
   private options: PushStreamInitializeProps;
   private chatInstance: Chat;
-  private listen: STREAM[];
+  private listen: StreamType[];
   private disconnected: boolean;
   public uid: string;
   public chatSocketCount: number;
@@ -35,7 +37,7 @@ export class PushStream extends EventEmitter {
   public notifSocketConnected: boolean;
   constructor(
     account: string,
-    private _listen: STREAM[],
+    private _listen: StreamType[],
     options: PushStreamInitializeProps,
     private decryptedPgpPvtKey?: string,
     private progressHook?: (progress: ProgressHookType) => void,
@@ -66,7 +68,7 @@ export class PushStream extends EventEmitter {
 
   static async initialize(
     account: string,
-    listen: STREAM[],
+    listen: StreamType[],
     env: ENV,
     decryptedPgpPvtKey?: string,
     progressHook?: (progress: ProgressHookType) => void,
@@ -94,6 +96,10 @@ export class PushStream extends EventEmitter {
     };
 
     const accountToUse = settings.overrideAccount || account;
+
+    if (listen.includes('*')) {
+      listen = Object.values(STREAM);
+    }
 
     const stream = new PushStream(
       accountToUse,
@@ -306,6 +312,7 @@ export class PushStream extends EventEmitter {
             modifiedData.event = DataModifier.convertToProposedName(
               modifiedData.event
             );
+            modifiedData.streamUid = this.uid;
             DataModifier.handleToField(modifiedData);
             if (this.shouldEmitChat(data.chatId)) {
               if (
