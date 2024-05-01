@@ -14,6 +14,7 @@ import { chatLimit } from '../../../config';
 import {
   appendUniqueMessages,
   dateToFromNowDaily,
+  getAddress,
   pCAIP10ToWallet,
   walletToPCAIP10,
 } from '../../../helpers';
@@ -33,7 +34,10 @@ import { ChatInfoResponse } from '../types';
 import useUserProfile from '../../../hooks/useUserProfile';
 import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
 import useToast from '../reusables/NewToast';
-import { checkIfNewRequest, transformStreamToIMessageIPFSWithCID } from '../helpers';
+import {
+  checkIfNewRequest,
+  transformStreamToIMessageIPFSWithCID,
+} from '../helpers';
 
 /**
  * @interface IThemeProps
@@ -82,6 +86,8 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   const [participantJoinStream, setParticipantJoinStream] = useState<any>({}); // to track if a participant joins a group
 
   const [groupUpdateStream, setGroupUpdateStream] = useState<any>({});
+  const [formattedChatId, setFormattedChatId] = useState<string>('');
+
   // const {
   //   chatStream,
   //   groupUpdateStream,
@@ -95,7 +101,9 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   usePushChatStream();
   useEffect(() => {
     window.addEventListener('chatStream', (e: any) => setChatStream(e.detail));
-    window.addEventListener('chatRequestStream', (e: any) => setChatRequestStream(e.detail));
+    window.addEventListener('chatRequestStream', (e: any) =>
+      setChatRequestStream(e.detail)
+    );
     window.addEventListener('chatAcceptStream', (e: any) =>
       setChatAcceptStream(e.detail)
     );
@@ -115,7 +123,9 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       window.removeEventListener('chatStream', (e: any) =>
         setChatStream(e.detail)
       );
-      window.removeEventListener('chatRequestStream', (e: any) => setChatRequestStream(e.detail));
+      window.removeEventListener('chatRequestStream', (e: any) =>
+        setChatRequestStream(e.detail)
+      );
 
       window.removeEventListener('chatAcceptStream', (e: any) =>
         setChatAcceptStream(e.detail)
@@ -151,7 +161,12 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     (async () => {
       if (!user) return;
       if (chatId) {
-        const chat = await fetchChat({ chatId: chatId });
+        let formattedChatId;
+        if (chatId.includes('.')) {
+          formattedChatId = (await getAddress(chatId, env))!;
+        } else formattedChatId = chatId;
+        setFormattedChatId(formattedChatId);
+        const chat = await fetchChat({ chatId: formattedChatId });
         if (Object.keys(chat || {}).length) {
           setChatInfo(chat as ChatInfoResponse);
         }
@@ -173,7 +188,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
           profileId: pCAIP10ToWallet(
             chatInfo?.participants.find(
               (address) => address != walletToPCAIP10(account)
-            ) || chatId
+            ) || formattedChatId
           ),
           env,
           user,
@@ -181,7 +196,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
         if (UserProfile) setUserInfo(UserProfile);
         setChatStatusText(ChatStatus.FIRST_CHAT);
       } else if (chatInfo && chatInfo?.meta?.group) {
-        GroupProfile = await getGroupByIDnew({ groupId: chatId });
+        GroupProfile = await getGroupByIDnew({ groupId: formattedChatId });
         if (GroupProfile) setGroupInfo(GroupProfile);
         else {
           setChatStatusText(ChatStatus.INVALID_CHAT);
@@ -230,12 +245,15 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     )
       transformGroupDetails(groupUpdateStream);
   }, [groupUpdateStream]);
- 
+
   const transformSteamMessage = (item: any) => {
     if (!user) {
       return;
     }
-    if (chatInfo && ((item?.chatId == chatInfo?.chatId) || checkIfNewRequest(item,chatId))) {
+    if (
+      chatInfo &&
+      (item?.chatId == chatInfo?.chatId || checkIfNewRequest(item, formattedChatId))
+    ) {
       const transformedMessage = transformStreamToIMessageIPFSWithCID(item);
       if (messages && messages.length) {
         const newChatViewList = appendUniqueMessages(
@@ -344,7 +362,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     if (user) {
       const chatHistory = await historyMessages({
         limit: limit,
-        chatId,
+        chatId:formattedChatId,
         reference,
       });
       if (chatHistory?.length) {
@@ -476,7 +494,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
                   })}
               </Section>
               {chatInfo && chatInfo?.list === 'REQUESTS' && (
-                <ApproveRequestBubble groupInfo={groupInfo} chatId={chatId} />
+                <ApproveRequestBubble groupInfo={groupInfo} chatId={formattedChatId} />
               )}
             </>
           }
