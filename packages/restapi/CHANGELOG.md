@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [1.7.12](https://github.com/push-protocol/push-sdk/compare/restapi-1.7.11...restapi-1.7.12) (2024-05-01)
+
+
+### Bug Fixes
+
+* add apis for initiate and verify alias. ([#1239](https://github.com/push-protocol/push-sdk/issues/1239)) ([34859e4](https://github.com/push-protocol/push-sdk/commit/34859e436efb4a3f363627fda9ad10329f1e7622))
+* merge main ([93eac4d](https://github.com/push-protocol/push-sdk/commit/93eac4dbcace2c4285007f0a29385183529d3f0d))
+
+
+
 ## [1.7.11](https://github.com/push-protocol/push-sdk/compare/restapi-1.7.10...restapi-1.7.11) (2024-04-25)
 
 
