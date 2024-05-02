@@ -1,26 +1,23 @@
-import { useCallback, useState } from 'react';
-import { useChatData } from './useChatData';
-import { FetchGroupMembersResponseType } from '../../components/chat/types';
 import { GroupParticipantCounts, ParticipantStatus } from '@pushprotocol/restapi';
-
-
+import { useCallback, useState } from 'react';
+import { FetchGroupMembersResponseType } from '../../components/chat/types';
+import { useChatData } from './useChatData';
 
 interface fetchMembersParams {
-  chatId:string;
-  page:number,
-  limit?:number,
-  pending?:boolean,
-  role?: string
+  chatId: string;
+  page: number;
+  limit?: number;
+  pending?: boolean;
+  role?: string;
 }
 interface fetchMemberStatusParams {
-  chatId:string;
+  chatId: string;
   accountId: string;
 }
 
 interface fetchMembersCountParams {
-  chatId:string;
+  chatId: string;
 }
-
 
 const useGroupMemberUtilities = () => {
   const [error, setError] = useState<string>();
@@ -29,81 +26,89 @@ const useGroupMemberUtilities = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [joinLoading, setJoinLoading] = useState<boolean>(false);
 
-  const { account, env, user } = useChatData();
-
+  const { user } = useChatData();
 
   const fetchMembers = useCallback(
-    async ({ chatId ,page,limit=10,pending = false }: fetchMembersParams):Promise<FetchGroupMembersResponseType | undefined> => {
+    async ({
+      chatId,
+      page,
+      limit = 10,
+      pending = false,
+    }: fetchMembersParams): Promise<FetchGroupMembersResponseType | undefined> => {
       setLoading(true);
       try {
-        const response = await user?.chat.group.participants.list(chatId,{page,limit, filter: {
+        const response = await user?.chat.group.participants.list(chatId, {
+          page,
+          limit,
+          filter: {
             pending,
-          }});
-          setLoading(false);
-        return response;
-      } catch(error: Error | any) {
+          },
+        });
         setLoading(false);
-        console.log("err", error);
+        return response;
+      } catch (error: Error | any) {
+        setLoading(false);
+        console.log('err', error);
         setError(error.message);
         return error.message;
       }
     },
-    [user, env, account]
-  )
+    [user]
+  );
 
   const fetchMemberStatus = useCallback(
-    async ({ chatId ,accountId }: fetchMemberStatusParams):Promise<ParticipantStatus | undefined>  => {
+    async ({ chatId, accountId }: fetchMemberStatusParams): Promise<ParticipantStatus | undefined> => {
       setLoading(true);
       try {
-        const response = await user?.chat.group.participants.status(chatId,accountId);
-        console.debug(response)
-          setLoading(false);
-        return response;
-      } catch(error: Error | any) {
+        const response = await user?.chat.group.participants.status(chatId, accountId);
+        console.debug(response);
         setLoading(false);
-        console.log("err", error);
+        return response;
+      } catch (error: Error | any) {
+        setLoading(false);
+        console.log('err', error);
         setError(error.message);
         return error.message;
       }
     },
-    [account, env]
-  )
+    [user]
+  );
 
   const fetchMembersCount = useCallback(
-    async ({ chatId }:fetchMembersCountParams ):Promise<GroupParticipantCounts | undefined> => {
+    async ({ chatId }: fetchMembersCountParams): Promise<GroupParticipantCounts | undefined> => {
       setLoading(true);
       try {
         const response = await user?.chat.group.participants.count(chatId);
-          setLoading(false);
-        return response;
-      } catch(error: Error | any) {
         setLoading(false);
-        console.log("err", error);
+        return response;
+      } catch (error: Error | any) {
+        setLoading(false);
+        console.log('err', error);
         setError(error.message);
         return error.message;
       }
     },
-    [user, env]
-  )
+    [user]
+  );
 
   const joinGroup = useCallback(
-    async ({ chatId  }: fetchMembersCountParams) => {
+    async ({ chatId }: fetchMembersCountParams) => {
       setJoinLoading(true);
       try {
         const response = await user?.chat.group.join(chatId);
-         setJoinLoading(false);
+        setJoinLoading(false);
 
         return response;
-      } catch(error: Error | any) {
-        console.log("err", error);
-         setJoinLoading(false);
+      } catch (error: Error | any) {
+        console.log('err', error);
+        setJoinLoading(false);
         setJoinError(error.message);
         return error.message;
       }
     },
-    [user, env, account]
-  )
-  return { error, loading, fetchMembers,fetchMemberStatus,fetchMembersCount,joinGroup,joinLoading,joinError };
+    [user]
+  );
+  return { error, loading, fetchMembers, fetchMemberStatus, fetchMembersCount, joinGroup, joinLoading, joinError };
 };
 
 export default useGroupMemberUtilities;

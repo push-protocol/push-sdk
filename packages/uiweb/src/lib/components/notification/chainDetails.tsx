@@ -1,14 +1,14 @@
 import Tooltip from '../tooltip';
 
-import { EthereumSvg } from '../../icons/EthereumSvg';
-import { PolygonSvg } from '../../icons/PolygonSvg';
+import { ArbitrumSvg } from '../../icons/ArbitrumSvg';
 import { BSCSvg } from '../../icons/BSCSvg';
+import { BerachainSVG } from '../../icons/BerachainSVG';
+import { EthereumSvg } from '../../icons/EthereumSvg';
+import { FuseSvg } from '../../icons/FuseSvg';
 import { OptimismSvg } from '../../icons/OptimismSvg';
+import { PolygonSvg } from '../../icons/PolygonSvg';
 import { PolygonzkevmSvg } from '../../icons/PolygonzkevmSvg';
 import { TheGraphSvg } from '../../icons/TheGraphSvg';
-import { ArbitrumSvg } from '../../icons/ArbitrumSvg';
-import { FuseSvg } from '../../icons/FuseSvg';
-import { BerachainSVG } from '../../icons/BerachainSVG';
 const createSVGIcon = (element: any, chainName: string) => {
   return (
     <Tooltip tooltipContent={`Delivered by ${chainName}`}>{element}</Tooltip>
@@ -24,13 +24,13 @@ export default {
     label: 'ETHEREUM MAINNET',
     icon: createSVGIcon(<EthereumSvg />, 'Ethereum Mainnet'),
   },
-  POLYGON_TEST_AMOY: {
-    label: 'POLYGON AMOY',
-    icon: createSVGIcon(<PolygonSvg />, 'Polygon Amoy'),
-  },
   POLYGON_MAINNET: {
     label: 'POLYGON MAINNET',
     icon: createSVGIcon(<PolygonSvg />, 'Polygon Mainnet'),
+  },
+  POLYGON_TEST_AMOY: {
+    label: 'POLYGON AMOY',
+    icon: createSVGIcon(<PolygonSvg />, 'Polygon Amoy'),
   },
   BSC_TESTNET: {
     label: 'BSC TESTNET',

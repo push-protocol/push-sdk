@@ -33,23 +33,31 @@ export const ChatSupportTest = () => {
   return (
     //works as Chat as well as Support Chat
     <ChatWidget
-    key= {'460336a9fa83112c95894af5471cd2b1091290a11298d87ec824ed74b7c14974'}
-          chatId="0x778D3206374f8AC265728E18E3fE2Ae6b93E4ce4"
-          welcomeComponent={<div style={{display: "flex",flexDirection:'column',border:'1px solid black',overflow:'auto',height:'100%',width:'100%'}}>
-            <p>Welcome</p>
-            <p>new chat</p>
-            <p>Welcome</p>
-            <p>new chat</p>
-            <p>Welcome</p>
-            <p>new chat</p>
-            <p>Welcome</p>
-
-         
-          </div>}
-
+      key={'460336a9fa83112c95894af5471cd2b1091290a11298d87ec824ed74b7c14974'}
+      chatId="4ac5ab85c9c3d57adbdf2dba79357e56b2f9ef0256befe750d9f93af78d2ca68"
+      welcomeComponent={
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            border: '1px solid black',
+            overflow: 'auto',
+            height: '100%',
+            width: '100%',
+          }}
+        >
+          <p>Welcome</p>
+          <p>new chat</p>
+          <p>Welcome</p>
+          <p>new chat</p>
+          <p>Welcome</p>
+          <p>new chat</p>
+          <p>Welcome</p>
+        </div>
+      }
     />
     // <SupportChat
-  
+
     //   signer={librarySigner}
     //   supportAddress="4ac5ab85c9c3d57adbdf2dba79357e56b2f9ef0256befe750d9f93af78d2ca68"
     //   env={env}

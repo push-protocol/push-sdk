@@ -11,11 +11,10 @@ interface VerifyAccessControlParams {
 const useVerifyAccessControl = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
-  const [verificationSuccessfull, setVerificationSuccessfull] =
-    useState<boolean>(true);
+  const [verificationSuccessfull, setVerificationSuccessfull] = useState<boolean>(true);
   const [verified, setVerified] = useState<boolean>(false);
 
-  const { env, account, user } = useChatData();
+  const { user } = useChatData();
 
   const verifyAccessControl = useCallback(
     async (options: VerifyAccessControlParams) => {
@@ -42,7 +41,7 @@ const useVerifyAccessControl = () => {
         return;
       }
     },
-    [account, env, user]
+    [user]
   );
 
   return {

@@ -5,16 +5,15 @@ import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 
 // Internal Components
-import { MoreLightIcon } from '../../../icons/MoreLight';
-import { shortenText } from '../../../helpers';
-import { ThemeContext } from '../theme/ThemeProvider';
-import { useChatData } from '../../../hooks';
-import { Section, Span } from '../../reusables';
-import Dropdown from '../reusables/DropDown';
-import { pCAIP10ToWallet } from '../../../helpers';
 import { device } from '../../../config';
-import { ProfileContainer } from '../reusables';
+import { pCAIP10ToWallet, shortenText } from '../../../helpers';
+import { useChatData } from '../../../hooks';
+import { MoreLightIcon } from '../../../icons/MoreLight';
+import { Section, Span } from '../../reusables';
 import { isAdmin } from '../helpers';
+import { ProfileContainer } from '../reusables';
+import Dropdown from '../reusables/DropDown';
+import { ThemeContext } from '../theme/ThemeProvider';
 
 type MemberProfileCardProps = {
   key?: number | string;
@@ -35,7 +34,7 @@ export const MemberProfileCard = ({
   dropdownRef,
 }: MemberProfileCardProps) => {
   const theme = useContext(ThemeContext);
-  const { account } = useChatData();
+  const { user } = useChatData();
 
   const [dropdownHeight, setDropdownHeight] = useState<number | undefined>(0);
 
@@ -60,8 +59,13 @@ export const MemberProfileCard = ({
       <ProfileContainer
         theme={theme}
         member={{
-          wallet: shortenText(pCAIP10ToWallet(member?.address), 6, true),
-          image: member?.userInfo?.profile?.picture,
+          name: null,
+          icon: member?.userInfo?.profile?.picture,
+          chatId: null,
+          recipient: member.address,
+          abbrRecipient: shortenText(pCAIP10ToWallet(member?.address), 6, true),
+          web3Name: null,
+          desc: null,
         }}
       />
       <Section justifyContent="flex-end" position="relative" zIndex="2">
@@ -78,7 +82,7 @@ export const MemberProfileCard = ({
           </Span>
         )}
         {pCAIP10ToWallet(member?.address)!.toLowerCase() !==
-          pCAIP10ToWallet(account!.toLowerCase()!) &&
+          pCAIP10ToWallet(user!.account!.toLowerCase()!) &&
           dropdownValues.length > 0 && (
             <Section
               maxWidth="fit-content"

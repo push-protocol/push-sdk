@@ -6,12 +6,12 @@ import { GrouInfoType } from '../../components/chat/types';
 export const useCreateGatedGroup = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>();
-  const { env, account, user } = useChatData();
+  const { user } = useChatData();
 
   const createGatedGroup = useCallback(
     async (groupInfoType: GrouInfoType, rules: any) => {
       setLoading(true);
-      console.debug('user in create group ',user)
+      console.debug('user in create group ', user);
       try {
         const payload = {
           description: groupInfoType.groupDescription,
@@ -21,10 +21,7 @@ export const useCreateGatedGroup = () => {
           admins: groupInfoType.admins,
           rules: rules,
         };
-        const response = await user?.chat.group.create(
-          groupInfoType.groupName,
-          payload
-        );
+        const response = await user?.chat.group.create(groupInfoType.groupName, payload);
         setLoading(false);
         if (!response) {
           return { success: false, data: 'Something went wrong' };
@@ -36,7 +33,7 @@ export const useCreateGatedGroup = () => {
         return error.message;
       }
     },
-    [account, env, user]
+    [user]
   );
 
   return { createGatedGroup, error, loading };
