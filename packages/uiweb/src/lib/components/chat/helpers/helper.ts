@@ -1,10 +1,9 @@
-import { Group, IChatPreviewPayload, IMessagePayload, User } from '../exportedTypes';
+import { Env, IFeeds, IMessageIPFSWithCID, IUser, ParticipantStatus } from '@pushprotocol/restapi';
 import { ethers } from 'ethers';
-import { IFeeds, IMessageIPFSWithCID, IUser, ParticipantStatus } from '@pushprotocol/restapi';
-import { getAddress, walletToPCAIP10 } from '../../../helpers';
-import { Env,  } from '@pushprotocol/restapi';
 import moment from 'moment';
 import { ProfilePicture } from '../../../config';
+import { getAddress, walletToPCAIP10 } from '../../../helpers';
+import { Group, IChatPreviewPayload, IMessagePayload, User } from '../exportedTypes';
 
 export const profilePicture = `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==`;
 
@@ -39,11 +38,7 @@ export const displayDefaultUser = ({ caip10 }: { caip10: string }): IUser => {
   return userCreated;
 };
 
-export const findObject = (
-  data: any,
-  parentArray: any[],
-  property: string
-): boolean => {
+export const findObject = (data: any, parentArray: any[], property: string): boolean => {
   let isPresent = false;
   if (data) {
     parentArray.map((value) => {
@@ -55,17 +50,13 @@ export const findObject = (
   return isPresent;
 };
 
-
-
 export const addWalletValidation = (
   member: IUser,
   memberList: any,
   groupMembers: any,
   memberStatus: ParticipantStatus,
-  limit:number
+  limit: number
 ) => {
-
-
   let errorMessage = '';
 
   if (memberStatus?.participant) {
@@ -82,9 +73,6 @@ export const addWalletValidation = (
   }
   return errorMessage;
 };
-
-
- 
 
 export function isValidETHAddress(address: string) {
   return ethers.utils.isAddress(address);
@@ -106,22 +94,14 @@ export const checkIfMember = (chatFeed: IFeeds, account: string) => {
 
 export const checkIfAccessVerifiedGroup = (groupInfo: Group) => {
   let isRules = false;
-  if (
-    groupInfo &&
-    groupInfo.rules &&
-    (groupInfo.rules?.entry ||
-      groupInfo.rules?.chat)
-  ) {
+  if (groupInfo && groupInfo.rules && (groupInfo.rules?.entry || groupInfo.rules?.chat)) {
     isRules = true;
   }
   return isRules;
 };
 
 // Format address
-export const formatAddress = async (
-  chatPreviewPayload: IChatPreviewPayload,
-  env: Env
-) => {
+export const formatAddress = async (chatPreviewPayload: IChatPreviewPayload, env: Env) => {
   let formattedAddress = chatPreviewPayload?.chatParticipant;
 
   if (!chatPreviewPayload?.chatGroup) {
@@ -151,7 +131,16 @@ export const formatDate = (chatPreviewPayload: IChatPreviewPayload) => {
     } else {
       // If the timestamp is from before yesterday, show the date
       // Use 'L' to format the date based on the locale
-      formattedDate = timestamp.format('L');
+      // But remove the year if it's the current year
+      const currentYear = today.year();
+      const timestampYear = timestamp.year();
+
+      if (timestampYear === currentYear) {
+        // Change this later to show the date in the format 'DD MMM' (e.g. '01 Jan')
+        formattedDate = timestamp.format('L'); // Default locale-specific format
+      } else {
+        formattedDate = timestamp.format('L'); // Default locale-specific format
+      }
     }
   }
 
@@ -161,8 +150,7 @@ export const formatDate = (chatPreviewPayload: IChatPreviewPayload) => {
 // Generate random nonce
 export const generateRandomNonce: () => string = () => {
   let text = '';
-  const possible =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
   for (let i = 0; i < 32; i++) {
     text += possible.charAt(Math.floor(Math.random() * possible.length));
@@ -171,85 +159,72 @@ export const generateRandomNonce: () => string = () => {
   return text;
 };
 
-  // Transform chat payloads
- export  const transformChatItems: (items: IFeeds[]) => IChatPreviewPayload[] = (
-    items: IFeeds[]
-  ) => {
-    // map but also filter to remove any duplicates which might creep in if stream sends a message
-    const transformedItems: IChatPreviewPayload[] = items
-      .map((item: IFeeds) => ({
-        chatId: item.chatId,
-        chatPic: item.groupInformation
-          ? item.groupInformation.groupImage
-          : item.profilePicture,
-        chatParticipant: item.groupInformation
-          ? item.groupInformation.groupName
-          : item.did,
-        chatGroup: item.groupInformation ? true : false,
-        chatTimestamp: item.msg.timestamp,
-        chatMsg: {
-          messageType: item.msg.messageType,
-          messageContent: item.msg.messageContent,
-        },
-      }))
-      .filter(
-        (item, index, self) =>
-          index === self.findIndex((t) => t.chatId === item.chatId)
-      );
-
-    return transformedItems;
-  };
-
-  export const transformStreamToIChatPreviewPayload: (
-    item: any
-  ) => IChatPreviewPayload = (item: any) => {
-    // transform the item
-    const transformedItem: IChatPreviewPayload = {
+// Transform chat payloads
+export const transformChatItems: (items: IFeeds[]) => IChatPreviewPayload[] = (items: IFeeds[]) => {
+  // map but also filter to remove any duplicates which might creep in if stream sends a message
+  const transformedItems: IChatPreviewPayload[] = items
+    .map((item: IFeeds) => ({
       chatId: item.chatId,
-      chatPic: null, // for now, we don't have a way to get pfp from stream
-      chatParticipant: item.meta.group
-        ? null // we take from fetching info
-        : (item?.event === 'chat.request')?item?.origin == 'self'?item.to[0] :item.from: item.to[0],
-      chatGroup: item.meta.group,
-      chatTimestamp: Number(item.timestamp),
+      chatPic: item.groupInformation ? item.groupInformation.groupImage : item.profilePicture,
+      chatParticipant: item.groupInformation ? item.groupInformation.groupName : item.did,
+      chatGroup: item.groupInformation ? true : false,
+      chatTimestamp: item.msg.timestamp,
       chatMsg: {
-        messageType: item?.message?.type ,
-        messageContent: item?.message?.content,
+        messageType: item.msg.messageType,
+        messageContent: item.msg.messageContent,
       },
-    };
+    }))
+    .filter((item, index, self) => index === self.findIndex((t) => t.chatId === item.chatId));
 
-    return transformedItem;
+  return transformedItems;
+};
+
+export const transformStreamToIChatPreviewPayload: (item: any) => IChatPreviewPayload = (item: any) => {
+  // transform the item
+  const transformedItem: IChatPreviewPayload = {
+    chatId: item.chatId,
+    chatPic: null, // for now, we don't have a way to get pfp from stream
+    chatParticipant: item.meta.group
+      ? null // we take from fetching info
+      : item?.event === 'chat.request'
+      ? item?.origin === 'self'
+        ? item.to[0]
+        : item.from
+      : item.to[0],
+    chatGroup: item.meta.group,
+    chatTimestamp: Number(item.timestamp),
+    chatMsg: {
+      messageType: item?.message?.type,
+      messageContent: item?.message?.content,
+    },
   };
 
-  export const checkIfNewRequest = (item:any,chatId:string) => {
-    if(item?.origin == 'self')
-     return (walletToPCAIP10(chatId) === walletToPCAIP10(item?.to[0]));
-     if(item?.origin == 'other')
-     return (walletToPCAIP10(chatId) === walletToPCAIP10(item?.from));
-    return false;
-  }
+  return transformedItem;
+};
 
-  export  const transformStreamToIMessageIPFSWithCID: (
-    item: any
-  ) => IMessageIPFSWithCID = (item: any) =>{
+export const checkIfNewRequest = (item: any, chatId: string) => {
+  if (item?.origin === 'self') return walletToPCAIP10(chatId) === walletToPCAIP10(item?.to[0]);
+  if (item?.origin === 'other') return walletToPCAIP10(chatId) === walletToPCAIP10(item?.from);
+  return false;
+};
 
-    const transformedItem :IMessageIPFSWithCID = {
-      fromCAIP10: item?.from,
-      toCAIP10: item?.to[0],
-      fromDID: item?.from,
-      toDID: item?.to[0],
-      messageType: item?.message?.type,
-      messageObj: {content:item?.message?.content},
-      sigType: item?.raw?.sigType || '',
-      link:  `previous:v2${item?.reference}`,
-      timestamp: parseInt(item?.timestamp),
-      encType: item?.raw?.encType || '',
-      encryptedSecret: item?.raw?.encryptedSecret || '',
-      cid: item?.reference,
-      messageContent:  item?.message?.content,
-      signature: item?.raw?.signature || '',
-      verificationProof:  item?.raw?.verificationProof || '',
-    }
-    return transformedItem;
-
-  }
+export const transformStreamToIMessageIPFSWithCID: (item: any) => IMessageIPFSWithCID = (item: any) => {
+  const transformedItem: IMessageIPFSWithCID = {
+    fromCAIP10: item?.from,
+    toCAIP10: item?.to[0],
+    fromDID: item?.from,
+    toDID: item?.to[0],
+    messageType: item?.message?.type,
+    messageObj: { content: item?.message?.content },
+    sigType: item?.raw?.sigType || '',
+    link: `previous:v2${item?.reference}`,
+    timestamp: parseInt(item?.timestamp),
+    encType: item?.raw?.encType || '',
+    encryptedSecret: item?.raw?.encryptedSecret || '',
+    cid: item?.reference,
+    messageContent: item?.message?.content,
+    signature: item?.raw?.signature || '',
+    verificationProof: item?.raw?.verificationProof || '',
+  };
+  return transformedItem;
+};

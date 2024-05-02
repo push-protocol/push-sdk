@@ -4,14 +4,14 @@ import { SpinnerSvg } from '../../icons/SpinnerSvg';
 
 type SpinnerPropType = {
   size?: string;
-  color?:string;
+  color?: string;
 };
 
 type SpinLoaderPropType = {
   width?: string;
 };
 
-export const Spinner: React.FC<SpinnerPropType> = ({ size = 42,color='#000' }) => {
+export const Spinner: React.FC<SpinnerPropType> = ({ size = 42, color = '#000' }) => {
   return (
     <SpinLoader width={`${size}px`}>
       <SpinnerSvg color={color} />

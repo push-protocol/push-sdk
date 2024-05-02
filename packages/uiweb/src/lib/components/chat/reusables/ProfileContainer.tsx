@@ -1,20 +1,37 @@
-import { useState } from 'react';
-import { copyToClipboard, pCAIP10ToWallet } from '../../../helpers';
-import { CopySvg2 } from '../../../icons/CopySvg2';
-import { Section, Span, Image, Div, Tooltip } from '../../reusables';
-import { IChatTheme } from '../theme';
+// React + Web3 Essentials
+import { useEffect, useRef, useState } from 'react';
 
+// External Packages
+
+// Internal Compoonents
+import { copyToClipboard, pCAIP10ToWallet } from '../../../helpers';
+import { createBlockie } from '../../../helpers/blockies';
+import { Div, Image, Section, Span, Tooltip } from '../../reusables';
+
+// Internal Configs
+
+// Assets
+import { CopyIcon } from '../../../icons/PushIcons';
+
+// Interfaces & Types
+import { IChatTheme } from '../theme';
 type ProfileProps = {
   theme: IChatTheme;
   member: {
-    wallet: string;
-    image: string;
+    name?: string | null;
+    icon?: string | null;
+    chatId?: string | null;
+    abbrRecipient?: string | null;
+    recipient?: string | null;
     web3Name?: string | null;
-    completeWallet?: string | null;
+    desc?: string | null;
+    isGroup?: boolean | null;
   };
   copy?: boolean;
   customStyle?: CustomStyleParamsType | null;
+  loading?: boolean;
 };
+
 type CustomStyleParamsType = {
   fontSize?: string;
   fontWeight?: string;
@@ -22,87 +39,131 @@ type CustomStyleParamsType = {
   imgMaxHeight?: string;
   textColor?: string;
 };
-export const ProfileContainer = ({
-  theme,
-  member,
-  copy,
-  customStyle,
-}: ProfileProps) => {
+
+// Constants
+
+// Exported Interfaces & Types
+
+// Exported Functions
+export const ProfileContainer = ({ theme, member, copy, customStyle, loading }: ProfileProps) => {
   const [copyText, setCopyText] = useState<string>();
 
+  // For blockie if icon is missing
+  const blockieContainerRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    if (blockieContainerRef.current && !member?.icon) {
+      const blockie = createBlockie(member?.recipient || '', { size: 8, scale: 6 });
+      blockieContainerRef.current.innerHTML = ''; // Clear the container to avoid duplicating the canvas
+      blockieContainerRef.current.appendChild(blockie);
+    }
+  }, [member?.recipient, member?.icon]);
 
   return (
     <Section justifyContent="flex-start">
       <Section
         height={customStyle?.imgHeight ?? '48px'}
-        maxWidth="48px"
+        width={customStyle?.imgHeight ?? '48px'}
         borderRadius="100%"
         overflow="hidden"
         margin="0px 12px 0px 0px"
         position="relative"
+        className={loading ? 'skeleton' : ''}
       >
-        <Image
-          height={customStyle?.imgHeight ?? '48px'}
-          maxHeight={customStyle?.imgMaxHeight ?? '48px'}
-          width={'auto'}
-          cursor="pointer"
-          src={member?.image}
-        />
-      </Section>
-      <Section flexDirection="column" alignItems="start" gap="5px"  whiteSpace='nowrap' >
-        {!!member?.web3Name && (
-          <Span
-            fontSize={customStyle?.fontSize ?? '18px'}
-            fontWeight={customStyle?.fontWeight ?? '400'}
-            color={
-              customStyle?.textColor ?? theme.textColor?.modalSubHeadingText
-            }
-            position="relative"
-          >
-            {member?.web3Name}
-          </Span>
+        {member?.icon && (
+          <Image
+            height={customStyle?.imgHeight ?? '48px'}
+            maxHeight={customStyle?.imgMaxHeight ?? '48px'}
+            width={'auto'}
+            cursor="pointer"
+            src={member?.icon}
+          />
         )}
-        <Tooltip content={copyText}>
-          <Section
-            gap="5px"
-       cursor='pointer'
-            onMouseEnter={() => {
-              setCopyText('Copy to clipboard');
-            }}
-            onMouseLeave={() => {
-              setCopyText('');
-            }}
-            onClick={() => {
-              copyToClipboard(pCAIP10ToWallet(member?.completeWallet || ''));
-              setCopyText('copied');
-            }}
-          >
-            <Span
-              fontSize={
-                member?.web3Name ? '14px' : customStyle?.fontSize ?? '18px'
-              }
-              fontWeight={
-                member?.web3Name ? '500' : customStyle?.fontWeight ?? '400'
-              }
-              color={
-                member?.web3Name
-                  ? theme.textColor?.modalSubHeadingText
-                  : customStyle?.textColor ??
-                    theme.textColor?.modalSubHeadingText
-              }
-              position="relative"
-              whiteSpace='nowrap'
+        {/* If no icon then show blockie */}
+        {!member?.icon && (
+          <Div
+            ref={blockieContainerRef}
+            height={customStyle?.imgHeight ?? '48px'}
+            width={customStyle?.imgHeight ?? '48px'}
+            cursor="pointer"
+          ></Div>
+        )}
+      </Section>
+
+      <Section
+        flexDirection="column"
+        alignItems="start"
+        whiteSpace="nowrap"
+        minWidth="150px"
+        cursor="pointer"
+      >
+        <>
+          {member?.name ||
+            member?.web3Name ||
+            (loading && (
+              <Section
+                justifyContent="flex-start"
+                minWidth="120px"
+                className={loading ? 'skeleton' : ''}
+              >
+                <Span
+                  fontSize={customStyle?.fontSize ?? '18px'}
+                  fontWeight={customStyle?.fontWeight ?? '400'}
+                  color={customStyle?.textColor ?? theme.textColor?.modalSubHeadingText}
+                  position="relative"
+                  cursor="pointer"
+                >
+                  {/* If name and web3 name then show push user name else show web3 name */}
+                  {member.name && member.web3Name ? member.name : member.name ? member.name : member.web3Name}
+                </Span>
+              </Section>
+            ))}
+
+          <Tooltip content={copyText}>
+            <Section
+              justifyContent="flex-start"
+              gap="5px"
+              cursor="pointer"
+              minHeight="22px"
+              minWidth="180px"
+              onMouseEnter={() => {
+                const text = member.chatId === member.recipient ? 'Copy Chat ID' : 'Copy Wallet';
+                setCopyText(text);
+              }}
+              onMouseLeave={() => setCopyText('')}
+              onClick={() => {
+                copyToClipboard(pCAIP10ToWallet(member?.recipient || ''));
+                setCopyText('Copied');
+              }}
+              className={loading ? 'skeleton' : ''}
             >
-              {member.wallet}
-            </Span>
-            {!!copy && copyText && (
-              <Div cursor="pointer" >
-                <CopySvg2 />
-              </Div>
-            )}
-          </Section>
-        </Tooltip>
+              <Span
+                fontSize={member?.name || member?.web3Name ? '14px' : customStyle?.fontSize ?? '18px'}
+                fontWeight={member?.name || member?.web3Name ? '500' : customStyle?.fontWeight ?? '400'}
+                color={
+                  member?.name || member?.web3Name
+                    ? theme.textColor?.modalSubHeadingText
+                    : customStyle?.textColor ?? theme.textColor?.modalSubHeadingText
+                }
+                position="relative"
+                whiteSpace="nowrap"
+                cursor="pointer"
+              >
+                {member?.name && member?.web3Name
+                  ? `${member?.web3Name} | ${member.abbrRecipient}`
+                  : member.abbrRecipient}
+              </Span>
+              {copy && copyText && (
+                <Div cursor="pointer">
+                  <CopyIcon
+                    size={16}
+                    color={theme?.iconColor?.primaryColor}
+                  />
+                </Div>
+              )}
+            </Section>
+          </Tooltip>
+        </>
       </Section>
     </Section>
   );

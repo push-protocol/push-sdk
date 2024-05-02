@@ -5,15 +5,16 @@ import styled from 'styled-components';
 import { useChatData } from '../../../hooks';
 import { Button, Image, Section } from '../../reusables';
 
+import { CONSTANTS } from '@pushprotocol/restapi';
+import { ethers } from 'ethers';
+import { CiImageOn } from 'react-icons/ci';
+import { FaFile } from 'react-icons/fa';
+import { CoreContractChainId, InfuraAPIKey } from '../../../config';
+import { resolveWeb3Name, shortenText } from '../../../helpers';
 import { IChatPreviewProps } from '../exportedTypes';
+import { formatAddress, formatDate } from '../helpers';
 import { IChatTheme } from '../theme';
 import { ThemeContext } from '../theme/ThemeProvider';
-import { formatAddress, formatDate } from '../helpers';
-import { resolveNewEns, shortenText } from '../../../helpers';
-import { CoreContractChainId, InfuraAPIKey } from '../../../config';
-import { ethers } from 'ethers';
-import { FaFile } from 'react-icons/fa';
-import { CiImageOn } from 'react-icons/ci';
 /**
  * @interface IThemeProps
  * this interface is used for defining the props for styled components
@@ -23,25 +24,21 @@ interface IThemeProps {
   blur?: boolean;
 }
 
-export const ChatPreview: React.FC<IChatPreviewProps> = (
-  options: IChatPreviewProps
-) => {
+export const ChatPreview: React.FC<IChatPreviewProps> = (options: IChatPreviewProps) => {
+  // get hooks
+  const { user } = useChatData();
+
   const theme = useContext(ThemeContext);
-  const { env } = useChatData();
-  const provider = new ethers.providers.InfuraProvider(
-    CoreContractChainId[env],
-    InfuraAPIKey
-  );
   const [formattedAddress, setFormattedAddress] = useState<string>('');
   const [web3Name, setWeb3Name] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
-      const address = await formatAddress(options.chatPreviewPayload, env);
+      const address = await formatAddress(options.chatPreviewPayload, user?.env || CONSTANTS.ENV.PROD);
       setFormattedAddress(address);
       if (!options.chatPreviewPayload?.chatGroup) {
         try {
-          const result = await resolveNewEns(address, provider, env);
+          const result = await resolveWeb3Name(address, user);
           if (result) setWeb3Name(result);
         } catch (e) {
           // console.debug(e);
@@ -51,22 +48,18 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
   }, []);
 
   const getProfileName = (formattedAddress: string) => {
-    return options.chatPreviewPayload?.chatGroup
-      ? formattedAddress
-      : web3Name
-      ? web3Name
-      : formattedAddress;
+    return options.chatPreviewPayload?.chatGroup ? formattedAddress : web3Name ? web3Name : formattedAddress;
   };
 
   return (
-    <ChatPreviewContainer>
+    <ChatPreviewContainer cursor="pointer">
       <Button
         display="flex"
         width="100%"
         height="70px"
         minHeight="70px"
-        margin="5px 5px"
-        padding="5px 5px"
+        padding="10px"
+        cursor="pointer"
         borderRadius={theme.borderRadius?.chatPreview}
         border={theme.border?.chatPreview}
         flexDirection="row"
@@ -94,6 +87,7 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
           overflow="hidden"
           width="48px"
           height="48px"
+          cursor="pointer"
         >
           <Image
             src={options.chatPreviewPayload?.chatPic || undefined}
@@ -102,29 +96,27 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
           />
         </Section>
         <Section
-          justifyContent="flex-start"
+          justifyContent="center"
+          gap="6px"
+          cursor="pointer"
           flexDirection="column"
           alignItems="center"
           alignSelf="stretch"
           overflow="hidden"
-          margin="0 5px"
+          margin="0 5px 0 10px"
           flex="1"
         >
           <Section
+            flex="initial"
             justifyContent="flex-start"
             flexDirection="row"
             alignItems="flex-start"
             alignSelf="stretch"
             overflow="hidden"
-            flex="1"
+            cursor="pointer"
           >
-            <Account theme={theme}>
-              {shortenText(getProfileName(formattedAddress), 8, true) ||
-                shortenText(formattedAddress, 8, true)}
-            </Account>
-            <Dated theme={theme}>
-              {formatDate(options.chatPreviewPayload)}
-            </Dated>
+            <Account theme={theme}>{getProfileName(formattedAddress)}</Account>
+            <Dated theme={theme}>{formatDate(options.chatPreviewPayload)}</Dated>
           </Section>
           <Section
             justifyContent="flex-start"
@@ -132,13 +124,14 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
             alignItems="flex-start"
             alignSelf="stretch"
             overflow="hidden"
-            flex="1"
+            flex="initial"
+            cursor="pointer"
+            className={options.readmode ? 'skeleton' : ''}
           >
             <Message theme={theme}>
               {options?.chatPreviewPayload?.chatMsg?.messageType === 'Image' ||
               options?.chatPreviewPayload?.chatMsg?.messageType === 'GIF' ||
-              options?.chatPreviewPayload?.chatMsg?.messageType ===
-                'MediaEmbed' ? (
+              options?.chatPreviewPayload?.chatMsg?.messageType === 'MediaEmbed' ? (
                 <Section
                   justifyContent="flex-start"
                   flexDirection="row"
@@ -151,8 +144,7 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
                   <CiImageOn />
                   Media
                 </Section>
-              ) : options?.chatPreviewPayload?.chatMsg?.messageType ===
-                'File' ? (
+              ) : options?.chatPreviewPayload?.chatMsg?.messageType === 'File' ? (
                 <Section
                   justifyContent="flex-start"
                   flexDirection="row"
@@ -169,9 +161,7 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (
                 options?.chatPreviewPayload?.chatMsg?.messageContent
               )}
             </Message>
-            {!!options?.badge?.count && (
-              <Badge theme={theme}>{options.badge.count}</Badge>
-            )}
+            {!!options?.badge?.count && <Badge theme={theme}>{options.badge.count}</Badge>}
           </Section>
         </Section>
       </Button>
@@ -206,7 +196,7 @@ const Account = styled.div<IThemeProps>`
   flex: 1;
   align-self: stretch;
   text-align: start;
-  // text-overflow: ellipsis ellipsis;
+  text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
   margin-right: 10px;
@@ -226,20 +216,19 @@ const Message = styled.div<IThemeProps>`
   flex: 1;
   align-self: stretch;
   text-align: start;
-  // text-overflow: ellipsis;
+  text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
   margin-right: 10px;
 `;
 
 const Badge = styled.div<IThemeProps>`
-  background: ${(props) =>
-    props.theme.backgroundColor?.chatPreviewBadgeBackground};
+  background: ${(props) => props.theme.backgroundColor?.chatPreviewBadgeBackground};
   font-weight: ${(props) => props.theme.fontWeight?.chatPreviewBadgeText};
   font-size: ${(props) => props.theme.fontSize?.chatPreviewBadgeText};
   color: ${(props) => props.theme.textColor?.chatPreviewBadgeText};
   padding: 0px 8px;
-  min-height: 24px;
+  text-overflow: ellipsis;
   border-radius: 24px;
   align-self: center;
 `;

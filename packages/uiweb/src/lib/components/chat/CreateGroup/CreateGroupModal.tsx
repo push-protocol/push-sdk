@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import styled from 'styled-components';
-import { ToastContainer } from 'react-toastify';
 import { AiTwotoneCamera } from 'react-icons/ai';
 import { MdCheckCircle, MdError } from 'react-icons/md';
 
@@ -16,13 +15,10 @@ import useMediaQuery from '../../../hooks/useMediaQuery';
 import { DefineCondtion } from './DefineCondition';
 import AddCriteria from './AddCriteria';
 import { ThemeContext } from '../theme/ThemeProvider';
-import {
-  CriteriaStateManagerType,
-  useCriteriaStateManager,
-} from '../../../hooks/chat/useCriteriaState';
+import { CriteriaStateManagerType, useCriteriaStateManager } from '../../../hooks/chat/useCriteriaState';
 import { AddGroupMembers } from './AddGroupMembers';
 import { useCreateGatedGroup } from '../../../hooks/chat/useCreateGatedGroup';
-import useToast from '../reusables/NewToast';
+import { useChatData } from '../../../hooks';
 
 import { Image } from '../../../config/styles';
 import { ProfilePicture, device } from '../../../config';
@@ -40,8 +36,7 @@ export const CREATE_GROUP_STEP_KEYS = {
   ADD_MEMBERS: 5,
 } as const;
 
-export type CreateGroupStepKeys =
-  typeof CREATE_GROUP_STEP_KEYS[keyof typeof CREATE_GROUP_STEP_KEYS];
+export type CreateGroupStepKeys = typeof CREATE_GROUP_STEP_KEYS[keyof typeof CREATE_GROUP_STEP_KEYS];
 
 export interface GroupInputDetailsType {
   groupName: string;
@@ -62,7 +57,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
     CREATE_GROUP_STEP_KEYS.INPUT_DETAILS
   );
   const { createGatedGroup, loading } = useCreateGatedGroup();
-  const groupInfoToast = useToast();
+  const { toast, user } = useChatData();
   const handleNext = () => {
     setActiveComponent((activeComponent + 1) as CreateGroupStepKeys);
   };
@@ -90,29 +85,30 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   const useDummyGroupInfo = false;
 
   const [checked, setChecked] = useState<boolean>(true);
-  const [groupInputDetails, setGroupInputDetails] =
-    useState<GroupInputDetailsType>({
-      groupName: useDummyGroupInfo ? 'This is duumy group name' : '',
-      groupDescription: useDummyGroupInfo
-        ? 'This is dummy group description for testing'
-        : '',
-      groupImage: useDummyGroupInfo ? ProfilePicture : '',
-      groupMembers: [],
-      groupEncryptionType: GROUP_TYPE_OPTIONS[0].value,
-    });
+  const [groupInputDetails, setGroupInputDetails] = useState<GroupInputDetailsType>({
+    groupName: useDummyGroupInfo ? 'This is duumy group name' : '',
+    groupDescription: useDummyGroupInfo ? 'This is dummy group description for testing' : '',
+    groupImage: useDummyGroupInfo ? ProfilePicture : '',
+    groupMembers: [],
+    groupEncryptionType: GROUP_TYPE_OPTIONS[0].value,
+  });
   const [isImageUploaded, setIsImageUploaded] = useState<boolean>(false);
 
   const showError = (errorMessage: string) => {
-    groupInfoToast.showMessageToast({
+    toast.showMessageToast({
       toastTitle: 'Error',
       toastMessage: errorMessage,
       toastType: 'ERROR',
-      getToastIcon: (size) => <MdError size={size} color="red" />,
+      getToastIcon: (size: number) => (
+        <MdError
+          size={size}
+          color="red"
+        />
+      ),
     });
   };
 
   const getEncryptionType = () => {
-    console.debug(groupInputDetails.groupEncryptionType, 'encryptionTypeee');
     if (groupInputDetails.groupEncryptionType === 'encrypted') {
       return false;
     }
@@ -120,34 +116,53 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   };
 
   const createGroupService = async () => {
-    const groupInfo = {
-      groupName: groupInputDetails.groupName,
-      groupDescription: groupInputDetails.groupDescription,
-      groupImage: groupInputDetails.groupImage || ProfilePicture,
-      isPublic: getEncryptionType(),
-      members: groupInputDetails.groupMembers
-        .filter((member: any) => !member.isAdmin)
-        .map((member: any) => member.wallets),
-      admins: groupInputDetails.groupMembers
-        .filter((member: any) => member.isAdmin)
-        .map((member: any) => member.wallets),
-    };
-    const rules: any = checked ? criteriaStateManager.generateRule() : {};
-    const { success: isGroupCreated, data: APIResponse } =
-      await createGatedGroup(groupInfo, rules);
-    if (isGroupCreated === true) {
-      onSuccess && onSuccess(APIResponse);
-      groupInfoToast.showMessageToast({
-        toastTitle: 'Success',
-        toastMessage: 'Group created successfully',
-        toastType: 'SUCCESS',
-        getToastIcon: (size: string | number | undefined) => (
-          <MdCheckCircle size={size} color="green" />
-        ),
-      });
-      onClose();
-    } else {
-      showError('Group creation failed');
+    if (user) {
+      if (user.readmode()) {
+        console.error('UIWeb::CreateGroupModal::createGroupService::User is in read mode.Switch to write mode');
+        toast.showMessageToast({
+          toastTitle: 'Error',
+          toastMessage: 'Unable to create group in readMode. Switch to write mode',
+          toastType: 'ERROR',
+          getToastIcon: (size: number) => (
+            <MdError
+              size={size}
+              color="red"
+            />
+          ),
+        });
+      } else {
+        const groupInfo = {
+          groupName: groupInputDetails.groupName,
+          groupDescription: groupInputDetails.groupDescription,
+          groupImage: groupInputDetails.groupImage || ProfilePicture,
+          isPublic: getEncryptionType(),
+          members: groupInputDetails.groupMembers
+            .filter((member: any) => !member.isAdmin)
+            .map((member: any) => member.wallets),
+          admins: groupInputDetails.groupMembers
+            .filter((member: any) => member.isAdmin)
+            .map((member: any) => member.wallets),
+        };
+        const rules: any = checked ? criteriaStateManager.generateRule() : {};
+        const { success: isGroupCreated, data: APIResponse } = await createGatedGroup(groupInfo, rules);
+        if (isGroupCreated === true) {
+          onSuccess && onSuccess(APIResponse);
+          toast.showMessageToast({
+            toastTitle: 'Success',
+            toastMessage: 'Group created successfully',
+            toastType: 'SUCCESS',
+            getToastIcon: (size: string | number | undefined) => (
+              <MdCheckCircle
+                size={size}
+                color="green"
+              />
+            ),
+          });
+          onClose();
+        } else {
+          showError('Group creation failed');
+        }
+      }
     }
   };
 
@@ -246,7 +261,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
       modalBackground={modalBackground}
       modalPositionType={modalPositionType}
     >
-      {renderComponent()} <ToastContainer />
+      {renderComponent()}
     </Modal>
   );
 };
@@ -261,17 +276,13 @@ export interface ModalHeaderProps {
   handleAddWallets?: () => void;
   isImageUploaded?: boolean;
   setIsImageUploaded?: React.Dispatch<React.SetStateAction<boolean>>;
-  setGroupInputDetails?: React.Dispatch<
-    React.SetStateAction<GroupInputDetailsType>
-  >;
+  setGroupInputDetails?: React.Dispatch<React.SetStateAction<GroupInputDetailsType>>;
   groupInputDetails?: GroupInputDetailsType;
 }
 
 interface GroupDetailState {
   groupInputDetails: GroupInputDetailsType;
-  setGroupInputDetails: React.Dispatch<
-    React.SetStateAction<GroupInputDetailsType>
-  >;
+  setGroupInputDetails: React.Dispatch<React.SetStateAction<GroupInputDetailsType>>;
 }
 
 export interface GroupTypeState {
@@ -288,8 +299,7 @@ const CreateGroupDetail = ({
 }: ModalHeaderProps & GroupDetailState) => {
   const { groupName, groupDescription, groupImage } = groupInputDetails;
   const theme = useContext(ThemeContext);
-  const [validationErrors, setValidationErrors] =
-    useState<CriteriaValidationErrorType>({});
+  const [validationErrors, setValidationErrors] = useState<CriteriaValidationErrorType>({});
   const fileUploadInputRef = useRef<HTMLInputElement>(null);
   const isMobile = useMediaQuery(device.mobileL);
   const [imageSrc, setImageSrc] = useState<string | null>();
@@ -331,7 +341,7 @@ const CreateGroupDetail = ({
         });
         return;
       }
-      if (groupName.trim().length <3) {
+      if (groupName.trim().length < 3) {
         setValidationErrors({
           groupName: 'Group name should have minimum 3 character',
         });
@@ -345,7 +355,7 @@ const CreateGroupDetail = ({
         });
         return;
       }
-      if (groupDescription.trim().length <3) {
+      if (groupDescription.trim().length < 3) {
         setValidationErrors({
           groupDescription: 'Group Description should have minimum 3 character',
         });
@@ -373,7 +383,10 @@ const CreateGroupDetail = ({
       justifyContent="start"
       width={!isMobile ? '400px' : '300px'}
     >
-      <ModalHeader title="Create Group" handleClose={onClose} />
+      <ModalHeader
+        title="Create Group"
+        handleClose={onClose}
+      />
       <UploadContainer onClick={handleUpload}>
         {isImageUploaded ? (
           groupImage ? (
@@ -401,7 +414,10 @@ const CreateGroupDetail = ({
           )
         ) : (
           <ImageContainer theme={theme}>
-            <AiTwotoneCamera fontSize={40} color={'rgba(87, 93, 115, 1)'} />
+            <AiTwotoneCamera
+              fontSize={40}
+              color={'rgba(87, 93, 115, 1)'}
+            />
           </ImageContainer>
         )}
         <FileInput
@@ -412,7 +428,11 @@ const CreateGroupDetail = ({
           onChange={(e) => handleChange(e as unknown as Event)}
         />
       </UploadContainer>
-      <Section gap="10px" flexDirection="column" alignItems="start">
+      <Section
+        gap="10px"
+        flexDirection="column"
+        alignItems="start"
+      >
         <TextInput
           labelName="Group Name"
           charCount={100}
@@ -425,11 +445,13 @@ const CreateGroupDetail = ({
           }
           error={!!validationErrors?.groupName}
         />
-        {!!validationErrors?.groupName && (
-          <ErrorSpan>{validationErrors?.groupName}</ErrorSpan>
-        )}
+        {!!validationErrors?.groupName && <ErrorSpan>{validationErrors?.groupName}</ErrorSpan>}
       </Section>
-      <Section gap="10px" flexDirection="column" alignItems="start">
+      <Section
+        gap="10px"
+        flexDirection="column"
+        alignItems="start"
+      >
         <TextArea
           labelName="Group Description"
           charCount={150}
@@ -442,11 +464,12 @@ const CreateGroupDetail = ({
           }
           error={!!validationErrors?.groupDescription}
         />
-        {!!validationErrors?.groupDescription && (
-          <ErrorSpan>{validationErrors?.groupDescription}</ErrorSpan>
-        )}
+        {!!validationErrors?.groupDescription && <ErrorSpan>{validationErrors?.groupDescription}</ErrorSpan>}
       </Section>
-      <Button width="197px" onClick={verifyAndHandelNext}>
+      <Button
+        width="197px"
+        onClick={verifyAndHandelNext}
+      >
         Next
       </Button>
     </Section>

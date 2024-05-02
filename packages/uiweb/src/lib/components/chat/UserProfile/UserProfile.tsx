@@ -1,30 +1,25 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
+import { IUser } from '@pushprotocol/restapi';
 import { ethers } from 'ethers';
 import styled from 'styled-components';
-import { ToastContainer } from 'react-toastify';
-import { IUser } from '@pushprotocol/restapi';
 
-import { Section, Span, Image } from '../../reusables';
-import { ThemeContext } from '../theme/ThemeProvider';
-import { useChatData } from '../../../hooks/chat/useChatData';
-import useMediaQuery from '../../../hooks/useMediaQuery';
-import { resolveNewEns, shortenText } from '../../../helpers';
-import { ProfileContainer } from '../reusables';
-import useChatProfile from '../../../hooks/chat/useChatProfile';
+import { resolveWeb3Name, shortenText } from '../../../helpers';
 import { useClickAway } from '../../../hooks';
+import { useChatData } from '../../../hooks/chat/useChatData';
+import useChatProfile from '../../../hooks/chat/useChatProfile';
+import useMediaQuery from '../../../hooks/useMediaQuery';
+import { Image, Section, Span } from '../../reusables';
+import { ProfileContainer } from '../reusables';
+import { ThemeContext } from '../theme/ThemeProvider';
 import { UpdateUserProfileModal } from './UpdateUserProfileModal';
 
-import {
-  CoreContractChainId,
-  InfuraAPIKey,
-  ProfilePicture,
-  device,
-} from '../../../config';
+import { CoreContractChainId, InfuraAPIKey, ProfilePicture, device } from '../../../config';
 import VerticalEllipsisIcon from '../../../icons/VerticalEllipsis.svg';
 import UserProfileIcon from '../../../icons/userCircleGear.svg';
-import { IChatTheme, UserProfileProps } from '../exportedTypes';
 import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../../../types';
+import { IChatTheme, UserProfileProps } from '../exportedTypes';
 
 /**
  * @interface IThemeProps
@@ -37,18 +32,14 @@ interface IThemeProps {
 export const UserProfile: React.FC<UserProfileProps> = ({
   updateUserProfileModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
   updateUserProfileModalPositionType = MODAL_POSITION_TYPE.GLOBAL,
+  onUserProfileUpdateModalOpen,
 }) => {
-  const { account, user, env } = useChatData();
+  const { user } = useChatData();
   const [userProfile, setUserProfile] = useState<IUser>();
   const [web3Name, setWeb3Name] = useState<string | null>(null);
   const [options, setOptions] = useState<boolean>();
-  const [showUpdateUserProfileModal, setShowUpdateUserProfileModal] =
-    useState<boolean>(false);
+  const [showUpdateUserProfileModal, setShowUpdateUserProfileModal] = useState<boolean>(false);
   const DropdownRef = useRef(null);
-  const provider = new ethers.providers.InfuraProvider(
-    CoreContractChainId[env],
-    InfuraAPIKey
-  );
 
   const theme = useContext(ThemeContext);
   const { fetchChatProfile } = useChatProfile();
@@ -59,19 +50,37 @@ export const UserProfile: React.FC<UserProfileProps> = ({
     (async () => {
       const fetchedUser = await fetchChatProfile({ user });
       if (fetchedUser) {
-        const result = await resolveNewEns(fetchedUser?.wallets, provider, env);
+        const result = await resolveWeb3Name(fetchedUser?.wallets, user);
         setWeb3Name(result);
         setUserProfile(fetchedUser);
       }
     })();
-  }, [account, user]);
+  }, [user]);
+
   useClickAway(DropdownRef, () => {
     setOptions(false);
   });
 
+  // to hook for when profile is visible
+  useEffect(() => {
+    if (onUserProfileUpdateModalOpen) {
+      onUserProfileUpdateModalOpen(showUpdateUserProfileModal);
+    }
+  }, [showUpdateUserProfileModal]);
+
+  // TODO: Route hook from here
+  // when user profile is updated
+  // const updateUserProfile = (newUserProfile: IUser | undefined) => {
+  //   if (newUserProfile) {
+  //     setUserProfile(newUserProfile);
+  //     if (onUserProfileUpdate) {
+  //       onUserProfileUpdate(newUserProfile);
+  //     }
+  //   }
+  // };
+
   return (
-    <>
-      <Conatiner
+    <Conatiner
         height="inherit"
         justifyContent="space-between"
         overflow="hidden"
@@ -84,10 +93,10 @@ export const UserProfile: React.FC<UserProfileProps> = ({
         <ProfileContainer
           theme={theme}
           member={{
-            wallet: shortenText(account || '', 8, true) as string,
-            image: userProfile?.profile?.picture || ProfilePicture,
             web3Name: web3Name,
-            completeWallet: account,
+            abbrRecipient: shortenText(user?.account || '', 8, true) as string,
+            recipient: user!.account,
+            icon: userProfile?.profile?.picture || null,
           }}
           copy={true}
           customStyle={{
@@ -95,6 +104,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({
             fontWeight: theme?.fontWeight?.userProfileText,
             textColor: theme?.textColor?.userProfileText,
           }}
+          loading={!userProfile ? true : false}
         />
         {userProfile && (
           <Section>
@@ -128,21 +138,19 @@ export const UserProfile: React.FC<UserProfileProps> = ({
             </DropDownItem>
           </DropDownBar>
         )}
-        {showUpdateUserProfileModal && (
-          <UpdateUserProfileModal
-            theme={theme}
-            setModal={setShowUpdateUserProfileModal}
-            userProfile={userProfile!}
-            setUserProfile={setUserProfile}
-            updateUserProfileModalBackground={updateUserProfileModalBackground}
-            updateUserProfileModalPositionType={
-              updateUserProfileModalPositionType
-            }
-          />
-        )}
+        {showUpdateUserProfileModal &&
+          createPortal(
+            <UpdateUserProfileModal
+              theme={theme}
+              setModal={setShowUpdateUserProfileModal}
+              userProfile={userProfile!}
+              setUserProfile={setUserProfile}
+              updateUserProfileModalBackground={updateUserProfileModalBackground}
+              updateUserProfileModalPositionType={updateUserProfileModalPositionType}
+            />,
+            document.body
+          )}
       </Conatiner>
-      <ToastContainer />
-    </>
   );
 };
 

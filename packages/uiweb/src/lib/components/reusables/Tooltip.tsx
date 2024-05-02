@@ -55,7 +55,7 @@ export const Tooltip: React.FC<TooltipPropType> = ({
 const TooltipWrapper = styled.div`
 /* Custom properties */
 
-  display: inline-block;
+  display: flex;
   position: relative;
   z-index: 1;
 `;
