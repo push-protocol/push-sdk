@@ -60,7 +60,7 @@ const useGroupMemberUtilities = () => {
     async ({ chatId, accountId }: fetchMemberStatusParams): Promise<ParticipantStatus | undefined> => {
       setLoading(true);
       try {
-        const response = await user?.chat.group.participants.status(chatId, accountId);
+        const response = await user?.chat.group.participants.status(chatId, { overrideAccount: accountId });
         console.debug(response);
         setLoading(false);
         return response;
