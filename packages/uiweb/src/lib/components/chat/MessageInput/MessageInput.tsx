@@ -595,7 +595,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
             <SendSection position="static">
               {gif && (
                 <Section
-                  width="34px"
+                  width="30px"
                   height="24px"
                   cursor="pointer"
                   alignSelf="end"
@@ -624,7 +624,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                 {!fileUploading && file && (
                   <>
                     <Section
-                      width="17"
+                      width="18px"
                       height="24px"
                       cursor="pointer"
                       alignSelf="end"
@@ -643,7 +643,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                 <Section
                   cursor="pointer"
                   alignSelf="end"
-                  height="24px"
+                  height="20px"
+                  width="22px"
                   onClick={() => sendTextMsg()}
                 >
                   <SendCompIcon color={theme.iconColor?.sendButton} />
