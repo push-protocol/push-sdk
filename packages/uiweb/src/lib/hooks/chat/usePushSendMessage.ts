@@ -11,11 +11,11 @@ interface SendMessageParams {
   messageType?: 'Text' | 'Image' | 'File' | 'GIF' | 'MediaEmbed';
 }
 
-const usePushSendMessage = () => { 
+const usePushSendMessage = () => {
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
 
-  const { user, env, account } = useChatData();
+  const { user } = useChatData();
 
   const sendMessage = useCallback(
     async (options: SendMessageParams) => {
@@ -25,21 +25,20 @@ const usePushSendMessage = () => {
         const response = await user?.chat.send(chatId, {
           type: messageType,
           content: message,
-        })
+        });
         setLoading(false);
         if (!response) {
           return false;
         }
         return response;
       } catch (error: Error | any) {
-       
         setLoading(false);
         setError(error.message);
         console.log(error);
         return error.message;
       }
     },
-    [user, account,env]
+    [user]
   );
 
   return { sendMessage, error, loading };

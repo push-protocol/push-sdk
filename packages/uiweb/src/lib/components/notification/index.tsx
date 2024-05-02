@@ -1,33 +1,33 @@
-import * as React from 'react';
 import * as PropTypes from 'prop-types';
+import * as React from 'react';
 import styled, { css } from 'styled-components';
 
+import {
+  MediaHelper,
+  convertTimeStamp,
+  extractTimeStamp,
+} from '../../utilities';
 import IPFSIcon from '../ipfsicon';
+import Loader from '../loader/loader';
 import ImageOverlayComponent from '../overlay';
 import { ParseMarkdownText } from '../parsetext';
-import Loader from '../loader/loader';
-import {
-  extractTimeStamp,
-  convertTimeStamp,
-  MediaHelper,
-} from '../../utilities';
-import ActionButton from './styled/ActionButton';
-import { useDecrypt, DecryptButton } from './decrypt';
 import chainDetails from './chainDetails';
+import { DecryptButton, useDecrypt } from './decrypt';
+import ActionButton from './styled/ActionButton';
 
-import { LinkIcon } from "../../icons/Link";
 import { useDivOffsetWidth } from "../../hooks";
+import { LinkIcon } from "../../icons/Link";
 
-import type { INotificationItemTheme} from './theme';
+import type { INotificationItemTheme } from './theme';
 import { getCustomTheme } from './theme';
-export {lightTheme as notificationLightTheme,darkTheme as notificationDarkTheme,baseTheme as notificationBaseTheme, type INotificationItemTheme} from './theme';
+export { baseTheme as notificationBaseTheme, darkTheme as notificationDarkTheme, lightTheme as notificationLightTheme, type INotificationItemTheme } from './theme';
 
 // ================= Define types
 export type chainNameType =
   | 'ETH_TEST_SEPOLIA'
-  | 'POLYGON_TEST_AMOY'
   | 'ETH_MAINNET'
   | 'POLYGON_MAINNET'
+  | 'POLYGON_TEST_AMOY'
   | 'BSC_MAINNET'
   | 'BSC_TESTNET'
   | 'OPTIMISM_MAINNET'
