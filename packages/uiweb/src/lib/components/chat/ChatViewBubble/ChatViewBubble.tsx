@@ -19,7 +19,7 @@ import { IMessagePayload, TwitterFeedReturnType } from '../exportedTypes';
 const SenderMessageAddress = ({ chat }: { chat: IMessagePayload }) => {
   const { user } = useContext(ChatDataContext);
   const theme = useContext(ThemeContext);
-  return chat.fromCAIP10?.split(':')[1] !== user?.account ? (
+  return chat.fromCAIP10 == user?.account ? (
     <Span
       theme={theme}
       alignSelf="start"
@@ -55,7 +55,7 @@ const SenderMessageProfilePicture = ({ chat }: { chat: IMessagePayload }) => {
       justifyContent="start"
       alignItems="start"
     >
-      {chat.fromCAIP10?.split(':')[1] !== user?.account && (
+      {chat.fromCAIP10 == user?.account && (
         <Section alignItems="start">
           {pfp && (
             <Image
@@ -108,6 +108,7 @@ const MessageWrapper = ({
 const MessageCard = ({ chat, position, isGroup }: { chat: IMessagePayload; position: number; isGroup: boolean }) => {
   const theme = useContext(ThemeContext);
   const time = moment(chat.timestamp).format('hh:mm a');
+  console.debug(position);
   return (
     <MessageWrapper
       chat={chat}
@@ -321,12 +322,15 @@ export const ChatViewBubble = ({
   isGroup?: boolean;
 }) => {
   const { user } = useChatData();
+
   const position =
-    pCAIP10ToWallet(decryptedMessagePayload.fromDID).toLowerCase() !== user?.account?.toLowerCase() ? 0 : 1;
+    pCAIP10ToWallet(decryptedMessagePayload.fromDID).toLowerCase() !== pCAIP10ToWallet(user?.account!)?.toLowerCase()
+      ? 0
+      : 1;
   const { tweetId, messageType }: TwitterFeedReturnType = checkTwitterUrl({
     message: decryptedMessagePayload?.messageContent,
   });
-
+  console.debug(user, position, 'position');
   if (messageType === 'TwitterFeedLink') {
     decryptedMessagePayload.messageType = 'TwitterFeedLink';
   }
