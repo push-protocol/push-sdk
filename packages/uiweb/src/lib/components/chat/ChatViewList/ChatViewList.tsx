@@ -394,7 +394,9 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
                   const dateNum = moment(chat.timestamp).format('L');
                   // TODO: This is a hack as chat.fromDID is converted with eip to match with user.account creating a bug for omnichain
                   const position =
-                    pCAIP10ToWallet(chat.fromDID)?.toLowerCase() !== user?.account?.toLowerCase() ? 0 : 1;
+                    pCAIP10ToWallet(chat.fromDID)?.toLowerCase() !== pCAIP10ToWallet(user?.account!)?.toLowerCase()
+                      ? 0
+                      : 1;
                   return (
                     <>
                       {dates.has(dateNum) ? null : renderDate({ chat, dateNum })}
