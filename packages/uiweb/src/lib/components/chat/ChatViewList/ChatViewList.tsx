@@ -70,13 +70,9 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
     invalidChat: false,
   });
 
-  const [loading, setLoading] = useState<boolean>(true);
-
   const { chatId, limit = chatLimit, chatFilterList = [] } = options || {};
   const { user, toast } = useChatData();
-  const [chatInfo, setChatInfo] = useState<ChatInfoResponse | null>(null);
   const [groupInfo, setGroupInfo] = useState<Group | null>(null);
-  const [userInfo, setUserInfo] = useState<IUser | null>(null);
 
   // const [chatStatusText, setChatStatusText] = useState<string>('');
   const [messages, setMessages] = useState<IMessageIPFSWithCID[]>([]);
@@ -172,9 +168,9 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
   //moniters stream changes
   useEffect(() => {
     if (Object.keys(chatAcceptStream || {}).length > 0 && chatAcceptStream.constructor === Object) {
-      const updatedChatInfo = { ...(chatInfo as ChatInfoResponse) };
+      const updatedChatInfo = { ...(initialized.chatInfo as ChatInfoResponse) };
       if (updatedChatInfo) updatedChatInfo.list = 'CHATS';
-      setChatInfo(updatedChatInfo);
+      setInitialized({ ...initialized, chatInfo: updatedChatInfo });
     }
   }, [chatAcceptStream]);
 
@@ -408,7 +404,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
                         <ChatViewBubble
                           decryptedMessagePayload={chat}
                           key={index}
-                          isGroup={chatInfo?.meta?.group ?? false}
+                          isGroup={initialized.chatInfo?.meta?.group ?? false}
                         />
                       </Section>
                     </>
