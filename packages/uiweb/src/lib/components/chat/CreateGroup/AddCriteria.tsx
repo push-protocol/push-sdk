@@ -241,7 +241,7 @@ const AddCriteria = ({ handlePrevious, onClose, criteriaStateManager }: ModalHea
       function: () => setSelectedChainValue(6),
     } as DropdownValueType);
   }
-
+  console.debug(dropdownChainsValues);
   const onQuantityChange = (e: any) => {
     setQuantity({ ...quantity, value: e.target.value });
   };
@@ -263,6 +263,7 @@ const AddCriteria = ({ handlePrevious, onClose, criteriaStateManager }: ModalHea
       }
     }
 
+    console.debug(selectedChainValue);
     const rule: Rule = {
       type: _type,
       category: category,
