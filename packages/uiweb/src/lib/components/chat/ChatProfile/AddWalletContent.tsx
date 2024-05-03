@@ -3,13 +3,11 @@ import { useContext, useState } from 'react';
 import { ChatMemberProfile, IUser } from '@pushprotocol/restapi';
 import { MdError } from 'react-icons/md';
 
-import useToast from '../reusables/NewToast';
+import { useChatData } from '../../../hooks';
 
-import { Group, } from '../exportedTypes';
+import { Group } from '../exportedTypes';
 import { addWalletValidation } from '../helpers/helper';
-import {
-  AddWallets,
-} from '../reusables';
+import { AddWallets } from '../reusables';
 import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities';
 
 type AddWalletContentProps = {
@@ -32,10 +30,9 @@ export const AddWalletContent = ({
   isLoading = false,
   groupInfo,
 }: AddWalletContentProps) => {
-
   const { fetchMemberStatus } = useGroupMemberUtilities();
-  const groupInfoToast = useToast();
-  
+  const { toast } = useChatData();
+
   const addMemberToList = async (member: IUser) => {
     let errorMessage = '';
     const memberStatus = await fetchMemberStatus({
@@ -51,11 +48,16 @@ export const AddWalletContent = ({
     );
 
     if (errorMessage) {
-      groupInfoToast.showMessageToast({
+      toast.showMessageToast({
         toastTitle: 'Error',
         toastMessage: errorMessage,
         toastType: 'ERROR',
-        getToastIcon: (size) => <MdError size={size} color="red" />,
+        getToastIcon: (size: number) => (
+          <MdError
+            size={size}
+            color="red"
+          />
+        ),
       });
     } else {
       handleMemberList((prev: any) => [...prev, { ...member, isAdmin: false }]);

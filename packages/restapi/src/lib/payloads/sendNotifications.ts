@@ -13,8 +13,8 @@ import {
   getCAIPAddress,
   getCAIPDetails,
   getConfig,
-  isValidCAIP10NFTAddress,
-  isValidETHAddress,
+  isValidNFTCAIP,
+  isValidPushCAIP,
 } from '../helpers';
 import {
   IDENTITY_TYPE,
@@ -25,7 +25,6 @@ import {
   VIDEO_NOTIFICATION_ACCESS_TYPE,
 } from './constants';
 import { ENV } from '../constants';
-import { getChannel } from '../channels/getChannel';
 import { axiosPost } from '../utils/axiosUtil';
 /**
  * Validate options for some scenarios
@@ -34,7 +33,7 @@ function validateOptions(options: ISendNotificationInputOptions) {
   if (!options?.channel) {
     throw '[Push SDK] - Error - sendNotification() - "channel" is mandatory!';
   }
-  if (!isValidETHAddress(options.channel)) {
+  if (!isValidPushCAIP(options.channel)) {
     throw '[Push SDK] - Error - sendNotification() - "channel" is invalid!';
   }
   if (options.senderType === 0 && options.signer === undefined) {
@@ -86,30 +85,30 @@ function validateOptions(options: ISendNotificationInputOptions) {
  * @returns boolean
  */
 async function checkSimulateNotification(payloadOptions: {
-  channel: string;
+  channelFound: boolean;
+  channelorAlias: string;
   recipient: string | string[] | undefined;
   type: NOTIFICATION_TYPE;
   env: ENV | undefined;
+  senderType: 0 | 1;
 }): Promise<boolean> {
   try {
-    const { channel, recipient, type, env } = payloadOptions || {};
-    // fetch channel info
-    const channelInfo = await getChannel({
-      channel: channel,
-      env: env,
-    });
-    // check if channel exists, if it does then its not simulate type
-    if (channelInfo) return false;
-    else {
-      // if no channel info found, check if channel address = recipient and notification type is targeted
-      const convertedRecipient =
-        typeof recipient == 'string' && recipient?.split(':').length == 3
-          ? recipient.split(':')[2]
-          : recipient;
-      return (
-        channel == convertedRecipient && type == NOTIFICATION_TYPE.TARGETTED
-      );
-    }
+    const { channelFound, channelorAlias, recipient, type, env, senderType } =
+      payloadOptions || {};
+
+    // Video call notifications are not simulated
+    // If channel is found, then it is not a simulate type
+    if (senderType === 1 || channelFound) return false;
+
+    // if no channel info found, check if channel address = recipient and notification type is targeted
+    const convertedRecipient =
+      typeof recipient == 'string' && recipient?.split(':').length == 3
+        ? recipient.split(':')[2]
+        : recipient;
+    return (
+      channelorAlias == convertedRecipient &&
+      type == NOTIFICATION_TYPE.TARGETTED
+    );
   } catch (e) {
     return true;
   }
@@ -135,6 +134,7 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       chatId,
       rules,
       pgpPrivateKey,
+      channelFound = true,
     } = options || {};
 
     validateOptions(options);
@@ -199,10 +199,12 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
     });
 
     const source = (await checkSimulateNotification({
-      channel: options.channel,
+      channelFound: channelFound,
+      channelorAlias: options.channel,
       recipient: options.recipients,
       type: options.type,
       env: options.env,
+      senderType: options.senderType as 0 | 1,
     }))
       ? SOURCE_TYPES.SIMULATE
       : getSource(chainId, identityType, senderType);
@@ -211,7 +213,7 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       verificationProof,
       identity,
       sender:
-        senderType === 1 && !isValidCAIP10NFTAddress(_channelAddress)
+        senderType === 1 && !isValidNFTCAIP(_channelAddress)
           ? `${channelCAIPDetails?.blockchain}:${channelCAIPDetails?.address}`
           : _channelAddress,
       source,

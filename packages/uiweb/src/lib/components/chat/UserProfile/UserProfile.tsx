@@ -1,26 +1,25 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
+import { IUser } from '@pushprotocol/restapi';
 import { ethers } from 'ethers';
 import styled from 'styled-components';
-import { ToastContainer } from 'react-toastify';
-import { IUser } from '@pushprotocol/restapi';
 
-import { Section, Span, Image } from '../../reusables';
-import { ThemeContext } from '../theme/ThemeProvider';
-import { useChatData } from '../../../hooks/chat/useChatData';
-import useMediaQuery from '../../../hooks/useMediaQuery';
-import { resolveNewEns, shortenText } from '../../../helpers';
-import { ProfileContainer } from '../reusables';
-import useChatProfile from '../../../hooks/chat/useChatProfile';
+import { resolveWeb3Name, shortenText } from '../../../helpers';
 import { useClickAway } from '../../../hooks';
+import { useChatData } from '../../../hooks/chat/useChatData';
+import useChatProfile from '../../../hooks/chat/useChatProfile';
+import useMediaQuery from '../../../hooks/useMediaQuery';
+import { Image, Section, Span } from '../../reusables';
+import { ProfileContainer } from '../reusables';
+import { ThemeContext } from '../theme/ThemeProvider';
 import { UpdateUserProfileModal } from './UpdateUserProfileModal';
 
 import { CoreContractChainId, InfuraAPIKey, ProfilePicture, device } from '../../../config';
 import VerticalEllipsisIcon from '../../../icons/VerticalEllipsis.svg';
 import UserProfileIcon from '../../../icons/userCircleGear.svg';
-import { IChatTheme, UserProfileProps } from '../exportedTypes';
 import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../../../types';
-
+import { IChatTheme, UserProfileProps } from '../exportedTypes';
 
 /**
  * @interface IThemeProps
@@ -30,21 +29,17 @@ interface IThemeProps {
   theme?: IChatTheme;
 }
 
-export const UserProfile : React.FC<UserProfileProps> = ({
+export const UserProfile: React.FC<UserProfileProps> = ({
   updateUserProfileModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
-  updateUserProfileModalPositionType = MODAL_POSITION_TYPE.GLOBAL
+  updateUserProfileModalPositionType = MODAL_POSITION_TYPE.GLOBAL,
+  onUserProfileUpdateModalOpen,
 }) => {
-  const {  account, user ,env} = useChatData();
+  const { user } = useChatData();
   const [userProfile, setUserProfile] = useState<IUser>();
-  const [web3Name,setWeb3Name] = useState<string|null>(null);
+  const [web3Name, setWeb3Name] = useState<string | null>(null);
   const [options, setOptions] = useState<boolean>();
-  const [showUpdateUserProfileModal,setShowUpdateUserProfileModal] = useState<boolean>(false);
+  const [showUpdateUserProfileModal, setShowUpdateUserProfileModal] = useState<boolean>(false);
   const DropdownRef = useRef(null);
-  const provider = new ethers.providers.InfuraProvider(
-    CoreContractChainId[env],
-    InfuraAPIKey
-  );
-
 
   const theme = useContext(ThemeContext);
   const { fetchChatProfile } = useChatProfile();
@@ -53,87 +48,109 @@ export const UserProfile : React.FC<UserProfileProps> = ({
 
   useEffect(() => {
     (async () => {
-      const fetchedUser = await fetchChatProfile({user});
+      const fetchedUser = await fetchChatProfile({ user });
       if (fetchedUser) {
-        const result = await resolveNewEns(fetchedUser?.wallets, provider, env);
+        const result = await resolveWeb3Name(fetchedUser?.wallets, user);
         setWeb3Name(result);
         setUserProfile(fetchedUser);
-        
       }
     })();
-  }, [account, user]);
+  }, [user]);
+
   useClickAway(DropdownRef, () => {
     setOptions(false);
   });
 
-  return (
-    <>
-    <Conatiner
-      height="inherit"
-      justifyContent="space-between"
-      overflow="hidden"
-      width='100%'
-      padding="14px 10px"
-      borderRadius={theme?.borderRadius?.userProfile}
-      background={theme?.backgroundColor?.userProfileBackground}
-      theme={theme}
-    >
-      <ProfileContainer
-        theme={theme}
-        member={{
-          wallet: shortenText(account || '', 8, true) as string,
-          image: userProfile?.profile?.picture || ProfilePicture,
-          web3Name: web3Name ,
-          completeWallet:account
-        }}
-        copy={true}
-        customStyle={{ fontSize: theme?.fontSize?.userProfileText,
-          fontWeight: theme?.fontWeight?.userProfileText,
-           textColor: theme?.textColor?.userProfileText}}
-      />
-      {userProfile && (
-        <Section>
-          <Image
-            src={VerticalEllipsisIcon}
-            height="21px"
-            maxHeight="21px"
-            color={theme?.iconColor?.userProfileSettings}
-            width={'auto'}
-            cursor="pointer"
-            onClick={() => setOptions(true)}
-          />
-         
-        </Section>
-      )}
-       {options && (
-            <DropDownBar theme={theme} ref={DropdownRef} onClick={()=>setShowUpdateUserProfileModal(true)}>
-              <DropDownItem cursor="pointer" >
-                <Image
-                  src={UserProfileIcon}
-                  height="32px"
-                  maxHeight="32px"
-                  width={'auto'}
-                  cursor="pointer"
-                />
+  // to hook for when profile is visible
+  useEffect(() => {
+    if (onUserProfileUpdateModalOpen) {
+      onUserProfileUpdateModalOpen(showUpdateUserProfileModal);
+    }
+  }, [showUpdateUserProfileModal]);
 
-                <TextItem cursor="pointer" >Edit Profile</TextItem>
-              </DropDownItem>
-            </DropDownBar>
-          )}
-           {showUpdateUserProfileModal && (
+  // TODO: Route hook from here
+  // when user profile is updated
+  // const updateUserProfile = (newUserProfile: IUser | undefined) => {
+  //   if (newUserProfile) {
+  //     setUserProfile(newUserProfile);
+  //     if (onUserProfileUpdate) {
+  //       onUserProfileUpdate(newUserProfile);
+  //     }
+  //   }
+  // };
+
+  return (
+    <Conatiner
+        height="inherit"
+        justifyContent="space-between"
+        overflow="hidden"
+        width="100%"
+        padding="14px 10px"
+        borderRadius={theme?.borderRadius?.userProfile}
+        background={theme?.backgroundColor?.userProfileBackground}
+        theme={theme}
+      >
+        <ProfileContainer
+          theme={theme}
+          member={{
+            web3Name: web3Name,
+            abbrRecipient: shortenText(user?.account || '', 8, true) as string,
+            recipient: user!.account,
+            icon: userProfile?.profile?.picture || null,
+          }}
+          copy={true}
+          customStyle={{
+            fontSize: theme?.fontSize?.userProfileText,
+            fontWeight: theme?.fontWeight?.userProfileText,
+            textColor: theme?.textColor?.userProfileText,
+          }}
+          loading={!userProfile ? true : false}
+        />
+        {userProfile && (
+          <Section>
+            <Image
+              src={VerticalEllipsisIcon}
+              height="21px"
+              maxHeight="21px"
+              color={theme?.iconColor?.userProfileSettings}
+              width={'auto'}
+              cursor="pointer"
+              onClick={() => setOptions(true)}
+            />
+          </Section>
+        )}
+        {options && (
+          <DropDownBar
+            theme={theme}
+            ref={DropdownRef}
+            onClick={() => setShowUpdateUserProfileModal(true)}
+          >
+            <DropDownItem cursor="pointer">
+              <Image
+                src={UserProfileIcon}
+                height="32px"
+                maxHeight="32px"
+                width={'auto'}
+                cursor="pointer"
+              />
+
+              <TextItem cursor="pointer">Edit Profile</TextItem>
+            </DropDownItem>
+          </DropDownBar>
+        )}
+        {showUpdateUserProfileModal &&
+          createPortal(
             <UpdateUserProfileModal
               theme={theme}
               setModal={setShowUpdateUserProfileModal}
               userProfile={userProfile!}
-              setUserProfile = {setUserProfile}
+              setUserProfile={setUserProfile}
               updateUserProfileModalBackground={updateUserProfileModalBackground}
               updateUserProfileModalPositionType={updateUserProfileModalPositionType}
-            />
+            />,
+            document.body
           )}
-          
-    </Conatiner>
-     <ToastContainer />
-     </>
+      </Conatiner>
   );
 };
 
@@ -141,13 +158,12 @@ export const UserProfile : React.FC<UserProfileProps> = ({
 const Conatiner = styled(Section)<IThemeProps>`
   border: ${(props) => props.theme.border?.userProfile};
   box-sizing: border-box;
-
 `;
 
 const DropDownBar = styled.div`
   position: absolute;
-  bottom: 40px;
-  right:20px;
+  bottom: 13px;
+  right: 29px;
   cursor: pointer;
   display: block;
   min-width: 170px;

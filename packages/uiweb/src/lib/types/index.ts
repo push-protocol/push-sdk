@@ -1,12 +1,7 @@
+import type { IFeeds, ParsedResponseType, PushAPI, Rules } from '@pushprotocol/restapi';
+import { Bytes, TypedDataDomain, TypedDataField, providers } from 'ethers';
 import type { ReactElement } from 'react';
 import type { ENV } from '../config';
-import type {
-  ParsedResponseType,
-  IFeeds,
-  Rules,
-  PushAPI,
-} from '@pushprotocol/restapi';
-import { Bytes, TypedDataDomain, TypedDataField, providers } from 'ethers';
 
 export interface IMessageIPFS {
   cid?: string;
@@ -89,20 +84,13 @@ export type viemSignerType = {
     message: any;
   }) => Promise<`0x${string}`>;
   getChainId: () => Promise<number>;
-  signMessage: (args: {
-    message: any;
-    account: any;
-    [key: string]: any;
-  }) => Promise<`0x${string}`>;
+  signMessage: (args: { message: any; account: any; [key: string]: any }) => Promise<`0x${string}`>;
   account: { [key: string]: any };
   privateKey?: string;
   provider?: any;
 };
 
-export type SignerType =
-  | ethersV5SignerType
-  | ethersV6SignerType
-  | viemSignerType;
+export type SignerType = ethersV5SignerType | ethersV6SignerType | viemSignerType;
 
 export type ParsedNotificationType = ParsedResponseType & {
   channel: string;
@@ -139,11 +127,9 @@ export const SIDEBAR_PLACEHOLDER_KEYS = {
   NEW_CHAT: 'NEW_CHAT',
 } as const;
 
-export type SidebarPlaceholderKeys =
-  typeof SIDEBAR_PLACEHOLDER_KEYS[keyof typeof SIDEBAR_PLACEHOLDER_KEYS];
+export type SidebarPlaceholderKeys = typeof SIDEBAR_PLACEHOLDER_KEYS[keyof typeof SIDEBAR_PLACEHOLDER_KEYS];
 
-export type LocalStorageKeys =
-  typeof LOCAL_STORAGE_KEYS[keyof typeof LOCAL_STORAGE_KEYS];
+export type LocalStorageKeys = typeof LOCAL_STORAGE_KEYS[keyof typeof LOCAL_STORAGE_KEYS];
 export type PushTabs = typeof PUSH_TABS[keyof typeof PUSH_TABS];
 export type PushSubTabs = typeof PUSH_SUB_TABS[keyof typeof PUSH_SUB_TABS];
 export type SocketType = typeof SOCKET_TYPE[keyof typeof SOCKET_TYPE];

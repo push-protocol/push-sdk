@@ -3,8 +3,6 @@ import { useContext, useState } from 'react';
 import { IUser } from '@pushprotocol/restapi';
 import { MdError } from 'react-icons/md';
 
-import useToast from '../reusables/NewToast';
-
 import { findObject } from '../helpers/helper';
 import { AddWallets } from '../reusables';
 import { useChatData } from '../../../hooks';
@@ -28,34 +26,33 @@ export const AddGroupMembers = ({
   isLoading = false,
   isPublic,
 }: AddWalletContentProps) => {
-  const groupInfoToast = useToast();
-  const { account } = useChatData();
+  const { user, toast } = useChatData();
 
   const addMemberToList = async (member: IUser) => {
     let errorMessage = '';
-    if (
-      pCAIP10ToWallet(member.wallets.toLowerCase()) ===
-      pCAIP10ToWallet((account?? '').toLowerCase())
-    )
-    {
-        errorMessage = 'Group Creator cannot be added as member';
+    if (pCAIP10ToWallet(member.wallets.toLowerCase()) === pCAIP10ToWallet((user?.account ?? '').toLowerCase())) {
+      errorMessage = 'Group Creator cannot be added as member';
     }
-    if(findObject(member, memberList, 'wallets')){
-        errorMessage = 'Address is already added';
+    if (findObject(member, memberList, 'wallets')) {
+      errorMessage = 'Address is already added';
     }
-      if (errorMessage) {
-       
-        groupInfoToast.showMessageToast({
-          toastTitle: 'Error',
-          toastMessage: errorMessage,
-          toastType: 'ERROR',
-          getToastIcon: (size) => <MdError size={size} color="red" />,
-        });
-      } else {
-        const updatedMemberList = memberList;
-        updatedMemberList.push( { ...member, isAdmin: false }) 
-        handleMemberList(updatedMemberList);
-      }
+    if (errorMessage) {
+      toast.showMessageToast({
+        toastTitle: 'Error',
+        toastMessage: errorMessage,
+        toastType: 'ERROR',
+        getToastIcon: (size: number) => (
+          <MdError
+            size={size}
+            color="red"
+          />
+        ),
+      });
+    } else {
+      const updatedMemberList = memberList;
+      updatedMemberList.push({ ...member, isAdmin: false });
+      handleMemberList(updatedMemberList);
+    }
   };
 
   return (

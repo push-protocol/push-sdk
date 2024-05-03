@@ -1,40 +1,60 @@
-// @typescript-eslint/no-non-null-asserted-optional-chain
-
-import { useContext, useEffect, useRef, useState } from 'react';
-
-import styled from 'styled-components';
-import type { IUser } from '@pushprotocol/restapi';
+// React + Web3 Essentials
 import { ethers } from 'ethers';
-import { ToastContainer } from 'react-toastify';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
-import { Image, Section, Span } from '../../reusables';
-import { useChatData, useClickAway } from '../../../hooks';
-import { ThemeContext } from '../theme/ThemeProvider';
-import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
-import useChatProfile from '../../../hooks/chat/useChatProfile';
-import { GroupInfoModal } from './GroupInfoModal';
-import useMediaQuery from '../../../hooks/useMediaQuery';
-import { createBlockie } from '../../space/helpers/blockies';
-import { ProfileContainer } from '../reusables';
+// External Packages
+import { CONSTANTS, PushAPI } from '@pushprotocol/restapi';
 import 'react-toastify/dist/ReactToastify.min.css';
-import { Group, IChatProfile } from '../exportedTypes';
-import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../../../types';
+import styled from 'styled-components';
 
+// Internal Compoonents
 import {
-  CoreContractChainId,
-  InfuraAPIKey,
-  allowedNetworks,
-  device,
-} from '../../../config';
-import { getAddress, resolveNewEns, shortenText } from '../../../helpers';
-import { formatAddress, isValidETHAddress } from '../helpers/helper';
-import PublicChatIcon from '../../../icons/Public-Chat.svg';
-import GreyImage from '../../../icons/greyImage.png';
-import InfoIcon from '../../../icons/infodark.svg';
-import VerticalEllipsisIcon from '../../../icons/VerticalEllipsis.svg';
-import { TokenGatedSvg } from '../../../icons/TokenGatedSvg';
-import useUserProfile from '../../../hooks/useUserProfile';
+  deriveChatId,
+  getAddress,
+  pCAIP10ToWallet,
+  resolveWeb3Name,
+  shortenText,
+  walletToPCAIP10,
+} from '../../../helpers';
+import { useChatData, useClickAway } from '../../../hooks';
+import useFetchChat from '../../../hooks/chat/useFetchChat';
+import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
+import usePushUser from '../../../hooks/usePushUser';
+import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../../../types';
+import { Div, Image, Section, Span, Tooltip } from '../../reusables';
+import { ProfileContainer } from '../reusables';
+import { GroupInfoModal } from './ChatProfileInfoModal';
 
+// Internal Configs
+import { CoreContractChainId, InfuraAPIKey, allowedNetworks, device } from '../../../config';
+import { ThemeContext } from '../theme/ThemeProvider';
+
+// Assets
+import { PublicChatIcon, TokenGatedIcon } from '../../../icons/PushIcons';
+import VerticalEllipsisIcon from '../../../icons/VerticalEllipsis.svg';
+import InfoIcon from '../../../icons/infodark.svg';
+
+// Interfaces & Types
+import { Group, IChatProfile } from '../exportedTypes';
+import { ChatInfoResponse } from '../types';
+import useUserInfoUtilities from '../../../hooks/chat/useUserInfoUtilities';
+
+// Constants
+
+// Exported Interfaces & Types
+export interface IChatProfileUserInfo {
+  name: string | null;
+  icon: string | null;
+  chatId: string | null;
+  recipient: string | null;
+  abbrRecipient: string | null;
+  web3Name: string | null;
+  desc: string | null;
+  isGroup?: boolean | null;
+}
+
+// Exported Functions
 export const ChatProfile: React.FC<IChatProfile> = ({
   chatId,
   groupInfoModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
@@ -43,92 +63,163 @@ export const ChatProfile: React.FC<IChatProfile> = ({
   chatProfileLeftHelperComponent = null,
 }) => {
   const theme = useContext(ThemeContext);
-  const { account, env, user } = useChatData();
+  const { user } = useChatData();
+  const [showoptions, setShowOptions] = useState(false);
+  const { fetchChat } = useFetchChat();
   const { getGroupByIDnew } = useGetGroupByIDnew();
-  const { fetchUserProfile } = useUserProfile();
+  const { fetchProfileInfo } = useUserInfoUtilities();
 
-  // const [isGroup, setIsGroup] = useState<boolean>(false);
-  const [options, setOptions] = useState(false);
-  const [chatInfo, setChatInfo] = useState<IUser | null>();
-  const [groupInfo, setGroupInfo] = useState<Group | null>();
-  const [web3Name, setWeb3Name] = useState<string | null>(null);
-  const isMobile = useMediaQuery(device.tablet);
-  const provider = new ethers.providers.InfuraProvider(
-    CoreContractChainId[env],
-    InfuraAPIKey
-  );
+  const [initialized, setInitialized] = useState({
+    loading: false,
+    profile: {
+      name: null,
+      icon: null,
+      chatId: null,
+      recipient: null,
+      abbrRecipient: null,
+      web3Name: null,
+      desc: null,
+      isGroup: null,
+    } as IChatProfileUserInfo,
+    groupInfo: null as Group | null,
+  });
+
   const DropdownRef = useRef(null);
   const [modal, setModal] = useState(false);
 
   useClickAway(DropdownRef, () => {
-    setOptions(false);
+    setShowOptions(false);
   });
 
-  const ShowModal = () => {
-    setModal(true);
+  // To setup web3 name, asynchrounously
+  const setupWeb3Name = async (address: string) => {
+    console.debug('UIWeb::ChatProfile::setupWeb3Name sending address for resolution', address);
+    const result = await resolveWeb3Name(address, user);
+    console.debug('UIWeb::ChatProfile::setupWeb3Name got result as ', address, result);
+
+    setInitialized((prevState) => ({
+      ...prevState,
+      profile: { ...prevState.profile, web3Name: result },
+    }));
   };
 
-  const fetchProfileData = async () => {
-    let formattedChatId;
-    if (chatId.includes('eip155:')) {
-      formattedChatId = chatId.replace('eip155:', '');
-    } else if (chatId.includes('.')) {
-      formattedChatId = (await getAddress(chatId, env))!;
-    } else formattedChatId = chatId;
-    if (isValidETHAddress(formattedChatId)) {
-      const ChatProfile = await fetchUserProfile({
-        profileId: formattedChatId,
-        env,
-        user,
-      });
-      const result = await resolveNewEns(formattedChatId, provider, env);
-      setWeb3Name(result);
-      setChatInfo(ChatProfile);
-      setGroupInfo(null);
-      // setIsGroup(false);
-    } else {
-      const GroupProfile = await getGroupByIDnew({ groupId: formattedChatId });
-      setGroupInfo(GroupProfile);
-      setChatInfo(null);
-      setWeb3Name(null);
-      // setIsGroup(true);
-    }
+  // To get the abbreviated recipient
+  const getAbbreiatedRecipient = (recipient: string) => {
+    // split recipient into two parts, 6 characters each and join them with '...' but only if recipient is more than 15 characters
+    if (recipient.length <= 15) return recipient;
+
+    const firstPart = recipient.slice(0, 6);
+    const secondPart = recipient.slice(-6);
+    return `${firstPart}...${secondPart}`;
   };
 
-  const getImage = () => {
-    if (chatInfo || groupInfo) {
-      return Object.keys(groupInfo || {}).length
-        ? groupInfo?.groupImage ?? GreyImage
-        : chatInfo?.profile?.picture ??
-            createBlockie?.(chatId)?.toDataURL()?.toString();
-    } else {
-      return createBlockie?.(chatId)?.toDataURL()?.toString();
-    }
-  };
-
-  const getProfileName = () => {
-    return Object.keys(groupInfo || {}).length
-      ? shortenText(groupInfo?.chatId || '', 6, true)
-      : chatInfo
-      ? shortenText(chatInfo.did?.split(':')[1] ?? '', 6, true)
-      : shortenText(chatId?.split(':')[1], 6, true);
-  };
+  // Initiate profile fetch if chatId, account or user changes
   useEffect(() => {
-    if (!chatId) return;
-    fetchProfileData();
-  }, [chatId, account, user]);
+    (async () => {
+      if (!user || !chatId || chatId === '' || initialized.loading) return;
+
+      setInitialized((currentState) => ({ ...currentState, loading: true }));
+
+      try {
+        // derive chatId
+        const derivedChatId = await deriveChatId(chatId, user);
+
+        // We have derived chatId, fetch chat info to see if it's group or dm
+        const chatInfo = await fetchChat({ chatId: derivedChatId });
+
+        if (chatInfo) {
+          let groupInfo;
+
+          // eslint-disable-next-line prefer-const
+          let profile = {} as IChatProfileUserInfo;
+
+          // If group
+          if (chatInfo.meta && chatInfo.meta.group) {
+            groupInfo = await getGroupByIDnew({ groupId: derivedChatId });
+            if (groupInfo) {
+              profile.name = groupInfo.groupName;
+              profile.icon = groupInfo.groupImage;
+              profile.chatId = chatInfo.chatId;
+              profile.recipient = derivedChatId;
+              profile.abbrRecipient = getAbbreiatedRecipient(derivedChatId);
+              profile.desc = groupInfo.groupDescription;
+              profile.isGroup = true;
+            }
+
+            // TODO - HANDLE ERROR IN UI
+          } else {
+            // This is DM
+            const recipient = await deriveChatId(chatInfo.recipient, user);
+            console.debug('UIWeb::ChatProfile::user.chat.info fetched', chatInfo, recipient);
+
+            try {
+              const profileInfo = await fetchProfileInfo({
+                recipient,
+              });
+              if (profileInfo) {
+                console.debug('UIWeb::ChatProfile::user.profile.info fetched', profileInfo);
+
+                profile.name = profileInfo.name;
+                profile.icon = profileInfo.picture;
+                profile.chatId = chatInfo.chatId;
+                profile.recipient = recipient;
+                profile.abbrRecipient = getAbbreiatedRecipient(recipient);
+                profile.desc = profileInfo.profile?.desc;
+                profile.isGroup = false;
+              }
+            } catch (error) {
+              console.warn(
+                'UIWeb::ChatProfile::user.profile.info fetch error, possible push user does not exist.',
+                error
+              );
+              profile.name = '';
+              profile.icon = null;
+              profile.chatId = chatInfo.chatId;
+              profile.recipient = recipient;
+              profile.abbrRecipient = getAbbreiatedRecipient(recipient);
+              profile.desc = '';
+              profile.isGroup = false;
+            }
+
+            // get and set web3 name asynchrounously
+            if (profile.recipient) {
+              setupWeb3Name(profile.recipient);
+            }
+          }
+
+          // Finally set everything
+          setInitialized({
+            loading: false,
+            profile: profile,
+            groupInfo: groupInfo,
+          });
+        } else {
+          // Handle Error
+          console.error('UIWeb::ChatProfile::ChatInfo is null');
+        }
+      } catch (error) {
+        console.error('UIWeb::ChatProfile::Error', error);
+
+        // TODO - Handle the error appropriately
+      }
+    })();
+  }, [chatId, user]);
+
+  // useEffect(() => {
+  //   (async () => {
+  //     await fetchProfileData();
+  //   })();
+  // }, [chatInfo]);
 
   if (chatId) {
     return (
       <Container theme={theme}>
+        {/* For showing Chat Profile */}
         <Section gap="10px">
           {chatProfileLeftHelperComponent && (
             <Section
               cursor="pointer"
               maxHeight="1.75rem"
-              width="1.75rem"
-              maxWidth="1.75rem"
-              minWidth="1.75rem"
               overflow="hidden"
               justifyContent="center"
               alignSelf="center"
@@ -139,50 +230,63 @@ export const ChatProfile: React.FC<IChatProfile> = ({
           <ProfileContainer
             theme={theme}
             member={{
-              wallet: getProfileName() as string,
-              image: getImage(),
-              web3Name: web3Name?web3Name:groupInfo?.groupName,
-              completeWallet:chatInfo?.wallets??groupInfo?.chatId
+              icon: initialized.profile.icon,
+              name: initialized.profile.name,
+              chatId: initialized.profile.chatId,
+              recipient: initialized.profile.recipient,
+              abbrRecipient: initialized.profile.abbrRecipient,
+              web3Name: initialized.profile.web3Name,
+              desc: initialized.profile.desc,
             }}
-            copy={!!chatInfo|| !!groupInfo}
+            copy={!!initialized.profile.recipient}
             customStyle={{
               fontSize: theme?.fontWeight?.chatProfileText,
               textColor: theme?.textColor?.chatProfileText,
             }}
-            
+            loading={initialized.loading || initialized.profile.recipient === '' || initialized.profile.icon === ''}
           />
         </Section>
+
+        {/* For showing group related icons and menu */}
         <Section
           zIndex="unset"
           flexDirection="row"
           gap="10px"
-          margin="0 20px 0 auto"
+          margin="0 10px 0 auto"
           alignSelf="center"
         >
-          {chatProfileRightHelperComponent && !groupInfo && (
+          {/* For showing chat profile right helper component */}
+          {chatProfileRightHelperComponent && !initialized.groupInfo && (
             <Section
               cursor="pointer"
               maxHeight="1.75rem"
-              width="1.75rem"
-              maxWidth="1.75rem"
-              minWidth="1.75rem"
               overflow="hidden"
             >
               {chatProfileRightHelperComponent}
             </Section>
           )}
-          {!!Object.keys(groupInfo?.rules || {}).length && <TokenGatedSvg />}
-          {!!groupInfo?.isPublic && (
-            <Image
-              src={PublicChatIcon}
-              height="28px"
-              maxHeight="32px"
-              width={'auto'}
-            />
+
+          {/* For showing Token Gated Group Icon */}
+          {!!Object.keys(initialized.groupInfo?.rules || {}).length && (
+            <Tooltip content={'Token Gated Group'}>
+              <TokenGatedIcon
+                size={20}
+                color={theme?.iconColor?.subtleColor}
+              />
+            </Tooltip>
           )}
 
-          {!!Object.keys(groupInfo || {}).length && (
-            <ImageItem onClick={() => setOptions(true)}>
+          {!!initialized.groupInfo?.isPublic && (
+            <Tooltip content={'Token Gated Group'}>
+              <PublicChatIcon
+                size={{ height: 20 }}
+                color={theme?.iconColor?.subtleColor}
+              />
+            </Tooltip>
+          )}
+
+          {!initialized.loading && (
+            <ImageItem onClick={() => setShowOptions(true)}>
               <Image
                 src={VerticalEllipsisIcon}
                 height="21px"
@@ -191,9 +295,15 @@ export const ChatProfile: React.FC<IChatProfile> = ({
                 cursor="pointer"
               />
 
-              {options && (
-                <DropDownBar theme={theme} ref={DropdownRef}>
-                  <DropDownItem cursor="pointer" onClick={ShowModal}>
+              {showoptions && (
+                <DropDownBar
+                  theme={theme}
+                  ref={DropdownRef}
+                >
+                  <DropDownItem
+                    cursor="pointer"
+                    onClick={() => setModal(true)}
+                  >
                     <Image
                       src={InfoIcon}
                       height="21px"
@@ -202,37 +312,39 @@ export const ChatProfile: React.FC<IChatProfile> = ({
                       cursor="pointer"
                     />
 
-                    <TextItem cursor="pointer">Group Info</TextItem>
+                    <TextItem cursor="pointer">{initialized.groupInfo ? 'Group Info' : 'User Info'}</TextItem>
                   </DropDownItem>
                 </DropDownBar>
               )}
             </ImageItem>
           )}
         </Section>
-        {modal && (
-          <GroupInfoModal
-            theme={theme}
-            setModal={setModal}
-            groupInfo={groupInfo!}
-            setGroupInfo={setGroupInfo}
-            groupInfoModalBackground={groupInfoModalBackground}
-            groupInfoModalPositionType={groupInfoModalPositionType}
-          />
-        )}
-        {/* {!isGroup && 
-                    <VideoChatSection>
-                        <Image src={VideoChatIcon} height="18px" maxHeight="18px" width={'auto'} />
-                    </VideoChatSection>
-                    } */}
 
-        <ToastContainer />
+        {/* For showing chat info modal | modal && */}
+        {modal &&
+          createPortal(
+            <GroupInfoModal
+              theme={theme}
+              setModal={setModal}
+              groupInfo={initialized.groupInfo!}
+              chatProfileInfo={initialized.profile}
+              setGroupInfo={(mutatedGroupInfo) =>
+                setInitialized((prevState) => ({
+                  ...prevState,
+                  mutatedGroupInfo,
+                }))
+              }
+              groupInfoModalBackground={groupInfoModalBackground}
+              groupInfoModalPositionType={groupInfoModalPositionType}
+            />,
+            document.body
+          )}
       </Container>
     );
   } else {
     return null;
   }
 };
-
 const Container = styled.div`
   width: 100%;
   background: ${(props) => props.theme.backgroundColor.chatProfileBackground};

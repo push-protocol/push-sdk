@@ -8,7 +8,7 @@ import { Chat } from './chat';
 import { Profile } from './profile';
 import { Encryption } from './encryption';
 import { User } from './user';
-import { PushStream } from '../pushstream/PushStream';
+import { PushStream, StreamType } from '../pushstream/PushStream';
 import { Channel } from '../pushNotification/channel';
 import { Notification } from '../pushNotification/notification';
 import {
@@ -18,18 +18,19 @@ import {
 import { ALPHA_FEATURE_CONFIG } from '../config';
 import { Space } from './space';
 import { Video } from './video';
-import { isValidCAIP10NFTAddress } from '../helpers';
+import { isValidNFTCAIP, walletToPCAIP10 } from '../helpers';
 import { LRUCache } from 'lru-cache';
 import { cache } from '../helpers/cache';
+import { v4 as uuidv4 } from 'uuid';
 
 export class PushAPI {
-  private signer?: SignerType;
+  public signer?: SignerType;
   private readMode: boolean;
   private alpha: { feature: string[] };
-  private account: string;
-  private decryptedPgpPvtKey?: string;
-  private pgpPublicKey?: string;
-  private env: ENV;
+  public account: string;
+  public decryptedPgpPvtKey?: string;
+  public pgpPublicKey?: string;
+  public env: ENV;
   private progressHook?: (progress: ProgressHookType) => void;
   private cache: LRUCache<string, any>;
 
@@ -44,7 +45,7 @@ export class PushAPI {
   // Notification
   public channel!: Channel;
   public notification!: Notification;
-
+  public uid: string;
   // error object to maintain errors and warnings
   public errors: { type: 'WARN' | 'ERROR'; message: string }[];
 
@@ -70,7 +71,7 @@ export class PushAPI {
     // Instantiate the notification classes
     this.channel = new Channel(this.signer, this.env, this.account);
     this.notification = new Notification(this.signer, this.env, this.account);
-
+    this.uid = uuidv4();
     this.cache = cache;
 
     // Initialize the instances of the four classes
@@ -117,7 +118,7 @@ export class PushAPI {
   }
   // Overloaded initialize method signatures
   static async initialize(
-    signer?: SignerType,
+    signer?: SignerType | null,
     options?: PushAPIInitializeProps
   ): Promise<PushAPI>;
   static async initialize(options?: PushAPIInitializeProps): Promise<PushAPI>;
@@ -126,29 +127,40 @@ export class PushAPI {
     try {
       let signer: SignerType | undefined;
       let options: PushAPIInitializeProps | undefined;
+      let decryptedPGPPrivateKey: string | undefined;
 
-      if (
-        args.length === 1 &&
-        typeof args[0] === 'object' &&
-        'account' in args[0] &&
-        typeof args[0].account === 'string'
-      ) {
-        // Single options object provided
-        options = args[0];
-      } else if (args.length === 1) {
-        // Only signer provided
-        [signer] = args;
+      if (args.length === 1 && typeof args[0] === 'object') {
+        // This branch handles both the single options object and the single signer scenario.
+        if ('account' in args[0] && typeof args[0].account === 'string') {
+          // Single options object provided.
+          options = args[0];
+        } else {
+          // Only signer provided.
+          [signer] = args;
+        }
       } else if (args.length === 2) {
-        // Separate signer and options arguments provided
+        // Separate signer and options arguments provided.
         [signer, options] = args;
       } else {
-        // Handle other cases or throw an error
+        // Handle other cases or throw an error.
         throw new Error('Invalid arguments provided to initialize method.');
+      }
+
+      // Check for decryptedPGPPrivateKey in options, regardless of how options was assigned.
+      if (
+        options &&
+        'decryptedPGPPrivateKey' in options &&
+        typeof options.decryptedPGPPrivateKey === 'string'
+      ) {
+        decryptedPGPPrivateKey = options.decryptedPGPPrivateKey;
       }
 
       if (!signer && !options?.account) {
         throw new Error("Either 'signer' or 'account' must be provided.");
       }
+
+      // Determine readMode based on the presence of signer and decryptedPGPPrivateKey
+      let readMode = !signer && !decryptedPGPPrivateKey;
 
       // Default options
       const defaultOptions: PushAPIInitializeProps = {
@@ -175,7 +187,6 @@ export class PushAPI {
             : ALPHA_FEATURE_CONFIG[PACKAGE_BUILD],
       };
 
-      let readMode = !signer;
       const initializationErrors: {
         type: 'WARN' | 'ERROR';
         message: string;
@@ -200,7 +211,6 @@ export class PushAPI {
         throw new Error('Account could not be derived.');
       }
 
-      let decryptedPGPPrivateKey: string | undefined;
       let pgpPublicKey: string | undefined;
 
       /**
@@ -220,14 +230,16 @@ export class PushAPI {
       if (!readMode) {
         try {
           if (user && user.encryptedPrivateKey) {
-            decryptedPGPPrivateKey = await PUSH_CHAT.decryptPGPKey({
-              encryptedPGPPrivateKey: user.encryptedPrivateKey,
-              signer: signer,
-              toUpgrade: settings.autoUpgrade,
-              additionalMeta: settings.versionMeta,
-              progressHook: settings.progressHook,
-              env: settings.env,
-            });
+            if (!decryptedPGPPrivateKey) {
+              decryptedPGPPrivateKey = await PUSH_CHAT.decryptPGPKey({
+                encryptedPGPPrivateKey: user.encryptedPrivateKey,
+                signer: signer,
+                toUpgrade: settings.autoUpgrade,
+                additionalMeta: settings.versionMeta,
+                progressHook: settings.progressHook,
+                env: settings.env,
+              });
+            }
           } else {
             const newUser = await PUSH_USER.create({
               env: settings.env,
@@ -249,7 +261,7 @@ export class PushAPI {
             message: decryptionError,
           });
           console.error(decryptionError);
-          if (isValidCAIP10NFTAddress(derivedAccount)) {
+          if (isValidNFTCAIP(derivedAccount)) {
             const nftDecryptionError =
               'NFT Account Detected. If this NFT was recently transferred to you, please ensure you have received the correct password from the previous owner. Alternatively, you can reinitialize for a fresh start. Please be aware that reinitialization will result in the loss of all previous account data.';
 
@@ -262,7 +274,7 @@ export class PushAPI {
           readMode = true;
         }
       }
-
+      derivedAccount = walletToPCAIP10(derivedAccount);
       // Initialize PushAPI instance
       const api = new PushAPI(
         settings.env as ENV,
@@ -303,7 +315,7 @@ export class PushAPI {
     this.pgpPublicKey = newUser.publicKey;
     this.readMode = false;
     this.errors = [];
-
+    this.uid = uuidv4();
     // Initialize the instances of the four classes
     this.chat = new Chat(
       this.account,
@@ -331,7 +343,7 @@ export class PushAPI {
   }
 
   async initStream(
-    listen: STREAM[],
+    listen: StreamType[],
     options?: PushStreamInitializeProps
   ): Promise<PushStream> {
     if (this.stream) {

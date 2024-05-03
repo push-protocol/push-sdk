@@ -1,6 +1,3 @@
-import * as path from 'path';
-import * as dotenv from 'dotenv';
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 import { ethers } from 'ethers';
 import { PushAPI } from '../../../src';
 import { ENV } from '../../../src/lib/constants';
@@ -10,6 +7,12 @@ describe('OPTIMISM ALIAS functionality', () => {
   let userBob: PushAPI;
   let account: string;
   let account2: string;
+
+  // accessing env dynamically using process.env
+  type EnvStrings = keyof typeof ENV;
+  const envMode = process.env.ENV as EnvStrings;
+  const _env = ENV[envMode];
+
   before(async () => {
     const provider = new ethers.providers.JsonRpcProvider(
       'https://sepolia.optimism.io'
@@ -20,12 +23,12 @@ describe('OPTIMISM ALIAS functionality', () => {
     );
     account = signer.address;
     userAlice = await PushAPI.initialize(signer, {
-      env: ENV.DEV,
+      env: _env,
     });
 
     const signer2 = new ethers.Wallet(ethers.Wallet.createRandom().privateKey);
     account2 = signer2.address;
-    userBob = await PushAPI.initialize(signer2, { env: ENV.DEV });
+    userBob = await PushAPI.initialize(signer2, { env: _env });
   });
 
   it.skip('Should be able to create channel', async () => {

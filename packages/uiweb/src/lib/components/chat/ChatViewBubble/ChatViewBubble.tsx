@@ -1,70 +1,52 @@
-import {
-  ReactElement,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import { ReactElement, ReactNode, useContext, useEffect, useState } from 'react';
 
 import moment from 'moment';
-import styled from 'styled-components';
+import { MdDownload } from 'react-icons/md';
 import { TwitterTweetEmbed } from 'react-twitter-embed';
+import styled from 'styled-components';
 
-import { Section, Span, Image } from '../../reusables';
-import useToast from '../reusables/NewToast';
-import { checkTwitterUrl } from '../helpers/twitter';
 import { ChatDataContext } from '../../../context';
 import { useAccount, useChatData } from '../../../hooks';
+import { Image, Section, Span } from '../../reusables';
+import { checkTwitterUrl } from '../helpers/twitter';
+import useToast from '../reusables/NewToast';
 import { ThemeContext } from '../theme/ThemeProvider';
 
-import { FileMessageContent, FrameDetails } from '../../../types';
-import { IMessagePayload, TwitterFeedReturnType } from '../exportedTypes';
-import { allowedNetworks, ENV, FILE_ICON } from '../../../config';
-import {
-  formatFileSize,
-  getPfp,
-  pCAIP10ToWallet,
-  shortenText,
-} from '../../../helpers';
-import {
-  extractWebLink,
-  getFormattedMetadata,
-  hasWebLink,
-} from '../../../utilities';
-import { Button, TextInput } from '../reusables';
-import { MdError, MdOpenInNew } from 'react-icons/md';
-import { FaBell, FaLink } from 'react-icons/fa';
 import { BsLightning } from 'react-icons/bs';
+import { FaBell, FaLink } from 'react-icons/fa';
+import { MdError, MdOpenInNew } from 'react-icons/md';
+import { ENV, FILE_ICON, allowedNetworks } from '../../../config';
+import { formatFileSize, getPfp, pCAIP10ToWallet, shortenText } from '../../../helpers';
+import { FileMessageContent, FrameDetails } from '../../../types';
+import { extractWebLink, getFormattedMetadata, hasWebLink } from '../../../utilities';
+import { IMessagePayload, TwitterFeedReturnType } from '../exportedTypes';
+import { Button, TextInput } from '../reusables';
 
 const SenderMessageAddress = ({ chat }: { chat: IMessagePayload }) => {
-  const { account } = useContext(ChatDataContext);
+  const { user } = useContext(ChatDataContext);
   const theme = useContext(ThemeContext);
-  return (
-    <>
-      {chat.fromCAIP10.split(':')[1] !== account && (
-        <Span
-          theme={theme}
-          alignSelf="start"
-          textAlign="start"
-          fontSize={theme.fontSize?.chatReceivedBubbleAddressText}
-          fontWeight={theme.fontWeight?.chatReceivedBubbleAddressText}
-          color={theme.textColor?.chatReceivedBubbleAddressText}
-        >
-          {chat.fromDID.split(':')[1].slice(0, 6)}...
-          {chat.fromDID.split(':')[1].slice(-6)}
-        </Span>
-      )}
-    </>
-  );
+  return chat.fromCAIP10?.split(':')[1] !== user?.account ? (
+    <Span
+      theme={theme}
+      alignSelf="start"
+      textAlign="start"
+      fontSize={theme.fontSize?.chatReceivedBubbleAddressText}
+      fontWeight={theme.fontWeight?.chatReceivedBubbleAddressText}
+      color={theme.textColor?.chatReceivedBubbleAddressText}
+    >
+      {chat.fromDID?.split(':')[1].slice(0, 6)}...
+      {chat.fromDID?.split(':')[1].slice(-6)}
+    </Span>
+  ) : null;
 };
 
 const SenderMessageProfilePicture = ({ chat }: { chat: IMessagePayload }) => {
-  const { account, env } = useContext(ChatDataContext);
+  const { user } = useContext(ChatDataContext);
   const [pfp, setPfp] = useState<string>('');
   const getUserPfp = async () => {
     const pfp = await getPfp({
-      account: chat.fromCAIP10.split(':')[1],
-      env: env,
+      user: user,
+      recipient: chat.fromCAIP10?.split(':')[1],
     });
     if (pfp) {
       setPfp(pfp);
@@ -72,10 +54,14 @@ const SenderMessageProfilePicture = ({ chat }: { chat: IMessagePayload }) => {
   };
   useEffect(() => {
     getUserPfp();
-  }, [account, chat.fromCAIP10]);
+  }, [chat.fromCAIP10]);
+
   return (
-    <Section justifyContent="start" alignItems="start">
-      {chat.fromCAIP10.split(':')[1] !== account && (
+    <Section
+      justifyContent="start"
+      alignItems="start"
+    >
+      {chat.fromCAIP10?.split(':')[1] !== user?.account && (
         <Section alignItems="start">
           {pfp && (
             <Image
@@ -114,7 +100,10 @@ const MessageWrapper = ({
       maxWidth={maxWidth || 'auto'}
     >
       {isGroup && <SenderMessageProfilePicture chat={chat} />}
-      <Section justifyContent="start" flexDirection="column">
+      <Section
+        justifyContent="start"
+        flexDirection="column"
+      >
         {isGroup && <SenderMessageAddress chat={chat} />}
         {children}
       </Section>
@@ -156,10 +145,7 @@ const FrameRenderer = ({ url, account }: { url: string; account: string }) => {
       fetchMetaTags(url);
     }
   }, [url]);
-  const getButtonIconContent = (
-    buttonAction: string,
-    buttonContent: string
-  ) => {
+  const getButtonIconContent = (buttonAction: string, buttonContent: string) => {
     switch (buttonAction) {
       case 'link':
         return (
@@ -240,30 +226,36 @@ const FrameRenderer = ({ url, account }: { url: string; account: string }) => {
     if (!user) return { status: 'failure', message: 'User not initialised' };
 
     if (chainId !== Number(desiredChain)) {
-      if (allowedNetworks[env].some((chain) => chain === Number(desiredChain)))
-        switchChain(Number(desiredChain));
+      if (allowedNetworks[env].some((chain) => chain === Number(desiredChain))) switchChain(Number(desiredChain));
       else {
         frameRenderer.showMessageToast({
           toastTitle: 'Error',
           toastMessage: 'Chain not supported',
           toastType: 'ERROR',
-          getToastIcon: (size: any) => <MdError size={size} color="red" />,
+          getToastIcon: (size: any) => (
+            <MdError
+              size={size}
+              color="red"
+            />
+          ),
         });
         return { status: 'failure', message: 'Chain not supported' };
       }
     }
     try {
-      const response = await user.notification.subscribe(
-        `eip155:${desiredChain}:${channel}`
-      );
-      if (response.status === 204)
-        return { status: 'success', message: 'Subscribed' };
+      const response = await user.notification.subscribe(`eip155:${desiredChain}:${channel}`);
+      if (response.status === 204) return { status: 'success', message: 'Subscribed' };
     } catch (error) {
       frameRenderer.showMessageToast({
         toastTitle: 'Error',
         toastMessage: 'Chain not supported',
         toastType: 'ERROR',
-        getToastIcon: (size: any) => <MdError size={size} color="red" />,
+        getToastIcon: (size: any) => (
+          <MdError
+            size={size}
+            color="red"
+          />
+        ),
       });
       return { status: 'failure', message: 'Something went wrong' };
     }
@@ -273,24 +265,21 @@ const FrameRenderer = ({ url, account }: { url: string; account: string }) => {
   // Function to trigger a transaction
   const TriggerTx = async (data: any, provider: any) => {
     console.log(allowedNetworks[env]);
-    console.log(
-      allowedNetworks[env].some(
-        (chain) => chain === Number(data.chainId.slice(7))
-      )
-    );
+    console.log(allowedNetworks[env].some((chain) => chain === Number(data.chainId.slice(7))));
     if (chainId !== Number(data.chainId.slice(7))) {
-      if (
-        allowedNetworks[env].some(
-          (chain) => chain === Number(data.chainId.slice(7))
-        )
-      )
+      if (allowedNetworks[env].some((chain) => chain === Number(data.chainId.slice(7))))
         switchChain(Number(data.chainId.slice(7)));
       else {
         frameRenderer.showMessageToast({
           toastTitle: 'Error',
           toastMessage: 'Chain not supported',
           toastType: 'ERROR',
-          getToastIcon: (size: any) => <MdError size={size} color="red" />,
+          getToastIcon: (size: any) => (
+            <MdError
+              size={size}
+              color="red"
+            />
+          ),
         });
         return { status: 'failure', message: 'Chain not supported' };
       }
@@ -312,7 +301,12 @@ const FrameRenderer = ({ url, account }: { url: string; account: string }) => {
         toastTitle: 'Error',
         toastMessage: 'Something went wrong',
         toastType: 'ERROR',
-        getToastIcon: (size: any) => <MdError size={size} color="red" />,
+        getToastIcon: (size: any) => (
+          <MdError
+            size={size}
+            color="red"
+          />
+        ),
       });
       return {
         hash: 'Failed',
@@ -323,11 +317,7 @@ const FrameRenderer = ({ url, account }: { url: string; account: string }) => {
   };
 
   // Function to handle button click on a frame button
-  const onButtonClick = async (button: {
-    index: string;
-    action?: string;
-    target?: string;
-  }) => {
+  const onButtonClick = async (button: { index: string; action?: string; target?: string }) => {
     if (button.action === 'mint') return;
     let hash;
 
@@ -376,11 +366,7 @@ const FrameRenderer = ({ url, account }: { url: string; account: string }) => {
 
     // Makes a POST call to the Frame server after the action has been performed
     const post_url =
-      button.action === 'tx'
-        ? metaTags.postURL
-        : button?.target!.startsWith('http')
-        ? button.target
-        : metaTags.postURL;
+      button.action === 'tx' ? metaTags.postURL : button?.target!.startsWith('http') ? button.target : metaTags.postURL;
     if (!post_url) return;
     const response = await fetch(`http://localhost:5004/${post_url}`, {
       method: 'POST',
@@ -427,7 +413,10 @@ const FrameRenderer = ({ url, account }: { url: string; account: string }) => {
             backgroundColor: '#fff',
           }}
         >
-          <a href={url} target="blank">
+          <a
+            href={url}
+            target="blank"
+          >
             <img
               src={metaTags.image}
               alt="frame"
@@ -518,7 +507,11 @@ const MessageCard = ({
   const theme = useContext(ThemeContext);
   const time = moment(chat.timestamp).format('hh:mm a');
   return (
-    <MessageWrapper chat={chat} isGroup={isGroup} maxWidth="70%">
+    <MessageWrapper
+      chat={chat}
+      isGroup={isGroup}
+      maxWidth="70%"
+    >
       <Section alignSelf={position ? 'end' : 'start'}>
         {hasWebLink(chat.messageContent) && (
           <FrameRenderer
@@ -527,13 +520,14 @@ const MessageCard = ({
           />
         )}
       </Section>
-      <Section
+      <MessageSection
         gap="5px"
         background={
           position
             ? `${theme.backgroundColor?.chatSentBubbleBackground}`
             : `${theme.backgroundColor?.chatReceivedBubbleBackground}`
         }
+        border={position ? `${theme.border?.chatSentBubble}` : `${theme.border?.chatReceivedBubble}`}
         padding="8px 12px"
         borderRadius={position ? '12px 0px 12px 12px' : '0px 12px 12px 12px'}
         margin="5px 0"
@@ -542,33 +536,24 @@ const MessageCard = ({
         minWidth="71px"
         position="relative"
         width="fit-content"
-        color={
-          position
-            ? `${theme.textColor?.chatSentBubbleText}`
-            : `${theme.textColor?.chatReceivedBubbleText}`
-        }
+        color={position ? `${theme.textColor?.chatSentBubbleText}` : `${theme.textColor?.chatReceivedBubbleText}`}
       >
-        <Section flexDirection="column" padding="5px 0 15px 0">
+        <Section
+          flexDirection="column"
+          padding="5px 0 15px 0"
+        >
           {chat.messageContent.split('\n').map((str) => (
             <Span
               key={Math.random().toString()}
               alignSelf="start"
               textAlign="left"
               fontSize={
-                position
-                  ? `${theme.fontSize?.chatSentBubbleText}`
-                  : `${theme.fontSize?.chatReceivedBubbleText}`
+                position ? `${theme.fontSize?.chatSentBubbleText}` : `${theme.fontSize?.chatReceivedBubbleText}`
               }
               fontWeight={
-                position
-                  ? `${theme.fontWeight?.chatSentBubbleText}`
-                  : `${theme.fontWeight?.chatReceivedBubbleText}`
+                position ? `${theme.fontWeight?.chatSentBubbleText}` : `${theme.fontWeight?.chatReceivedBubbleText}`
               }
-              color={
-                position
-                  ? `${theme.textColor?.chatSentBubbleText}`
-                  : `${theme.textColor?.chatReceivedBubbleText}`
-              }
+              color={position ? `${theme.textColor?.chatSentBubbleText}` : `${theme.textColor?.chatReceivedBubbleText}`}
             >
               {str}
             </Span>
@@ -586,37 +571,30 @@ const MessageCard = ({
               ? `${theme.fontWeight?.chatSentBubbleTimestampText}`
               : `${theme.fontWeight?.chatReceivedBubbleTimestampText}`
           }
-          color={
-            position
-              ? `${theme.textColor?.chatSentBubbleText}`
-              : `${theme.textColor?.chatReceivedBubbleText}`
-          }
+          color={position ? `${theme.textColor?.chatSentBubbleText}` : `${theme.textColor?.chatReceivedBubbleText}`}
           bottom="6px"
           right="10px"
         >
           {time}
         </Span>
-      </Section>
+      </MessageSection>
     </MessageWrapper>
   );
 };
 
-const FileCard = ({
-  chat,
-  isGroup,
-}: {
-  chat: IMessagePayload;
-  position: number;
-  isGroup: boolean;
-}) => {
-  const fileContent: FileMessageContent = JSON.parse(chat.messageContent);
+const FileCard = ({ chat, isGroup }: { chat: IMessagePayload; position: number; isGroup: boolean }) => {
+  const fileContent: FileMessageContent = JSON.parse(chat?.messageContent);
   const name = fileContent.name;
 
   const content = fileContent.content as string;
   const size = fileContent.size;
 
   return (
-    <MessageWrapper maxWidth="fit-content" chat={chat} isGroup={isGroup}>
+    <MessageWrapper
+      maxWidth="fit-content"
+      chat={chat}
+      isGroup={isGroup}
+    >
       <Section
         alignSelf="start"
         maxWidth="100%"
@@ -629,16 +607,25 @@ const FileCard = ({
         width="fit-content"
       >
         <Image
-          src={FILE_ICON(name.split('.').slice(-1)[0])}
+          src={FILE_ICON(name?.split('.').slice(-1)[0])}
           alt="extension icon"
           width="20px"
           height="20px"
         />
-        <Section flexDirection="column" gap="5px">
-          <Span color="#fff" fontSize="15px">
+        <Section
+          flexDirection="column"
+          gap="5px"
+        >
+          <Span
+            color="#fff"
+            fontSize="15px"
+          >
             {shortenText(name, 11)}
           </Span>
-          <Span color="#fff" fontSize="12px">
+          <Span
+            color="#fff"
+            fontSize="12px"
+          >
             {formatFileSize(size)}
           </Span>
         </Section>
@@ -648,24 +635,19 @@ const FileCard = ({
           rel="noopener noreferrer"
           download
         >
-          <FileDownloadIcon className="fa fa-download" aria-hidden="true" />
+          <MdDownload color="#575757" />
         </FileDownloadIconAnchor>
       </Section>
     </MessageWrapper>
   );
 };
 
-const ImageCard = ({
-  chat,
-  position,
-  isGroup,
-}: {
-  chat: IMessagePayload;
-  position: number;
-  isGroup: boolean;
-}) => {
+const ImageCard = ({ chat, position, isGroup }: { chat: IMessagePayload; position: number; isGroup: boolean }) => {
   return (
-    <MessageWrapper chat={chat} isGroup={isGroup}>
+    <MessageWrapper
+      chat={chat}
+      isGroup={isGroup}
+    >
       <Section
         alignSelf={position ? 'end' : 'start'}
         maxWidth="65%"
@@ -673,7 +655,7 @@ const ImageCard = ({
         margin="5px 0"
       >
         <Image
-          src={JSON.parse(chat.messageContent).content}
+          src={JSON.parse(chat?.messageContent)?.content}
           alt=""
           width="100%"
           borderRadius={position ? '12px 0px 12px 12px' : '0px 12px 12px 12px'}
@@ -683,17 +665,13 @@ const ImageCard = ({
   );
 };
 
-const GIFCard = ({
-  chat,
-  position,
-  isGroup,
-}: {
-  chat: IMessagePayload;
-  position: number;
-  isGroup: boolean;
-}) => {
+const GIFCard = ({ chat, position, isGroup }: { chat: IMessagePayload; position: number; isGroup: boolean }) => {
   return (
-    <MessageWrapper chat={chat} isGroup={isGroup} maxWidth="fit-content">
+    <MessageWrapper
+      chat={chat}
+      isGroup={isGroup}
+      maxWidth="fit-content"
+    >
       <Section
         alignSelf={position ? 'end' : 'start'}
         maxWidth="65%"
@@ -701,7 +679,7 @@ const GIFCard = ({
         width="fit-content"
       >
         <Image
-          src={chat.messageContent}
+          src={chat?.messageContent}
           alt=""
           width="100%"
           borderRadius={position ? '12px 0px 12px 12px' : '0px 12px 12px 12px'}
@@ -723,7 +701,11 @@ const TwitterCard = ({
   position: number;
 }) => {
   return (
-    <MessageWrapper chat={chat} isGroup={isGroup} maxWidth="fit-content">
+    <MessageWrapper
+      chat={chat}
+      isGroup={isGroup}
+      maxWidth="fit-content"
+    >
       <Section
         alignSelf={position ? 'end' : 'start'}
         maxWidth="100%"
@@ -738,31 +720,29 @@ const TwitterCard = ({
 
 export const ChatViewBubble = ({
   decryptedMessagePayload,
+  isGroup,
 }: {
   decryptedMessagePayload: IMessagePayload;
+  isGroup: boolean;
 }) => {
   const { account } = useChatData();
-  const position =
-    pCAIP10ToWallet(decryptedMessagePayload.fromDID).toLowerCase() !==
-    account?.toLowerCase()
-      ? 0
-      : 1;
+  const position = pCAIP10ToWallet(decryptedMessagePayload.fromDID).toLowerCase() !== account?.toLowerCase() ? 0 : 1;
   const { tweetId, messageType }: TwitterFeedReturnType = checkTwitterUrl({
     message: decryptedMessagePayload?.messageContent,
   });
-  const [isGroup, setIsGroup] = useState<boolean>(false);
+  // const [isGroup, setIsGroup] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (decryptedMessagePayload.toDID.split(':')[0] === 'eip155') {
-      if (isGroup) {
-        setIsGroup(false);
-      }
-    } else {
-      if (!isGroup) {
-        setIsGroup(true);
-      }
-    }
-  }, [decryptedMessagePayload.toDID, isGroup]);
+  // useEffect(() => {
+  //   if (decryptedMessagePayload.toDID.split(':')[0] === 'eip155') {
+  //     if (isGroup) {
+  //       setIsGroup(false);
+  //     }
+  //   } else {
+  //     if (!isGroup) {
+  //       setIsGroup(true);
+  //     }
+  //   }
+  // }, [decryptedMessagePayload.toDID, isGroup]);
 
   if (messageType === 'TwitterFeedLink') {
     decryptedMessagePayload.messageType = 'TwitterFeedLink';
@@ -815,10 +795,9 @@ export const ChatViewBubble = ({
   );
 };
 
-const FileDownloadIcon = styled.i`
-  color: #575757;
-`;
-
 const FileDownloadIconAnchor = styled.a`
   font-size: 20px;
+`;
+const MessageSection = styled(Section)<{ border: string }>`
+  border: ${(props) => props.border};
 `;

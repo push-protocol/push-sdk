@@ -1,21 +1,20 @@
 import { useContext, useRef, useState } from 'react';
 
-import styled from 'styled-components';
 import { IUser } from '@pushprotocol/restapi';
+import styled from 'styled-components';
 
-import { ThemeContext } from '../theme/ThemeProvider';
 import { useClickAway } from '../../../hooks';
-import Dropdown, { DropdownValueType } from './DropDown';
 import { Section, Span } from '../../reusables/sharedStyling';
+import { ThemeContext } from '../theme/ThemeProvider';
+import Dropdown, { DropdownValueType } from './DropDown';
 
-import DismissAdmin from '../../../icons/dismissadmin.svg';
-import AddAdmin from '../../../icons/addadmin.svg';
-import Remove from '../../../icons/remove.svg';
-import { findObject } from '../helpers/helper';
+import { ProfileContainer } from '.';
 import { device } from '../../../config';
 import { shortenText } from '../../../helpers';
-import { ProfileContainer } from '.';
-
+import AddAdmin from '../../../icons/addadmin.svg';
+import DismissAdmin from '../../../icons/dismissadmin.svg';
+import Remove from '../../../icons/remove.svg';
+import { findObject } from '../helpers/helper';
 
 type MemberListContainerType = {
   key?: number;
@@ -30,7 +29,7 @@ export interface WalletProfileContainerProps {
   id?: any;
   background?: any;
   border?: string;
-};
+}
 
 export const MemberListContainer = ({
   key,
@@ -70,9 +69,7 @@ export const MemberListContainer = ({
 
   const dismissGroupAdmin = () => {
     const updatedMembers = memberList.map((member: any) =>
-      member?.wallets?.toLowerCase() == memberData?.wallets?.toLowerCase()
-        ? { ...member, isAdmin: false }
-        : member
+      member?.wallets?.toLowerCase() == memberData?.wallets?.toLowerCase() ? { ...member, isAdmin: false } : member
     );
     handleMembers?.(updatedMembers);
     setSelectedWallet(null);
@@ -80,9 +77,7 @@ export const MemberListContainer = ({
 
   const makeGroupAdmin = () => {
     const updatedMembers = memberList.map((member: any) =>
-      member?.wallets?.toLowerCase() == memberData?.wallets?.toLowerCase()
-        ? { ...member, isAdmin: true }
-        : member
+      member?.wallets?.toLowerCase() == memberData?.wallets?.toLowerCase() ? { ...member, isAdmin: true } : member
     );
     handleMembers?.(updatedMembers);
     setSelectedWallet(null);
@@ -94,27 +89,26 @@ export const MemberListContainer = ({
   };
 
   const handleHeight = (id: any) => {
-    const containerHeight = document
-      .getElementById(id)
-      ?.getBoundingClientRect();
+    const containerHeight = document.getElementById(id)?.getBoundingClientRect();
     setDropdownHeight(containerHeight?.top);
   };
   return (
     <WalletProfileContainer
       id={memberData?.wallets}
-      background={
-        memberList ? 'transparent' : theme.backgroundColor?.modalHoverBackground
-      }
-      border={
-        memberList ? theme.border?.modalInnerComponents:'none' 
-      }
+      background={memberList ? 'transparent' : theme.backgroundColor?.modalHoverBackground}
+      border={memberList ? theme.border?.modalInnerComponents : 'none'}
       borderRadius={theme.borderRadius?.modalInnerComponents}
     >
       <ProfileContainer
         theme={theme}
         member={{
-          wallet: shortenText(memberData.wallets?.split(':')[1], 6, true),
-          image: memberData.profile?.picture || '',
+          name: null,
+          icon: memberData.profile?.picture || '',
+          chatId: null,
+          recipient: memberData.wallets?.split(':')[1],
+          abbrRecipient: shortenText(memberData.wallets?.split(':')[1], 6, true),
+          web3Name: null,
+          desc: null,
         }}
       />
 
@@ -155,9 +149,7 @@ export const MemberListContainer = ({
         >
           <Dropdown
             dropdownValues={
-              memberData?.isAdmin
-                ? [removeAdminDropdown, removeUserDropdown]
-                : [addAdminDropdown, removeUserDropdown]
+              memberData?.isAdmin ? [removeAdminDropdown, removeUserDropdown] : [addAdminDropdown, removeUserDropdown]
             }
             hoverBGColor={theme.backgroundColor?.modalHoverBackground}
           />
@@ -170,7 +162,7 @@ export const MemberListContainer = ({
 const WalletProfileContainer = styled(Section)<WalletProfileContainerProps>`
   justify-content: space-between;
   padding: 8px 16px;
-    border: ${(props) => props.border};
+  border: ${(props) => props.border};
   position: relative;
   box-sizing: border-box;
   width: 100%;

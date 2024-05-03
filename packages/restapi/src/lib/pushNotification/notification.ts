@@ -97,7 +97,7 @@ export class Notification extends PushNotificationBaseClass {
         page = Constants.PAGINATION.INITIAL_PAGE,
         limit = Constants.PAGINATION.LIMIT,
         channel = null,
-        raw
+        raw,
       } = options || {};
       const account = options?.account
         ? options.account
@@ -109,7 +109,7 @@ export class Notification extends PushNotificationBaseClass {
         user: account!,
         env: this.env,
         channel: channel,
-        raw
+        raw,
       });
     } catch (error) {
       throw new Error(
