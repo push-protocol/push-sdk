@@ -14,6 +14,7 @@ import {
   getCAIPWithChainId,
   validateCAIP,
   getFallbackETHCAIPAddress,
+  pCAIP10ToWallet,
 } from '../helpers';
 
 import { PushNotificationBaseClass } from './pushNotificationBase';
@@ -50,11 +51,16 @@ export class Notification extends PushNotificationBaseClass {
       raw = false,
     } = options || {};
     try {
-      const account = options?.account
-        ? options.account
-        : this.account
-        ? getFallbackETHCAIPAddress(this.env!, this.account!)
-        : null;
+      let account: string | null;
+      if (options?.account) {
+        if (this.isValidPCaip(options.account)) {
+          account = pCAIP10ToWallet(options.account);
+        } else {
+          account = options.account;
+        }
+      } else if(this.account){
+        account = getFallbackETHCAIPAddress(this.env!, this.account!)
+      }
       // guest mode and valid address check
       this.checkUserAddressExists(account!);
       const nonCaipAccount = this.getAddressFromCaip(account!);
@@ -99,11 +105,16 @@ export class Notification extends PushNotificationBaseClass {
         channel = null,
         raw,
       } = options || {};
-      const account = options?.account
-        ? options.account
-        : this.account
-        ? getFallbackETHCAIPAddress(this.env!, this.account!)
-        : null;
+      let account: string | null;
+      if (options?.account) {
+        if (this.isValidPCaip(options.account)) {
+          account = pCAIP10ToWallet(options.account);
+        } else {
+          account = options.account;
+        }
+      } else if(this.account){
+        account = getFallbackETHCAIPAddress(this.env!, this.account!)
+      }
       this.checkUserAddressExists(account!);
       return await PUSH_USER.getSubscriptions({
         user: account!,
