@@ -23,6 +23,8 @@
     "html-react-parser": "^1.4.13",
     "livekit-client": "^1.13.3",
     "moment": "^2.29.4",
+    "openpgp": "^5.11.1",
+    "protobufjs": "^7.2.6",
     "react-easy-crop": "^4.1.4",
     "react-icons": "^4.10.1",
     "react-image-file-resizer": "^0.4.7",

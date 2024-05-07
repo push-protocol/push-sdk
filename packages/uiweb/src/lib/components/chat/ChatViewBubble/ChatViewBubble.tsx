@@ -6,21 +6,23 @@ import { TwitterTweetEmbed } from 'react-twitter-embed';
 import styled from 'styled-components';
 
 import { ChatDataContext } from '../../../context';
-import { useAccount, useChatData } from '../../../hooks';
+import { useChatData } from '../../../hooks';
 import { Image, Section, Span } from '../../reusables';
 import { checkTwitterUrl } from '../helpers/twitter';
 import useToast from '../reusables/NewToast';
 import { ThemeContext } from '../theme/ThemeProvider';
 
 import { BsLightning } from 'react-icons/bs';
-import { FaBell, FaLink } from 'react-icons/fa';
+import { FaBell, FaLink, FaRegThumbsUp } from 'react-icons/fa';
 import { MdError, MdOpenInNew } from 'react-icons/md';
-import { ENV, FILE_ICON, allowedNetworks } from '../../../config';
-import { formatFileSize, getPfp, pCAIP10ToWallet, shortenText } from '../../../helpers';
-import { FileMessageContent, FrameDetails } from '../../../types';
+import { FILE_ICON, allowedNetworks } from '../../../config';
+import { formatFileSize, getPfp, pCAIP10ToWallet, shortenText, sign, toSerialisedHexString } from '../../../helpers';
+import { FileMessageContent, FrameButton, FrameDetails, IFrame } from '../../../types';
 import { extractWebLink, getFormattedMetadata, hasWebLink } from '../../../utilities';
 import { IMessagePayload, TwitterFeedReturnType } from '../exportedTypes';
 import { Button, TextInput } from '../reusables';
+import { useConnectWallet, useSetChain } from '@web3-onboard/react';
+import { ethers } from 'ethers';
 
 const SenderMessageAddress = ({ chat }: { chat: IMessagePayload }) => {
   const { user } = useContext(ChatDataContext);
@@ -110,32 +112,35 @@ const MessageWrapper = ({
     </Section>
   );
 };
-const FrameRenderer = ({ url, account }: { url: string; account: string }) => {
-  const { env, user } = useChatData();
-  const { chainId, switchChain, provider } = useAccount({ env });
+const FrameRenderer = ({ url, account, messageId }: { url: string; account: string; messageId: string }) => {
+  const { env, user, pgpPrivateKey } = useChatData();
+
+  const [{ wallet }] = useConnectWallet();
+  const [{ connectedChain }, setChain] = useSetChain();
+
   const frameRenderer = useToast();
-  const [metaTags, setMetaTags] = useState<FrameDetails>({
-    image: '',
-    siteURL: '',
-    postURL: '',
-    buttons: [],
-    input: { name: '', content: '' },
-  });
-  const [inputText, setInputText] = useState<undefined | string>(undefined);
+  const proxyServer = 'https://proxy.push.org';
+  const [FrameData, setFrameData] = useState<IFrame>({} as IFrame);
+  const [inputText, setInputText] = useState<string>('');
+  const [imageLoadingError, setImageLoadingError] = useState<boolean>(false);
   // Fetches the metadata for the URL to fetch the Frame
 
   useEffect(() => {
     const fetchMetaTags = async (url: string) => {
       try {
-        const response = await fetch(url, {
+        const response = await fetch(`${proxyServer}/${url}`, {
           method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Origin: window.location.origin,
+          },
         });
 
         const htmlText = await response.text();
 
-        const frameDetails: FrameDetails = getFormattedMetadata(url, htmlText);
+        const frameDetails: IFrame = getFormattedMetadata(url, htmlText);
 
-        setMetaTags(frameDetails);
+        setFrameData(frameDetails);
       } catch (err) {
         console.error('Error fetching meta tags for rendering frame:', err);
       }
@@ -145,8 +150,8 @@ const FrameRenderer = ({ url, account }: { url: string; account: string }) => {
       fetchMetaTags(url);
     }
   }, [url]);
-  const getButtonIconContent = (buttonAction: string, buttonContent: string) => {
-    switch (buttonAction) {
+  const getButtonIconContent = (button: FrameButton) => {
+    switch (button.action) {
       case 'link':
         return (
           <span
@@ -156,9 +161,14 @@ const FrameRenderer = ({ url, account }: { url: string; account: string }) => {
               gap: '4px',
               alignItems: 'center',
               justifyContent: 'center',
+              padding: '0 4px',
+              width: '90%',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
             }}
           >
-            {buttonContent} <FaLink />
+            <FaLink /> {button.content}
           </span>
         );
 
@@ -171,9 +181,14 @@ const FrameRenderer = ({ url, account }: { url: string; account: string }) => {
               gap: '4px',
               alignItems: 'center',
               justifyContent: 'center',
+              padding: '0 4px',
+              width: '90%',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
             }}
           >
-            {buttonContent} <MdOpenInNew />
+            <MdOpenInNew /> {button.content}
           </span>
         );
       case 'tx':
@@ -185,13 +200,18 @@ const FrameRenderer = ({ url, account }: { url: string; account: string }) => {
               gap: '4px',
               alignItems: 'center',
               justifyContent: 'center',
+              padding: '0 4px',
+              width: '90%',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
             }}
           >
-            {buttonContent} <BsLightning />
+            <BsLightning /> {button.content}
           </span>
         );
 
-      case buttonAction.includes('subscribe') && 'subscribe':
+      case button?.action?.includes('subscribe') && 'subscribe':
         return (
           <span
             style={{
@@ -200,9 +220,14 @@ const FrameRenderer = ({ url, account }: { url: string; account: string }) => {
               gap: '4px',
               alignItems: 'center',
               justifyContent: 'center',
+              padding: '0 4px',
+              width: '90%',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
             }}
           >
-            {buttonContent} <FaBell />
+            <FaBell /> {button.content}
           </span>
         );
       default:
@@ -214,20 +239,27 @@ const FrameRenderer = ({ url, account }: { url: string; account: string }) => {
               gap: '4px',
               alignItems: 'center',
               justifyContent: 'center',
+              padding: '0 4px',
+              width: '100%',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
             }}
           >
-            {buttonContent}
+            {button.content}
           </span>
         );
     }
   };
-  // Function to subscribe to a channel
-  const subscribeToChannel = async (channel: string, desiredChain: any) => {
-    if (!user) return { status: 'failure', message: 'User not initialised' };
 
-    if (chainId !== Number(desiredChain)) {
-      if (allowedNetworks[env].some((chain) => chain === Number(desiredChain))) switchChain(Number(desiredChain));
-      else {
+  const handleChainChange = async (desiredChainId: string) => {
+    if (Number(connectedChain?.id) !== Number(desiredChainId.slice(7))) {
+      if (allowedNetworks[env].some((chain) => chain === Number(desiredChainId.slice(7)))) {
+        await setChain({
+          chainId: ethers.utils.hexValue(Number(desiredChainId.slice(7))),
+        });
+        return { status: 'success', message: 'Chain switched' };
+      } else {
         frameRenderer.showMessageToast({
           toastTitle: 'Error',
           toastMessage: 'Chain not supported',
@@ -242,37 +274,33 @@ const FrameRenderer = ({ url, account }: { url: string; account: string }) => {
         return { status: 'failure', message: 'Chain not supported' };
       }
     }
-    try {
-      const response = await user.notification.subscribe(`eip155:${desiredChain}:${channel}`);
-      if (response.status === 204) return { status: 'success', message: 'Subscribed' };
-    } catch (error) {
-      frameRenderer.showMessageToast({
-        toastTitle: 'Error',
-        toastMessage: 'Chain not supported',
-        toastType: 'ERROR',
-        getToastIcon: (size: any) => (
-          <MdError
-            size={size}
-            color="red"
-          />
-        ),
-      });
-      return { status: 'failure', message: 'Something went wrong' };
-    }
-    return { status: 'failure', message: 'Unexpected error' };
+    return { status: 'success', message: 'Chain switch not required' };
   };
+  // Function to subscribe to a channel
+  const subscribeToChannel = async (button: FrameButton) => {
+    if (!user) return { status: 'failure', message: 'User not initialized' };
+    const { status, message } = await handleChainChange(button.action!);
+    if (status === 'failure') return { status: 'failure', message };
+    try {
+      const response = await user.notification.subscribe(`${button.action}:${button.target}`);
 
-  // Function to trigger a transaction
-  const TriggerTx = async (data: any, provider: any) => {
-    console.log(allowedNetworks[env]);
-    console.log(allowedNetworks[env].some((chain) => chain === Number(data.chainId.slice(7))));
-    if (chainId !== Number(data.chainId.slice(7))) {
-      if (allowedNetworks[env].some((chain) => chain === Number(data.chainId.slice(7))))
-        switchChain(Number(data.chainId.slice(7)));
-      else {
+      if (response.status === 204) {
+        frameRenderer.showMessageToast({
+          toastTitle: 'Success',
+          toastMessage: 'Subscribed Successfully',
+          toastType: 'SUCCESS',
+          getToastIcon: (size: any) => (
+            <FaRegThumbsUp
+              size={size}
+              color="green"
+            />
+          ),
+        });
+        return { status: 'success', message: 'Subscribed' };
+      } else {
         frameRenderer.showMessageToast({
           toastTitle: 'Error',
-          toastMessage: 'Chain not supported',
+          toastMessage: JSON.stringify(response.message) ?? 'Subscription failed',
           toastType: 'ERROR',
           getToastIcon: (size: any) => (
             <MdError
@@ -281,21 +309,11 @@ const FrameRenderer = ({ url, account }: { url: string; account: string }) => {
             />
           ),
         });
-        return { status: 'failure', message: 'Chain not supported' };
+        return {
+          status: 'failure',
+          message: JSON.stringify(response.message) ?? 'Subscription failed',
+        };
       }
-    }
-    let hash = undefined;
-    try {
-      const signer = provider.getUncheckedSigner();
-      const tx = await signer.sendTransaction({
-        from: account,
-        to: data.params.to,
-        value: data.params.value,
-        data: data.params.data,
-        chainId: Number(data.chainId.slice(7)),
-      });
-      hash = tx.hash;
-      return { hash, status: 'success', message: 'Transaction sent' };
     } catch (error) {
       frameRenderer.showMessageToast({
         toastTitle: 'Error',
@@ -308,18 +326,87 @@ const FrameRenderer = ({ url, account }: { url: string; account: string }) => {
           />
         ),
       });
+      return { status: 'failure', message: 'Something went wrong' };
+    }
+  };
+
+  // Function to trigger a transaction
+  const TriggerTx = async (data: any) => {
+    if (!data || !data.params || !data.chainId) return { status: 'failure', message: 'Invalid data' };
+
+    const { status, message } = await handleChainChange(data.chainId);
+    if (status === 'failure') return { status: 'failure', message };
+    if (!wallet) return { status: 'failure', message: 'Wallet not connected' };
+    let hash = undefined;
+    try {
+      const provider = new ethers.providers.Web3Provider(wallet.provider, 'any');
+
+      const signer = provider.getSigner();
+      const tx = await signer.sendTransaction({
+        from: account,
+        to: data.params.to,
+        value: data.params.value,
+        data: data.params.data,
+        chainId: Number(data.chainId.slice(7)),
+      });
+      hash = tx.hash;
+      return { hash, status: 'success', message: 'Transaction sent' };
+    } catch (error: any) {
+      frameRenderer.showMessageToast({
+        toastTitle: 'Error',
+        toastMessage: error?.data?.message ?? error?.message ?? 'Failed',
+        toastType: 'ERROR',
+        getToastIcon: (size: any) => (
+          <MdError
+            size={size}
+            color="red"
+          />
+        ),
+      });
       return {
         hash: 'Failed',
         status: 'failure',
-        message: 'Something went wrong',
+        message: error?.data?.message ?? error?.message ?? 'Failed',
       };
     }
   };
 
   // Function to handle button click on a frame button
-  const onButtonClick = async (button: { index: string; action?: string; target?: string }) => {
-    if (button.action === 'mint') return;
+  const onButtonClick = async (button: FrameButton) => {
+    if (!FrameData.isValidFrame) return;
+    if (button.action === 'mint') {
+      frameRenderer.showMessageToast({
+        toastTitle: 'Error',
+        toastMessage: 'Mint Action is not supported',
+        toastType: 'ERROR',
+        getToastIcon: (size: any) => (
+          <MdError
+            size={size}
+            color="red"
+          />
+        ),
+      });
+      return;
+    }
     let hash;
+
+    const serializedProtoMessage = await toSerialisedHexString({
+      url: url,
+      unixTimestamp: Date.now().toString(),
+      buttonIndex: Number(button.index),
+      inputText: FrameData.frameDetails?.inputText ? inputText : 'undefined',
+      state: FrameData.frameDetails?.state ?? '',
+      transactionId: hash ?? '',
+      address: account,
+      messageId: messageId,
+      chatId: window.location.href.split('/').pop() ?? 'null',
+      clientProtocol: 'push',
+      env: env,
+    });
+    const signedMessage = await sign({
+      message: serializedProtoMessage,
+      signingKey: user?.decryptedPgpPvtKey ?? pgpPrivateKey!,
+    });
 
     // If the button action is post_redirect or link, opens the link in a new tab
     if (button.action === 'post_redirect' || button.action === 'link') {
@@ -329,9 +416,7 @@ const FrameRenderer = ({ url, account }: { url: string; account: string }) => {
 
     // If the button action is subscribe, subscribes to the channel and then makes a POST call to the Frame server
     if (button.action?.includes('subscribe')) {
-      const desiredChainId = button.action?.split(':')[1];
-
-      const response = await subscribeToChannel(button.target!, desiredChainId);
+      const response = await subscribeToChannel(button);
       if (response.status === 'failure') {
         return;
       }
@@ -339,64 +424,88 @@ const FrameRenderer = ({ url, account }: { url: string; account: string }) => {
 
     // If the button action is tx, triggers a transaction and then makes a POST call to the Frame server
     if (button.action === 'tx' && button.target) {
-      const response = await fetch(`http://localhost:5004/${button.target}`, {
+      const response = await fetch(`${proxyServer}/${button.target}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Origin: window.location.origin,
         },
         body: JSON.stringify({
           clientProtocol: 'push',
           untrustedData: {
-            url: window.location.hostname,
-            unixTimestamp: Date.now(),
+            url: url,
+            unixTimestamp: Date.now().toString(),
             buttonIndex: Number(button.index),
-            inputText: inputText,
-            state: metaTags.state,
+            inputText: FrameData.frameDetails?.inputText ? inputText : 'undefined',
+            state: FrameData.frameDetails?.state ?? '',
+            transactionId: hash ?? '',
             address: account,
+            messageId: messageId,
+            chatId: window.location.href.split('/').pop() ?? 'null',
+            clientProtocol: 'push',
+            env: env,
+          },
+          trustedData: {
+            messageBytes: serializedProtoMessage,
+            pgpSignature: signedMessage,
           },
         }),
       });
+      if (!response.ok) return;
 
       const data = await response.json();
-
-      const { hash: txid, status } = await TriggerTx(data, provider);
+      const { hash: txid, status } = await TriggerTx(data);
       hash = txid;
+
       if (!txid || status === 'failure') return;
     }
 
     // Makes a POST call to the Frame server after the action has been performed
-    const post_url =
-      button.action === 'tx' ? metaTags.postURL : button?.target!.startsWith('http') ? button.target : metaTags.postURL;
+
+    let post_url = button.post_url ?? FrameData.frameDetails?.postURL ?? url;
+
+    if (button.action === 'post') {
+      post_url = button.target ?? button.post_url ?? FrameData.frameDetails?.postURL ?? url;
+    }
     if (!post_url) return;
-    const response = await fetch(`http://localhost:5004/${post_url}`, {
+    const response = await fetch(`${proxyServer}/${post_url}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        origin: 'http://localhost:4200',
+        Origin: window.location.origin,
       },
       body: JSON.stringify({
         clientProtocol: 'push',
         untrustedData: {
-          url: window.location.hostname,
-          unixTimestamp: Date.now(),
-          buttonIndex: button.index,
-          inputText: inputText,
-          state: metaTags.state,
-          transactionId: hash,
+          url: url,
+          unixTimestamp: Date.now().toString(),
+          buttonIndex: Number(button.index),
+          inputText: FrameData.frameDetails?.inputText ? inputText : 'undefined',
+          state: FrameData.frameDetails?.state ?? '',
+          transactionId: hash ?? '',
+          address: account,
+          messageId: messageId,
+          chatId: window.location.href.split('/').pop() ?? 'null',
+          clientProtocol: 'push',
+          env: env,
+        },
+        trustedData: {
+          messageBytes: serializedProtoMessage,
+          pgpSignature: signedMessage,
         },
       }),
     });
 
     const data = await response.text();
 
-    const frameDetails: FrameDetails = getFormattedMetadata(url, data);
+    const frameDetails: IFrame = getFormattedMetadata(url, data);
     setInputText('');
 
-    setMetaTags(frameDetails);
+    setFrameData(frameDetails);
   };
   return (
     <div>
-      {metaTags.image && (
+      {FrameData.isValidFrame && (
         <div
           style={{
             width: '32rem',
@@ -417,23 +526,44 @@ const FrameRenderer = ({ url, account }: { url: string; account: string }) => {
             href={url}
             target="blank"
           >
-            <img
-              src={metaTags.image}
-              alt="frame"
-              style={{
-                borderRadius: '12px 12px 0px 0px',
-                width: '100%',
-              }}
-            />
+            {!imageLoadingError && (
+              <img
+                src={FrameData.frameDetails?.image ?? FrameData.frameDetails?.ogImage}
+                alt="Frame Fallback"
+                style={{
+                  borderRadius: '12px 12px 0px 0px',
+                  width: '100%',
+                }}
+                onError={() => {
+                  setImageLoadingError(true);
+                }}
+              />
+            )}
+            {imageLoadingError && (
+              <div
+                style={{
+                  borderRadius: '12px 12px 0px 0px',
+                  width: '100%',
+                  height: '300px', // Set the height to match the image height
+                  backgroundColor: '#f0f0f0', // Background color for the div
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  color: '#333', // Text color for the message
+                }}
+              >
+                Image cannot be loaded
+              </div>
+            )}
           </a>
-          {metaTags?.input?.name && metaTags?.input?.content.length > 0 && (
+          {FrameData.frameDetails?.inputText && (
             <div style={{ width: '95%', margin: 'auto', color: 'black' }}>
               <TextInput
                 onInputChange={(e: any) => {
                   setInputText(e.target.value);
                 }}
                 inputValue={inputText as string}
-                placeholder={metaTags.input.content}
+                placeholder={FrameData.frameDetails?.inputText}
               />
             </div>
           )}
@@ -447,27 +577,31 @@ const FrameRenderer = ({ url, account }: { url: string; account: string }) => {
               margin: 'auto',
             }}
           >
-            {metaTags.buttons.map((button) => (
-              <div
-                style={{
-                  width: '100%',
-                }}
-              >
-                <Button
-                  width="98%"
-                  customStyle={{
-                    maxHeight: '12px',
-                    padding: '12px 6px',
-                  }}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onButtonClick(button);
+            {FrameData.frameDetails &&
+              FrameData.frameDetails.buttons.map((button) => (
+                <div
+                  style={{
+                    width: '100%',
                   }}
                 >
-                  {getButtonIconContent(button.action!, button.content)}
-                </Button>
-              </div>
-            ))}
+                  <Button
+                    width="98%"
+                    customStyle={{
+                      maxHeight: '12px',
+                      padding: '12px 6px',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      onButtonClick(button);
+                    }}
+                  >
+                    {getButtonIconContent(button)}
+                  </Button>
+                </div>
+              ))}
           </div>
           <div
             style={{
@@ -517,6 +651,7 @@ const MessageCard = ({
           <FrameRenderer
             url={extractWebLink(chat.messageContent) ?? ''}
             account={account}
+            messageId={chat.link ?? 'null'}
           />
         )}
       </Section>

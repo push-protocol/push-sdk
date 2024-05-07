@@ -34,6 +34,9 @@ type CustomStyleParamsType = {
   borderRadius?: string;
   height?: string;
   maxHeight?: string;
+  whiteSpace?: string;
+  overflow?: string;
+  textOverflow?: string;
 };
 
 /**
