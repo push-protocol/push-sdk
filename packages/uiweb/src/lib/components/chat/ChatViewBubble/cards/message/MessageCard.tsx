@@ -67,6 +67,9 @@ export const MessageCard = ({
       <MessagePreviewSection
         alignSelf={position ? 'end' : 'start'}
         borderRadius={position ? '12px 0px 0px 0px' : '0px 12px 0px 0px'}
+        width="100%"
+        minWidth="inherit"
+        maxWidth="inherit"
         margin="10px 0 0 0"
       >
         <PreviewRenderer

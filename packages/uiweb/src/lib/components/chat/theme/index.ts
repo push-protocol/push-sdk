@@ -37,6 +37,8 @@ interface IBorderRadius {
   chatWidget?: string;
 }
 interface IBackgroundColor {
+  inputBackground?: string;
+  inputHoverBackground?: string;
   chatViewComponentBackground?: string;
   chatProfileBackground?: string;
   messageInputBackground?: string;
@@ -173,6 +175,9 @@ export const lightChatTheme: IChatTheme = {
   },
 
   backgroundColor: {
+    inputBackground: '#fff',
+    inputHoverBackground:
+      'linear-gradient(rgb(244, 245, 250), rgb(244, 245, 250)), linear-gradient(to right, rgb(182, 160, 245), rgb(244, 110, 246), rgb(255, 222, 211), rgba(161 159 161, 1))',
     chatViewComponentBackground: 'linear-gradient(179.97deg, #EEF5FF 0.02%, #ECE9FA 123.25%)',
     chatProfileBackground: '#fff',
     messageInputBackground: '#fff',
@@ -312,6 +317,9 @@ export const darkChatTheme: IChatTheme = {
   },
 
   backgroundColor: {
+    inputBackground: 'rgb(64, 70, 80)',
+    inputHoverBackground:
+      'linear-gradient(#404650, #404650), linear-gradient(to right, rgba(182, 160, 245, 1), rgba(244, 110, 246, 1), rgba(255, 222, 211, 1), rgba(161 159 161, 1))',
     chatViewComponentBackground: 'rgb(40, 42, 46)',
     chatProfileBackground: 'rgb(64, 70, 80)',
     messageInputBackground: 'rgb(64, 70, 80)',
@@ -321,6 +329,7 @@ export const darkChatTheme: IChatTheme = {
     encryptionMessageBackground: 'rgb(64, 70, 80)',
     buttonBackground: 'rgb(202, 89, 155)',
     buttonHotBackground: '#D53A94',
+    searchInputBackground: 'rgb(64,70,80)',
     modalBackground: 'rgb(47, 49, 55)',
     criteriaLabelBackground: 'rgb(47, 49, 55)',
     modalInputBackground: 'transparent',

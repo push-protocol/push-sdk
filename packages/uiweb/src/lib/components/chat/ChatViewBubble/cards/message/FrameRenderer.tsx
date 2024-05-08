@@ -32,6 +32,11 @@ import { MdError, MdOpenInNew } from 'react-icons/md';
 
 // Interfaces & Types
 import { IFrame, IFrameButton } from '../../../../../types';
+import { IChatTheme } from '../../../exportedTypes';
+
+interface FrameInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  theme: IChatTheme;
+}
 
 // Constants
 
@@ -359,11 +364,13 @@ export const FrameRenderer = ({
       justifyContent="center"
       alignItems="center"
       width="100%"
+      minWidth="inherit"
+      maxWidth="inherit"
       background={background}
     >
       {FrameData.isValidFrame && (
         <>
-          <Section>
+          <Section padding="0px 0px 8px 0px">
             <Anchor
               href={url}
               target="blank"
@@ -396,25 +403,14 @@ export const FrameRenderer = ({
           {/* Render input field */}
           {FrameData.frameDetails?.inputText && (
             <Section padding="8px 12px">
-              <TextInput
-                onInputChange={(e: any) => {
-                  setInputText(e.target.value);
-                }}
-                inputValue={inputText as string}
+              <FrameInput
+                theme={theme}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputText(e.target.value)}
+                value={inputText}
                 placeholder={FrameData.frameDetails?.inputText}
               />
             </Section>
           )}
-
-          <Section padding="8px 12px">
-            <TextInput
-              onInputChange={(e: any) => {
-                setInputText(e.target.value);
-              }}
-              inputValue={inputText as string}
-              placeholder={FrameData.frameDetails?.inputText ?? 'Hello World'}
-            />
-          </Section>
 
           {/* Render buttons */}
           {FrameData.frameDetails && FrameData.frameDetails.buttons.length > 0 && (
@@ -458,7 +454,7 @@ export const FrameRenderer = ({
 };
 
 const FrameButton = styled(Button)`
-  flex: auto;
+  flex: 1;
   flex-wrap: wrap;
   padding: 12px 8px;
   background: ${(props) =>
@@ -470,14 +466,39 @@ const FrameButton = styled(Button)`
 `;
 
 const FrameSpan = styled(Span)`
-  display: flex;
-  flex: 1;
+  display: block;
   flex-direction: row;
   justify-content: center;
   gap: 4px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+`;
+
+const FrameInput = styled.input<FrameInputProps>`
+  width: 100%;
+  padding: 16px;
+  margin-top: 8px;
+  color: ${(props) => props.theme.textColor?.chatReceivedBubbleText ?? 'inherit'};
+  background: ${(props) => props.theme.backgroundColor?.inputBackground ?? 'inherit'};
+  border: 1px solid transparent;
+  border-radius: ${(props) => props.theme.borderRadius?.chatViewComponent ?? 'inherit'};
+
+  font-family: ${(props) => props.theme.fontFamily};
+  font-size: 16px;
+
+  font-weight: 500;
+  [readonly='readonly'] {
+    pointer-events: none;
+  }
+
+  &:focus,
+  &:focus-visible {
+    outline: none;
+    background-image: ${(props) => props.theme.backgroundColor?.inputHoverBackground ?? 'initial'};
+    background-clip: padding-box, border-box;
+    border: 1px solid transparent !important;
+  }
 `;
 
 const PreviewAnchor = styled(Anchor)`

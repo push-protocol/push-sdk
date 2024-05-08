@@ -283,6 +283,7 @@ type ImageStyleProps = {
   objectFit?: string;
   margin?: string;
 };
+
 export const Image = styled.img<ImageStyleProps>`
   display: ${(props) => props.display || 'flex'};
   height: ${(props) => props.height || 'auto'};
