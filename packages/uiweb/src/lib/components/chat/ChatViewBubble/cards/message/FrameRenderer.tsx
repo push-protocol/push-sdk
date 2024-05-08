@@ -48,15 +48,11 @@ export const FrameRenderer = ({
   account,
   messageId,
   frameData,
-  position,
-  background,
 }: {
   url: string;
   account: string;
   messageId: string;
   frameData: IFrame;
-  position: number;
-  background: string;
 }) => {
   const { env, user, pgpPrivateKey } = useChatData();
 
@@ -366,7 +362,7 @@ export const FrameRenderer = ({
       width="100%"
       minWidth="inherit"
       maxWidth="inherit"
-      background={background}
+      background={theme.backgroundColor?.chatFrameBackground}
     >
       {FrameData.isValidFrame && (
         <>
@@ -391,7 +387,7 @@ export const FrameRenderer = ({
                 <Section
                   width="100%"
                   padding="16px"
-                  background={background}
+                  background={theme.backgroundColor?.chatFrameBackground}
                   color={theme.textColor?.chatReceivedBubbleText}
                 >
                   Image cannot be loaded

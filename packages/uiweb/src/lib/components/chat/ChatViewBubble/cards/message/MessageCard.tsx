@@ -76,8 +76,6 @@ export const MessageCard = ({
           message={message}
           account={account}
           messageId={chat.link ?? 'null'}
-          position={position}
-          background={theme.backgroundColor?.chatFrameBackground ?? ''}
           previewCallback={previewCallback}
         />
       </MessagePreviewSection>

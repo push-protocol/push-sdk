@@ -31,15 +31,11 @@ export const PreviewRenderer = ({
   message,
   account,
   messageId,
-  position,
-  background,
   previewCallback,
 }: {
   message: string | undefined;
   account: string;
   messageId: string;
-  position: number;
-  background: string;
   previewCallback?: (callback: IPreviewCallback) => void;
 }) => {
   // setup frame data
@@ -127,17 +123,11 @@ export const PreviewRenderer = ({
       account={account}
       messageId={messageId}
       frameData={initialized.frameData}
-      position={position}
-      background={background}
     />
   ) : !initialized.loading && !initialized.error && initialized.url && initialized.urlType === 'video' ? (
     <VideoRenderer
       url={initialized.url}
-      account={account}
-      messageId={messageId}
       frameData={initialized.frameData}
-      position={position}
-      background={background}
     />
   ) : null;
 };
