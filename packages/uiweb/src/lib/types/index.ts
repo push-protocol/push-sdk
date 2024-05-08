@@ -187,7 +187,7 @@ export const MODAL_POSITION_TYPE = {
 } as const;
 
 export type ModalPositionType = keyof typeof MODAL_POSITION_TYPE;
-export interface FrameButton {
+export interface IFrameButton {
   index: string;
   content: string;
   action?: string;
@@ -203,7 +203,7 @@ export interface FrameDetails {
   ogImage: string | null;
   siteURL: string | null;
   postURL: string | null;
-  buttons: FrameButton[];
+  buttons: IFrameButton[];
   inputText?: string | null;
   state?: string | null;
   ofProtocolIdentifier?: string | null;

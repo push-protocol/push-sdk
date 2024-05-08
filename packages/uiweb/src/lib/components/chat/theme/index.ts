@@ -45,6 +45,7 @@ interface IBackgroundColor {
   chatFrameBackground?: string;
   encryptionMessageBackground?: string;
   buttonBackground?: string;
+  buttonHotBackground?: string;
   buttonDisableBackground?: string;
   searchInputBackground?: string;
   modalBackground?: string;
@@ -180,6 +181,7 @@ export const lightChatTheme: IChatTheme = {
     chatFrameBackground: '#f5f5f5',
     encryptionMessageBackground: '#fff',
     buttonBackground: 'rgb(202, 89, 155)',
+    buttonHotBackground: '#D53A94',
     searchInputBackground: 'rgb(244, 245, 250)',
     modalBackground: '#fff',
     modalInputBackground: 'transparent',
@@ -318,6 +320,7 @@ export const darkChatTheme: IChatTheme = {
     chatFrameBackground: '#343536',
     encryptionMessageBackground: 'rgb(64, 70, 80)',
     buttonBackground: 'rgb(202, 89, 155)',
+    buttonHotBackground: '#D53A94',
     modalBackground: 'rgb(47, 49, 55)',
     criteriaLabelBackground: 'rgb(47, 49, 55)',
     modalInputBackground: 'transparent',

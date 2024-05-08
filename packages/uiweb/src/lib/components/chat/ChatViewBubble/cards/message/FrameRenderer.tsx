@@ -17,10 +17,9 @@ import {
   toSerialisedHexString,
 } from '../../../../../helpers';
 import { useChatData } from '../../../../../hooks';
-import { FileMessageContent, FrameButton, FrameDetails, IFrame } from '../../../../../types';
 import { extractWebLink, getFormattedMetadata, hasWebLink } from '../../../../../utilities';
-import { Anchor, Image, Section, Span } from '../../../../reusables';
-import { Button, TextInput } from '../../../reusables';
+import { Anchor, Button, Image, Section, Span } from '../../../../reusables';
+import { TextInput } from '../../../reusables';
 import useToast from '../../../reusables/NewToast';
 import { ThemeContext } from '../../../theme/ThemeProvider';
 
@@ -32,6 +31,7 @@ import { FaBell, FaLink, FaRegThumbsUp } from 'react-icons/fa';
 import { MdError, MdOpenInNew } from 'react-icons/md';
 
 // Interfaces & Types
+import { IFrame, IFrameButton } from '../../../../../types';
 
 // Constants
 
@@ -67,105 +67,36 @@ export const FrameRenderer = ({
   // get theme
   const theme = useContext(ThemeContext);
 
-  const getButtonIconContent = (button: FrameButton) => {
+  const getButtonIconContent = (button: IFrameButton) => {
     switch (button.action) {
       case 'link':
         return (
-          <span
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              gap: '4px',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '0 4px',
-              width: '90%',
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-            }}
-          >
+          <FrameSpan>
             <FaLink /> {button.content}
-          </span>
+          </FrameSpan>
         );
 
       case 'post_redirect':
         return (
-          <span
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              gap: '4px',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '0 4px',
-              width: '90%',
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-            }}
-          >
+          <FrameSpan>
             <MdOpenInNew /> {button.content}
-          </span>
+          </FrameSpan>
         );
       case 'tx':
         return (
-          <span
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              gap: '4px',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '0 4px',
-              width: '90%',
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-            }}
-          >
+          <FrameSpan>
             <BsLightning /> {button.content}
-          </span>
+          </FrameSpan>
         );
 
       case button?.action?.includes('subscribe') && 'subscribe':
         return (
-          <span
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              gap: '4px',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '0 4px',
-              width: '90%',
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-            }}
-          >
+          <FrameSpan>
             <FaBell /> {button.content}
-          </span>
+          </FrameSpan>
         );
       default:
-        return (
-          <span
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              gap: '4px',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '0 4px',
-              width: '100%',
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-            }}
-          >
-            {button.content}
-          </span>
-        );
+        return <FrameSpan style={{}}>{button.content}</FrameSpan>;
     }
   };
 
@@ -195,7 +126,7 @@ export const FrameRenderer = ({
   };
 
   // Function to subscribe to a channel
-  const subscribeToChannel = async (button: FrameButton) => {
+  const subscribeToChannel = async (button: IFrameButton) => {
     if (!user) return { status: 'failure', message: 'User not initialized' };
     const { status, message } = await handleChainChange(button.action!);
     if (status === 'failure') return { status: 'failure', message };
@@ -290,7 +221,7 @@ export const FrameRenderer = ({
   };
 
   // Function to handle button click on a frame button
-  const onButtonClick = async (button: FrameButton) => {
+  const onButtonClick = async (button: IFrameButton) => {
     if (!FrameData.isValidFrame) return;
     if (button.action === 'mint') {
       frameRenderer.showMessageToast({
@@ -423,49 +354,48 @@ export const FrameRenderer = ({
   };
 
   return (
-    <Section>
+    <Section
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+      width="100%"
+      background={background}
+    >
       {FrameData.isValidFrame && (
-        <Section
-          flexDirection="column"
-          justifyContent="center"
-          alignItems="center"
-          width="100%"
-          background={background}
-        >
-          <a
-            href={url}
-            target="blank"
-          >
-            {!imageLoadingError && (
-              <img
-                src={FrameData.frameDetails?.image ?? FrameData.frameDetails?.ogImage ?? ''}
-                alt="Frame Fallback"
-                style={{
-                  width: '100%',
-                }}
-                onError={() => {
-                  setImageLoadingError(true);
-                }}
-              />
-            )}
-            {imageLoadingError && (
-              <div
-                style={{
-                  width: '100%',
-                  height: '300px', // Set the height to match the image height
-                  backgroundColor: '#f0f0f0', // Background color for the div
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  color: '#333', // Text color for the message
-                }}
-              >
-                Image cannot be loaded
-              </div>
-            )}
-          </a>
+        <>
+          <Section>
+            <Anchor
+              href={url}
+              target="blank"
+            >
+              {!imageLoadingError && (
+                <Image
+                  src={FrameData.frameDetails?.image ?? FrameData.frameDetails?.ogImage ?? ''}
+                  alt="Frame Fallback"
+                  style={{
+                    width: '100%',
+                  }}
+                  onError={() => {
+                    setImageLoadingError(true);
+                  }}
+                />
+              )}
+              {imageLoadingError && (
+                <Section
+                  width="100%"
+                  padding="16px"
+                  background={background}
+                  color={theme.textColor?.chatReceivedBubbleText}
+                >
+                  Image cannot be loaded
+                </Section>
+              )}
+            </Anchor>
+          </Section>
+
+          {/* Render input field */}
           {FrameData.frameDetails?.inputText && (
-            <div style={{ width: '95%', margin: 'auto', color: 'black' }}>
+            <Section padding="8px 12px">
               <TextInput
                 onInputChange={(e: any) => {
                   setInputText(e.target.value);
@@ -473,53 +403,44 @@ export const FrameRenderer = ({
                 inputValue={inputText as string}
                 placeholder={FrameData.frameDetails?.inputText}
               />
-            </div>
+            </Section>
           )}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              width: '95%',
-              margin: 'auto',
-            }}
-          >
-            {FrameData.frameDetails &&
-              FrameData.frameDetails.buttons.map((button) => (
-                <div
-                  style={{
-                    width: '100%',
+
+          <Section padding="8px 12px">
+            <TextInput
+              onInputChange={(e: any) => {
+                setInputText(e.target.value);
+              }}
+              inputValue={inputText as string}
+              placeholder={FrameData.frameDetails?.inputText ?? 'Hello World'}
+            />
+          </Section>
+
+          {/* Render buttons */}
+          {FrameData.frameDetails && FrameData.frameDetails.buttons.length > 0 && (
+            <Section
+              padding="8px 12px"
+              gap="8px"
+              justifyContent="space-between"
+            >
+              {FrameData.frameDetails.buttons.map((button) => (
+                <FrameButton
+                  theme={theme}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onButtonClick(button);
                   }}
                 >
-                  <Button
-                    width="98%"
-                    customStyle={{
-                      maxHeight: '12px',
-                      padding: '12px 6px',
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                    }}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      onButtonClick(button);
-                    }}
-                  >
-                    {getButtonIconContent(button)}
-                  </Button>
-                </div>
+                  {getButtonIconContent(button)}
+                </FrameButton>
               ))}
-          </div>
-          <div
-            style={{
-              display: 'flex',
-              width: '96%',
-              justifyContent: 'flex-end',
+            </Section>
+          )}
 
-              marginTop: '10px',
-              marginBottom: '10px',
-            }}
+          {/* Render Preview */}
+          <Section
+            padding="8px 12px"
+            justifyContent="flex-end"
           >
             <PreviewAnchor
               href={url}
@@ -529,12 +450,35 @@ export const FrameRenderer = ({
             >
               {new URL(url).hostname}
             </PreviewAnchor>
-          </div>
-        </Section>
+          </Section>
+        </>
       )}
     </Section>
   );
 };
+
+const FrameButton = styled(Button)`
+  flex: auto;
+  flex-wrap: wrap;
+  padding: 12px 8px;
+  background: ${(props) =>
+    props.theme.backgroundColor.buttonHotBackground ? props.theme.backgroundColor.buttonHotBackground : 'initial'};
+  color: ${(props) => (props.theme.textColor.buttonText ? props.theme.textColor.buttonText : 'initial')};
+  border-radius: ${(props) =>
+    props.theme?.borderRadius.modalInnerComponents ? props.theme?.borderRadius.modalInnerComponents : '0'};
+  border: ${(props) => (props.theme.border.modal ? props.theme.border.modal : 'initial')};
+`;
+
+const FrameSpan = styled(Span)`
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  justify-content: center;
+  gap: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
 
 const PreviewAnchor = styled(Anchor)`
   text-decoration: none;
