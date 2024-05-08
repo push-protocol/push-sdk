@@ -127,12 +127,12 @@ export const SIDEBAR_PLACEHOLDER_KEYS = {
   NEW_CHAT: 'NEW_CHAT',
 } as const;
 
-export type SidebarPlaceholderKeys = (typeof SIDEBAR_PLACEHOLDER_KEYS)[keyof typeof SIDEBAR_PLACEHOLDER_KEYS];
+export type SidebarPlaceholderKeys = typeof SIDEBAR_PLACEHOLDER_KEYS[keyof typeof SIDEBAR_PLACEHOLDER_KEYS];
 
-export type LocalStorageKeys = (typeof LOCAL_STORAGE_KEYS)[keyof typeof LOCAL_STORAGE_KEYS];
-export type PushTabs = (typeof PUSH_TABS)[keyof typeof PUSH_TABS];
-export type PushSubTabs = (typeof PUSH_SUB_TABS)[keyof typeof PUSH_SUB_TABS];
-export type SocketType = (typeof SOCKET_TYPE)[keyof typeof SOCKET_TYPE];
+export type LocalStorageKeys = typeof LOCAL_STORAGE_KEYS[keyof typeof LOCAL_STORAGE_KEYS];
+export type PushTabs = typeof PUSH_TABS[keyof typeof PUSH_TABS];
+export type PushSubTabs = typeof PUSH_SUB_TABS[keyof typeof PUSH_SUB_TABS];
+export type SocketType = typeof SOCKET_TYPE[keyof typeof SOCKET_TYPE];
 
 export interface FileMessageContent {
   content: string;
@@ -195,15 +195,18 @@ export interface FrameButton {
   post_url?: string;
 }
 export interface FrameDetails {
-  version: string;
-  image: string;
-  ogImage: string;
-  siteURL: string;
-  postURL: string;
+  version: string | null;
+  image: string | null;
+  ogTitle: string | null;
+  ogDescription: string | null;
+  ogType: string | null;
+  ogImage: string | null;
+  siteURL: string | null;
+  postURL: string | null;
   buttons: FrameButton[];
-  inputText?: string;
-  state?: string;
-  ofProtocolIdentifier?: string;
+  inputText?: string | null;
+  state?: string | null;
+  ofProtocolIdentifier?: string | null;
 }
 
 export interface IFrame {

@@ -42,6 +42,7 @@ interface IBackgroundColor {
   messageInputBackground?: string;
   chatSentBubbleBackground?: string;
   chatReceivedBubbleBackground?: string;
+  chatFrameBackground?: string;
   encryptionMessageBackground?: string;
   buttonBackground?: string;
   buttonDisableBackground?: string;
@@ -67,6 +68,9 @@ interface ITextColor {
   messageInputText?: string;
   chatSentBubbleText?: string;
   chatReceivedBubbleText?: string;
+  chatFrameTitleText?: string;
+  chatFrameDescriptionText?: string;
+  chatFrameURLText?: string;
   timestamp?: string;
   encryptionMessageText?: string;
   buttonText?: string;
@@ -173,6 +177,7 @@ export const lightChatTheme: IChatTheme = {
     messageInputBackground: '#fff',
     chatSentBubbleBackground: 'rgb(202, 89, 155)',
     chatReceivedBubbleBackground: '#fff',
+    chatFrameBackground: '#f5f5f5',
     encryptionMessageBackground: '#fff',
     buttonBackground: 'rgb(202, 89, 155)',
     searchInputBackground: 'rgb(244, 245, 250)',
@@ -265,6 +270,9 @@ export const lightChatTheme: IChatTheme = {
     messageInputText: '#000',
     chatSentBubbleText: '#fff',
     chatReceivedBubbleText: '#000',
+    chatFrameTitleText: '#000',
+    chatFrameDescriptionText: '#000',
+    chatFrameURLText: '#000',
     timestamp: '400',
     encryptionMessageText: '#000',
     buttonText: '#fff',
@@ -307,6 +315,7 @@ export const darkChatTheme: IChatTheme = {
     messageInputBackground: 'rgb(64, 70, 80)',
     chatSentBubbleBackground: 'rgb(202, 89, 155)',
     chatReceivedBubbleBackground: 'rgb(64, 70, 80)',
+    chatFrameBackground: '#343536',
     encryptionMessageBackground: 'rgb(64, 70, 80)',
     buttonBackground: 'rgb(202, 89, 155)',
     modalBackground: 'rgb(47, 49, 55)',
@@ -397,6 +406,9 @@ export const darkChatTheme: IChatTheme = {
     messageInputText: 'rgb(182, 188, 214)',
     chatSentBubbleText: '#fff',
     chatReceivedBubbleText: 'rgb(182, 188, 214)',
+    chatFrameTitleText: 'rgb(182, 188, 214)',
+    chatFrameDescriptionText: 'rgb(182, 188, 214)',
+    chatFrameURLText: 'rgb(182, 188, 214)',
     timestamp: 'rgb(182, 188, 214)',
     encryptionMessageText: 'rgb(182, 188, 214)',
     buttonText: '#fff',

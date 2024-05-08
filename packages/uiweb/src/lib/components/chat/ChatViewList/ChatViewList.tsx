@@ -387,7 +387,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
               flexDirection="column"
               justifyContent="start"
               width="100%"
-              blur={initialized.isHidden}
+              blur={false}
             >
               {messages &&
                 messages?.map((chat: IMessageIPFS, index: number) => {
@@ -406,7 +406,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
                         <ChatViewBubble
                           decryptedMessagePayload={chat}
                           key={index}
-                          isGroup={chatInfo?.meta?.group ?? false}
+                          isGroup={initialized.chatInfo?.meta?.group ?? false}
                         />
                       </Section>
                     </>

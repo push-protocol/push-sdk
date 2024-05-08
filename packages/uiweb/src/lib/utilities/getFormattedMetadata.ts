@@ -3,27 +3,30 @@ import { FrameDetails } from '../types';
 export function getFormattedMetadata(URL: string, data: any) {
   let frameType: string;
   const frameDetails: FrameDetails = {
-    version: '',
-    image: '',
+    version: null,
+    image: null,
+    ogTitle: null,
+    ogDescription: null,
+    ogType: null,
     siteURL: URL,
-    postURL: '',
+    postURL: null,
     buttons: [],
-    inputText: undefined,
-    ogImage: '',
-    state: undefined,
-    ofProtocolIdentifier: undefined,
+    inputText: null,
+    ogImage: null,
+    state: null,
+    ofProtocolIdentifier: null,
   };
 
   const parser = new DOMParser();
   const doc = parser.parseFromString(data, 'text/html');
 
-  const metaElements: NodeListOf<HTMLMetaElement> =
-    doc.head.querySelectorAll('meta');
+  const metaElements: NodeListOf<HTMLMetaElement> = doc.head.querySelectorAll('meta');
   const fcTags: string[] = [];
   const ofTags: string[] = [];
+  const ogTags: string[] = [];
+
   metaElements.forEach((element) => {
-    const name =
-      element.getAttribute('name') ?? element.getAttribute('property');
+    const name = element.getAttribute('name') ?? element.getAttribute('property');
     switch (name) {
       case 'fc:frame':
       case 'fc:frame:image':
@@ -35,6 +38,7 @@ export function getFormattedMetadata(URL: string, data: any) {
         ofTags.push(name);
         break;
       case 'og:image':
+        ogTags.push(name);
         if (!ofTags.some((tag) => tag === 'og:image')) {
           ofTags.push(name);
         }
@@ -42,20 +46,19 @@ export function getFormattedMetadata(URL: string, data: any) {
           fcTags.push(name);
         }
         break;
+      case 'og:title':
+      case 'og:description':
+        ogTags.push(name);
+        break;
       default:
         break;
     }
   });
 
-  if (
-    ofTags.includes('of:version') &&
-    ofTags.includes('of:image') &&
-    ofTags.includes('of:accepts:push')
-  ) {
+  if (ofTags.includes('of:version') && ofTags.includes('of:image') && ofTags.includes('of:accepts:push')) {
     frameType = 'of';
     metaElements.forEach((element) => {
-      const name =
-        element.getAttribute('name') || element.getAttribute('property');
+      const name = element.getAttribute('name') || element.getAttribute('property');
       const content = element.getAttribute('content');
       if (name === 'og:image') {
         frameDetails.ogImage = content as string;
@@ -63,6 +66,15 @@ export function getFormattedMetadata(URL: string, data: any) {
       if (name && content && name.startsWith('of:')) {
         const index = name.split(':')[2];
         switch (name) {
+          case 'og:title':
+            frameDetails.ogTitle = content;
+            break;
+          case 'og:description':
+            frameDetails.ogDescription = content;
+            break;
+          case 'og:type':
+            frameDetails.ogType = content;
+            break;
           case 'of:version':
             frameDetails.version = content;
             break;
@@ -81,13 +93,9 @@ export function getFormattedMetadata(URL: string, data: any) {
           case `of:button:${index}`:
           case `of:button:${index}:action`:
           case `of:button:${index}:target`: {
-            let type: 'action' | 'target' | 'content' = name
-              .split(':')
-              .pop() as 'action' | 'target' | 'content';
+            let type: 'action' | 'target' | 'content' = name.split(':').pop() as 'action' | 'target' | 'content';
 
-            const buttonIndex = frameDetails.buttons.findIndex(
-              (button) => button.index === index
-            );
+            const buttonIndex = frameDetails.buttons.findIndex((button) => button.index === index);
             if (buttonIndex !== -1) {
               if (type === index) type = 'content';
               frameDetails.buttons[buttonIndex][type] = content;
@@ -99,8 +107,7 @@ export function getFormattedMetadata(URL: string, data: any) {
                 target: undefined,
               });
               if (type === index) type = 'content';
-              frameDetails.buttons[frameDetails.buttons.length - 1][type] =
-                content;
+              frameDetails.buttons[frameDetails.buttons.length - 1][type] = content;
             }
             break;
           }
@@ -113,8 +120,7 @@ export function getFormattedMetadata(URL: string, data: any) {
     frameType = 'fc';
 
     metaElements.forEach((element) => {
-      const name =
-        element.getAttribute('name') || element.getAttribute('property');
+      const name = element.getAttribute('name') || element.getAttribute('property');
 
       const content = element.getAttribute('content');
       if (name === 'og:image') {
@@ -124,6 +130,15 @@ export function getFormattedMetadata(URL: string, data: any) {
         const index = name.split(':')[3];
 
         switch (name) {
+          case 'og:title':
+            frameDetails.ogTitle = content;
+            break;
+          case 'og:description':
+            frameDetails.ogDescription = content;
+            break;
+          case 'og:type':
+            frameDetails.ogType = content;
+            break;
           case 'fc:frame':
             frameDetails.version = content;
             break;
@@ -143,12 +158,11 @@ export function getFormattedMetadata(URL: string, data: any) {
           case `fc:frame:button:${index}:action`:
           case `fc:frame:button:${index}:target`:
           case `fc:frame:button:${index}:post_url`: {
-            let type: 'action' | 'target' | 'content' | 'post_url' = name
-              .split(':')
-              .pop() as 'action' | 'target' | 'content';
-            const buttonIndex = frameDetails.buttons.findIndex(
-              (button) => button.index === index
-            );
+            let type: 'action' | 'target' | 'content' | 'post_url' = name.split(':').pop() as
+              | 'action'
+              | 'target'
+              | 'content';
+            const buttonIndex = frameDetails.buttons.findIndex((button) => button.index === index);
             if (buttonIndex !== -1) {
               if (type === index) type = 'content';
               frameDetails.buttons[buttonIndex][type] = content;
@@ -162,12 +176,34 @@ export function getFormattedMetadata(URL: string, data: any) {
               });
 
               if (type === index) type = 'content';
-              frameDetails.buttons[frameDetails.buttons.length - 1][type] =
-                content;
+              frameDetails.buttons[frameDetails.buttons.length - 1][type] = content;
             }
             break;
           }
           default:
+            break;
+        }
+      }
+    });
+  } else if (ogTags.includes('og:image')) {
+    frameType = 'og';
+    metaElements.forEach((element) => {
+      const name = element.getAttribute('name') || element.getAttribute('property');
+      const content = element.getAttribute('content');
+
+      if (name && content && name.startsWith('og:')) {
+        switch (name) {
+          case 'og:image':
+            frameDetails.ogImage = content as string;
+            break;
+          case 'og:title':
+            frameDetails.ogTitle = content;
+            break;
+          case 'og:description':
+            frameDetails.ogDescription = content;
+            break;
+          case 'og:type':
+            frameDetails.ogType = content;
             break;
         }
       }
