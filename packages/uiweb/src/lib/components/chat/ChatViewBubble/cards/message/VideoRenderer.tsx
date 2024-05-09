@@ -1,13 +1,12 @@
 // React + Web3 Essentials
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 
 // External Packages
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import ReactPlayer from 'react-player/lazy';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 // Internal Compoonents
-import { useChatData } from '../../../../../hooks';
 import { IFrame } from '../../../../../types';
 import { Anchor, Button, Image, Section, Span } from '../../../../reusables';
 import useToast from '../../../reusables/NewToast';
@@ -26,21 +25,11 @@ import { FaPlay } from 'react-icons/fa';
 
 // Exported Functions
 export const VideoRenderer = ({ url, frameData }: { url: string; frameData: IFrame }) => {
-  const { env, user, pgpPrivateKey } = useChatData();
-
-  const [{ wallet }] = useConnectWallet();
-  const [{ connectedChain }, setChain] = useSetChain();
-
-  const frameRenderer = useToast();
-  const proxyServer = 'https://proxy.push.org';
-  const [FrameData, setFrameData] = useState<IFrame>(frameData as IFrame);
-  const [inputText, setInputText] = useState<string>('');
-  const [playVideo, setPlayVideo] = useState<number>(-1);
-  const [imageLoadingError, setImageLoadingError] = useState<boolean>(false);
+  // -1 is user not interacted, 0 is loading, 1 is loaded
+  const [videoLoaded, setVideoLoaded] = useState<number>(-1);
 
   // get theme
   const theme = useContext(ThemeContext);
-  console.log('UIWeb::components::chat::ChatViewBubble::cards::message::VideoRenderer.tsx:: VideoRenderer:: url', url);
 
   return (
     <Section
@@ -52,17 +41,30 @@ export const VideoRenderer = ({ url, frameData }: { url: string; frameData: IFra
       maxWidth="inherit"
       background={theme.backgroundColor?.chatFrameBackground}
     >
-      {FrameData.isValidFrame && (
+      {frameData.isValidFrame && (
         <>
           <Section padding="0px 0px 8px 0px">
             <ReactPlayerSection>
+              {/* remove preview when video is ready */}
+              {videoLoaded !== 1 && (
+                <ReactPlayerImage
+                  src={frameData.frameDetails?.image ?? frameData.frameDetails?.ogImage ?? ''}
+                  className={videoLoaded === 0 ? 'loading' : ''}
+                  alt="React Player Fallback"
+                />
+              )}
+
               <ReactPlayer
                 url={url}
-                light={FrameData.frameDetails?.image ?? FrameData.frameDetails?.ogImage ?? ''}
+                light={frameData.frameDetails?.image ?? frameData.frameDetails?.ogImage ?? ''}
                 playing={true}
                 style={{ position: 'absolute', top: 0, left: 0 }}
                 width="100%"
                 height="100%"
+                onClickPreview={() => {
+                  setVideoLoaded(0);
+                }}
+                onReady={() => setVideoLoaded(1)}
               />
             </ReactPlayerSection>
           </Section>
@@ -71,7 +73,28 @@ export const VideoRenderer = ({ url, frameData }: { url: string; frameData: IFra
           <Section
             padding="8px 12px"
             justifyContent="flex-end"
+            flexDirection="column"
+            gap="4px"
           >
+            {frameData.frameDetails?.ogTitle && (
+              <FrameTitleSpan
+                fontSize={theme.fontSize?.chatFrameTitleText}
+                fontWeight={theme.fontWeight?.chatFrameTitleText}
+                color={theme.textColor?.chatFrameTitleText}
+              >
+                {frameData.frameDetails.ogTitle}
+              </FrameTitleSpan>
+            )}
+
+            {frameData.frameDetails?.ogDescription && (
+              <FrameDescriptionSpan
+                fontSize={theme.fontSize?.chatFrameDescriptionText}
+                color={theme.textColor?.chatFrameDescriptionText}
+              >
+                {frameData.frameDetails.ogDescription}
+              </FrameDescriptionSpan>
+            )}
+
             <PreviewAnchor
               href={url}
               target="_blank"
@@ -87,11 +110,46 @@ export const VideoRenderer = ({ url, frameData }: { url: string; frameData: IFra
   );
 };
 
-const PreviewAnchor = styled(Anchor)`
-  text-decoration: none;
-`;
-
 const ReactPlayerSection = styled(Section)`
   padding-top: 56.25%;
   width: 100%;
+  overflow: hidden;
+`;
+
+const fader = keyframes`
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
+`;
+
+const ReactPlayerImage = styled(Image)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  margin: auto;
+
+  z-index: -1;
+  &.loading {
+    animation: ${fader} 1.5s ease-in infinite;
+  }
+`;
+
+const FrameTitleSpan = styled(Span)`
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 100%;
+  text-align: start;
+`;
+
+const FrameDescriptionSpan = styled(Span)`
+  text-align: start;
+  width: 100%;
+`;
+
+const PreviewAnchor = styled(Anchor)`
+  align-self: flex-end;
+  text-decoration: none;
 `;

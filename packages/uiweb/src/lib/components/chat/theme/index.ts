@@ -109,6 +109,8 @@ interface IFont {
   chatPreviewDateText?: string;
   chatPreviewBadgeText?: string;
   userProfileText?: string;
+  chatFrameTitleText?: string;
+  chatFrameDescriptionText?: string;
 }
 interface IFontWeight {
   chatProfileText?: string;
@@ -127,6 +129,7 @@ interface IFontWeight {
   chatPreviewDateText?: string;
   chatPreviewBadgeText?: string;
   userProfileText?: string;
+  chatFrameTitleText?: string;
 }
 interface IIconColor {
   emoji?: string;
@@ -223,6 +226,8 @@ export const lightChatTheme: IChatTheme = {
     chatPreviewDateText: '12px',
     chatPreviewBadgeText: '12px',
     userProfileText: '18px',
+    chatFrameTitleText: '16px',
+    chatFrameDescriptionText: '14px',
   },
 
   fontWeight: {
@@ -242,6 +247,7 @@ export const lightChatTheme: IChatTheme = {
     chatPreviewDateText: '400',
     chatPreviewBadgeText: '600',
     userProfileText: '500',
+    chatFrameTitleText: '500',
   },
 
   fontFamily: 'inherit',
@@ -278,7 +284,7 @@ export const lightChatTheme: IChatTheme = {
     chatSentBubbleText: '#fff',
     chatReceivedBubbleText: '#000',
     chatFrameTitleText: '#000',
-    chatFrameDescriptionText: '#000',
+    chatFrameDescriptionText: 'rgba(0, 0, 0, 0.5)',
     chatFrameURLText: '#000',
     timestamp: '400',
     encryptionMessageText: '#000',
@@ -365,6 +371,8 @@ export const darkChatTheme: IChatTheme = {
     chatPreviewDateText: '12px',
     chatPreviewBadgeText: '12px',
     userProfileText: '18px',
+    chatFrameTitleText: '16px',
+    chatFrameDescriptionText: '14px',
   },
 
   fontWeight: {
@@ -384,6 +392,7 @@ export const darkChatTheme: IChatTheme = {
     chatPreviewDateText: '400',
     chatPreviewBadgeText: '600',
     userProfileText: '500',
+    chatFrameTitleText: '500',
   },
 
   fontFamily: 'inherit',
@@ -419,7 +428,7 @@ export const darkChatTheme: IChatTheme = {
     chatSentBubbleText: '#fff',
     chatReceivedBubbleText: 'rgb(182, 188, 214)',
     chatFrameTitleText: 'rgb(182, 188, 214)',
-    chatFrameDescriptionText: 'rgb(182, 188, 214)',
+    chatFrameDescriptionText: 'rgba(182, 188, 214, 0.5)',
     chatFrameURLText: 'rgb(182, 188, 214)',
     timestamp: 'rgb(182, 188, 214)',
     encryptionMessageText: 'rgb(182, 188, 214)',
