@@ -3,6 +3,7 @@ import { useContext, useEffect, useState } from 'react';
 
 // External Packages
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
+import ReactPlayer from 'react-player/lazy';
 import styled from 'styled-components';
 
 // Internal Compoonents
@@ -15,9 +16,7 @@ import { ThemeContext } from '../../../theme/ThemeProvider';
 // Internal Configs
 
 // Assets
-import { BsLightning } from 'react-icons/bs';
-import { FaBell, FaLink, FaRegThumbsUp } from 'react-icons/fa';
-import { MdError, MdOpenInNew } from 'react-icons/md';
+import { FaPlay } from 'react-icons/fa';
 
 // Interfaces & Types
 
@@ -36,10 +35,12 @@ export const VideoRenderer = ({ url, frameData }: { url: string; frameData: IFra
   const proxyServer = 'https://proxy.push.org';
   const [FrameData, setFrameData] = useState<IFrame>(frameData as IFrame);
   const [inputText, setInputText] = useState<string>('');
+  const [playVideo, setPlayVideo] = useState<number>(-1);
   const [imageLoadingError, setImageLoadingError] = useState<boolean>(false);
 
   // get theme
   const theme = useContext(ThemeContext);
+  console.log('UIWeb::components::chat::ChatViewBubble::cards::message::VideoRenderer.tsx:: VideoRenderer:: url', url);
 
   return (
     <Section
@@ -54,33 +55,16 @@ export const VideoRenderer = ({ url, frameData }: { url: string; frameData: IFra
       {FrameData.isValidFrame && (
         <>
           <Section padding="0px 0px 8px 0px">
-            <Anchor
-              href={url}
-              target="blank"
-            >
-              {!imageLoadingError && (
-                <Image
-                  src={FrameData.frameDetails?.image ?? FrameData.frameDetails?.ogImage ?? ''}
-                  alt="Frame Fallback"
-                  style={{
-                    width: '100%',
-                  }}
-                  onError={() => {
-                    setImageLoadingError(true);
-                  }}
-                />
-              )}
-              {imageLoadingError && (
-                <Section
-                  width="100%"
-                  padding="16px"
-                  background={theme.backgroundColor?.chatFrameBackground}
-                  color={theme.textColor?.chatReceivedBubbleText}
-                >
-                  Image cannot be loaded
-                </Section>
-              )}
-            </Anchor>
+            <ReactPlayerSection>
+              <ReactPlayer
+                url={url}
+                light={FrameData.frameDetails?.image ?? FrameData.frameDetails?.ogImage ?? ''}
+                playing={true}
+                style={{ position: 'absolute', top: 0, left: 0 }}
+                width="100%"
+                height="100%"
+              />
+            </ReactPlayerSection>
           </Section>
 
           {/* Render Preview */}
@@ -105,4 +89,9 @@ export const VideoRenderer = ({ url, frameData }: { url: string; frameData: IFra
 
 const PreviewAnchor = styled(Anchor)`
   text-decoration: none;
+`;
+
+const ReactPlayerSection = styled(Section)`
+  padding-top: 56.25%;
+  width: 100%;
 `;

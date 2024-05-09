@@ -19,7 +19,7 @@ import { MdError, MdOpenInNew } from 'react-icons/md';
 import { FILE_ICON, allowedNetworks, device } from '../../../config';
 import { formatFileSize, getPfp, pCAIP10ToWallet, shortenText, sign, toSerialisedHexString } from '../../../helpers';
 import { createBlockie } from '../../../helpers/blockies';
-import { FileMessageContent, FrameButton, FrameDetails, IFrame } from '../../../types';
+import { FileMessageContent, FrameDetails, IFrame, IFrameButton } from '../../../types';
 import { extractWebLink, getFormattedMetadata, hasWebLink } from '../../../utilities';
 import { IMessagePayload, TwitterFeedReturnType } from '../exportedTypes';
 import { Button, TextInput } from '../reusables';

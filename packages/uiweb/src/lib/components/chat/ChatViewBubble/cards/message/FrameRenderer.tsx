@@ -410,7 +410,7 @@ export const FrameRenderer = ({
 
           {/* Render buttons */}
           {FrameData.frameDetails && FrameData.frameDetails.buttons.length > 0 && (
-            <Section
+            <FrameButtonSection
               padding="8px 12px"
               gap="8px"
               justifyContent="space-between"
@@ -426,7 +426,7 @@ export const FrameRenderer = ({
                   {getButtonIconContent(button)}
                 </FrameButton>
               ))}
-            </Section>
+            </FrameButtonSection>
           )}
 
           {/* Render Preview */}
@@ -449,6 +449,10 @@ export const FrameRenderer = ({
   );
 };
 
+const FrameButtonSection = styled(Section)`
+  flex-wrap: wrap;
+`;
+
 const FrameButton = styled(Button)`
   flex: 1;
   flex-wrap: wrap;
@@ -459,10 +463,11 @@ const FrameButton = styled(Button)`
   border-radius: ${(props) =>
     props.theme?.borderRadius.modalInnerComponents ? props.theme?.borderRadius.modalInnerComponents : '0'};
   border: ${(props) => (props.theme.border.modal ? props.theme.border.modal : 'initial')};
+  min-width: 120px;
 `;
 
 const FrameSpan = styled(Span)`
-  display: block;
+  display: flex;
   flex-direction: row;
   justify-content: center;
   gap: 4px;

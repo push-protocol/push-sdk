@@ -21,7 +21,7 @@ import { FILE_ICON, allowedNetworks } from '../../../../../config';
 import { MdDownload } from 'react-icons/md';
 
 // Interfaces & Types
-import { FileMessageContent, FrameButton, FrameDetails, IFrame } from '../../../../../types';
+import { FileMessageContent, FrameDetails, IFrame, IFrameButton } from '../../../../../types';
 import { IMessagePayload } from '../../../exportedTypes';
 
 // Constants
