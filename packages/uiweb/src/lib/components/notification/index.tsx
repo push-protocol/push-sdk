@@ -2,11 +2,7 @@ import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 
-import {
-  MediaHelper,
-  convertTimeStamp,
-  extractTimeStamp,
-} from '../../utilities';
+import { MediaHelper, convertTimeStamp, extractTimeStamp } from '../../utilities';
 import IPFSIcon from '../ipfsicon';
 import Loader from '../loader/loader';
 import ImageOverlayComponent from '../overlay';
@@ -15,12 +11,17 @@ import chainDetails from './chainDetails';
 import { DecryptButton, useDecrypt } from './decrypt';
 import ActionButton from './styled/ActionButton';
 
-import { useDivOffsetWidth } from "../../hooks";
-import { LinkIcon } from "../../icons/Link";
+import { useDivOffsetWidth } from '../../hooks';
+import { LinkIcon } from '../../icons/Link';
 
 import type { INotificationItemTheme } from './theme';
 import { getCustomTheme } from './theme';
-export { baseTheme as notificationBaseTheme, darkTheme as notificationDarkTheme, lightTheme as notificationLightTheme, type INotificationItemTheme } from './theme';
+export {
+  baseTheme as notificationBaseTheme,
+  darkTheme as notificationDarkTheme,
+  lightTheme as notificationLightTheme,
+  type INotificationItemTheme,
+} from './theme';
 
 // ================= Define types
 export type chainNameType =
@@ -67,7 +68,7 @@ export type NotificationItemProps = {
 
 type ContainerDataType = {
   timestamp?: string;
-}& OffsetWidthType;
+} & OffsetWidthType;
 type OffsetWidthType = {
   offsetWidth: number;
 };
@@ -103,20 +104,13 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
   isSecret,
   decryptFn,
 }) => {
-  const { notificationBody: parsedBody, timeStamp } = extractTimeStamp(
-    notificationBody || ''
+  const { notificationBody: parsedBody, timeStamp } = extractTimeStamp(notificationBody || '');
+  const themeObject = getCustomTheme(theme, customTheme!);
+
+  const { notifTitle, notifBody, notifCta, notifImage, setDecryptedValues, isSecretRevealed } = useDecrypt(
+    { notificationTitle, parsedBody, cta, image },
+    isSecret
   );
-  const themeObject = getCustomTheme(theme,customTheme!);
-
-
-  const {
-    notifTitle,
-    notifBody,
-    notifCta,
-    notifImage,
-    setDecryptedValues,
-    isSecretRevealed,
-  } = useDecrypt({ notificationTitle, parsedBody, cta, image }, isSecret);
 
   const isCtaURLValid = MediaHelper.validURL(notifCta);
   const isChannelURLValid = MediaHelper.validURL(url);
@@ -126,7 +120,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
   const [subscribeLoading, setSubscribeLoading] = React.useState(false);
   const [isSubscribed, setIsSubscribed] = React.useState(true); //use this to confirm if this is s
   const [divRef, offsetWidth] = useDivOffsetWidth();
-  
+
   const showMetaInfo = isSecret || timeStamp;
   // console.log({
   //   chainName,
@@ -190,7 +184,6 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
   return (
     <Container
       timestamp={timeStamp}
- 
       offsetWidth={offsetWidth}
       ref={divRef}
       themeObject={themeObject!}
@@ -198,38 +191,52 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
       {/* header that only pops up on small devices */}
       <MobileHeader themeObject={themeObject!}>
         <HeaderButton themeObject={themeObject!}>
-          <ImageContainer  offsetWidth={offsetWidth} theme={theme}>
-            <IPFSIcon icon={icon} />
+          <ImageContainer
+            offsetWidth={offsetWidth}
+            theme={theme}
+          >
+            <img
+              style={{ width: '100%', borderRadius: '8px' }}
+              src={icon}
+              title={`Channel icon for ${app}`}
+              alt=""
+            />
           </ImageContainer>
           <ChannelName onClick={goToURL}>{app}</ChannelName>
         </HeaderButton>
         {chainName && chainDetails[chainName] ? (
           <BlockchainContainer>
-            <ChainIconSVG  offsetWidth={offsetWidth}>{chainDetails[chainName].icon}</ChainIconSVG>
+            <ChainIconSVG offsetWidth={offsetWidth}>{chainDetails[chainName].icon}</ChainIconSVG>
           </BlockchainContainer>
         ) : null}
       </MobileHeader>
       {/* header that only pops up on small devices */}
 
       {/* content of the component */}
-      <ContentSection themeObject={themeObject!}  offsetWidth={offsetWidth} onClick={isCtaURLValid ? gotToCTA : undefined} cta={isCtaURLValid}>
+      <ContentSection
+        themeObject={themeObject!}
+        offsetWidth={offsetWidth}
+        onClick={isCtaURLValid ? gotToCTA : undefined}
+        cta={isCtaURLValid}
+      >
         {/* section for media content */}
         {notifImage &&
           // if its an image then render this
           (!MediaHelper.isMediaSupportedVideo(notifImage) ? (
             <MobileImage
-            theme={theme}
-            offsetWidth={offsetWidth}
-    
+              theme={theme}
+              offsetWidth={offsetWidth}
               style={{ cursor: 'pointer' }}
               onClick={() => setImageOverlay(notifImage || '')}
             >
-              <img src={notifImage} alt="" />
+              <img
+                src={notifImage}
+                alt=""
+              />
             </MobileImage>
           ) : // if its a youtube url, RENDER THIS
           MediaHelper.isMediaYoutube(notifImage) ? (
-            <MobileImage 
-            offsetWidth={offsetWidth} >
+            <MobileImage offsetWidth={offsetWidth}>
               <iframe
                 id="ytplayer"
                 width="640"
@@ -242,8 +249,15 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
           ) : (
             // if its aN MP4 url, RENDER THIS
             <MobileImage offsetWidth={offsetWidth}>
-              <video width="360" height="100%" controls>
-                <source src={notifImage} type="video/mp4" />
+              <video
+                width="360"
+                height="100%"
+                controls
+              >
+                <source
+                  src={notifImage}
+                  type="video/mp4"
+                />
                 Your browser does not support the video tag.
               </video>
             </MobileImage>
@@ -252,29 +266,26 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
 
         {/* section for text content */}
         <ChannelDetailsWrapper>
-          <ChannelTitle 
-          themeObject={themeObject!}
+          <ChannelTitle
+            themeObject={themeObject!}
             cta={isCtaURLValid}
             offsetWidth={offsetWidth}
-       
           >
-            <ChannelTitleText themeObject={themeObject!}>
-              {notifTitle}
-            </ChannelTitleText>
+            <ChannelTitleText themeObject={themeObject!}>{notifTitle}</ChannelTitleText>
             {/* display link svg if notification has a valid cta url */}
-            {
-              isCtaURLValid
-              ?
-              <span style={{height: "20px", marginLeft: "7px"}} >
+            {isCtaURLValid ? (
+              <span style={{ height: '20px', marginLeft: '7px' }}>
                 <LinkIcon />
-                </span>
-                  
-              :
-                ""
-            }
+              </span>
+            ) : (
+              ''
+            )}
           </ChannelTitle>
           <ChannelDesc themeObject={themeObject!}>
-            <ChannelDescLabel  themeObject={themeObject!} cta={isCtaURLValid} >
+            <ChannelDescLabel
+              themeObject={themeObject!}
+              cta={isCtaURLValid}
+            >
               <ParseMarkdownText text={notifBody} />
             </ChannelDescLabel>
           </ChannelDesc>
@@ -284,11 +295,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
         <ButtonGroupContainer>
           <ButtonGroup>
             {/* include a channel opt into */}
-            {isSpam && (
-              <ActionButton onClick={onSubscribe}>
-                {subscribeLoading ? <Loader /> : 'opt-in'}
-              </ActionButton>
-            )}
+            {isSpam && <ActionButton onClick={onSubscribe}>{subscribeLoading ? <Loader /> : 'opt-in'}</ActionButton>}
             {/* include a channel opt into */}
 
             {isSecret ? (
@@ -303,7 +310,10 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
       {/* content of the component */}
 
       {/* Meta Data section */}
-      <ChannelMetaInfo hidden={!showMetaInfo} hasLeft={false}>
+      <ChannelMetaInfo
+        hidden={!showMetaInfo}
+        hasLeft={false}
+      >
         {/* For left aligned items use ChannelMetaInfoLeft as parent */}
         <ChannelMetaInfoLeft hidden></ChannelMetaInfoLeft>
 
@@ -315,11 +325,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
             </SecretIconContainer>
           ) : null}
 
-          {timeStamp ? (
-            <TimestampLabel themeObject={themeObject!} >
-              {convertTimeStamp(timeStamp)}
-            </TimestampLabel>
-          ) : null}
+          {timeStamp ? <TimestampLabel themeObject={themeObject!}>{convertTimeStamp(timeStamp)}</TimestampLabel> : null}
         </ChannelMetaInfoRight>
       </ChannelMetaInfo>
 
@@ -345,7 +351,7 @@ NotificationItem.propTypes = {
   subscribeFn: PropTypes.func,
   isSubscribedFn: PropTypes.func,
   theme: PropTypes.string,
-  customTheme:PropTypes.object
+  customTheme: PropTypes.object,
 };
 
 NotificationItem.defaultProps = {
@@ -371,28 +377,26 @@ const ContentSection = styled.div<CTADataType & CustomThemeProps & OffsetWidthTy
   cursor: ${(props) => (props.cta ? 'pointer' : 'default')};
 
   &:hover {
-    background: ${(props) =>
-      props.cta ? (props?.themeObject?.color?.contentHoverBackground) : 'none'};
+    background: ${(props) => (props.cta ? props?.themeObject?.color?.contentHoverBackground : 'none')};
   }
   ${(props: any) =>
-    props.offsetWidth>461 &&
+    props.offsetWidth > 461 &&
     css`
-    @media (min-width: ${SM_BREAKPOINT}) {
-      align-items: flex-start;
-      flex-direction: row;
-      gap: 20px;
-      justify-content: space-between;
-    }
-    @media (max-width: ${SM_BREAKPOINT}) {
-      flex-direction: column;
-    }
+      @media (min-width: ${SM_BREAKPOINT}) {
+        align-items: flex-start;
+        flex-direction: row;
+        gap: 20px;
+        justify-content: space-between;
+      }
+      @media (max-width: ${SM_BREAKPOINT}) {
+        flex-direction: column;
+      }
     `};
-  
+
   ${(props: any) =>
-    props.offsetWidth<=461 &&
+    props.offsetWidth <= 461 &&
     css`
-    flex-direction: column;
-  
+      flex-direction: column;
     `};
 `;
 
@@ -417,11 +421,10 @@ const ChainIconSVG = styled.div<OffsetWidthType>`
     width: 18px;
     height: 18px;
   }
- 
 `;
 
-const MobileImage = styled.div<OffsetWidthType & {theme?:string}>`
-  overflow:hidden;
+const MobileImage = styled.div<OffsetWidthType & { theme?: string }>`
+  overflow: hidden;
   img,
   iframe,
   video {
@@ -433,56 +436,52 @@ const MobileImage = styled.div<OffsetWidthType & {theme?:string}>`
     border: 0;
   }
 
-
-
-  ${(props: OffsetWidthType & {theme?:string}) =>
-    props.offsetWidth>461 &&
+  ${(props: OffsetWidthType & { theme?: string }) =>
+    props.offsetWidth > 461 &&
     css`
-    @media (min-width: ${SM_BREAKPOINT}) {
-      border: 1px solid ${props => (props.theme as unknown as string)  === 'light' ? '#ededed' : '#444'};
-      border-radius: 10px;
-      min-width: 220px;
-      width: 220px;
-      height: 200px;
-    }
-    @media (max-width: ${SM_BREAKPOINT}) {
+      @media (min-width: ${SM_BREAKPOINT}) {
+        border: 1px solid ${(props) => ((props.theme as unknown as string) === 'light' ? '#ededed' : '#444')};
+        border-radius: 10px;
+        min-width: 220px;
+        width: 220px;
+        height: 200px;
+      }
+      @media (max-width: ${SM_BREAKPOINT}) {
+        display: block;
+        width: 100%;
+        max-height: 200px;
+        margin-bottom: 12px;
+        border: 0;
+
+        img,
+        iframe,
+        video {
+          border: 0;
+          border-radius: 0;
+        }
+      }
+    `};
+
+  ${(props: any) =>
+    props.offsetWidth <= 461 &&
+    css`
       display: block;
       width: 100%;
       max-height: 200px;
       margin-bottom: 12px;
       border: 0;
-  
+
       img,
       iframe,
       video {
         border: 0;
         border-radius: 0;
       }
-    }
     `};
-  
-  ${(props: any) =>
-    props.offsetWidth<=461 &&
-    css`
-    display: block;
-      width: 100%;
-      max-height: 200px;
-      margin-bottom: 12px;
-      border: 0;
-  
-      img,
-      iframe,
-      video {
-        border: 0;
-        border-radius: 0;
-      }
-  
-    `};
-  
 `;
 
-const ImageContainer = styled.span<OffsetWidthType & {theme?:string}>`
-  background: ${(props) => (props.theme === "light" ? "#ededed" : "#444")};
+const ImageContainer = styled.span<OffsetWidthType & { theme?: string }>`
+  background: ${(props) => (props.theme === 'light' ? '#ededed' : '#444')};
   display: inline-block;
   margin-right: 10px;
   border-radius: 5px;
@@ -564,36 +563,31 @@ const ChannelTitle = styled.div<CTADataType & OffsetWidthType & CustomThemeProps
   }
 
   ${(props: any) =>
-    props.offsetWidth>461 &&
+    props.offsetWidth > 461 &&
     css`
-    @media (max-width: ${SM_BREAKPOINT}) {
-      margin-bottom: 6px;
-    }
+      @media (max-width: ${SM_BREAKPOINT}) {
+        margin-bottom: 6px;
+      }
     `};
-  
+
   ${(props: any) =>
-    props.offsetWidth<=461 &&
+    props.offsetWidth <= 461 &&
     css`
-    margin-bottom: 6px;
-  
+      margin-bottom: 6px;
     `};
-  
 `;
 
 const ChannelTitleText = styled.div<CustomThemeProps>`
   font-size: ${(props) => props?.themeObject?.fontSize?.notificationTitleText};
-  font-weight: ${(props) =>
-    props?.themeObject?.fontWeight?.notificationTitleText};
+  font-weight: ${(props) => props?.themeObject?.fontWeight?.notificationTitleText};
 `;
 const ChannelDesc = styled.div<CustomThemeProps>`
   line-height: 20px;
   flex: 1;
   display: flex;
-  font-size: ${(props) =>
-    props?.themeObject?.fontSize?.notificationContentText};
+  font-size: ${(props) => props?.themeObject?.fontSize?.notificationContentText};
   color: ${(props) => props?.themeObject?.color?.notificationContentText};
-  font-weight: ${(props) =>
-    props?.themeObject?.fontWeight?.notificationContentText};
+  font-weight: ${(props) => props?.themeObject?.fontWeight?.notificationContentText};
   flex-direction: column;
 `;
 
@@ -647,12 +641,7 @@ const SecretIcon = styled.div`
   height: 12px;
 
   border-radius: 50%;
-  background: linear-gradient(
-    135deg,
-    #e20880 12.5%,
-    #674c9f 49.89%,
-    #35c5f3 87.5%
-  );
+  background: linear-gradient(135deg, #e20880 12.5%, #674c9f 49.89%, #35c5f3 87.5%);
 `;
 
 const ButtonGroupContainer = styled.div`

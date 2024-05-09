@@ -4,14 +4,15 @@ import {
   getDomainInformation,
   getSubscriptionMessage,
 } from './signature.helpers';
-import Constants, {ENV} from '../constants';
-import { SignerType } from "../types";
-import { axiosPost } from "../utils/axiosUtil";
+import Constants, { ENV } from '../constants';
+import { SignerType } from '../types';
+import { axiosPost } from '../utils/axiosUtil';
 export type SubscribeOptionsType = {
   signer: SignerType;
   channelAddress: string;
   userAddress: string;
   verifyingContractAddress?: string;
+  origin?: string;
   env?: ENV;
   onSuccess?: () => void;
   onError?: (err: Error) => void;
@@ -23,6 +24,7 @@ export const subscribe = async (options: SubscribeOptionsType) => {
     channelAddress,
     userAddress,
     verifyingContractAddress,
+    origin,
     env = Constants.ENV.PROD,
     onSuccess,
     onError,
@@ -86,6 +88,7 @@ export const subscribe = async (options: SubscribeOptionsType) => {
         channel: _channelAddress,
         subscriber: _userAddress,
       },
+      origin: origin
     };
 
     await axiosPost(requestUrl, body);

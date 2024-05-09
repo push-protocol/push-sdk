@@ -1,6 +1,6 @@
 {
   "name": "@pushprotocol/uiweb",
-  "version": "0.0.1-alpha.46",
+  "version": "1.4.0-alpha.4",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
@@ -37,7 +37,7 @@
     "uuid": "^9.0.1"
   },
   "peerDependencies": {
-    "@pushprotocol/restapi": "0.0.1-alpha.80",
+    "@pushprotocol/restapi": "1.7.13",
     "@pushprotocol/socket": "^0.5.0",
     "react": ">=16.8.0",
     "styled-components": "^6.0.8"

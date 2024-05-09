@@ -28,6 +28,7 @@ export class PushAPI {
   private readMode: boolean;
   private alpha: { feature: string[] };
   public account: string;
+  public chainWiseAccount: string;
   public decryptedPgpPvtKey?: string;
   public pgpPublicKey?: string;
   public env: ENV;
@@ -65,6 +66,7 @@ export class PushAPI {
     this.alpha = alpha;
     this.env = env;
     this.account = account;
+    this.chainWiseAccount = walletToPCAIP10(account);
     this.decryptedPgpPvtKey = decryptedPgpPvtKey;
     this.pgpPublicKey = pgpPublicKey;
     this.progressHook = progressHook;
@@ -274,7 +276,6 @@ export class PushAPI {
           readMode = true;
         }
       }
-      derivedAccount = walletToPCAIP10(derivedAccount);
       // Initialize PushAPI instance
       const api = new PushAPI(
         settings.env as ENV,

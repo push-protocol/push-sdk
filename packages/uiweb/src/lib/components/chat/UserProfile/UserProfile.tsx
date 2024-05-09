@@ -5,7 +5,7 @@ import { IUser } from '@pushprotocol/restapi';
 import { ethers } from 'ethers';
 import styled from 'styled-components';
 
-import { resolveWeb3Name, shortenText } from '../../../helpers';
+import { pCAIP10ToWallet, resolveWeb3Name, shortenText } from '../../../helpers';
 import { useClickAway } from '../../../hooks';
 import { useChatData } from '../../../hooks/chat/useChatData';
 import useChatProfile from '../../../hooks/chat/useChatProfile';
@@ -81,76 +81,76 @@ export const UserProfile: React.FC<UserProfileProps> = ({
 
   return (
     <Conatiner
-        height="inherit"
-        justifyContent="space-between"
-        overflow="hidden"
-        width="100%"
-        padding="14px 10px"
-        borderRadius={theme?.borderRadius?.userProfile}
-        background={theme?.backgroundColor?.userProfileBackground}
+      height="inherit"
+      justifyContent="space-between"
+      overflow="hidden"
+      width="100%"
+      padding="14px 10px"
+      borderRadius={theme?.borderRadius?.userProfile}
+      background={theme?.backgroundColor?.userProfileBackground}
+      theme={theme}
+    >
+      <ProfileContainer
         theme={theme}
-      >
-        <ProfileContainer
+        member={{
+          web3Name: web3Name,
+          abbrRecipient: shortenText(pCAIP10ToWallet(user?.account || ''), 8, true) as string,
+          recipient: user!.account,
+          icon: userProfile?.profile?.picture || null,
+        }}
+        copy={true}
+        customStyle={{
+          fontSize: theme?.fontSize?.userProfileText,
+          fontWeight: theme?.fontWeight?.userProfileText,
+          textColor: theme?.textColor?.userProfileText,
+        }}
+        loading={!userProfile ? true : false}
+      />
+      {userProfile && (
+        <Section>
+          <Image
+            src={VerticalEllipsisIcon}
+            height="21px"
+            maxHeight="21px"
+            color={theme?.iconColor?.userProfileSettings}
+            width={'auto'}
+            cursor="pointer"
+            onClick={() => setOptions(true)}
+          />
+        </Section>
+      )}
+      {options && (
+        <DropDownBar
           theme={theme}
-          member={{
-            web3Name: web3Name,
-            abbrRecipient: shortenText(user?.account || '', 8, true) as string,
-            recipient: user!.account,
-            icon: userProfile?.profile?.picture || null,
-          }}
-          copy={true}
-          customStyle={{
-            fontSize: theme?.fontSize?.userProfileText,
-            fontWeight: theme?.fontWeight?.userProfileText,
-            textColor: theme?.textColor?.userProfileText,
-          }}
-          loading={!userProfile ? true : false}
-        />
-        {userProfile && (
-          <Section>
+          ref={DropdownRef}
+          onClick={() => setShowUpdateUserProfileModal(true)}
+        >
+          <DropDownItem cursor="pointer">
             <Image
-              src={VerticalEllipsisIcon}
-              height="21px"
-              maxHeight="21px"
-              color={theme?.iconColor?.userProfileSettings}
+              src={UserProfileIcon}
+              height="32px"
+              maxHeight="32px"
               width={'auto'}
               cursor="pointer"
-              onClick={() => setOptions(true)}
             />
-          </Section>
-        )}
-        {options && (
-          <DropDownBar
-            theme={theme}
-            ref={DropdownRef}
-            onClick={() => setShowUpdateUserProfileModal(true)}
-          >
-            <DropDownItem cursor="pointer">
-              <Image
-                src={UserProfileIcon}
-                height="32px"
-                maxHeight="32px"
-                width={'auto'}
-                cursor="pointer"
-              />
 
-              <TextItem cursor="pointer">Edit Profile</TextItem>
-            </DropDownItem>
-          </DropDownBar>
+            <TextItem cursor="pointer">Edit Profile</TextItem>
+          </DropDownItem>
+        </DropDownBar>
+      )}
+      {showUpdateUserProfileModal &&
+        createPortal(
+          <UpdateUserProfileModal
+            theme={theme}
+            setModal={setShowUpdateUserProfileModal}
+            userProfile={userProfile!}
+            setUserProfile={setUserProfile}
+            updateUserProfileModalBackground={updateUserProfileModalBackground}
+            updateUserProfileModalPositionType={updateUserProfileModalPositionType}
+          />,
+          document.body
         )}
-        {showUpdateUserProfileModal &&
-          createPortal(
-            <UpdateUserProfileModal
-              theme={theme}
-              setModal={setShowUpdateUserProfileModal}
-              userProfile={userProfile!}
-              setUserProfile={setUserProfile}
-              updateUserProfileModalBackground={updateUserProfileModalBackground}
-              updateUserProfileModalPositionType={updateUserProfileModalPositionType}
-            />,
-            document.body
-          )}
-      </Conatiner>
+    </Conatiner>
   );
 };
 

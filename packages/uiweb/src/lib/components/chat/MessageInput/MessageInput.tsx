@@ -291,7 +291,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       }
     } else {
       const sendTextMessage = await sendMessage({
-        message: `Hello, please let me join this group, my wallet address is ${user?.account}`,
+        message: `Hello, please let me join this group, my wallet address is ${pCAIP10ToWallet(user?.account || '')}`,
         chatId: groupInfo?.groupCreator || '',
         messageType: 'Text',
       });
