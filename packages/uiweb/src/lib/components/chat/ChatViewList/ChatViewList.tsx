@@ -1,43 +1,36 @@
+// React + Web3 Essentials
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
-import {
-  IMessageIPFS,
-  IMessageIPFSWithCID,
-  IUser,
-} from '@pushprotocol/restapi';
+// External Packages
+import { IMessageIPFS, IMessageIPFSWithCID, IUser } from '@pushprotocol/restapi';
 import moment from 'moment';
-import styled from 'styled-components';
-import { ToastContainer } from 'react-toastify';
 import { MdError } from 'react-icons/md';
+import styled from 'styled-components';
 
+// Internal Compoonents
 import { chatLimit } from '../../../config';
-import {
-  appendUniqueMessages,
-  dateToFromNowDaily,
-  getAddress,
-  pCAIP10ToWallet,
-  walletToPCAIP10,
-} from '../../../helpers';
+import { appendUniqueMessages, dateToFromNowDaily, pCAIP10ToWallet, walletToPCAIP10 } from '../../../helpers';
 import { useChatData, usePushChatStream } from '../../../hooks';
+import useFetchChat from '../../../hooks/chat/useFetchChat';
 import useFetchMessageUtilities from '../../../hooks/chat/useFetchMessageUtilities';
+import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
+import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities';
+import usePushUser from '../../../hooks/usePushUser';
 import { Section, Span, Spinner } from '../../reusables';
 import { ChatViewBubble } from '../ChatViewBubble';
-import { Group, IChatViewListProps } from '../exportedTypes';
-import { IChatTheme } from '../theme';
+import { checkIfNewRequest, transformStreamToIMessageIPFSWithCID } from '../helpers';
+import { ActionRequestBubble } from './ActionRequestBubble';
+import { ENCRYPTION_KEYS, EncryptionMessage } from './MessageEncryption';
+
+// Internal Configs
 import { ThemeContext } from '../theme/ThemeProvider';
 
-import useFetchChat from '../../../hooks/chat/useFetchChat';
-import { ApproveRequestBubble } from './ApproveRequestBubble';
-import { ENCRYPTION_KEYS, EncryptionMessage } from './MessageEncryption';
-import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities';
+// Assets
+
+// Interfaces & Types
+import { Group, IChatViewListProps } from '../exportedTypes';
+import { IChatTheme } from '../theme';
 import { ChatInfoResponse } from '../types';
-import useUserProfile from '../../../hooks/useUserProfile';
-import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
-import useToast from '../reusables/NewToast';
-import {
-  checkIfNewRequest,
-  transformStreamToIMessageIPFSWithCID,
-} from '../helpers';
 
 /**
  * @interface IThemeProps
@@ -47,202 +40,158 @@ interface IThemeProps {
   theme?: IChatTheme;
   blur: boolean;
 }
-const ChatStatus = {
+
+interface IChatViewListInitialized {
+  loading: boolean;
+  chatInfo: ChatInfoResponse | null;
+  groupInfo: Group | null;
+  isParticipant: boolean;
+  isHidden: boolean;
+  invalidChat: boolean;
+}
+
+// Constants
+const CHAT_STATUS = {
   FIRST_CHAT: `This is your first conversation with recipient.\n Start the conversation by sending a message.`,
   INVALID_CHAT: 'Invalid chatId',
 };
 
-export const ChatViewList: React.FC<IChatViewListProps> = (
-  options: IChatViewListProps
-) => {
-  const { chatId, limit = chatLimit, chatFilterList = [] } = options || {};
-  const { account, user } = useChatData();
-  const [chatInfo, setChatInfo] = useState<ChatInfoResponse | null>(null);
-  const [groupInfo, setGroupInfo] = useState<Group | null>(null);
-  const [userInfo, setUserInfo] = useState<IUser | null>(null);
+// Exported Interfaces & Types
 
-  const [chatStatusText, setChatStatusText] = useState<string>('');
+// Exported Functions
+export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewListProps) => {
+  // setup loading state
+  const [initialized, setInitialized] = useState<IChatViewListInitialized>({
+    loading: true,
+    chatInfo: null,
+    groupInfo: null,
+    isParticipant: false,
+    isHidden: false,
+    invalidChat: false,
+  });
+
+  const { chatId, limit = chatLimit, chatFilterList = [] } = options || {};
+  const { user, toast } = useChatData();
+  const [groupInfo, setGroupInfo] = useState<Group | null>(null);
+
+  // const [chatStatusText, setChatStatusText] = useState<string>('');
   const [messages, setMessages] = useState<IMessageIPFSWithCID[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const { historyMessages, historyLoading: messageLoading } =
-    useFetchMessageUtilities();
+  const { historyMessages, historyLoading: messageLoading } = useFetchMessageUtilities();
   const listInnerRef = useRef<HTMLDivElement>(null);
-  const [isMember, setIsMember] = useState<boolean>(false);
+  const [stopPagination, setStopPagination] = useState<boolean>(false);
   const { fetchChat } = useFetchChat();
-  const { fetchUserProfile } = useUserProfile();
   const { getGroupByIDnew } = useGetGroupByIDnew();
   const { fetchMemberStatus } = useGroupMemberUtilities();
-  const chatViewListToast = useToast();
 
-  //hack for stream not working
-  const [chatStream, setChatStream] = useState<any>({}); // to track any new messages
-  const [chatRequestStream, setChatRequestStream] = useState<any>({}); // to track any new messages
+  // for stream
+  const {
+    chatStream,
+    chatAcceptStream,
+    chatRequestStream,
+    participantJoinStream,
+    participantLeaveStream,
+    participantRemoveStream,
+    groupUpdateStream,
+  } = useChatData();
 
-  const [chatAcceptStream, setChatAcceptStream] = useState<any>({}); // to track any new messages
-  const [participantRemoveStream, setParticipantRemoveStream] = useState<any>(
-    {}
-  ); // to track if a participant is removed from group
-  const [participantLeaveStream, setParticipantLeaveStream] = useState<any>({}); // to track if a participant leaves a group
-  const [participantJoinStream, setParticipantJoinStream] = useState<any>({}); // to track if a participant joins a group
-
-  const [groupUpdateStream, setGroupUpdateStream] = useState<any>({});
-  const [formattedChatId, setFormattedChatId] = useState<string>('');
-
-  // const {
-  //   chatStream,
-  //   groupUpdateStream,
-  //   chatAcceptStream,
-  //   participantJoinStream,
-  //   participantLeaveStream,
-  //   participantRemoveStream,
-  // } = usePushChatStream();
-
-  //event listeners
-  usePushChatStream();
-  useEffect(() => {
-    window.addEventListener('chatStream', (e: any) => setChatStream(e.detail));
-    window.addEventListener('chatRequestStream', (e: any) =>
-      setChatRequestStream(e.detail)
-    );
-    window.addEventListener('chatAcceptStream', (e: any) =>
-      setChatAcceptStream(e.detail)
-    );
-    window.addEventListener('participantRemoveStream', (e: any) =>
-      setParticipantRemoveStream(e.detail)
-    );
-    window.addEventListener('participantLeaveStream', (e: any) =>
-      setParticipantLeaveStream(e.detail)
-    );
-    window.addEventListener('participantJoinStream', (e: any) =>
-      setParticipantJoinStream(e.detail)
-    );
-    window.addEventListener('groupUpdateStream', (e: any) =>
-      setGroupUpdateStream(e.detail)
-    );
-    return () => {
-      window.removeEventListener('chatStream', (e: any) =>
-        setChatStream(e.detail)
-      );
-      window.removeEventListener('chatRequestStream', (e: any) =>
-        setChatRequestStream(e.detail)
-      );
-
-      window.removeEventListener('chatAcceptStream', (e: any) =>
-        setChatAcceptStream(e.detail)
-      );
-      window.removeEventListener('participantRemoveStream', (e: any) =>
-        setParticipantRemoveStream(e.detail)
-      );
-      window.removeEventListener('participantLeaveStream', (e: any) =>
-        setParticipantLeaveStream(e.detail)
-      );
-      window.removeEventListener('participantJoinStream', (e: any) =>
-        setParticipantJoinStream(e.detail)
-      );
-      window.removeEventListener('groupUpdateStream', (e: any) =>
-        setGroupUpdateStream(e.detail)
-      );
-    };
-  }, []);
   const theme = useContext(ThemeContext);
   const dates = new Set();
-  const { env } = useChatData();
-  useEffect(() => {
-    setChatStatusText('');
-  }, [chatId, account, env, user]);
 
-  useEffect(() => {
-    setChatInfo(null);
-    setMessages([]);
-    setGroupInfo(null);
-  }, [chatId, account, user, env]);
-
+  // Primary Hook that fetches and sets ChatInfo which then fetches and sets UserInfo or GroupInfo
+  // Which then calls await getMessagesCall(); to fetch messages
   useEffect(() => {
     (async () => {
       if (!user) return;
       if (chatId) {
-        let formattedChatId;
-        if (chatId.includes('.')) {
-          formattedChatId = (await getAddress(chatId, env))!;
-        } else formattedChatId = chatId;
-        setFormattedChatId(formattedChatId);
-        const chat = await fetchChat({ chatId: formattedChatId });
-        if (Object.keys(chat || {}).length) {
-          setChatInfo(chat as ChatInfoResponse);
+        const info = await fetchChat({ chatId: chatId });
+
+        // get group info
+        let groupMeta;
+        if (info && info?.meta?.group) {
+          groupMeta = await getGroupByIDnew({ groupId: chatId });
         }
 
-        setLoading(false);
-      }
-    })();
-  }, [chatId, user, account, env]);
-  useEffect(() => {
-    (async () => {
-      let UserProfile, GroupProfile;
-      if (
-        chatInfo &&
-        !chatInfo?.meta?.group &&
-        chatInfo?.participants &&
-        account
-      ) {
-        UserProfile = await fetchUserProfile({
-          profileId: pCAIP10ToWallet(
-            chatInfo?.participants.find(
-              (address) => address != walletToPCAIP10(account)
-            ) || formattedChatId
-          ),
-          env,
-          user,
+        // get member status
+        const status = await fetchMemberStatus({
+          chatId: chatId,
+          accountId: user?.account || '',
         });
-        if (UserProfile) setUserInfo(UserProfile);
-        setChatStatusText(ChatStatus.FIRST_CHAT);
-      } else if (chatInfo && chatInfo?.meta?.group) {
-        GroupProfile = await getGroupByIDnew({ groupId: formattedChatId });
-        if (GroupProfile) setGroupInfo(GroupProfile);
-        else {
-          setChatStatusText(ChatStatus.INVALID_CHAT);
+
+        // also find out if chat is encrypted
+        let hidden = false;
+        if (
+          user &&
+          !user.readmode() &&
+          ((info?.meta?.group && status?.participant) ||
+            (!info?.meta?.group && (info?.list === 'CHATS' || info?.list === 'REQUESTS')) ||
+            (info?.meta?.group && groupMeta?.isPublic))
+        ) {
+          hidden = false;
+        } else {
+          hidden = true;
         }
+
+        // Finally initialize the component
+        setInitialized({
+          loading: false,
+          chatInfo: Object.keys(info || {}).length ? (info as ChatInfoResponse) : null,
+          groupInfo: groupMeta ? groupMeta : null,
+          isParticipant: status?.participant ?? false,
+          isHidden: hidden,
+          invalidChat: info === undefined ? true : false,
+        });
       }
     })();
-  }, [chatInfo]);
+
+    // cleanup
+    return () => {
+      setInitialized({
+        loading: true,
+        chatInfo: null,
+        groupInfo: null,
+        isParticipant: false,
+        isHidden: false,
+        invalidChat: false,
+      });
+    };
+  }, [chatId, user, chatAcceptStream, participantJoinStream, participantLeaveStream, participantRemoveStream]);
+
+  // When loading is done
+  useEffect(() => {
+    if (initialized.loading) return;
+
+    (async function () {
+      await getMessagesCall();
+    })();
+  }, [initialized.loading]);
 
   //moniters stream changes
   useEffect(() => {
-    if (
-      Object.keys(chatAcceptStream || {}).length > 0 &&
-      chatAcceptStream.constructor === Object
-    ) {
-      const updatedChatInfo = { ...(chatInfo as ChatInfoResponse) };
+    if (Object.keys(chatAcceptStream || {}).length > 0 && chatAcceptStream.constructor === Object) {
+      const updatedChatInfo = { ...(initialized.chatInfo as ChatInfoResponse) };
       if (updatedChatInfo) updatedChatInfo.list = 'CHATS';
-      setChatInfo(updatedChatInfo);
+      setInitialized({ ...initialized, chatInfo: updatedChatInfo });
     }
   }, [chatAcceptStream]);
+
   useEffect(() => {
-    if (
-      Object.keys(chatStream || {}).length > 0 &&
-      chatStream.constructor === Object
-    ) {
+    if (Object.keys(chatStream || {}).length > 0 && chatStream.constructor === Object) {
       transformSteamMessage(chatStream);
-      setChatStatusText('');
+      // setChatStatusText('');
       scrollToBottom();
     }
   }, [chatStream]);
 
   useEffect(() => {
-    if (
-      Object.keys(chatRequestStream || {}).length > 0 &&
-      chatRequestStream.constructor === Object
-    ) {
+    if (Object.keys(chatRequestStream || {}).length > 0 && chatRequestStream.constructor === Object) {
       transformSteamMessage(chatRequestStream);
-      setChatStatusText('');
+      // setChatStatusText('');
       scrollToBottom();
     }
   }, [chatRequestStream]);
 
   useEffect(() => {
-    if (
-      Object.keys(groupUpdateStream || {}).length > 0 &&
-      groupUpdateStream.constructor === Object
-    )
+    if (Object.keys(groupUpdateStream || {}).length > 0 && groupUpdateStream.constructor === Object)
       transformGroupDetails(groupUpdateStream);
   }, [groupUpdateStream]);
 
@@ -250,17 +199,11 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
     if (!user) {
       return;
     }
-    if (
-      chatInfo &&
-      (item?.chatId == chatInfo?.chatId || checkIfNewRequest(item, formattedChatId))
-    ) {
+
+    if (initialized.chatInfo && (item?.chatId === initialized.chatInfo?.chatId || checkIfNewRequest(item, chatId))) {
       const transformedMessage = transformStreamToIMessageIPFSWithCID(item);
       if (messages && messages.length) {
-        const newChatViewList = appendUniqueMessages(
-          messages,
-          [transformedMessage],
-          false
-        );
+        const newChatViewList = appendUniqueMessages(messages, [transformedMessage], false);
         setFilteredMessages(newChatViewList);
       } else {
         setFilteredMessages([transformedMessage]);
@@ -283,56 +226,17 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   };
 
   useEffect(() => {
-    if (chatInfo) {
-      (async function () {
-        await getMessagesCall();
-      })();
-    }
-  }, [chatInfo, user?.readmode(), account, env, chatId]);
-
-  useEffect(() => {
     if (messages && messages?.length && messages?.length <= limit) {
-      setChatStatusText('');
+      // setChatStatusText('');
       scrollToBottom();
     }
   }, [messages]);
-
-  useEffect(() => {
-    if (user && account && groupInfo) {
-      (async () => {
-        const status = await fetchMemberStatus({
-          chatId: groupInfo.chatId!,
-          accountId: account,
-        });
-        if (status && typeof status !== 'string') {
-          setIsMember(status?.participant);
-        } else {
-          //show toast
-          chatViewListToast.showMessageToast({
-            toastTitle: 'Error',
-            toastMessage: 'Error in fetching member details',
-            toastType: 'ERROR',
-            getToastIcon: (size) => <MdError size={size} color="red" />,
-          });
-        }
-      })();
-    }
-  }, [
-    account,
-    groupInfo,
-    chatInfo,
-    chatAcceptStream,
-    participantJoinStream,
-    participantLeaveStream,
-    participantRemoveStream,
-  ]);
 
   //methods
   const scrollToBottom = () => {
     setTimeout(() => {
       if (listInnerRef.current) {
-        listInnerRef.current.scrollTop =
-          listInnerRef.current.scrollHeight + 100;
+        listInnerRef.current.scrollTop = listInnerRef.current.scrollHeight + 100;
       }
     }, 0);
   };
@@ -355,45 +259,40 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
 
   const getMessagesCall = async () => {
     let reference = null;
+    let stopFetchingChats = false;
     if (messages && messages?.length) {
       reference = messages[0].link;
+      if (!reference) {
+        stopFetchingChats = true;
+        setStopPagination(stopFetchingChats);
+      }
     }
 
-    if (user) {
+    if (user && !stopFetchingChats) {
       const chatHistory = await historyMessages({
         limit: limit,
-        chatId:formattedChatId,
+        chatId: chatId,
         reference,
       });
+
       if (chatHistory?.length) {
+        const reversedChatHistory = chatHistory?.reverse();
         if (messages && messages?.length) {
-          const newChatViewList = appendUniqueMessages(
-            messages,
-            chatHistory.reverse(),
-            true
-          );
+          const newChatViewList = appendUniqueMessages(messages, reversedChatHistory, true);
           setFilteredMessages(newChatViewList as IMessageIPFSWithCID[]);
         } else {
-          setFilteredMessages(chatHistory.reverse() as IMessageIPFSWithCID[]);
+          setFilteredMessages(reversedChatHistory as IMessageIPFSWithCID[]);
         }
       }
     }
   };
 
   const setFilteredMessages = (messageList: Array<IMessageIPFSWithCID>) => {
-    const updatedMessageList = messageList.filter(
-      (msg) => !chatFilterList.includes(msg.cid)
-    );
+    const updatedMessageList = messageList.filter((msg) => !chatFilterList.includes(msg.cid));
 
     if (updatedMessageList && updatedMessageList.length) {
       setMessages([...updatedMessageList]);
     }
-  };
-  const ifBlurChat = () => {
-    return !!(
-      user &&
-      ((groupInfo && !groupInfo?.isPublic && !isMember) || user?.readmode())
-    );
   };
 
   type RenderDataType = {
@@ -415,8 +314,10 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       </Span>
     );
   };
+
   return (
     <ChatViewListCard
+      blur={false}
       overflow="hidden scroll"
       flexDirection="column"
       ref={listInnerRef}
@@ -425,82 +326,98 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       justifyContent="start"
       padding="0 2px"
       theme={theme}
-      blur={ifBlurChat()}
       onScroll={(e) => {
         e.stopPropagation();
-        onScroll();
+        if (!stopPagination) onScroll();
       }}
     >
-      {loading ? <Spinner color={theme.spinnerColor} /> : ''}
-      {!loading && (
-        <>
-          {(userInfo && userInfo.publicKey) ||
-          (groupInfo && !groupInfo?.isPublic) ? (
-            <EncryptionMessage id={ENCRYPTION_KEYS.ENCRYPTED} />
-          ) : (
-            <EncryptionMessage
-              id={
-                groupInfo
-                  ? ENCRYPTION_KEYS.NO_ENCRYPTED_GROUP
-                  : ENCRYPTION_KEYS.NO_ENCRYPTED
-              }
-            />
-          )}
+      <Section
+        margin="5px 0 10px 0"
+        minWidth="150px"
+        minHeight="20px"
+      >
+        {initialized.loading && (
+          <EncryptionMessage
+            id={ENCRYPTION_KEYS.LOADING}
+            className="skeleton"
+          />
+        )}
 
-          {chatStatusText && (
-            <Section margin="20px 0 0 0">
-              <Span
-                fontSize="13px"
-                color={theme.textColor?.encryptionMessageText}
-                fontWeight="400"
-              >
-                {chatStatusText}
-              </Span>
-            </Section>
-          )}
-          {messageLoading ? <Spinner color={theme.spinnerColor} /> : ''}
+        {!initialized.loading &&
+          ((user && user.pgpPublicKey) || (initialized.groupInfo && !initialized.groupInfo?.isPublic) ? (
+            <EncryptionMessage id={ENCRYPTION_KEYS.ENCRYPTED} />
+          ) : user && user.readmode() ? (
+            <EncryptionMessage id={ENCRYPTION_KEYS.PREVIEW} />
+          ) : (
+            <EncryptionMessage id={groupInfo ? ENCRYPTION_KEYS.NO_ENCRYPTED_GROUP : ENCRYPTION_KEYS.NO_ENCRYPTED} />
+          ))}
+      </Section>
+
+      {initialized.loading ? <Spinner color={theme.spinnerColor} /> : ''}
+      {!initialized.loading && (
+        <>
+          {/* Loading section and information about the chat */}
+          <Section
+            margin="10px 0 0 0"
+            flexDirection="column"
+          >
+            <Span
+              fontSize="13px"
+              color={theme.textColor?.encryptionMessageText}
+              fontWeight="400"
+            >
+              {messages &&
+                messages.length === 0 &&
+                !messageLoading &&
+                !groupInfo &&
+                !initialized.invalidChat &&
+                CHAT_STATUS.FIRST_CHAT}
+              {initialized.invalidChat && CHAT_STATUS.INVALID_CHAT}
+            </Span>
+
+            {messageLoading ? <Spinner color={theme.spinnerColor} /> : ''}
+          </Section>
 
           {
-            <>
-              <Section
-                flexDirection="column"
-                justifyContent="start"
-                width="100%"
-              >
-                {messages &&
-                  messages?.map((chat: IMessageIPFS, index: number) => {
-                    const dateNum = moment(chat.timestamp).format('L');
-                    const position =
-                      pCAIP10ToWallet(chat.fromDID)?.toLowerCase() !==
-                      account?.toLowerCase()
-                        ? 0
-                        : 1;
-                    return (
-                      <>
-                        {dates.has(dateNum)
-                          ? null
-                          : renderDate({ chat, dateNum })}
-                        <Section
-                          justifyContent={position ? 'end' : 'start'}
-                          margin="7px"
-                        >
-                          <ChatViewBubble
-                            decryptedMessagePayload={chat}
-                            key={index}
-                          />
-                        </Section>
-                      </>
-                    );
-                  })}
-              </Section>
-              {chatInfo && chatInfo?.list === 'REQUESTS' && (
-                <ApproveRequestBubble groupInfo={groupInfo} chatId={formattedChatId} />
+            <ChatViewListCardInner
+              flexDirection="column"
+              justifyContent="start"
+              width="100%"
+              blur={initialized.isHidden}
+            >
+              {messages &&
+                messages?.map((chat: IMessageIPFS, index: number) => {
+                  const dateNum = moment(chat.timestamp).format('L');
+                  // TODO: This is a hack as chat.fromDID is converted with eip to match with user.account creating a bug for omnichain
+                  const position =
+                    pCAIP10ToWallet(chat.fromDID)?.toLowerCase() !== pCAIP10ToWallet(user?.account!)?.toLowerCase()
+                      ? 0
+                      : 1;
+                  return (
+                    <>
+                      {dates.has(dateNum) ? null : renderDate({ chat, dateNum })}
+                      <Section
+                        justifyContent={position ? 'end' : 'start'}
+                        margin="7px"
+                        key={index}
+                      >
+                        <ChatViewBubble
+                          decryptedMessagePayload={chat}
+                          key={index}
+                          isGroup={initialized.chatInfo?.meta?.group ?? false}
+                        />
+                      </Section>
+                    </>
+                  );
+                })}
+
+              {initialized.chatInfo && initialized.chatInfo?.list === 'REQUESTS' && (
+                <ActionRequestBubble chatInfo={initialized.chatInfo} />
               )}
-            </>
+            </ChatViewListCardInner>
           }
         </>
       )}
-      <ToastContainer />
     </ChatViewListCard>
   );
 };
@@ -515,11 +432,11 @@ const ChatViewListCard = styled(Section)<IThemeProps>`
   &::-webkit-scrollbar {
     width: 5px;
   }
-  ${({ blur }) =>
-    blur &&
-    `
-  filter: blur(12px);
-  `}
+
   overscroll-behavior: contain;
   scroll-behavior: smooth;
+`;
+
+const ChatViewListCardInner = styled(Section)<IThemeProps>`
+  filter: ${(props) => (props.blur ? 'blur(6px)' : 'none')};
 `;

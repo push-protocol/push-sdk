@@ -23,19 +23,16 @@ type ModalProps = {
   modalTitle: string;
   welcomeComponent: React.ReactNode;
 };
-export const Modal: React.FC<ModalProps> = ({
-  chatId,
-  isModalOpen,
-  setIsModalOpen,
-  modalTitle,
-  welcomeComponent,
-}) => {
-  const { account, user, signer } = useChatData();
+export const Modal: React.FC<ModalProps> = ({ chatId, isModalOpen, setIsModalOpen, modalTitle, welcomeComponent }) => {
+  const { user } = useChatData();
   const theme = useContext(ThemeContext);
   return (
     <Container theme={theme}>
       {/* check other inputs for the components */}
-      <HeaderSection theme={theme} position="relative">
+      <HeaderSection
+        theme={theme}
+        position="relative"
+      >
         <Span
           textAlign="center"
           fontSize="20px"
@@ -52,32 +49,36 @@ export const Modal: React.FC<ModalProps> = ({
           <MinimizeIcon />
         </Section>
       </HeaderSection>
-      <Section flexDirection="column" height="82%">
+      <Section
+        flexDirection="column"
+        height="82%"
+      >
         <ChatProfile chatId={chatId} />
         <Section
-            flex="1 1 auto"
-            overflow="hidden"
-            padding="0 2px"
-            flexDirection="column"
-            justifyContent="start"
-          >
-          {!user || (user && user?.readmode()) ? (
-            <>{welcomeComponent}</>
-          ) : (
-           
-            <ChatViewList chatId={chatId} />
-           
-          )}
-       </Section>
+          flex="1 1 auto"
+          overflow="hidden"
+          padding="0 2px"
+          flexDirection="column"
+          justifyContent="start"
+        >
+          {!user || (user && user?.readmode()) ? <>{welcomeComponent}</> : <ChatViewList chatId={chatId} />}
+        </Section>
 
-        <Section flex="0 1 auto" position="static">
-          <MessageInput chatId={chatId} autoConnect={false} />
+        <Section
+          flex="0 1 auto"
+          position="static"
+        >
+          <MessageInput
+            chatId={chatId}
+            autoConnect={false}
+          />
         </Section>
       </Section>
-      <Div width="100%" textAlign="center">
-        <SponserPushIcon
-          color={theme?.textColor?.chatWidgetModalHeadingText}
-        />
+      <Div
+        width="100%"
+        textAlign="center"
+      >
+        <SponserPushIcon color={theme?.textColor?.chatWidgetModalHeadingText} />
       </Div>
     </Container>
   );
@@ -89,8 +90,7 @@ const Container = styled.div<IThemeProps>`
   gap: 10px;
   flex-direction: column;
   box-sizing: border-box;
-  background: ${(props) =>
-    props.theme?.backgroundColor?.chatWidgetModalBackground};
+  background: ${(props) => props.theme?.backgroundColor?.chatWidgetModalBackground};
   border: ${(props) => props.theme?.border?.chatWidget};
 
   box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.07);
