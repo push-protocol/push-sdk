@@ -1,7 +1,7 @@
-import { convertToValidDID, getAPIBaseUrls } from '../helpers';
 import Constants, { ENV } from '../constants';
-import { axiosGet } from '../utils/axiosUtil';
 import { handleError } from '../errors/validationError';
+import { convertToValidDID, getAPIBaseUrls } from '../helpers';
+import { axiosGet } from '../utils/axiosUtil';
 
 /**
  * Represents the response type for the chat status.
@@ -9,6 +9,10 @@ import { handleError } from '../errors/validationError';
 export interface ChatInfoResponse {
   meta: {
     group: boolean;
+    encryption: boolean;
+    groupInfo: {
+      public: boolean;
+    };
   };
   list: string;
   participants: string[];
