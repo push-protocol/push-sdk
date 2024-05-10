@@ -51,11 +51,6 @@ export const getNewChatUser = async ({
   let chatProfile: IUser | undefined;
   let address: string | null = null;
   address = await getAddress(searchText, env);
-  // const provider = new ethers.providers.InfuraProvider();
-  // address = await provider.resolveName(searchText);
-  // if (!address) {
-  //   address = await getAddress(searchText, env);
-  // }
   if (address) {
     chatProfile = await fetchChatProfile({ profileId: address, env, user });
     if (!chatProfile) chatProfile = displayDefaultUser({ caip10: walletToPCAIP10(address) });
@@ -70,7 +65,8 @@ export const getAddress = async (searchText: string, env: Env) => {
   let address: string | null = null;
   if (searchText.includes('.')) {
     try {
-      address = await udResolver.owner(searchText);
+      if (!udResolver) throw new Error('No udResolver available for the network');
+      address = await udResolver?.owner(searchText);
     } catch (err) {
       try {
         address = await provider.resolveName(searchText);

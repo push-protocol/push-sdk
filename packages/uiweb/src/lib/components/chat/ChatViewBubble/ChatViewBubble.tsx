@@ -323,7 +323,8 @@ export const ChatViewBubble = ({
 }) => {
   const { user } = useChatData();
   const position =
-    pCAIP10ToWallet(decryptedMessagePayload.fromDID).toLowerCase() !== pCAIP10ToWallet(user?.account!)?.toLowerCase()
+    pCAIP10ToWallet(decryptedMessagePayload.fromDID).toLowerCase() !==
+    pCAIP10ToWallet(user?.account || '')?.toLowerCase()
       ? 0
       : 1;
   const { tweetId, messageType }: TwitterFeedReturnType = checkTwitterUrl({
