@@ -123,6 +123,7 @@ export const PreviewRenderer = ({
       account={account}
       messageId={messageId}
       frameData={initialized.frameData}
+      proxyServer={PROXY_SERVER}
     />
   ) : !initialized.loading && !initialized.error && initialized.url && initialized.urlType === 'video' ? (
     <VideoRenderer

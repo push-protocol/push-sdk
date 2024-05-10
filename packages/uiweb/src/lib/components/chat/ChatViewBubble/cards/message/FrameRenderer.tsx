@@ -33,6 +33,7 @@ import { MdError, MdOpenInNew } from 'react-icons/md';
 // Interfaces & Types
 import { IFrame, IFrameButton } from '../../../../../types';
 import { IChatTheme } from '../../../exportedTypes';
+import { getAddress, toHex } from 'viem';
 
 interface FrameInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   theme: IChatTheme;
@@ -48,11 +49,13 @@ export const FrameRenderer = ({
   account,
   messageId,
   frameData,
+  proxyServer,
 }: {
   url: string;
   account: string;
   messageId: string;
   frameData: IFrame;
+  proxyServer: string;
 }) => {
   const { env, user, pgpPrivateKey } = useChatData();
 
@@ -60,7 +63,6 @@ export const FrameRenderer = ({
   const [{ connectedChain }, setChain] = useSetChain();
 
   const frameRenderer = useToast();
-  const proxyServer = 'https://proxy.push.org';
   const [FrameData, setFrameData] = useState<IFrame>(frameData as IFrame);
   const [inputText, setInputText] = useState<string>('');
   const [imageLoadingError, setImageLoadingError] = useState<boolean>(false);
@@ -102,12 +104,13 @@ export const FrameRenderer = ({
   };
 
   const handleChainChange = async (desiredChainId: string) => {
-    if (Number(connectedChain?.id) !== Number(desiredChainId.slice(7))) {
-      if (allowedNetworks[env].some((chain) => chain === Number(desiredChainId.slice(7)))) {
+    const desiredChainIdNumber = Number(desiredChainId.split(':')[1]);
+
+    if (connectedChain?.id !== toHex(desiredChainIdNumber)) {
+      if (allowedNetworks[env].some((chain) => chain === desiredChainIdNumber)) {
         await setChain({
-          chainId: ethers.utils.hexValue(Number(desiredChainId.slice(7))),
+          chainId: toHex(desiredChainIdNumber),
         });
-        return { status: 'success', message: 'Chain switched' };
       } else {
         frameRenderer.showMessageToast({
           toastTitle: 'Error',
@@ -128,12 +131,19 @@ export const FrameRenderer = ({
 
   // Function to subscribe to a channel
   const subscribeToChannel = async (button: IFrameButton) => {
-    if (!user) return { status: 'failure', message: 'User not initialized' };
+    if (!user) {
+      console.log('User not initialized');
+      return { status: 'failure', message: 'User not initialized' };
+    }
     const { status, message } = await handleChainChange(button.action!);
-    if (status === 'failure') return { status: 'failure', message };
+    if (status === 'failure') {
+      console.log('Chain switch failed');
+      return { status: 'failure', message };
+    }
     try {
-      const response = await user.notification.subscribe(`${button.action}:${button.target}`);
-
+      const addressChecksummed = getAddress(button.target!);
+      const chainId = button.action?.split(':')[1];
+      const response = await user.notification.subscribe(`eip155:${chainId}:${addressChecksummed}`);
       if (response.status === 204) {
         frameRenderer.showMessageToast({
           toastTitle: 'Success',
@@ -183,10 +193,15 @@ export const FrameRenderer = ({
   // Function to trigger a transaction
   const TriggerTx = async (data: any) => {
     if (!data || !data.params || !data.chainId) return { status: 'failure', message: 'Invalid data' };
-
     const { status, message } = await handleChainChange(data.chainId);
-    if (status === 'failure') return { status: 'failure', message };
-    if (!wallet) return { status: 'failure', message: 'Wallet not connected' };
+    if (status === 'failure') {
+      console.log('Chain switch failed');
+      return { status: 'failure', message };
+    }
+    if (!wallet) {
+      console.log('wallet not connected');
+      return { status: 'failure', message: 'Wallet not connected' };
+    }
     let hash = undefined;
     try {
       const provider = new ethers.providers.Web3Provider(wallet.provider, 'any');
@@ -224,6 +239,7 @@ export const FrameRenderer = ({
   // Function to handle button click on a frame button
   const onButtonClick = async (button: IFrameButton) => {
     if (!FrameData.isValidFrame) return;
+
     if (button.action === 'mint') {
       frameRenderer.showMessageToast({
         toastTitle: 'Error',
@@ -301,6 +317,7 @@ export const FrameRenderer = ({
           },
         }),
       });
+
       if (!response.ok) return;
 
       const data = await response.json();
