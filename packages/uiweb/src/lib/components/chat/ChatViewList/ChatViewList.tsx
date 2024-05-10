@@ -383,7 +383,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
               flexDirection="column"
               justifyContent="start"
               width="100%"
-              blur={initialized.isHidden}
+              blur={false}
             >
               {messages &&
                 messages?.map((chat: IMessageIPFS, index: number) => {
