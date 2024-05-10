@@ -13,9 +13,6 @@ import { appendUniqueMessages, dateToFromNowDaily, pCAIP10ToWallet, walletToPCAI
 import { useChatData, usePushChatStream } from '../../../hooks';
 import useFetchChat from '../../../hooks/chat/useFetchChat';
 import useFetchMessageUtilities from '../../../hooks/chat/useFetchMessageUtilities';
-import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
-import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities';
-import usePushUser from '../../../hooks/usePushUser';
 import { Section, Span, Spinner } from '../../reusables';
 import { ChatViewBubble } from '../ChatViewBubble';
 import { checkIfNewRequest, transformStreamToIMessageIPFSWithCID } from '../helpers';
@@ -44,8 +41,6 @@ interface IThemeProps {
 interface IChatViewListInitialized {
   loading: boolean;
   chatInfo: ChatInfoResponse | null;
-  groupInfo: Group | null;
-  isParticipant: boolean;
   isHidden: boolean;
   invalidChat: boolean;
 }
@@ -64,15 +59,12 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
   const [initialized, setInitialized] = useState<IChatViewListInitialized>({
     loading: true,
     chatInfo: null,
-    groupInfo: null,
-    isParticipant: false,
     isHidden: false,
     invalidChat: false,
   });
 
   const { chatId, limit = chatLimit, chatFilterList = [] } = options || {};
   const { user, toast } = useChatData();
-  const [groupInfo, setGroupInfo] = useState<Group | null>(null);
 
   // const [chatStatusText, setChatStatusText] = useState<string>('');
   const [messages, setMessages] = useState<IMessageIPFSWithCID[]>([]);
@@ -80,8 +72,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
   const listInnerRef = useRef<HTMLDivElement>(null);
   const [stopPagination, setStopPagination] = useState<boolean>(false);
   const { fetchChat } = useFetchChat();
-  const { getGroupByIDnew } = useGetGroupByIDnew();
-  const { fetchMemberStatus } = useGroupMemberUtilities();
 
   // for stream
   const {
@@ -91,13 +81,12 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
     participantJoinStream,
     participantLeaveStream,
     participantRemoveStream,
-    groupUpdateStream,
   } = useChatData();
 
   const theme = useContext(ThemeContext);
   const dates = new Set();
 
-  // Primary Hook that fetches and sets ChatInfo which then fetches and sets UserInfo or GroupInfo
+  // Primary Hook that fetches and sets ChatInfo which then fetches and sets UserInfo
   // Which then calls await getMessagesCall(); to fetch messages
   useEffect(() => {
     (async () => {
@@ -105,29 +94,31 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
       if (chatId) {
         const info = await fetchChat({ chatId: chatId });
 
-        // get group info
-        let groupMeta;
-        if (info && info?.meta?.group) {
-          groupMeta = await getGroupByIDnew({ groupId: chatId });
-        }
-
-        // get member status
-        const status = await fetchMemberStatus({
-          chatId: chatId,
-          accountId: user?.account || '',
-        });
-
-        // also find out if chat is encrypted
+        // if readmode, then only public true is considered
+        // TODO: Hack for interface not declared properly (info?.meta as any)?.encryption
+        // TODO: Hack for interface not declared properly (info?.meta as any)?.groupInfo?.public
         let hidden = false;
-        if (
-          user &&
-          !user.readmode() &&
-          ((info?.meta?.group && status?.participant) ||
-            (!info?.meta?.group && (info?.list === 'CHATS' || info?.list === 'REQUESTS')) ||
-            (info?.meta?.group && groupMeta?.isPublic))
-        ) {
+        if (user && user.readmode()) {
+          //check if encryption is false, only true for public groups
+          hidden = !(info?.meta as any)?.groupInfo?.public ?? true;
+        } else if (user && info?.meta) {
+          // Only executes when user is not readmode
+          // if encryption is false, return as is
+          // covers public group
+          // TODO: Hack for interface not declared properly (info?.meta as any)?.encryption
+          if ((info?.meta as any)?.encryption === false) {
+            hidden = false;
+          } else if (info?.meta?.group) {
+            // if encryption is true and group is in user list then hidden is false else true
+            // if group is encrypted, check if user list is CHATS, encryptioon false takes care of public groups
+            hidden = info.list === 'CHATS' ? false : true;
+          } else {
+            // if it's not a group, then check if list is CHATS or REQUESTS
+            hidden = info.list === 'CHATS' || info.list === 'REQUESTS' ? false : true;
+          }
           hidden = false;
         } else {
+          // for everything else, set hidden to true
           hidden = true;
         }
 
@@ -135,8 +126,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
         setInitialized({
           loading: false,
           chatInfo: Object.keys(info || {}).length ? (info as ChatInfoResponse) : null,
-          groupInfo: groupMeta ? groupMeta : null,
-          isParticipant: status?.participant ?? false,
           isHidden: hidden,
           invalidChat: info === undefined ? true : false,
         });
@@ -148,8 +137,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
       setInitialized({
         loading: true,
         chatInfo: null,
-        groupInfo: null,
-        isParticipant: false,
         isHidden: false,
         invalidChat: false,
       });
@@ -170,7 +157,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
     if (Object.keys(chatAcceptStream || {}).length > 0 && chatAcceptStream.constructor === Object) {
       const updatedChatInfo = { ...(initialized.chatInfo as ChatInfoResponse) };
       if (updatedChatInfo) updatedChatInfo.list = 'CHATS';
-      setInitialized({ ...initialized, chatInfo: updatedChatInfo });
+      setInitialized({ ...initialized, chatInfo: updatedChatInfo, isHidden: false });
     }
   }, [chatAcceptStream]);
 
@@ -190,11 +177,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
     }
   }, [chatRequestStream]);
 
-  useEffect(() => {
-    if (Object.keys(groupUpdateStream || {}).length > 0 && groupUpdateStream.constructor === Object)
-      transformGroupDetails(groupUpdateStream);
-  }, [groupUpdateStream]);
-
   const transformSteamMessage = (item: any) => {
     if (!user) {
       return;
@@ -207,20 +189,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
         setFilteredMessages(newChatViewList);
       } else {
         setFilteredMessages([transformedMessage]);
-      }
-    }
-  };
-  const transformGroupDetails = (item: any): void => {
-    if (groupInfo?.chatId === item?.chatId) {
-      const updatedGroupInfo = groupInfo;
-      if (updatedGroupInfo) {
-        updatedGroupInfo.groupName = item?.meta?.name;
-        updatedGroupInfo.groupDescription = item?.meta?.description;
-        updatedGroupInfo.groupImage = item?.meta?.image;
-        updatedGroupInfo.groupCreator = item?.meta?.owner;
-        updatedGroupInfo.isPublic = !item?.meta?.private;
-        updatedGroupInfo.rules = item?.meta?.rules;
-        setGroupInfo(updatedGroupInfo);
       }
     }
   };
@@ -343,13 +311,16 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
           />
         )}
 
+        {/* TODO: Hack for interface not declared properly (initialized.chatInfo?.meta as any)?.encryption */}
         {!initialized.loading &&
-          ((user && user.pgpPublicKey) || (initialized.groupInfo && !initialized.groupInfo?.isPublic) ? (
+          ((initialized.chatInfo?.meta as any)?.encryption ? (
             <EncryptionMessage id={ENCRYPTION_KEYS.ENCRYPTED} />
           ) : user && user.readmode() ? (
             <EncryptionMessage id={ENCRYPTION_KEYS.PREVIEW} />
           ) : (
-            <EncryptionMessage id={groupInfo ? ENCRYPTION_KEYS.NO_ENCRYPTED_GROUP : ENCRYPTION_KEYS.NO_ENCRYPTED} />
+            <EncryptionMessage
+              id={initialized.chatInfo?.meta?.group ? ENCRYPTION_KEYS.NO_ENCRYPTED_GROUP : ENCRYPTION_KEYS.NO_ENCRYPTED}
+            />
           ))}
       </Section>
 
@@ -361,19 +332,15 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
             margin="10px 0 0 0"
             flexDirection="column"
           >
-            <Span
-              fontSize="13px"
-              color={theme.textColor?.encryptionMessageText}
-              fontWeight="400"
-            >
-              {messages &&
-                messages.length === 0 &&
-                !messageLoading &&
-                !groupInfo &&
-                !initialized.invalidChat &&
-                CHAT_STATUS.FIRST_CHAT}
-              {initialized.invalidChat && CHAT_STATUS.INVALID_CHAT}
-            </Span>
+            {initialized.invalidChat && (
+              <Span
+                fontSize="13px"
+                color={theme.textColor?.encryptionMessageText}
+                fontWeight="400"
+              >
+                {CHAT_STATUS.INVALID_CHAT}
+              </Span>
+            )}
 
             {messageLoading ? <Spinner color={theme.spinnerColor} /> : ''}
           </Section>
@@ -383,7 +350,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
               flexDirection="column"
               justifyContent="start"
               width="100%"
-              blur={false}
+              blur={initialized.isHidden}
             >
               {messages &&
                 messages?.map((chat: IMessageIPFS, index: number) => {

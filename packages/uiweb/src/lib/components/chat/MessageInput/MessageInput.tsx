@@ -2,9 +2,9 @@ import { ChangeEvent, useContext, useEffect, useRef, useState } from 'react';
 
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import GifPicker from 'gif-picker-react';
+import { createPortal } from 'react-dom';
 import { MdCheckCircle, MdError } from 'react-icons/md';
 import styled from 'styled-components';
-import { createPortal } from 'react-dom';
 
 import { deriveChatId, pCAIP10ToWallet, setAccessControl, walletToPCAIP10 } from '../../../helpers';
 import { useChatData, useClickAway, useDeviceWidthCheck, usePushChatStream } from '../../../hooks';
@@ -236,7 +236,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
           chatId: prevInfo.chatId, // Directly use the existing chatId, ensuring it's not undefined
           meta: {
             group: prevInfo.meta?.group ?? false, // Provide default value if undefined
-            encrypted: prevInfo.meta?.encrypted ?? false,
+            encryption: prevInfo.meta?.encryption ?? false,
           },
         };
       });
