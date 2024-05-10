@@ -40,7 +40,6 @@ export const FileCard = ({ chat, isGroup }: { chat: IMessagePayload; position: n
     <Section
       alignSelf="start"
       maxWidth="100%"
-      margin="5px 0"
       background="#343536"
       borderRadius="8px"
       justifyContent="space-around"

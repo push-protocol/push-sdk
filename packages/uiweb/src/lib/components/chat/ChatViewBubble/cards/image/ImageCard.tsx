@@ -30,9 +30,7 @@ export const ImageCard = ({
   return (
     <Section
       alignSelf={position ? 'end' : 'start'}
-      maxWidth="65%"
-      width="fit-content"
-      margin="5px 0"
+      maxWidth="100%"
     >
       <Image
         src={JSON.parse(chat?.messageContent)?.content}

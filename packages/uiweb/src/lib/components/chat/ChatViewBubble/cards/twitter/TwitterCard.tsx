@@ -34,8 +34,6 @@ export const TwitterCard = ({
     <Section
       alignSelf={position ? 'end' : 'start'}
       maxWidth="100%"
-      width="fit-content"
-      margin="5px 0"
     >
       <TwitterTweetEmbed tweetId={tweetId} />
     </Section>

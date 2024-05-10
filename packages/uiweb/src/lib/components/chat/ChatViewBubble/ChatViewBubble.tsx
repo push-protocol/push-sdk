@@ -158,9 +158,19 @@ const MessageWrapper = ({
       <Section
         justifyContent="start"
         flexDirection="column"
+        maxWidth="100%"
+        overflow="hidden"
       >
         {isGroup && chat?.fromCAIP10 !== user?.account && <SenderMessageAddress chat={chat} />}
-        {children}
+        <Section
+          justifyContent="start"
+          flexDirection="column"
+          maxWidth="100%"
+          overflow="hidden"
+          margin="5px 0"
+        >
+          {children}
+        </Section>
       </Section>
     </MessageSection>
   );

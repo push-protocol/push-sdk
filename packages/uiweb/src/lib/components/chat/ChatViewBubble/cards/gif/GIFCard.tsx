@@ -21,9 +21,7 @@ export const GIFCard = ({ chat, position, isGroup }: { chat: IMessagePayload; po
   return (
     <Section
       alignSelf={position ? 'end' : 'start'}
-      maxWidth="65%"
-      margin="5px 0"
-      width="fit-content"
+      maxWidth="100%"
     >
       <Image
         src={chat?.messageContent}
