@@ -481,6 +481,7 @@ const FrameButton = styled(Button)`
     props.theme?.borderRadius.modalInnerComponents ? props.theme?.borderRadius.modalInnerComponents : '0'};
   border: ${(props) => (props.theme.border.modal ? props.theme.border.modal : 'initial')};
   min-width: 120px;
+  cursor: pointer;
 `;
 
 const FrameSpan = styled(Span)`
@@ -491,6 +492,7 @@ const FrameSpan = styled(Span)`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  cursor: pointer;
 `;
 
 const FrameInput = styled.input<FrameInputProps>`
