@@ -38,6 +38,8 @@ interface IBorderRadius {
 }
 
 interface IPadding {
+  chatPreviewListPadding?: string;
+  chatPreviewPadding?: string;
   chatProfilePadding?: string;
   chatViewPadding?: string;
   chatViewListPadding?: string;
@@ -47,6 +49,8 @@ interface IPadding {
 }
 
 interface IMargin {
+  chatPreviewListMargin?: string;
+  chatPreviewMargin?: string;
   chatProfileMargin?: string;
   chatViewMargin?: string;
   chatViewListMargin?: string;
@@ -199,6 +203,8 @@ export const lightChatTheme: IChatTheme = {
   },
 
   padding: {
+    chatPreviewListPadding: '0px 6px 0px 0px',
+    chatPreviewPadding: '10px 5px',
     chatProfilePadding: '0px',
     chatViewPadding: '0px',
     chatViewListPadding: '0px 6px 0px 0px',
@@ -208,6 +214,8 @@ export const lightChatTheme: IChatTheme = {
   },
 
   margin: {
+    chatPreviewListMargin: '0px',
+    chatPreviewMargin: '2px 0px',
     chatProfileMargin: '10px 10px 2px 10px',
     chatViewMargin: '0px',
     chatViewListMargin: '0px 0px 0px 10px',
@@ -362,6 +370,8 @@ export const darkChatTheme: IChatTheme = {
   },
 
   padding: {
+    chatPreviewListPadding: '0px 6px 0px 0px',
+    chatPreviewPadding: '10px 5px',
     chatProfilePadding: '0px',
     chatViewPadding: '0px',
     chatViewListPadding: '0px 6px 0px 0px',
@@ -371,6 +381,8 @@ export const darkChatTheme: IChatTheme = {
   },
 
   margin: {
+    chatPreviewListMargin: '0px',
+    chatPreviewMargin: '2px 0px',
     chatProfileMargin: '10px 10px 2px 10px',
     chatViewMargin: '0px',
     chatViewListMargin: '0px 0px 0px 10px',
