@@ -52,15 +52,18 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (options: IChatPreviewPr
   };
 
   return (
-    <ChatPreviewContainer cursor="pointer">
+    <ChatPreviewContainer
+      margin={theme.margin?.chatPreviewMargin}
+      cursor="pointer"
+    >
       <Button
         display="flex"
         width="100%"
         height="70px"
         minHeight="70px"
-        padding="10px"
         cursor="pointer"
         borderRadius={theme.borderRadius?.chatPreview}
+        padding={theme.padding?.chatPreviewPadding}
         border={theme.border?.chatPreview}
         flexDirection="row"
         background={

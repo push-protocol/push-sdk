@@ -769,6 +769,8 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
   return (
     <ChatPreviewListContainer
       key={user?.uid}
+      padding={theme.padding?.chatPreviewListPadding}
+      margin={theme.margin?.chatPreviewListMargin}
       blur={false}
       ref={listInnerRef}
       theme={theme}
@@ -862,6 +864,7 @@ const ChatPreviewListContainer = styled(Section)<IThemeProps>`
   flex-direction: column;
   width: 100%;
   justify-content: start;
+  box-sizing: border-box;
   // padding: 0 2px;
 
   &::-webkit-scrollbar-thumb {

@@ -1,6 +1,6 @@
 {
   "name": "@pushprotocol/uiweb",
-  "version": "1.4.0-alpha.4",
+  "version": "1.5.0-alpha.4",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },

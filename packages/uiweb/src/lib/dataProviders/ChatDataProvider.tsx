@@ -470,9 +470,9 @@ export const ChatUIProvider = ({
 
   const PROVIDER_THEME = Object.assign({}, lightChatTheme, theme);
   return (
-    <ThemeProvider theme={PROVIDER_THEME}>
+    <ThemeContext.Provider value={PROVIDER_THEME}>
       <GlobalStyle />
       <ChatDataContext.Provider value={value}>{children}</ChatDataContext.Provider>
-    </ThemeProvider>
+    </ThemeContext.Provider>
   );
 };

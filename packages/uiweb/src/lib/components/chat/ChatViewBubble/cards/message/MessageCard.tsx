@@ -75,29 +75,38 @@ export const MessageCard = ({
       const fragments = [];
       let lastIndex = 0;
 
-      fragment.msg.replace(codeBlockRegex, (match, p1, offset) => {
-        // Add text before the code block if it exists
-        if (offset > lastIndex) {
+      // Ensure fragment.msg is a string before attempting to use replace
+      if (typeof fragment.msg === 'string') {
+        fragment.msg.replace(codeBlockRegex, (match, p1, offset) => {
+          // Add text before the code block if it exists
+          if (offset > lastIndex) {
+            fragments.push({
+              msg: fragment.msg.substring(lastIndex, offset),
+              type: fragment.type,
+            });
+          }
+          // Add the code block
           fragments.push({
-            msg: fragment.msg.substring(lastIndex, offset),
+            msg: p1,
+            type: 'code',
+          });
+          lastIndex = offset + p1.length;
+          return match; // This return is not used, required for replace function signature
+        });
+
+        // Add any remaining text after the last code block
+        if (lastIndex < fragment.msg.length) {
+          fragments.push({
+            msg: fragment.msg.substring(lastIndex),
             type: fragment.type,
           });
         }
-        // Add the code block
-        fragments.push({
-          msg: p1,
-          type: 'code',
-        });
-        lastIndex = offset + p1.length;
-        return match; // This return is not used, required for replace function signature
-      });
-
-      // Add any remaining text after the last code block
-      if (lastIndex < fragment.msg.length) {
-        fragments.push({
-          msg: fragment.msg.substring(lastIndex),
-          type: fragment.type,
-        });
+      } else {
+        // Handle cases where fragment.msg is not a string
+        console.error(
+          'UIWEB::components::ChatViewBubble::cards::MessageCard::splitMessageToCodeBlocks:fragment.msg is not a string',
+          fragment.msg
+        );
       }
 
       return fragments;
