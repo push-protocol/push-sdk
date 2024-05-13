@@ -27,6 +27,7 @@
     "moment": "^2.29.4",
     "protobufjs": "^7.2.6",
     "raf": "^3.4.0",
+    "react-code-blocks": "^0.1.6",
     "react-easy-crop": "^4.1.4",
     "react-icons": "^4.10.1",
     "react-image-file-resizer": "^0.4.7",

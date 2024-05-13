@@ -3,11 +3,12 @@ import { Fragment, ReactElement, ReactNode, useContext, useEffect, useState } fr
 
 // External Packages
 import moment from 'moment';
+import { CopyBlock, dracula } from 'react-code-blocks';
 import styled, { keyframes } from 'styled-components';
 
 // Internal Compoonents
 import { extractWebLink, getFormattedMetadata, hasWebLink } from '../../../../../utilities';
-import { Anchor, Image, Section, Span } from '../../../../reusables';
+import { Anchor, Button, Section, Span } from '../../../../reusables';
 import { ThemeContext } from '../../../theme/ThemeProvider';
 
 import { IPreviewCallback, PreviewRenderer } from './PreviewRenderer';
@@ -18,6 +19,11 @@ import { IPreviewCallback, PreviewRenderer } from './PreviewRenderer';
 
 // Interfaces & Types
 import { IMessagePayload, TwitterFeedReturnType } from '../../../exportedTypes';
+
+interface IMsgFragments {
+  msg: string;
+  type: string;
+}
 
 // Constants
 
@@ -61,6 +67,121 @@ export const MessageCard = ({
     });
   };
 
+  // break message to derive different types
+  const splitMessageToMessages = (item: IMsgFragments): IMsgFragments[] => {
+    // split message into code blocks
+    const splitMessageToCodeBlocks = (fragment: IMsgFragments): IMsgFragments[] => {
+      const codeBlockRegex = /(```[\s\S]*?```)/g; // Regex to match code blocks
+      const fragments = [];
+      let lastIndex = 0;
+
+      fragment.msg.replace(codeBlockRegex, (match, p1, offset) => {
+        // Add text before the code block if it exists
+        if (offset > lastIndex) {
+          fragments.push({
+            msg: fragment.msg.substring(lastIndex, offset),
+            type: fragment.type,
+          });
+        }
+        // Add the code block
+        fragments.push({
+          msg: p1,
+          type: 'code',
+        });
+        lastIndex = offset + p1.length;
+        return match; // This return is not used, required for replace function signature
+      });
+
+      // Add any remaining text after the last code block
+      if (lastIndex < fragment.msg.length) {
+        fragments.push({
+          msg: fragment.msg.substring(lastIndex),
+          type: fragment.type,
+        });
+      }
+
+      return fragments;
+    };
+
+    // start with array of messages
+    const chunks = [
+      {
+        msg: item.msg,
+        type: item.type,
+      },
+    ];
+
+    // for each message in messages, split it into code blocks and replace array
+    chunks.forEach((item, index) => {
+      chunks.splice(index, 1, ...splitMessageToCodeBlocks(item));
+    });
+
+    return chunks;
+  };
+
+  // convert to fragments which can have different types
+  const fragments = splitMessageToMessages({ msg: message, type: 'text' });
+
+  // To render individual fragments
+  const renderTxtFragments = (message: string, fragmentIndex: number): ReactNode => {
+    return message.split('\n').map((line: string, lineIndex: number) => (
+      <Span
+        key={`${fragmentIndex}-${lineIndex}`} // Updated key to be more unique
+        alignSelf="start"
+        textAlign="left"
+        fontSize={position ? `${theme.fontSize?.chatSentBubbleText}` : `${theme.fontSize?.chatReceivedBubbleText}`}
+        fontWeight={
+          position ? `${theme.fontWeight?.chatSentBubbleText}` : `${theme.fontWeight?.chatReceivedBubbleText}`
+        }
+        color={position ? `${theme.textColor?.chatSentBubbleText}` : `${theme.textColor?.chatReceivedBubbleText}`}
+      >
+        {line.split(' ').map((word: string, wordIndex: number) => {
+          const link = hasWebLink(word) ? extractWebLink(word) : '';
+          return (
+            <Fragment key={`${fragmentIndex}-${lineIndex}-${wordIndex}`}>
+              {link ? (
+                <MessageAnchor
+                  href={link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={initialized.loading ? 'loading' : ''}
+                >
+                  {word}
+                </MessageAnchor>
+              ) : (
+                word
+              )}{' '}
+              {/* Ensure spaces are maintained between words */}
+            </Fragment>
+          );
+        })}
+      </Span>
+    ));
+  };
+
+  // To render code fragment
+  const renderCodeFragment = (message: string, fragmentIndex: number): ReactElement => {
+    // split code and language
+    const regex = /```(\S*)\s*([\s\S]*?)```/; // Regex to capture optional language and code within backticks
+    const match = message.match(regex);
+    const language = match?.[1] || 'plaintext';
+    const code = message.split('\n').slice(1, -1).join('\n').trim();
+
+    return (
+      <CodeSection>
+        <StyledCopyBlock
+          key={fragmentIndex}
+          text={code}
+          language={language}
+          // showLineNumbers={false}
+          // wrapLines={true}
+          theme={dracula}
+        />
+      </CodeSection>
+    );
+  };
+
+  // Render entire message
   return (
     <MessageCardSection className={initialized.additionalClasses}>
       {/* Preview Renderer - Start with assuming preview is there, callback handles no preview */}
@@ -91,51 +212,27 @@ export const MessageCard = ({
         border={position ? `${theme.border?.chatSentBubble}` : `${theme.border?.chatReceivedBubble}`}
         padding="8px 12px"
         borderRadius={position ? '12px 0px 12px 12px' : '0px 12px 12px 12px'}
-        margin="5px 0"
         alignSelf={position ? 'end' : 'start'}
         justifyContent="start"
-        minWidth="71px"
+        maxWidth="inherit"
+        minWidth="72px"
         position="relative"
-        width="fit-content"
         color={position ? `${theme.textColor?.chatSentBubbleText}` : `${theme.textColor?.chatReceivedBubbleText}`}
       >
         <Section
           flexDirection="column"
           padding="5px 0 15px 0"
+          maxWidth="inherit"
         >
-          {message.split('\n').map((line: string, lineIndex: number) => (
-            <Span
-              key={lineIndex}
-              alignSelf="start"
-              textAlign="left"
-              fontSize={
-                position ? `${theme.fontSize?.chatSentBubbleText}` : `${theme.fontSize?.chatReceivedBubbleText}`
-              }
-              fontWeight={
-                position ? `${theme.fontWeight?.chatSentBubbleText}` : `${theme.fontWeight?.chatReceivedBubbleText}`
-              }
-              color={position ? `${theme.textColor?.chatSentBubbleText}` : `${theme.textColor?.chatReceivedBubbleText}`}
-            >
-              {line.split(' ').map((word: string, wordIndex: number) =>
-                hasWebLink(word) ? (
-                  <>
-                    <MessageAnchor
-                      key={`anchor-${wordIndex}`}
-                      href={extractWebLink(word) ?? ''}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={initialized.loading ? 'loading' : ''}
-                    >
-                      {word}
-                    </MessageAnchor>
-                    <Fragment key={wordIndex}> </Fragment>
-                  </>
-                ) : (
-                  <Fragment key={wordIndex}>{word} </Fragment>
-                )
-              )}
-            </Span>
-          ))}
+          {fragments.map((fragment, fragmentIndex) => {
+            if (fragment.type === 'text') {
+              return renderTxtFragments(fragment.msg, fragmentIndex);
+            } else if (fragment.type === 'code') {
+              return renderCodeFragment(fragment.msg, fragmentIndex);
+            } else {
+              return null;
+            }
+          })}
         </Section>
 
         {/* Timestamp rendering */}
@@ -162,22 +259,19 @@ export const MessageCard = ({
   );
 };
 
-const fader = keyframes`
-  0% { opacity: 0.5; }
-  50% { opacity: 1; }
-  100% { opacity: 0.5; }
-`;
-
 const MessagePreviewSection = styled(Section)`
   overflow: hidden;
+  max-width: 100%;
 `;
 
 const MessageSection = styled(Section)`
   box-sizing: border-box;
+  max-width: 100%;
 `;
 
 const MessageCardSection = styled(Section)`
   flex-direction: column;
+  max-width: 100%;
 
   &.video,
   &.frame {
@@ -199,6 +293,31 @@ const MessageCardSection = styled(Section)`
 
   &.frame {
   }
+`;
+
+const CodeSection = styled(Section)`
+  margin: 16px 0;
+  border-radius: 12px;
+  align-self: stretch;
+  max-width: inherit;
+
+  div:first-of-type {
+    max-width: inherit;
+    width: 100%;
+    padding: 20px;
+    font-weight: 300;
+    font-family: monospace;
+    overflow: scroll;
+    justify-content: flex-start;
+  }
+`;
+
+const StyledCopyBlock = styled(CopyBlock)``;
+
+const fader = keyframes`
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
 `;
 
 const MessageAnchor = styled(Anchor)`

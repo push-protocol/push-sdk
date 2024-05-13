@@ -141,7 +141,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
         invalidChat: false,
       });
     };
-  }, [chatId, user, chatAcceptStream, participantJoinStream, participantLeaveStream, participantRemoveStream]);
+  }, [chatId, user]);
 
   // When loading is done
   useEffect(() => {
@@ -152,14 +152,32 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
     })();
   }, [initialized.loading]);
 
-  //moniters stream changes
+  // Change listtype to 'CHATS' and hidden to false when chatAcceptStream is received
   useEffect(() => {
     if (Object.keys(chatAcceptStream || {}).length > 0 && chatAcceptStream.constructor === Object) {
-      const updatedChatInfo = { ...(initialized.chatInfo as ChatInfoResponse) };
-      if (updatedChatInfo) updatedChatInfo.list = 'CHATS';
-      setInitialized({ ...initialized, chatInfo: updatedChatInfo, isHidden: false });
+      // Check if chat was encrypted, if so, reload the chat
+      if ((initialized.chatInfo?.meta as any)?.encryption === false) {
+        setInitialized({ loading: true, chatInfo: null, isHidden: false, invalidChat: false });
+      } else {
+        // If not encrypted, then set hidden to false
+        const updatedChatInfo = { ...(initialized.chatInfo as ChatInfoResponse) };
+        if (updatedChatInfo) updatedChatInfo.list = 'CHATS';
+
+        setInitialized({ ...initialized, isHidden: false });
+      }
     }
-  }, [chatAcceptStream]);
+  }, [chatAcceptStream, participantJoinStream]);
+
+  // Change listtype to 'UINITIALIZED' and hidden to true when participantRemoveStream or participantLeaveStream is received
+  useEffect(() => {
+    if (Object.keys(participantRemoveStream || {}).length > 0 && participantRemoveStream.constructor === Object) {
+      // If not encrypted, then set hidden to false
+      const updatedChatInfo = { ...(initialized.chatInfo as ChatInfoResponse) };
+      if (updatedChatInfo) updatedChatInfo.list = 'UNINITIALIZED';
+
+      setInitialized({ ...initialized, isHidden: false });
+    }
+  }, [participantRemoveStream, participantLeaveStream]);
 
   useEffect(() => {
     if (Object.keys(chatStream || {}).length > 0 && chatStream.constructor === Object) {
