@@ -277,7 +277,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
           )}
 
           {!!initialized.groupInfo?.isPublic && (
-            <Tooltip content={'Token Gated Group'}>
+            <Tooltip content={'Public Group'}>
               <PublicChatIcon
                 size={{ height: 20 }}
                 color={theme?.iconColor?.subtleColor}
