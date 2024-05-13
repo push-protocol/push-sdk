@@ -163,7 +163,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
         const updatedChatInfo = { ...(initialized.chatInfo as ChatInfoResponse) };
         if (updatedChatInfo) updatedChatInfo.list = 'CHATS';
 
-        setInitialized({ ...initialized, isHidden: false });
+        setInitialized({ ...initialized, chatInfo: updatedChatInfo, isHidden: false });
       }
     }
   }, [chatAcceptStream, participantJoinStream]);
@@ -175,7 +175,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
       const updatedChatInfo = { ...(initialized.chatInfo as ChatInfoResponse) };
       if (updatedChatInfo) updatedChatInfo.list = 'UNINITIALIZED';
 
-      setInitialized({ ...initialized, isHidden: false });
+      setInitialized({ ...initialized, chatInfo: updatedChatInfo, isHidden: true });
     }
   }, [participantRemoveStream, participantLeaveStream]);
 
@@ -220,11 +220,11 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
 
   //methods
   const scrollToBottom = () => {
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       if (listInnerRef.current) {
-        listInnerRef.current.scrollTop = listInnerRef.current.scrollHeight + 100;
+        listInnerRef.current.scrollTop = listInnerRef.current.scrollHeight;
       }
-    }, 0);
+    });
   };
 
   const onScroll = async () => {

@@ -860,7 +860,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
 //styles
 const ChatPreviewListContainer = styled(Section)<IThemeProps>`
   height: inherit;
-  overflow: hidden scroll;
+  overflow: hidden auto;
   flex-direction: column;
   width: 100%;
   justify-content: start;
