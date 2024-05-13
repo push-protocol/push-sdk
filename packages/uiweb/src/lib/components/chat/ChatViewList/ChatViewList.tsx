@@ -375,7 +375,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
                   const dateNum = moment(chat.timestamp).format('L');
                   // TODO: This is a hack as chat.fromDID is converted with eip to match with user.account creating a bug for omnichain
                   const position =
-                    pCAIP10ToWallet(chat.fromDID)?.toLowerCase() !== pCAIP10ToWallet(user?.account!)?.toLowerCase()
+                    pCAIP10ToWallet(chat.fromDID)?.toLowerCase() !== pCAIP10ToWallet(user?.account ?? '')?.toLowerCase()
                       ? 0
                       : 1;
                   return (
@@ -383,7 +383,9 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
                       {dates.has(dateNum) ? null : renderDate({ chat, dateNum })}
                       <Section
                         justifyContent={position ? 'end' : 'start'}
-                        margin="7px"
+                        margin={
+                          position ? theme.margin?.chatBubbleSenderMargin : theme.margin?.chatBubbleReceiverMargin
+                        }
                         key={index}
                       >
                         <ChatViewBubble
