@@ -100,7 +100,10 @@ export interface ChatInfoResponse {
   chatId: string;
   meta: {
     group: boolean;
-    encrypted: boolean;
+    encryption: boolean;
+    groupInfo?: {
+      public: boolean;
+    };
   };
   participants?: Array<string>;
   recipient?: string;

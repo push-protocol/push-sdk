@@ -152,14 +152,19 @@ const MessageWrapper = ({
       flexDirection="row"
       justifyContent="start"
       gap="6px"
-      width="auto"
+      maxWidth="100%"
     >
-      {isGroup && chat?.fromCAIP10 !== user?.account && <SenderMessageProfilePicture chat={chat} />}
+      {isGroup && pCAIP10ToWallet(chat?.fromCAIP10) !== pCAIP10ToWallet(user?.account ?? '') && (
+        <SenderMessageProfilePicture chat={chat} />
+      )}
       <Section
         justifyContent="start"
         flexDirection="column"
+        maxWidth="100%"
       >
-        {isGroup && chat?.fromCAIP10 !== user?.account && <SenderMessageAddress chat={chat} />}
+        {isGroup && pCAIP10ToWallet(chat?.fromCAIP10) !== pCAIP10ToWallet(user?.account ?? '') && (
+          <SenderMessageAddress chat={chat} />
+        )}
         {children}
       </Section>
     </MessageSection>
@@ -175,7 +180,8 @@ export const ChatViewBubble = ({
 }) => {
   const { user } = useChatData();
   const position =
-    pCAIP10ToWallet(decryptedMessagePayload.fromDID).toLowerCase() !== pCAIP10ToWallet(user?.account!)?.toLowerCase()
+    pCAIP10ToWallet(decryptedMessagePayload.fromDID).toLowerCase() !==
+    pCAIP10ToWallet(user?.account ?? '')?.toLowerCase()
       ? 0
       : 1;
   const { tweetId, messageType }: TwitterFeedReturnType = checkTwitterUrl({
@@ -258,6 +264,10 @@ const MessageSection = styled(Section)`
   max-width: 70%;
 
   @media ${device.tablet} {
+    max-width: 90%;
+  }
+
+  @media ${device.mobileL} {
     max-width: 90%;
   }
 `;

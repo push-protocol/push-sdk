@@ -1,6 +1,6 @@
 {
   "name": "@pushprotocol/uiweb",
-  "version": "1.4.0-alpha.4",
+  "version": "1.5.0-alpha.4",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
@@ -25,9 +25,9 @@
     "html-react-parser": "^1.4.13",
     "livekit-client": "^1.13.3",
     "moment": "^2.29.4",
-    "openpgp": "^5.11.1",
     "protobufjs": "^7.2.6",
     "raf": "^3.4.0",
+    "react-code-blocks": "^0.1.6",
     "react-easy-crop": "^4.1.4",
     "react-icons": "^4.10.1",
     "react-image-file-resizer": "^0.4.7",

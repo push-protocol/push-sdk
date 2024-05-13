@@ -86,7 +86,8 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (options: IC
       overflow="hidden"
       background={theme.backgroundColor?.chatViewComponentBackground}
       borderRadius={theme.borderRadius?.chatViewComponent}
-      padding="13px"
+      padding={theme.padding?.chatViewPadding}
+      margin={theme.margin?.chatViewMargin}
       theme={theme}
     >
       {/* If initialized is loading then show spinner */}
@@ -101,24 +102,31 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (options: IC
         <>
           {/* Load ChatProfile if in options */}
           {chatProfile && (
-            <ChatProfile
-              key={chatId}
-              chatProfileRightHelperComponent={chatProfileRightHelperComponent}
-              chatProfileLeftHelperComponent={chatProfileLeftHelperComponent}
-              chatId={initialized.derivedChatId}
-              groupInfoModalBackground={groupInfoModalBackground}
-              groupInfoModalPositionType={groupInfoModalPositionType}
-            />
+            <Section
+              margin={theme.margin?.chatProfileMargin}
+              padding={theme.padding?.chatProfilePadding}
+              zIndex="2"
+            >
+              <ChatProfile
+                key={chatId}
+                chatProfileRightHelperComponent={chatProfileRightHelperComponent}
+                chatProfileLeftHelperComponent={chatProfileLeftHelperComponent}
+                chatId={initialized.derivedChatId}
+                groupInfoModalBackground={groupInfoModalBackground}
+                groupInfoModalPositionType={groupInfoModalPositionType}
+              />
+            </Section>
           )}
 
           {/* Load ChatViewList if in options */}
           <Section
             flex="1 1 auto"
             overflow="hidden"
-            padding={isMobile ? '0 10px' : '0 20px'}
-            margin="0 0px 10px 0px"
+            padding={theme.padding?.chatViewListPadding}
+            margin={theme.margin?.chatViewListMargin}
             flexDirection="column"
             justifyContent="start"
+            zIndex="1"
           >
             {chatViewList && (
               <ChatViewList
@@ -143,6 +151,9 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (options: IC
             <Section
               flex="0 1 auto"
               position="static"
+              zIndex="2"
+              padding={theme.padding?.messageInputPadding}
+              margin={theme.margin?.messageInputMargin}
             >
               <MessageInput
                 key={chatId}

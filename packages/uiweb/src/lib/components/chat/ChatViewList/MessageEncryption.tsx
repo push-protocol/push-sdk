@@ -24,7 +24,7 @@ export const EncryptionMessage = ({ id, className }: { id: EncryptionKeys; class
   const EncryptionMessageContent = {
     ENCRYPTED: {
       IconComponent: <EncryptionIcon size="15" />,
-      text: 'Messages are end-to-end encrypted. Only users in this chat can view or listen to them. Click to learn more.',
+      text: 'Messages are end-to-end encrypted. Only users in this chat can view or listen to them.',
     },
     NO_ENCRYPTED: {
       IconComponent: <NoEncryptionIcon size="15" />,

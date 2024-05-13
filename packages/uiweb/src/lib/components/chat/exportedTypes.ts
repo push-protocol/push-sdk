@@ -1,4 +1,4 @@
-import type { CONSTANTS, GroupDTO, GroupInfoDTO, IMessageIPFS } from '@pushprotocol/restapi';
+import type { GroupDTO, GroupInfoDTO, IMessageIPFS } from '@pushprotocol/restapi';
 import { IGroup, ModalBackgroundType, ModalPositionType } from '../../types';
 import { IChatTheme } from './theme';
 
@@ -177,7 +177,7 @@ export interface ModalButtonProps {
   isLoading?: boolean;
 }
 
-export { IChatTheme } from './theme';
+export type { IChatTheme } from './theme';
 
 export interface ConditionData {
   operator?: string;
