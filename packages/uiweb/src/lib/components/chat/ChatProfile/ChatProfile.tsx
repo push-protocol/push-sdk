@@ -36,9 +36,9 @@ import VerticalEllipsisIcon from '../../../icons/VerticalEllipsis.svg';
 import InfoIcon from '../../../icons/infodark.svg';
 
 // Interfaces & Types
+import useUserInfoUtilities from '../../../hooks/chat/useUserInfoUtilities';
 import { Group, IChatProfile } from '../exportedTypes';
 import { ChatInfoResponse } from '../types';
-import useUserInfoUtilities from '../../../hooks/chat/useUserInfoUtilities';
 
 // Constants
 
@@ -345,15 +345,19 @@ export const ChatProfile: React.FC<IChatProfile> = ({
     return null;
   }
 };
-const Container = styled.div`
-  width: 100%;
+
+const Container = styled(Section)`
+  width: auto;
   background: ${(props) => props.theme.backgroundColor.chatProfileBackground};
   border: ${(props) => props.theme.border?.chatProfile};
   border-radius: ${(props) => props.theme.borderRadius?.chatProfile};
   display: flex;
   flex-direction: row;
+  flex: 1;
   align-items: center;
   padding: 6px;
+  box-sizing: border-box;
+  align-self: stretch;
   box-sizing: border-box;
 `;
 

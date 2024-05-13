@@ -3,6 +3,7 @@ import { ReactNode, useEffect, useRef, useState } from 'react';
 
 // External Packages
 import { CONSTANTS, PushAPI, SignerType } from '@pushprotocol/restapi';
+import { ThemeProvider } from 'styled-components';
 
 // Internal Compoonents
 import { ChatDataContext, IChatDataContextValues } from '../context/chatContext';
@@ -469,9 +470,9 @@ export const ChatUIProvider = ({
 
   const PROVIDER_THEME = Object.assign({}, lightChatTheme, theme);
   return (
-    <ThemeContext.Provider value={PROVIDER_THEME}>
+    <ThemeProvider theme={PROVIDER_THEME}>
       <GlobalStyle />
       <ChatDataContext.Provider value={value}>{children}</ChatDataContext.Provider>
-    </ThemeContext.Provider>
+    </ThemeProvider>
   );
 };

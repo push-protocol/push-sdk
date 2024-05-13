@@ -141,7 +141,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
         invalidChat: false,
       });
     };
-  }, [chatId, user, chatAcceptStream, participantJoinStream, participantLeaveStream, participantRemoveStream]);
+  }, [chatId, user]);
 
   // When loading is done
   useEffect(() => {
@@ -152,14 +152,32 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
     })();
   }, [initialized.loading]);
 
-  //moniters stream changes
+  // Change listtype to 'CHATS' and hidden to false when chatAcceptStream is received
   useEffect(() => {
     if (Object.keys(chatAcceptStream || {}).length > 0 && chatAcceptStream.constructor === Object) {
-      const updatedChatInfo = { ...(initialized.chatInfo as ChatInfoResponse) };
-      if (updatedChatInfo) updatedChatInfo.list = 'CHATS';
-      setInitialized({ ...initialized, chatInfo: updatedChatInfo, isHidden: false });
+      // Check if chat was encrypted, if so, reload the chat
+      if ((initialized.chatInfo?.meta as any)?.encryption === false) {
+        setInitialized({ loading: true, chatInfo: null, isHidden: false, invalidChat: false });
+      } else {
+        // If not encrypted, then set hidden to false
+        const updatedChatInfo = { ...(initialized.chatInfo as ChatInfoResponse) };
+        if (updatedChatInfo) updatedChatInfo.list = 'CHATS';
+
+        setInitialized({ ...initialized, isHidden: false });
+      }
     }
-  }, [chatAcceptStream]);
+  }, [chatAcceptStream, participantJoinStream]);
+
+  // Change listtype to 'UINITIALIZED' and hidden to true when participantRemoveStream or participantLeaveStream is received
+  useEffect(() => {
+    if (Object.keys(participantRemoveStream || {}).length > 0 && participantRemoveStream.constructor === Object) {
+      // If not encrypted, then set hidden to false
+      const updatedChatInfo = { ...(initialized.chatInfo as ChatInfoResponse) };
+      if (updatedChatInfo) updatedChatInfo.list = 'UNINITIALIZED';
+
+      setInitialized({ ...initialized, isHidden: false });
+    }
+  }, [participantRemoveStream, participantLeaveStream]);
 
   useEffect(() => {
     if (Object.keys(chatStream || {}).length > 0 && chatStream.constructor === Object) {
@@ -357,7 +375,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
                   const dateNum = moment(chat.timestamp).format('L');
                   // TODO: This is a hack as chat.fromDID is converted with eip to match with user.account creating a bug for omnichain
                   const position =
-                    pCAIP10ToWallet(chat.fromDID)?.toLowerCase() !== pCAIP10ToWallet(user?.account!)?.toLowerCase()
+                    pCAIP10ToWallet(chat.fromDID)?.toLowerCase() !== pCAIP10ToWallet(user?.account ?? '')?.toLowerCase()
                       ? 0
                       : 1;
                   return (
@@ -365,7 +383,9 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
                       {dates.has(dateNum) ? null : renderDate({ chat, dateNum })}
                       <Section
                         justifyContent={position ? 'end' : 'start'}
-                        margin="7px"
+                        margin={
+                          position ? theme.margin?.chatBubbleSenderMargin : theme.margin?.chatBubbleReceiverMargin
+                        }
                         key={index}
                       >
                         <ChatViewBubble
