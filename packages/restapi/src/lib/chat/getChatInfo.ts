@@ -9,7 +9,8 @@ import { axiosGet } from '../utils/axiosUtil';
 export interface ChatInfoResponse {
   meta: {
     group: boolean;
-    encryption: boolean;
+    encrypted: boolean;
+    visibility: boolean;
     groupInfo: {
       public: boolean;
     };
