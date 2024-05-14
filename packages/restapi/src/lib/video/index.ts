@@ -1,2 +1,2 @@
 export * from './Video';
-export { VideoDataType } from './helpers/sendVideoCallNotification';
+export type { VideoDataType } from './helpers/sendVideoCallNotification';

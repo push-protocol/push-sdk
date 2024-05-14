@@ -1,7 +1,6 @@
-import type { CONSTANTS, GroupDTO, GroupInfoDTO, IMessageIPFS } from '@pushprotocol/restapi';
-import { IChatTheme } from "./theme";
-import { IGroup, ModalBackgroundType, ModalPositionType } from '../../types'
-
+import type { GroupDTO, GroupInfoDTO, IMessageIPFS } from '@pushprotocol/restapi';
+import { IGroup, ModalBackgroundType, ModalPositionType } from '../../types';
+import { IChatTheme } from './theme';
 
 export interface IChatPreviewPayload {
   chatId: string | undefined;
@@ -12,29 +11,43 @@ export interface IChatPreviewPayload {
   chatMsg?: {
     messageType: string;
     messageContent: string | object;
-  }
+  };
 }
 
 export interface IChatPreviewProps {
   chatPreviewPayload: IChatPreviewPayload;
   selected?: boolean;
-  setSelected?: (chatId: string,chatParticipant: string) => void;
+  setSelected?: (chatId: string, chatParticipant: string) => void;
   badge?: {
     count?: number;
   };
+  readmode?: boolean;
 }
-export type Group = GroupInfoDTO| GroupDTO | undefined;
+export type Group = GroupInfoDTO | GroupDTO | undefined;
 
 export interface IChatPreviewListProps {
   overrideAccount?: string;
-  listType?: 'CHATS' | 'REQUESTS' | 'SEARCH';
+  listType?: 'CHATS' | 'REQUESTS';
   prefillChatPreviewList?: Array<IChatPreviewProps>;
   searchParamter?: string;
-  onChatSelected?: (chatId: string,chatParticipant: string) => void;
   onUnreadCountChange?: (count: number) => void;
+  onChatsCountChange?: (count: number) => void;
+  onChatSelected?: (chatId: string, chatParticipant: string) => void;
   onPreload?: (chats: Array<IChatPreviewPayload>) => void;
   onPaging?: (chats: Array<IChatPreviewPayload>) => void;
-  onLoading?: (loadingData:{loading:boolean,preload:boolean,paging:boolean,finished:boolean}) => void;
+  onLoading?: (loadingData: { loading: boolean; preload: boolean; paging: boolean; finished: boolean }) => void;
+}
+
+export interface IChatPreviewSearchListProps {
+  overrideAccount?: string;
+  prefillChatPreviewList?: Array<IChatPreviewProps>;
+  searchParamter?: string;
+  onUnreadCountChange?: (count: number) => void;
+  onChatsCountChange?: (count: number) => void;
+  onChatSelected?: (chatId: string, chatParticipant: string) => void;
+  onPreload?: (chats: Array<IChatPreviewPayload>) => void;
+  onPaging?: (chats: Array<IChatPreviewPayload>) => void;
+  onLoading?: (loadingData: { loading: boolean; preload: boolean; paging: boolean; finished: boolean }) => void;
 }
 
 export interface IChatViewListProps {
@@ -42,7 +55,6 @@ export interface IChatViewListProps {
   chatFilterList?: Array<string>;
   limit?: number;
 }
-
 
 export interface IChatViewComponentProps {
   messageInput?: boolean;
@@ -55,7 +67,7 @@ export interface IChatViewComponentProps {
   gif?: boolean;
   file?: boolean;
   isConnected?: boolean;
-  autoConnect?:boolean;
+  autoConnect?: boolean;
   groupInfoModalBackground?: ModalBackgroundType;
   groupInfoModalPositionType?: ModalPositionType;
   verificationFailModalBackground?: ModalBackgroundType;
@@ -63,7 +75,7 @@ export interface IChatViewComponentProps {
   onVerificationFail?: () => void;
   chatProfileRightHelperComponent?: React.ReactNode;
   chatProfileLeftHelperComponent?: React.ReactNode;
-  welcomeComponent?:React.ReactNode;
+  welcomeComponent?: React.ReactNode;
 }
 
 export interface IChatProfile {
@@ -103,28 +115,25 @@ export interface MessageInputProps {
   gif?: boolean;
   file?: boolean;
   isConnected?: boolean;
-  autoConnect?:boolean;
+  autoConnect?: boolean;
   verificationFailModalBackground?: ModalBackgroundType;
   verificationFailModalPosition?: ModalPositionType;
   onVerificationFail?: () => void;
 }
 
-
-
-
 export interface MessageIPFS {
-  fromCAIP10: string
-  toCAIP10: string
-  fromDID: string
-  toDID: string
-  messageType: string
-  messageContent: string
-  signature: string
-  sigType: string
-  link: string | null
-  timestamp?: number
-  encType: string
-  encryptedSecret: string
+  fromCAIP10: string;
+  toCAIP10: string;
+  fromDID: string;
+  toDID: string;
+  messageType: string;
+  messageContent: string;
+  signature: string;
+  sigType: string;
+  link: string | null;
+  timestamp?: number;
+  encType: string;
+  encryptedSecret: string;
 }
 
 export interface Feeds {
@@ -141,7 +150,7 @@ export interface Feeds {
   intentTimestamp: Date;
   combinedDID: string;
   cid?: string;
-  groupInformation?: IGroup
+  groupInformation?: IGroup;
 }
 
 export interface User {
@@ -158,28 +167,29 @@ export interface User {
   numMsg: number;
   allowedNumMsg: number;
   linkedListHash?: string | null;
-  isAdmin?:boolean;
+  isAdmin?: boolean;
 }
 
 export interface CreateGroupModalProps {
-  onClose: ()=>void;
+  onClose: () => void;
   modalBackground?: ModalBackgroundType;
   modalPositionType?: ModalPositionType;
-};
+  onSuccess?: (group: GroupInfoDTO | GroupDTO | undefined) => void;
+}
 
 export interface UserProfileProps {
   updateUserProfileModalBackground?: ModalBackgroundType;
   updateUserProfileModalPositionType?: ModalPositionType;
-};
+  onUserProfileUpdateModalOpen?: (open: boolean) => void;
+}
 
 export interface ModalButtonProps {
   memberListCount?: boolean;
   theme?: IChatTheme;
   isLoading?: boolean;
-};
+}
 
-
-export { IChatTheme } from './theme';
+export type { IChatTheme } from './theme';
 
 export interface ConditionData {
   operator?: string;
@@ -200,5 +210,16 @@ export enum ChatPreviewListErrorCodes {
 
 export interface IChatPreviewListError {
   code: ChatPreviewListErrorCodes;
+  message: string;
+}
+
+export enum ChatPreviewSearchListErrorCodes {
+  CHAT_PREVIEW_LIST_LOAD_ERROR = 'CPSL-001',
+  CHAT_PREVIEW_LIST_INVALID_SEARCH_ERROR = 'CPSL-002',
+  CHAT_PREVIEW_LIST_INSUFFICIENT_INPUT = 'CPSL-003',
+}
+
+export interface IChatPreviewSearchListError {
+  code: ChatPreviewSearchListErrorCodes;
   message: string;
 }

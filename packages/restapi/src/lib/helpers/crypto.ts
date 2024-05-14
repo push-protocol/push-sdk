@@ -23,11 +23,7 @@ import {
   ProgressHookType,
   ProgressHookTypeFunction,
 } from '../types';
-import {
-  isValidCAIP10NFTAddress,
-  isValidETHAddress,
-  pCAIP10ToWallet,
-} from './address';
+import { isValidNFTCAIP, isValidPushCAIP, pCAIP10ToWallet } from './address';
 import { verifyProfileSignature } from '../chat/helpers/signature';
 import { upgrade } from '../user/upgradeUser';
 import PROGRESSHOOK from '../progressHook';
@@ -133,7 +129,7 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
     const wallet = getWallet({ account, signer });
     const address = await getAccountAddress(wallet);
 
-    if (!isValidETHAddress(address)) {
+    if (!isValidPushCAIP(address)) {
       throw new Error(`Invalid address!`);
     }
 
@@ -530,7 +526,7 @@ export const verifyProfileKeys = async (
         encryptedPrivateKey,
       };
 
-      if (isValidCAIP10NFTAddress(did)) {
+      if (isValidNFTCAIP(did)) {
         const keyToRemove = 'owner';
         const parsedEncryptedPrivateKey = JSON.parse(encryptedPrivateKey);
         if (keyToRemove in parsedEncryptedPrivateKey) {
@@ -544,7 +540,7 @@ export const verifyProfileKeys = async (
       const isValidSig: boolean = await verifyProfileSignature(
         verificationProof,
         signedData,
-        isValidCAIP10NFTAddress(did)
+        isValidNFTCAIP(did)
           ? pCAIP10ToWallet(JSON.parse(encryptedPrivateKey).owner)
           : pCAIP10ToWallet(did)
       );

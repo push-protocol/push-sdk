@@ -1,11 +1,7 @@
 import { produce } from 'immer';
 import { chats } from '../chat';
 import { ENV } from '../constants';
-import {
-  isValidETHAddress,
-  pCAIP10ToWallet,
-  walletToPCAIP10,
-} from '../helpers';
+import { isValidPushCAIP, pCAIP10ToWallet, walletToPCAIP10 } from '../helpers';
 import { VIDEO_NOTIFICATION_ACCESS_TYPE } from '../payloads/constants';
 import {
   VideoCallStatus,
@@ -26,7 +22,7 @@ export class VideoV2 {
   private videoInstance: VideoV1;
 
   // peerInfo objects from the incoming video call requests
-  private peerInfos: {[key: string]: VideoPeerInfo};
+  private peerInfos: { [key: string]: VideoPeerInfo };
 
   /**
    * VideoV2 constructor
@@ -41,13 +37,13 @@ export class VideoV2 {
     account,
     decryptedPgpPvtKey,
     env,
-    peerInfos
+    peerInfos,
   }: {
     videoV1Instance: VideoV1;
     account: string;
     decryptedPgpPvtKey: string;
     env: ENV;
-    peerInfos: {[key: string]: VideoPeerInfo}
+    peerInfos: { [key: string]: VideoPeerInfo };
   }) {
     this.videoInstance = videoV1Instance;
     this.account = account;
@@ -75,7 +71,7 @@ export class VideoV2 {
     const { rules } = options || {};
 
     for (const recipient of recipients) {
-      if (!isValidETHAddress(recipient)) {
+      if (!isValidPushCAIP(recipient)) {
         throw new Error('Invalid recipient address found');
       }
     }
@@ -164,7 +160,9 @@ export class VideoV2 {
     if (!address) {
       const peerInfoAddresses = Object.keys(this.peerInfos);
       if (peerInfoAddresses.length !== 1) {
-        throw new Error('Either no request exists or more than one request found. Please pass an address.');
+        throw new Error(
+          'Either no request exists or more than one request found. Please pass an address.'
+        );
       }
       address = peerInfoAddresses[0];
     }
@@ -189,7 +187,9 @@ export class VideoV2 {
     if (!address) {
       const peerInfoAddresses = Object.keys(this.peerInfos);
       if (peerInfoAddresses.length !== 1) {
-        throw new Error('Either no request exists or more than one request found. Please pass an address.');
+        throw new Error(
+          'Either no request exists or more than one request found. Please pass an address.'
+        );
       }
       address = peerInfoAddresses[0];
     }

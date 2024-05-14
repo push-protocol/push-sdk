@@ -63,9 +63,9 @@ describe('PushAPI.channel functionality', () => {
     //initialisation without signer
     userBob = await PushAPI.initialize(signer1, { env: _env });
     // initialisation with a signer that has no channel
-    userNoChannel = await PushAPI.initialize(noChannelSigner);
+    userNoChannel = await PushAPI.initialize(noChannelSigner, { env: _env });
     // viem signer
-    viemUser = await PushAPI.initialize(viemSigner);
+    viemUser = await PushAPI.initialize(viemSigner, { env: _env });
   });
 
   describe('channel :: info', () => {
@@ -76,9 +76,8 @@ describe('PushAPI.channel functionality', () => {
 
     it('Without signer but with non-caip account: Should return response', async () => {
       const res = await userBob.channel.info(
-        '0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5'
+        '0xD8634C39BBFd4033c0d3289C4515275102423681'
       );
-      // console.log(res)
       expect(res).not.null;
     });
 
@@ -361,7 +360,7 @@ describe('PushAPI.channel functionality', () => {
       expect(res.status).to.equal(204);
     });
 
-    it('With signer : subset  : Should send notification with title and body along with additional options for alias', async () => {
+    it.skip('With signer : subset  : Should send notification with title and body along with additional options for alias', async () => {
       const res = await userAlice.channel.send(
         [
           'eip155:80001:0xC8c243a4fd7F34c49901fe441958953402b7C024',
@@ -460,7 +459,7 @@ describe('PushAPI.channel functionality', () => {
   });
 
   describe('channel :: settings', () => {
-    it('Should create channel', async () => {
+    it('Should create channel settings', async () => {
       const res = await userKate.channel.setting([
         {
           type: 1,

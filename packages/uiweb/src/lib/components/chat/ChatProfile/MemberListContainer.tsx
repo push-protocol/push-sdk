@@ -2,18 +2,18 @@ import { useContext, useRef, useState } from 'react';
 
 import styled from 'styled-components';
 
-import { ThemeContext } from '../theme/ThemeProvider';
 import { useClickAway } from '../../../hooks';
-import Dropdown, { DropdownValueType } from '../reusables/DropDown';
 import { Section, Span } from '../../reusables/sharedStyling';
+import Dropdown, { DropdownValueType } from '../reusables/DropDown';
+import { ThemeContext } from '../theme/ThemeProvider';
 
-import DismissAdmin from '../../../icons/dismissadmin.svg';
+import { device } from '../../../config';
+import { shortenText } from '../../../helpers';
 import AddAdmin from '../../../icons/addadmin.svg';
+import DismissAdmin from '../../../icons/dismissadmin.svg';
 import Remove from '../../../icons/remove.svg';
 import { IChatTheme, User } from '../exportedTypes';
 import { findObject } from '../helpers/helper';
-import { device } from '../../../config';
-import { shortenText } from '../../../helpers';
 import { ProfileContainer } from '../reusables';
 
 
@@ -113,8 +113,13 @@ export const MemberListContainer = ({
       <ProfileContainer
         theme={theme}
         member={{
-          wallet: shortenText(memberData.wallets?.split(':')[1], 6, true),
-          image: memberData.profilePicture || '',
+          name: null,
+          icon: memberData.profilePicture || null,
+          chatId: null,
+          recipient: memberData.wallets?.split(':')[1],
+          abbrRecipient: shortenText(memberData.wallets?.split(':')[1], 6, true),
+          web3Name: null,
+          desc: null,
         }}
       />
 

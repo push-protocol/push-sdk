@@ -1,58 +1,36 @@
 import { ChangeEvent, useContext, useEffect, useRef, useState } from 'react';
 
-import styled from 'styled-components';
-import { MdCheckCircle, MdError } from 'react-icons/md';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import GifPicker from 'gif-picker-react';
-import { IUser } from '@pushprotocol/restapi';
-import { ToastContainer } from 'react-toastify';
+import { createPortal } from 'react-dom';
+import { MdCheckCircle, MdError } from 'react-icons/md';
+import styled from 'styled-components';
 
-import { Section, Div, Span } from '../../reusables';
-import { EmojiIcon } from '../../../icons/Emoji';
-import { GifIcon } from '../../../icons/Gif';
-import { AttachmentIcon } from '../../../icons/Attachment';
-import usePushSendMessage from '../../../hooks/chat/usePushSendMessage';
-import { SendCompIcon } from '../../../icons/SendCompIcon';
-import { Spinner } from '../../reusables';
-import { ThemeContext } from '../theme/ThemeProvider';
-import OpenLink from '../../../icons/OpenLink';
-import useVerifyAccessControl from '../../../hooks/chat/useVerifyAccessControl';
-import { Modal, ModalHeader } from '../reusables/Modal';
-import { ConnectButtonComp } from '../ConnectButton';
-import useToast from '../reusables/NewToast';
-import { ConditionsInformation } from '../ChatProfile/GroupInfoModal';
-import {
-  pCAIP10ToWallet,
-  setAccessControl,
-  walletToPCAIP10,
-} from '../../../helpers';
+import { deriveChatId, pCAIP10ToWallet, setAccessControl, walletToPCAIP10 } from '../../../helpers';
+import { useChatData, useClickAway, useDeviceWidthCheck, usePushChatStream } from '../../../hooks';
 import useFetchChat from '../../../hooks/chat/useFetchChat';
-import {
-  useChatData,
-  useClickAway,
-  useDeviceWidthCheck,
-  usePushChatStream,
-  // usePushChatStream,
-} from '../../../hooks';
 import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
 import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities';
+import usePushSendMessage from '../../../hooks/chat/usePushSendMessage';
+import useVerifyAccessControl from '../../../hooks/chat/useVerifyAccessControl';
+import { AttachmentIcon } from '../../../icons/Attachment';
+import { EmojiIcon } from '../../../icons/Emoji';
+import { GifIcon } from '../../../icons/Gif';
+import OpenLink from '../../../icons/OpenLink';
+import { SendCompIcon } from '../../../icons/SendCompIcon';
+import { Div, Section, Span, Spinner } from '../../reusables';
+import { ConditionsInformation } from '../ChatProfile/ChatProfileInfoModal';
+import { ConnectButtonComp } from '../ConnectButton';
+import { Modal, ModalHeader } from '../reusables/Modal';
+import { ThemeContext } from '../theme/ThemeProvider';
 
-import {
-  MODAL_BACKGROUND_TYPE,
-  type FileMessageContent,
-  MODAL_POSITION_TYPE,
-} from '../../../types';
-import {
-  GIFType,
-  Group,
-  IChatTheme,
-  MessageInputProps,
-} from '../exportedTypes';
 import { PUBLIC_GOOGLE_TOKEN, device } from '../../../config';
+import usePushUser from '../../../hooks/usePushUser';
+import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, type FileMessageContent } from '../../../types';
+import { GIFType, Group, IChatTheme, MessageInputProps } from '../exportedTypes';
 import { checkIfAccessVerifiedGroup } from '../helpers';
 import { InfoContainer } from '../reusables';
 import { ChatInfoResponse } from '../types';
-import useUserProfile from '../../../hooks/useUserProfile';
 
 /**
  * @interface IThemeProps
@@ -63,7 +41,7 @@ interface IThemeProps {
 }
 
 const ConnectButtonSection = ({ autoConnect }: { autoConnect: boolean }) => {
-  const { account, user } = useChatData();
+  const { user, toast } = useChatData();
   return (
     <Section
       width="100%"
@@ -71,7 +49,7 @@ const ConnectButtonSection = ({ autoConnect }: { autoConnect: boolean }) => {
       alignItems="center"
       padding="8px"
     >
-      {!(user && !user?.readmode() && account) && (
+      {!(user && !user?.readmode() && user?.account) && (
         <Span
           padding="8px 8px 8px 16px"
           color="#B6BCD6"
@@ -106,15 +84,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   const [fileUploading, setFileUploading] = useState<boolean>(false);
   const [isRules, setIsRules] = useState<boolean>(false);
   const [isMember, setIsMember] = useState<boolean>(false);
-  //hack for stream not working
-  const [chatAcceptStream, setChatAcceptStream] = useState<any>({}); // to track any new messages
-  const [participantRemoveStream, setParticipantRemoveStream] = useState<any>(
-    {}
-  ); // to track if a participant is removed from group
-  const [participantLeaveStream, setParticipantLeaveStream] = useState<any>({}); // to track if a participant leaves a group
-  const [participantJoinStream, setParticipantJoinStream] = useState<any>({}); // to track if a participant joins a group
-
-  const [groupUpdateStream, setGroupUpdateStream] = useState<any>({});
+  const [formattedChatId, setFormattedChatId] = useState<string>('');
 
   const { getGroupByIDnew } = useGetGroupByIDnew();
   const [groupInfo, setGroupInfo] = useState<Group | null>(null);
@@ -131,51 +101,21 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     setVerified,
     loading: accessLoading,
   } = useVerifyAccessControl();
-  const { fetchMemberStatus, joinGroup, joinLoading, joinError } =
-    useGroupMemberUtilities();
-  const { fetchUserProfile } = useUserProfile();
+  const { fetchMemberStatus, joinGroup, joinLoading, joinError } = useGroupMemberUtilities();
+  const { fetchUserProfile } = usePushUser();
 
-  const { account, env, signer, user } = useChatData();
+  const { user, toast } = useChatData();
   const { fetchChat } = useFetchChat();
-  const statusToast = useToast();
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
-  //event listners
-  usePushChatStream();
-  useEffect(() => {
-    window.addEventListener('chatAcceptStream', (e: any) =>
-      setChatAcceptStream(e.detail)
-    );
-    window.addEventListener('participantRemoveStream', (e: any) =>
-      setParticipantRemoveStream(e.detail)
-    );
-    window.addEventListener('participantLeaveStream', (e: any) =>
-      setParticipantLeaveStream(e.detail)
-    );
-    window.addEventListener('participantJoinStream', (e: any) =>
-      setParticipantJoinStream(e.detail)
-    );
-    window.addEventListener('groupUpdateStream', (e: any) =>
-      setGroupUpdateStream(e.detail)
-    );
-    return () => {
-      window.removeEventListener('chatAcceptStream', (e: any) =>
-        setChatAcceptStream(e.detail)
-      );
-      window.removeEventListener('participantRemoveStream', (e: any) =>
-        setParticipantRemoveStream(e.detail)
-      );
-      window.removeEventListener('participantLeaveStream', (e: any) =>
-        setParticipantLeaveStream(e.detail)
-      );
-      window.removeEventListener('participantJoinStream', (e: any) =>
-        setParticipantJoinStream(e.detail)
-      );
-      window.removeEventListener('groupUpdateStream', (e: any) =>
-        setGroupUpdateStream(e.detail)
-      );
-    };
-  }, []);
+  // setup stream
+  const {
+    chatAcceptStream,
+    participantRemoveStream,
+    participantLeaveStream,
+    participantJoinStream,
+    groupUpdateStream,
+  } = useChatData();
 
   const onChangeTypedMessage = (val: string) => {
     setTypedMessage(val);
@@ -208,36 +148,38 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         const currentTimestamp = new Date().getTime();
         const twentyFourHoursInMilliseconds = 24 * 60 * 60 * 1000;
 
-        if (
-          Math.abs(currentTimestamp - storedTimestamp) <
-          twentyFourHoursInMilliseconds
-        ) {
+        if (Math.abs(currentTimestamp - storedTimestamp) < twentyFourHoursInMilliseconds) {
           setVerified(true);
         } else {
           setVerified(false);
-          setAccessControl(chatId, true);
+          setAccessControl(formattedChatId, true);
         }
       }
     }
-  }, [chatId, verified, isMember, account, env, user]);
+  }, [chatId, verified, isMember, user]);
 
   useEffect(() => {
     (async () => {
       if (!user) return;
       if (chatId) {
-        const chat = await fetchChat({ chatId: chatId });
+        let formattedChatId;
+        if (chatId.includes('.')) {
+          formattedChatId = (await deriveChatId(chatId, user))!;
+        } else formattedChatId = chatId;
+        setFormattedChatId(formattedChatId);
+        const chat = await fetchChat({ chatId: formattedChatId });
         if (Object.keys(chat || {}).length) {
           setChatInfo(chat as ChatInfoResponse);
         }
       }
     })();
-  }, [chatId, user, account, env]);
+  }, [chatId, user]);
 
   useEffect(() => {
     (async () => {
       let GroupProfile;
       if (chatInfo && chatInfo?.meta?.group) {
-        GroupProfile = await getGroupByIDnew({ groupId: chatId });
+        GroupProfile = await getGroupByIDnew({ groupId: formattedChatId });
         if (GroupProfile) setGroupInfo(GroupProfile);
       }
     })();
@@ -245,20 +187,17 @@ export const MessageInput: React.FC<MessageInputProps> = ({
 
   //moniter stream changes
   useEffect(() => {
-    if (
-      Object.keys(groupUpdateStream || {}).length > 0 &&
-      groupUpdateStream.constructor === Object
-    )
+    if (Object.keys(groupUpdateStream || {}).length > 0 && groupUpdateStream.constructor === Object)
       transformGroupDetails(groupUpdateStream);
   }, [groupUpdateStream]);
 
   useEffect(() => {
     if (!user) return;
-    if (user && account && groupInfo) {
+    if (user && groupInfo) {
       (async () => {
         const status = await fetchMemberStatus({
           chatId: groupInfo.chatId!,
-          accountId: account,
+          accountId: user?.account,
         });
         if (status && typeof status !== 'string') {
           setIsMember(status?.participant);
@@ -269,7 +208,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       })();
     }
   }, [
-    account,
+    user,
     groupInfo,
     chatInfo,
     chatAcceptStream,
@@ -277,12 +216,32 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     participantLeaveStream,
     participantRemoveStream,
   ]);
+
   useEffect(() => {
     if (!user) return;
     if (user && chatId && groupInfo) {
       setIsRules(checkIfAccessVerifiedGroup(groupInfo));
     }
-  }, [chatId, groupInfo, user, account, env]);
+  }, [chatId, groupInfo, user]);
+
+  // to change chatInfo when user action changes if chat info matches
+  useEffect(() => {
+    if (chatInfo && chatInfo.chatId === chatAcceptStream.chatId && chatInfo?.list === 'REQUESTS') {
+      setChatInfo((prevInfo) => {
+        if (!prevInfo) return null; // Handle the case where prevInfo is null
+
+        return {
+          ...prevInfo,
+          list: 'CHATS', // Example of updating the list
+          chatId: prevInfo.chatId, // Directly use the existing chatId, ensuring it's not undefined
+          meta: {
+            group: prevInfo.meta?.group ?? false, // Provide default value if undefined
+            encryption: prevInfo.meta?.encryption ?? false,
+          },
+        };
+      });
+    }
+  }, [chatAcceptStream]);
 
   const transformGroupDetails = (item: any): void => {
     if (groupInfo?.chatId === item?.chatId) {
@@ -311,13 +270,17 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   };
 
   const checkVerification = () => {
-    verifyAccessControl({ chatId, did: account! });
+    if (user?.account) {
+      verifyAccessControl({ chatId, did: user.account });
+    } else {
+      console.error("UIWeb::MessageInput::checkVerification::User's account is not available");
+    }
   };
 
   const handleJoinGroup = async () => {
-    if (chatInfo && groupInfo && groupInfo?.isPublic) {
+    if (chatInfo && groupInfo) {
       const response = await joinGroup({
-        chatId,
+        chatId: formattedChatId,
       });
       if (typeof response !== 'string') {
         showSuccess('Success', 'Successfully joined group');
@@ -328,7 +291,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       }
     } else {
       const sendTextMessage = await sendMessage({
-        message: `Hello, please let me join this group, my wallet address is ${account}`,
+        message: `Hello, please let me join this group, my wallet address is ${pCAIP10ToWallet(user?.account || '')}`,
         chatId: groupInfo?.groupCreator || '',
         messageType: 'Text',
       });
@@ -341,37 +304,41 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   };
 
   const showError = (title: string, subTitle: string) => {
-    statusToast.showMessageToast({
+    toast.showMessageToast({
       toastTitle: title,
       toastMessage: subTitle,
       toastType: 'ERROR',
-      getToastIcon: (size) => <MdError size={size} color="red" />,
+      getToastIcon: (size: number) => (
+        <MdError
+          size={size}
+          color="red"
+        />
+      ),
     });
   };
 
   const showSuccess = (title: string, subTitle: string) => {
-    statusToast.showMessageToast({
+    toast.showMessageToast({
       toastTitle: title,
       toastMessage: subTitle,
       toastType: 'SUCCESS',
-      getToastIcon: (size) => <MdCheckCircle size={size} color="green" />,
+      getToastIcon: (size: number) => (
+        <MdCheckCircle
+          size={size}
+          color="green"
+        />
+      ),
     });
   };
 
-  const uploadFile = async (
-    e: ChangeEvent<HTMLInputElement>
-  ): Promise<void> => {
+  const uploadFile = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {
     if (!(e.target instanceof HTMLInputElement)) {
       return;
     }
     if (!e.target.files) {
       return;
     }
-    if (
-      e.target &&
-      (e.target as HTMLInputElement).files &&
-      ((e.target as HTMLInputElement).files as FileList).length
-    ) {
+    if (e.target && (e.target as HTMLInputElement).files && ((e.target as HTMLInputElement).files as FileList).length) {
       const file: File = e.target.files[0];
       if (file) {
         try {
@@ -416,14 +383,10 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     try {
       const sendMessageResponse = await sendMessage({
         message: content,
-        chatId,
+        chatId: formattedChatId,
         messageType: type as any,
       });
-      if (
-        sendMessageResponse &&
-        typeof sendMessageResponse === 'string' &&
-        sendMessageResponse.includes('403')
-      ) {
+      if (sendMessageResponse && typeof sendMessageResponse === 'string' && sendMessageResponse.includes('403')) {
         setAccessControl(chatId, true);
         setVerified(false);
         setVerificationSuccessfull(false);
@@ -458,123 +421,135 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     >
       <ConnectButtonSection autoConnect={autoConnect} />
     </TypebarSection>
-  ) : Object.keys(chatInfo || {}).length && chatInfo?.list !== 'REQUESTS' ? (
-    <TypebarSection
+  ) : Object.keys(chatInfo || {}).length ? (
+    <MessageInputContainer
       width="100%"
-      overflow="hidden"
-      borderRadius={theme.borderRadius?.messageInput}
-      position="static"
-      border={theme.border?.messageInput}
-      padding={` ${user && !user?.readmode() ? '13px 16px' : ''}`}
-      background={`${theme.backgroundColor?.messageInputBackground}`}
-      alignItems="center"
       justifyContent="space-between"
+      alignItems="center"
+      className={chatInfo?.list === 'REQUESTS' ? 'hide' : ''}
     >
-      {Object.keys(chatInfo || {}).length && groupInfo ? (
-        <>
-          {(isJoinGroup() || isNotVerified()) && (
-            <Section
-              width="100%"
-              justifyContent="space-between"
-              alignItems="center"
-            >
-              <Span
-                padding="8px 8px 8px 16px"
-                color={theme.textColor?.chatReceivedBubbleText}
-                fontSize="15px"
-                fontWeight="500"
-                textAlign="start"
+      <TypebarSection
+        width="100%"
+        overflow="hidden"
+        borderRadius={theme.borderRadius?.messageInput}
+        position="static"
+        border={theme.border?.messageInput}
+        padding={` ${user && !user?.readmode() ? '13px 16px' : ''}`}
+        background={`${theme.backgroundColor?.messageInputBackground}`}
+        alignItems="center"
+        justifyContent="space-between"
+      >
+        {Object.keys(chatInfo || {}).length && groupInfo ? (
+          <>
+            {(isJoinGroup() || isNotVerified()) && (
+              <Section
+                width="100%"
+                justifyContent="space-between"
+                alignItems="center"
               >
-                {isJoinGroup() && 'Click on the button to join the group'}
-                {isNotVerified() && (
-                  <>
-                    Sending messages requires to staisfy the group rules.{' '}
-                    <Link
-                      href="https://push.org/docs/chat/build/conditional-rules-for-group/"
-                      target="_blank"
-                      color={theme.backgroundColor?.chatSentBubbleBackground}
-                    >
-                      Learn More <OpenLink />
-                    </Link>
-                  </>
-                )}
-              </Span>
-              <ConnectWrapper>
-                <Connect
-                  onClick={async () =>
-                    isJoinGroup()
-                      ? await handleJoinGroup()
-                      : await checkVerification()
-                  }
+                <Span
+                  padding="8px 8px 8px 0px"
+                  color={theme.textColor?.chatReceivedBubbleText}
+                  fontSize="15px"
+                  fontWeight="500"
+                  textAlign="start"
                 >
-                  {isJoinGroup() && (
-                    <>
-                      {joinLoading ? (
-                        <Spinner color="#fff" size="24" />
-                      ) : (
-                        ' Join Group '
-                      )}
-                    </>
-                  )}
+                  {isJoinGroup() && 'Click on the button to join the group'}
                   {isNotVerified() && (
                     <>
-                      {accessLoading ? (
-                        <Spinner color="#fff" size="24" />
-                      ) : (
-                        'Verify Access'
-                      )}
+                      Sending messages requires to staisfy the group rules.{' '}
+                      <Link
+                        href="https://push.org/docs/chat/build/conditional-rules-for-group/"
+                        target="_blank"
+                        color={theme.backgroundColor?.chatSentBubbleBackground}
+                      >
+                        Learn More <OpenLink />
+                      </Link>
                     </>
                   )}
-                </Connect>
-              </ConnectWrapper>
-            </Section>
-          )}
-          {!!user && !user?.readmode() && !verificationSuccessfull && (
-            <Modal
-              width="550px"
-              modalBackground={verificationFailModalBackground}
-              modalPositionType={verificationFailModalPosition}
-            >
-              <Section
-                margin="5px 0px 0px 0px"
-                gap="16px"
-                flexDirection="column"
-                width="100%"
-              >
-                <ModalHeader title="Access Failed" />
-                <ConditionsInformation
-                  theme={theme}
-                  groupInfo={groupInfo}
-                  subheader="Please make sure the following conditions
-                   are met to pariticpate and send messages."
-                  alert={true}
-                />
-                <ConnectWrapperClose
-                  onClick={() => {
-                    if (onVerificationFail) {
-                      onVerificationFail();
-                    }
-                    setVerificationSuccessfull(true);
-                  }}
-                >
-                  <ConnectClose>Cancel</ConnectClose>
-                </ConnectWrapperClose>
-                <InfoContainer
-                  cta="https://push.org/docs/chat/build/conditional-rules-for-group/"
-                  label="Learn more about access gating rules"
-                />
+                </Span>
+                <ConnectWrapper>
+                  <Connect onClick={async () => (isJoinGroup() ? await handleJoinGroup() : await checkVerification())}>
+                    {isJoinGroup() && (
+                      <>
+                        {joinLoading ? (
+                          <Spinner
+                            color="#fff"
+                            size="24"
+                          />
+                        ) : (
+                          ' Join Group '
+                        )}
+                      </>
+                    )}
+                    {isNotVerified() && (
+                      <>
+                        {accessLoading ? (
+                          <Spinner
+                            color="#fff"
+                            size="24"
+                          />
+                        ) : (
+                          'Verify Access'
+                        )}
+                      </>
+                    )}
+                  </Connect>
+                </ConnectWrapper>
               </Section>
-              {/* </Section> */}
-            </Modal>
-          )}
-        </>
-      ) : null}
-      {user &&
-        !user?.readmode() &&
-        (((isRules ? verified : true) && isMember) ||
-          (chatInfo && !groupInfo)) && (
+            )}
+            {!!user &&
+              !user?.readmode() &&
+              !verificationSuccessfull &&
+              createPortal(
+                <Modal
+                  width="550px"
+                  modalBackground={verificationFailModalBackground}
+                  modalPositionType={verificationFailModalPosition}
+                >
+                  <Section
+                    margin="5px 0px 0px 0px"
+                    gap="16px"
+                    flexDirection="column"
+                    width="100%"
+                  >
+                    <ModalHeader title="Access Failed" />
+                    <ConditionsInformation
+                      theme={theme}
+                      groupInfo={groupInfo}
+                      subheader="Please make sure the following conditions
+                    are met to pariticpate and send messages."
+                      alert={true}
+                    />
+                    <ConnectWrapperClose
+                      onClick={() => {
+                        if (onVerificationFail) {
+                          onVerificationFail();
+                        }
+                        setVerificationSuccessfull(true);
+                      }}
+                    >
+                      <ConnectClose>Cancel</ConnectClose>
+                    </ConnectWrapperClose>
+                    <InfoContainer
+                      cta="https://push.org/docs/chat/build/conditional-rules-for-group/"
+                      label="Learn more about access gating rules"
+                    />
+                  </Section>
+                  {/* </Section> */}
+                </Modal>,
+
+                document.body
+              )}
+          </>
+        ) : null}
+        {user && !user?.readmode() && (((isRules ? verified : true) && isMember) || (chatInfo && !groupInfo)) && (
           <>
-            <Section gap="8px" flex="1" position="static">
+            <Section
+              gap="8px"
+              flex="1"
+              position="static"
+            >
               {emoji && (
                 <Div
                   width="25px"
@@ -620,7 +595,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
             <SendSection position="static">
               {gif && (
                 <Section
-                  width="34px"
+                  width="30px"
                   height="24px"
                   cursor="pointer"
                   alignSelf="end"
@@ -649,7 +624,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                 {!fileUploading && file && (
                   <>
                     <Section
-                      width="17"
+                      width="18px"
                       height="24px"
                       cursor="pointer"
                       alignSelf="end"
@@ -668,7 +643,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                 <Section
                   cursor="pointer"
                   alignSelf="end"
-                  height="24px"
+                  height="20px"
+                  width="22px"
                   onClick={() => sendTextMsg()}
                 >
                   <SendCompIcon color={theme.iconColor?.sendButton} />
@@ -676,27 +652,43 @@ export const MessageInput: React.FC<MessageInputProps> = ({
               )}
 
               {(loading || fileUploading) && (
-                <Section alignSelf="end" height="24px">
-                  <Spinner color={theme.spinnerColor} size="22" />
+                <Section
+                  alignSelf="end"
+                  height="24px"
+                >
+                  <Spinner
+                    color={theme.spinnerColor}
+                    size="22"
+                  />
                 </Section>
               )}
             </SendSection>
           </>
         )}
-      <ToastContainer />
-    </TypebarSection>
+      </TypebarSection>
+    </MessageInputContainer>
   ) : (
     <></>
   );
 };
 
 const TypebarSection = styled(Section)<{ border?: string }>`
-  gap: 10px;
+  // gap: 10px;
   border: ${(props) => props.border || 'none'};
   @media ${device.mobileL} {
     gap: 0px;
   }
 `;
+
+const MessageInputContainer = styled(Section)`
+  transition: transform 0.3s ease-in-out;
+  transform: translateY(0);
+
+  &.hide {
+    transform: translateY(calc(100% + 20px));
+  }
+`;
+
 const SendSection = styled(Section)`
   gap: 11.5px;
   @media ${device.mobileL} {
@@ -707,7 +699,7 @@ const MultiLineInput = styled.textarea<IThemeProps>`
   font-family: inherit;
   font-weight: 400;
   transform: translateY(3px);
-  font-size: 16px;
+  font-size: 15px;
   outline: none;
   overflow-y: auto;
   box-sizing: border-box;

@@ -2,7 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
-## [0.5.2](https://github.com/push-protocol/push-sdk/compare/socket-0.5.1...socket-0.5.2) (2023-08-03)
+## [0.5.3](https://github.com/ethereum-push-notification-service/push-sdk/compare/socket-0.5.2...socket-0.5.3) (2023-11-15)
+
+
+### Bug Fixes
+
+* shift testnet env to sepolia ([#473](https://github.com/ethereum-push-notification-service/push-sdk/issues/473)) ([12f1392](https://github.com/ethereum-push-notification-service/push-sdk/commit/12f1392a4f4e800f720a0c2c34822bf502f15dac))
+
+
+
+## [0.5.2](https://github.com/ethereum-push-notification-service/push-sdk/compare/socket-0.5.1...socket-0.5.2) (2023-08-03)
 
 
 ### Bug Fixes

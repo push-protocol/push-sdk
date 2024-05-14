@@ -6,7 +6,6 @@ import * as config from '../config';
 import {
   getCAIPDetails,
   getFallbackETHCAIPAddress,
-  pCAIP10ToWallet,
   validateCAIP,
 } from '../helpers';
 import * as PUSH_PAYLOAD from '../payloads';
@@ -39,7 +38,7 @@ export class Channel extends PushNotificationBaseClass {
   constructor(signer?: SignerType, env?: ENV, account?: string) {
     super(signer, env, account);
     this.delegate = new Delegate(signer, env, account);
-    this.alias = new Alias(env!);
+    this.alias = new Alias(signer, env, account);
   }
 
   /**
@@ -132,20 +131,17 @@ export class Channel extends PushNotificationBaseClass {
   send = async (recipients: string[], options: NotificationOptions) => {
     try {
       this.checkSignerObjectExists();
-      const info = await this.getChannelOrAliasInfo(
+      const channelInfo = await this.getChannelOrAliasInfo(
         options.channel! ?? this.account
       );
-      let settings = null;
-      if (info && info.channel_settings) {
-        settings = JSON.parse(info.channel_settings);
-      }
+
       const lowLevelPayload = this.generateNotificationLowLevelPayload({
         signer: this.signer!,
         env: this.env!,
         recipients: recipients,
         options: options,
         channel: options.channel ?? this.account,
-        settings: settings,
+        channelInfo: channelInfo,
       });
       return await PUSH_PAYLOAD.sendNotification(lowLevelPayload);
     } catch (error) {
@@ -384,7 +380,13 @@ export class Channel extends PushNotificationBaseClass {
         config.MIN_TOKEN_BALANCE[this.env!].toString(),
         18
       );
-      if (fees > balance) {
+      // get counter
+      const counter = await this.fetchUpdateCounter(
+        this.coreContract,
+        this.account!
+      );
+      const totalFees = fees * counter;
+      if (totalFees > balance) {
         throw new Error('Insufficient PUSH balance');
       }
       const allowanceAmount = await this.fetchAllownace(
@@ -393,11 +395,11 @@ export class Channel extends PushNotificationBaseClass {
         config.CORE_CONFIG[this.env!].EPNS_CORE_CONTRACT
       );
       // if allowance is not greater than the fees, dont call approval again
-      if (!(allowanceAmount >= fees)) {
+      if (!(allowanceAmount >= totalFees)) {
         const approveRes = await this.approveToken(
           pushTokenContract,
           config.CORE_CONFIG[this.env!].EPNS_CORE_CONTRACT,
-          fees
+          totalFees
         );
         if (!approveRes) {
           throw new Error('Something went wrong while approving your token');

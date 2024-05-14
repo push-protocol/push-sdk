@@ -1,9 +1,10 @@
 import * as CryptoJS from 'crypto-js';
-import { IPGPHelper, PGPHelper, getUserDID } from '../chat/helpers';
+import { IPGPHelper, PGPHelper } from '../chat/helpers';
 import Constants, { ENV } from '../constants';
 import {
+  convertToValidDID,
   getAPIBaseUrls,
-  isValidETHAddress,
+  isValidPushCAIP,
   verifyProfileKeys,
 } from '../helpers';
 import { IUser, ProgressHookType, ProgressHookTypeFunction } from '../types';
@@ -55,7 +56,7 @@ export const profileUpdateCore = async (
     progressHook,
   } = options || {};
   try {
-    if (!isValidETHAddress(account)) {
+    if (!isValidPushCAIP(account)) {
       throw new Error(`Invalid account!`);
     }
 
@@ -67,7 +68,7 @@ export const profileUpdateCore = async (
     if (profile.blockedUsersList) {
       for (const element of profile.blockedUsersList) {
         // Check if the element is a valid CAIP-10 address
-        if (!isValidETHAddress(element)) {
+        if (!isValidPushCAIP(element)) {
           throw new Error(
             'Invalid address in the blockedUsersList: ' + element
           );
@@ -76,7 +77,7 @@ export const profileUpdateCore = async (
 
       const convertedBlockedListUsersPromise = profile.blockedUsersList.map(
         async (each) => {
-          return getUserDID(each, env);
+          return convertToValidDID(each, env);
         }
       );
       blockedUsersList = await Promise.all(convertedBlockedListUsersPromise);

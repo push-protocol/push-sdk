@@ -1,12 +1,12 @@
-import { DropdownValueType } from '../reusables';
 import { ChatMemberProfile, UserV2 } from '@pushprotocol/restapi';
+import { DropdownValueType } from '../reusables';
 
 export const GROUP_ROLES = {
   ADMIN: 'ADMIN',
   MEMBER: 'MEMBER',
 } as const;
 
-export type GroupRolesKeys = (typeof GROUP_ROLES)[keyof typeof GROUP_ROLES];
+export type GroupRolesKeys = typeof GROUP_ROLES[keyof typeof GROUP_ROLES];
 export interface ChatMemberCounts {
   overallCount: number;
   adminsCount: number;
@@ -15,19 +15,18 @@ export interface ChatMemberCounts {
   approvedCount: number;
 }
 
-
-export interface FetchGroupMembersResponseType  {
+export interface FetchGroupMembersResponseType {
   members: ChatMemberProfile[];
 }
 export interface GroupMembersType {
-  pending:ChatMemberProfile[];
-  accepted:ChatMemberProfile[];
+  pending: ChatMemberProfile[];
+  accepted: ChatMemberProfile[];
 }
 
-export interface GrouInfoType{
+export interface GrouInfoType {
   groupName: string;
-  groupDescription:string;
-  groupImage:string;
+  groupDescription: string;
+  groupImage: string;
   isPublic: boolean;
   members: string[];
   admins: string[];
@@ -38,7 +37,7 @@ export const TYPE = {
   GUILD: 'GUILD',
 } as const;
 
-export type TypeKeys = (typeof TYPE)[keyof typeof TYPE];
+export type TypeKeys = typeof TYPE[keyof typeof TYPE];
 
 export const CATEGORY = {
   ERC20: 'ERC20',
@@ -52,7 +51,7 @@ export const UNIT = {
   ERC20: 'TOKEN',
   ERC721: 'NFT',
 } as const;
-export type UnitKeys = (typeof UNIT)[keyof typeof UNIT];
+export type UnitKeys = typeof UNIT[keyof typeof UNIT];
 export const SUBCATEGORY = {
   HOLDER: 'holder',
   OWENER: 'owner',
@@ -62,13 +61,11 @@ export const SUBCATEGORY = {
 } as const;
 
 export type ReadonlyInputType = {
-    value: string;
-    title: string;
-  };
-export type InputType =
-  | DropdownValueType[]
-  | ReadonlyInputType;
-export type SubCategoryKeys = (typeof CATEGORY)[keyof typeof CATEGORY];
+  value: string;
+  title: string;
+};
+export type InputType = DropdownValueType[] | ReadonlyInputType;
+export type SubCategoryKeys = typeof CATEGORY[keyof typeof CATEGORY];
 
 export type DropdownCategoryValuesType = {
   [key in TypeKeys]: InputType;
@@ -79,32 +76,37 @@ export type DropdownSubCategoryValuesType = {
 };
 
 export const TOKEN_NFT_COMPARISION = {
-'>':'more than',
-'>=': 'equal or more than',
-'<': 'less than',
-'<=': 'equal or less than',
-'==': 'equal to',
-'!=':'not equal to'
+  '>': 'more than',
+  '>=': 'equal or more than',
+  '<': 'less than',
+  '<=': 'equal or less than',
+  '==': 'equal to',
+  '!=': 'not equal to',
 } as const;
 
 export type TokenNftComparision = keyof typeof TOKEN_NFT_COMPARISION;
 
 export const CRITERIA_TYPE = {
-  ERC20:'Token',
+  ERC20: 'Token',
   ERC721: 'NFT',
   INVITE: 'Invite',
   CustomEndpoint: 'URL',
   ROLES: 'Guild ID',
-  } as const;
-  
-  export type CriteriaType = keyof typeof CRITERIA_TYPE;
+} as const;
 
-  export interface ChatInfoResponse {
-    chatId:string;
-    meta: {
-      group: boolean;
+export type CriteriaType = keyof typeof CRITERIA_TYPE;
+
+export interface ChatInfoResponse {
+  chatId: string;
+  meta: {
+    group: boolean;
+    encryption: boolean;
+    groupInfo?: {
+      public: boolean;
     };
-    participants?: Array<string>;
-    list: string;
-  }
-export * from './tokenGatedGroupCreationType'
+  };
+  participants?: Array<string>;
+  recipient?: string;
+  list: string;
+}
+export * from './tokenGatedGroupCreationType';

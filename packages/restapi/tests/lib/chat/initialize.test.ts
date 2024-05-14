@@ -3,9 +3,15 @@ import { PushAPI } from '../../../src/lib/pushapi/PushAPI'; // Ensure correct im
 import { expect } from 'chai';
 import { ethers } from 'ethers';
 import Constants from '../../../src/lib/constants';
+import CONSTANTS from '../../../src/lib/constantsV2';
 
 describe('PushAPI.initialize functionality', () => {
   let signer: ethers.Wallet;
+
+  // accessing env dynamically using process.env
+  type EnvStrings = keyof typeof CONSTANTS.ENV;
+  const envMode = process.env.ENV as EnvStrings;
+  const env = CONSTANTS.ENV[envMode];
 
   beforeEach(async () => {
     const provider = ethers.getDefaultProvider();
@@ -18,7 +24,7 @@ describe('PushAPI.initialize functionality', () => {
     const updateProgressInfo = (info: ProgressHookType) => {
       progressInfo.push(info);
     };
-    await PushAPI.initialize(signer, { progressHook: updateProgressInfo });
+    await PushAPI.initialize(signer, { env, progressHook: updateProgressInfo });
     const expectedHooks = [
       'PUSH-CREATE-01',
       'PUSH-CREATE-02',
@@ -37,9 +43,9 @@ describe('PushAPI.initialize functionality', () => {
       progressInfo.push(info);
     };
     // New User
-    await PushAPI.initialize(signer);
+    await PushAPI.initialize(signer, { env });
     // Existing User
-    await PushAPI.initialize(signer, { progressHook: updateProgressInfo });
+    await PushAPI.initialize(signer, { env, progressHook: updateProgressInfo });
     const expectedHooks = ['PUSH-DECRYPT-01', 'PUSH-DECRYPT-02'];
     expect(progressInfo.length).to.deep.equal(expectedHooks.length);
     for (let i = 0; i < progressInfo.length; i++) {
@@ -58,6 +64,7 @@ describe('PushAPI.initialize functionality', () => {
     };
     // Already Existing NFT User
     await PushAPI.initialize(nftSigner, {
+      env,
       account: nftAccount,
       progressHook: updateProgressInfo,
     });
@@ -70,6 +77,7 @@ describe('PushAPI.initialize functionality', () => {
   it('Should upgrade user on initialize', async () => {
     // Create V1 User
     await PushAPI.initialize(signer, {
+      env,
       version: Constants.ENC_TYPE_V1,
     });
     const progressInfo: ProgressHookType[] = [];
@@ -77,6 +85,7 @@ describe('PushAPI.initialize functionality', () => {
       progressInfo.push(info);
     };
     await PushAPI.initialize(signer, {
+      env,
       progressHook: updateProgressInfo,
       version: Constants.ENC_TYPE_V1,
     });
@@ -98,6 +107,7 @@ describe('PushAPI.initialize functionality', () => {
   it('Should not upgrade user on initialize with autoupgrade flag false', async () => {
     // Create V1 User
     await PushAPI.initialize(signer, {
+      env,
       version: Constants.ENC_TYPE_V1,
     });
     const progressInfo: ProgressHookType[] = [];
@@ -105,6 +115,7 @@ describe('PushAPI.initialize functionality', () => {
       progressInfo.push(info);
     };
     await PushAPI.initialize(signer, {
+      env,
       progressHook: updateProgressInfo,
       version: Constants.ENC_TYPE_V1,
       autoUpgrade: false,
@@ -127,6 +138,7 @@ describe('PushAPI.initialize functionality', () => {
     };
     // Already Existing NFT User
     const userAlice = await PushAPI.initialize(nftSigner, {
+      env,
       account: nftAccount,
       progressHook: updateProgressInfo,
       versionMeta: { NFTPGP_V1: { password: 'wrongpassword' } },

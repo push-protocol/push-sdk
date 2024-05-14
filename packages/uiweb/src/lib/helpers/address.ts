@@ -1,6 +1,7 @@
+import type { InfuraProvider, Web3Provider } from '@ethersproject/providers';
+import { CONSTANTS, Env, PushAPI, SignerType } from '@pushprotocol/restapi';
 import { ethers } from 'ethers';
-import type { Web3Provider, InfuraProvider } from '@ethersproject/providers';
-import { Env, SignerType } from '@pushprotocol/restapi';
+import { CoreContractChainId, InfuraAPIKey } from '../config';
 import { getUdResolver } from './udResolver';
 
 /**
@@ -37,7 +38,11 @@ export const walletToPCAIP10 = (account: string): string => {
 };
 
 export const pCAIP10ToWallet = (wallet: string): string => {
-  if (wallet) wallet = wallet.replace('eip155:', '');
+  // only return the last part of the wallet after :
+  if (wallet) {
+    wallet = wallet.split(':').pop() ?? '';
+  }
+
   return wallet;
 };
 
@@ -67,54 +72,46 @@ export const resolveEns = (address: string, provider: Web3Provider) => {
   });
 };
 
-export const resolveNewEns = async (
-  address: string,
-  provider: InfuraProvider,
-  env:Env
-) => {
+export const getProvider = (user: PushAPI | undefined): any => {
+  const envKey = user ? user.env : CONSTANTS.ENV.PROD; // Default to 'PROD' if user.env is not in Constants.ENV
+  const chainId = CoreContractChainId[envKey as keyof typeof CoreContractChainId]; // Use 'as' to assert the type
+  const provider = new ethers.providers.InfuraProvider(chainId, InfuraAPIKey);
+
+  return provider;
+};
+
+export const resolveWeb3Name = async (address: string, user: PushAPI | undefined) => {
   const walletLowercase = pCAIP10ToWallet(address).toLowerCase();
   const checksumWallet = ethers.utils.getAddress(walletLowercase);
-  // let provider = ethers.getDefaultProvider('mainnet');
-  // if (
-  //   window.location.hostname == 'app.push.org' ||
-  //   window.location.hostname == 'staging.push.org' ||
-  //   window.location.hostname == 'dev.push.org' ||
-  //   window.location.hostname == 'alpha.push.org' ||
-  //   window.location.hostname == 'w2w.push.org'
-  // ) {
-  //   provider = new ethers.providers.InfuraProvider(
-  //     'mainnet',
-  //     appConfig.infuraAPIKey
-  //   );
-  // }
 
+  // get provider
+  const provider = getProvider(user);
 
   let result: string | null = null;
 
   try {
-   const ens =  await provider.lookupAddress(checksumWallet)
-      if (ens) {
-        result = ens;
-        // return ens;
-      } else {
-        try {
-          const udResolver = getUdResolver(env);
-          // attempt reverse resolution on provided address
-          const udName = await udResolver.reverse(checksumWallet);
-          if (udName) {
-            result = udName
-          } else {
-            result = null;
-          }
-        } catch (err) {
-          console.debug(err);
+    const ens = await provider.lookupAddress(checksumWallet);
+    if (ens) {
+      result = ens;
+    } else {
+      try {
+        const udResolver = getUdResolver(user ? user.env : CONSTANTS.ENV.PROD);
+        // attempt reverse resolution on provided address
+        const udName = await udResolver.reverse(checksumWallet);
+        if (udName) {
+          result = udName;
+        } else {
+          result = null;
         }
+      } catch (err) {
+        console.error('UIWeb::helpers::address::resolveWeb3Name::Error in resolving via UD', err);
       }
-
+    }
   } catch (err) {
-    console.debug(err);
+    console.error('UIWeb::helpers::address::resolveWeb3Name::Error in resolving via ENS', err);
   }
 
+  console.debug(`UIWeb::helpers::address::resolveWeb3Name::Wallet: ${checksumWallet} resolved to ${result}`);
   return result;
 };
 
@@ -123,9 +120,7 @@ export const isPCAIP = (id: string) => {
   return id?.startsWith(prefix);
 };
 
-export const getAddressFromSigner = async (
-  signer: SignerType
-): Promise<string> => {
+export const getAddressFromSigner = async (signer: SignerType): Promise<string> => {
   if ('getAddress' in signer) {
     return await signer.getAddress();
   } else {

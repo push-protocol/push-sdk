@@ -1,8 +1,7 @@
+import { Env, PushAPI } from '@pushprotocol/restapi';
 import { useCallback, useContext } from 'react';
-import { Env } from '@pushprotocol/restapi';
-import { PushAPI } from "@pushprotocol/restapi";
 
-export interface FetchProfileParams {
+export interface FetchUserProfileParams {
   profileId?: string;
   env?: Env;
   user?: PushAPI;
@@ -15,7 +14,7 @@ const useUserProfile = () => {
       user,
       //note: remove env when chat and notification component is shifted to class based
       env
-    }: FetchProfileParams): Promise<any> => {
+    }: FetchUserProfileParams): Promise<any> => {
       try {
         let userReadOnly;
         

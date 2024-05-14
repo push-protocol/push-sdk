@@ -1,10 +1,10 @@
+import { ethers } from 'ethers';
 import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { SupportChatPropsContext } from '../../context';
 import { Constants, ENV, InfuraAPIKey, allowedNetworks } from '../../config';
-import { copyToClipboard, pCAIP10ToWallet, resolveNewEns } from '../../helpers';
+import { SupportChatPropsContext } from '../../context';
+import { copyToClipboard, pCAIP10ToWallet, resolveWeb3Name, } from '../../helpers';
 import { CopySvg } from '../../icons/CopySvg';
-import { ethers } from 'ethers';
 import { ChatProps } from './Chat';
 
 export const AddressInfo: React.FC = () => {
@@ -22,7 +22,7 @@ export const AddressInfo: React.FC = () => {
     const getUser = async () => {
 if(user){
   const fetchedUser = await user.info();
- const ensNameResult = await resolveNewEns(supportAddress!, provider,env!) 
+ const ensNameResult = await resolveWeb3Name(supportAddress!, user) 
   setEnsName(ensNameResult!)
 setPushUser(fetchedUser);
 }

@@ -1,55 +1,37 @@
 import { useEffect, useRef, useState } from 'react';
 
-import styled from 'styled-components';
-import {
-  ChatMemberProfile,
-  GroupParticipantCounts,
-  IUser,
-  ParticipantStatus,
-} from '@pushprotocol/restapi';
+import { ChatMemberProfile, GroupParticipantCounts, IUser, ParticipantStatus } from '@pushprotocol/restapi';
 import { MdCheckCircle, MdError } from 'react-icons/md';
+import styled from 'styled-components';
 
 import { useChatData, usePushChatStream } from '../../../hooks';
-import { Section, Span, Image } from '../../reusables/sharedStyling';
-import { AddWalletContent } from './AddWalletContent';
-import { Modal, ModalHeader } from '../reusables';
-import useMediaQuery from '../../../hooks/useMediaQuery';
-import useToast from '../reusables/NewToast';
 import useUpdateGroup from '../../../hooks/chat/useUpdateGroup';
-import ConditionsComponent from '../CreateGroup/ConditionsComponent';
-import { AcceptedMembers, PendingMembers } from './PendingMembers';
+import useMediaQuery from '../../../hooks/useMediaQuery';
 import { Spinner } from '../../reusables';
+import { Image, Section, Span } from '../../reusables/sharedStyling';
+import ConditionsComponent from '../CreateGroup/ConditionsComponent';
+import { Modal, ModalHeader } from '../reusables';
+import { AddWalletContent } from './AddWalletContent';
+import { IChatProfileUserInfo } from './ChatProfile';
+import { AcceptedMembers, PendingMembers } from './PendingMembers';
 
-import { IChatTheme } from '../theme';
 import { device } from '../../../config';
+import { copyToClipboard, shortenText } from '../../../helpers';
 import LockIcon from '../../../icons/Lock.png';
 import LockSlashIcon from '../../../icons/LockSlash.png';
 import addIcon from '../../../icons/addicon.svg';
-import { copyToClipboard, shortenText } from '../../../helpers';
-import {
-  ACCEPTED_MEMBERS_LIMIT,
-  ACCESS_TYPE_TITLE,
-  OPERATOR_OPTIONS_INFO,
-  PENDING_MEMBERS_LIMIT,
-} from '../constants';
-import { getRuleInfo } from '../helpers/getRulesToCondtionArray';
+import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, ModalBackgroundType, ModalPositionType } from '../../../types';
+import { ACCEPTED_MEMBERS_LIMIT, ACCESS_TYPE_TITLE, OPERATOR_OPTIONS_INFO, PENDING_MEMBERS_LIMIT } from '../constants';
 import { Group } from '../exportedTypes';
-import {
-  MODAL_BACKGROUND_TYPE,
-  MODAL_POSITION_TYPE,
-  ModalBackgroundType,
-  ModalPositionType,
-} from '../../../types';
+import { getRuleInfo } from '../helpers/getRulesToCondtionArray';
+import { IChatTheme } from '../theme';
 
-import { TokenGatedSvg } from '../../../icons/TokenGatedSvg';
-import { GROUP_ROLES } from '../types';
-import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities';
 import useChatProfile from '../../../hooks/chat/useChatProfile';
-import {
-  resolvePromisesSeq,
-  transformIUserToChatMemberProfile,
-} from '../helpers';
-import useUserProfile from '../../../hooks/useUserProfile';
+import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities';
+import usePushUser from '../../../hooks/usePushUser';
+import { TokenGatedSvg } from '../../../icons/TokenGatedSvg';
+import { resolvePromisesSeq, transformIUserToChatMemberProfile } from '../helpers';
+import { GROUP_ROLES } from '../types';
 
 export interface MemberPaginationData {
   page: number;
@@ -72,20 +54,13 @@ interface ConditionsInformationProps {
   subheader?: string;
 }
 
-export const ConditionsInformation = ({
-  theme,
-  groupInfo,
-  alert,
-  header,
-  subheader,
-}: ConditionsInformationProps) => {
+export const ConditionsInformation = ({ theme, groupInfo, alert, header, subheader }: ConditionsInformationProps) => {
   const groupRules = getRuleInfo(groupInfo?.rules);
   const isMobile = useMediaQuery(device.mobileL);
 
   const getOperator = (key: keyof typeof groupRules) => {
     if (groupRules[key as keyof typeof groupRules].length) {
-      return groupRules[key as keyof typeof groupRules][0][0]
-        ?.operator as keyof typeof OPERATOR_OPTIONS_INFO;
+      return groupRules[key as keyof typeof groupRules][0][0]?.operator as keyof typeof OPERATOR_OPTIONS_INFO;
     }
     return null;
   };
@@ -117,32 +92,33 @@ export const ConditionsInformation = ({
         {Object.keys(ACCESS_TYPE_TITLE).map((key, idx) => (
           <>
             {getOperator(key as keyof typeof groupRules) ? (
-              <Section key={idx} flexDirection="column">
+              <Section
+                key={idx}
+                flexDirection="column"
+              >
                 <Span
                   fontSize="16px"
                   fontWeight="500"
                   alignSelf="start"
                   margin="5px 0"
                 >
-                  {
-                    ACCESS_TYPE_TITLE[key as keyof typeof ACCESS_TYPE_TITLE]
-                      ?.heading
-                  }
+                  {ACCESS_TYPE_TITLE[key as keyof typeof ACCESS_TYPE_TITLE]?.heading}
                 </Span>
 
-                <Span fontSize="14px" margin="15px 0">
+                <Span
+                  fontSize="14px"
+                  margin="15px 0"
+                >
                   {
                     OPERATOR_OPTIONS_INFO[
-                      groupRules[key as keyof typeof groupRules][0][0]
-                        ?.operator as keyof typeof OPERATOR_OPTIONS_INFO
+                      groupRules[key as keyof typeof groupRules][0][0]?.operator as keyof typeof OPERATOR_OPTIONS_INFO
                     ]?.head
                   }
                   <Span color={theme.textColor?.modalSubHeadingText}>
                     {' '}
                     {
                       OPERATOR_OPTIONS_INFO[
-                        groupRules[key as keyof typeof groupRules][0][0]
-                          ?.operator as keyof typeof OPERATOR_OPTIONS_INFO
+                        groupRules[key as keyof typeof groupRules][0][0]?.operator as keyof typeof OPERATOR_OPTIONS_INFO
                       ]?.tail
                     }
                   </Span>
@@ -235,13 +211,9 @@ type GroupSectionProps = GroupInfoModalProps & {
   handlePreviousInformation?: () => void;
   pendingMemberPaginationData: MemberPaginationData;
   groupMembers: MembersType;
-  setPendingMemberPaginationData: React.Dispatch<
-    React.SetStateAction<MemberPaginationData>
-  >;
+  setPendingMemberPaginationData: React.Dispatch<React.SetStateAction<MemberPaginationData>>;
   acceptedMemberPaginationData: MemberPaginationData;
-  setAcceptedMemberPaginationData: React.Dispatch<
-    React.SetStateAction<MemberPaginationData>
-  >;
+  setAcceptedMemberPaginationData: React.Dispatch<React.SetStateAction<MemberPaginationData>>;
   membersCount: GroupParticipantCounts;
   setShowAddMoreWalletModal: React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -251,6 +223,7 @@ type GroupInfoModalProps = {
   setModal: React.Dispatch<React.SetStateAction<boolean>>;
   groupInfo: Group;
   setGroupInfo: React.Dispatch<React.SetStateAction<Group | null>>;
+  chatProfileInfo?: IChatProfileUserInfo;
   groupInfoModalBackground?: ModalBackgroundType;
   groupInfoModalPositionType?: ModalPositionType;
 };
@@ -260,12 +233,12 @@ export const GROUPINFO_STEPS = {
   CRITERIA: 2,
 } as const;
 
-export type GROUP_INFO_TYPE =
-  typeof GROUPINFO_STEPS[keyof typeof GROUPINFO_STEPS];
+export type GROUP_INFO_TYPE = typeof GROUPINFO_STEPS[keyof typeof GROUPINFO_STEPS];
 
 const GroupInformation = ({
   theme,
   groupInfo,
+  chatProfileInfo,
   handleNextInformation,
   pendingMemberPaginationData,
   setPendingMemberPaginationData,
@@ -275,127 +248,139 @@ const GroupInformation = ({
   setShowAddMoreWalletModal,
   membersCount,
 }: GroupSectionProps) => {
-  const { account, user } = useChatData();
-  const [accountStatus, setAccountStatus] = useState<ParticipantStatus | null>(
-    null
-  );
-  const [showPendingRequests, setShowPendingRequests] =
-    useState<boolean>(false);
+  const { user, toast } = useChatData();
+  const [accountStatus, setAccountStatus] = useState<ParticipantStatus | null>(null);
+  const [showPendingRequests, setShowPendingRequests] = useState<boolean>(false);
 
   const [copyText, setCopyText] = useState<string>('');
   const isMobile = useMediaQuery(device.mobileL);
-  const groupInfoToast = useToast();
 
   const { fetchMemberStatus } = useGroupMemberUtilities();
 
   useEffect(() => {
-    if (account && groupInfo?.chatId) {
+    if (user?.account && chatProfileInfo?.isGroup && chatProfileInfo?.chatId) {
       (async () => {
         const status = await fetchMemberStatus({
-          chatId: groupInfo?.chatId,
-          accountId: account,
+          chatId: chatProfileInfo?.chatId ?? '',
+          accountId: user?.account,
         });
         if (status && typeof status !== 'string') {
           setAccountStatus(status);
         } else {
-          groupInfoToast.showMessageToast({
+          toast.showMessageToast({
             toastTitle: 'Error',
             toastMessage: 'Error in fetching member details',
             toastType: 'ERROR',
-            getToastIcon: (size) => <MdError size={size} color="red" />,
+            getToastIcon: (size: number) => (
+              <MdError
+                size={size}
+                color="red"
+              />
+            ),
           });
         }
       })();
     }
   }, []);
-
   return (
     <ScrollSection
       margin="auto"
       width="100%"
       flexDirection="column"
       gap="16px"
-      maxHeight={isMobile ? '59vh' : '60vh'}
-      height={isMobile ? '59vh' : '60vh'}
+      maxHeight={chatProfileInfo?.isGroup ? '60vh' : 'auto'}
+      height={chatProfileInfo?.isGroup ? '60vh' : 'auto'}
       overflow="hidden auto"
       justifyContent="start"
       padding="0 2px 0 0"
       theme={theme}
     >
-      <GroupDescription>
-        <Span fontSize="18px" color={theme.textColor?.modalHeadingText}>
-          Chat ID
-        </Span>
-        <Section
-          gap="5px"
-          alignSelf="start"
-          onClick={() => {
-            copyToClipboard(groupInfo!.chatId!);
-            setCopyText('copied');
-          }}
-          onMouseEnter={() => {
-            setCopyText('click to copy');
-          }}
-          onMouseLeave={() => {
-            setCopyText('');
-          }}
-        >
+      {chatProfileInfo?.chatId && (
+        <GroupDescription>
           <Span
-            textAlign="start"
-            fontSize="16px"
-            fontWeight="400"
-            color={theme.textColor?.modalSubHeadingText}
+            fontSize="18px"
+            color={theme.textColor?.modalHeadingText}
           >
-            {shortenText(groupInfo!.chatId!, 8, true)}
+            Chat ID
           </Span>
-          {!!copyText && (
+          <Section
+            gap="5px"
+            alignSelf="start"
+            onClick={() => {
+              copyToClipboard(chatProfileInfo?.chatId ?? '');
+              setCopyText('copied');
+            }}
+            onMouseEnter={() => {
+              setCopyText('click to copy');
+            }}
+            onMouseLeave={() => {
+              setCopyText('');
+            }}
+          >
             <Span
-              cursor="pointer"
-              position="relative"
-              padding="2px 10px"
-              color={theme.textColor?.modalSubHeadingText}
-              fontSize="14px"
+              textAlign="start"
+              fontSize="16px"
               fontWeight="400"
-              background={theme.backgroundColor?.modalHoverBackground}
-              borderRadius="16px"
+              color={theme.textColor?.modalSubHeadingText}
             >
-              {copyText}
+              {shortenText(chatProfileInfo?.chatId ?? '', 8, true)}
             </Span>
-          )}
-        </Section>
-      </GroupDescription>
-      <GroupDescription>
-        <Span fontSize="18px" color={theme.textColor?.modalHeadingText}>
-          Group Description
-        </Span>
-        <Span
-          textAlign="start"
-          fontSize="16px"
-          fontWeight="400"
-          color={theme.textColor?.modalSubHeadingText}
-        >
-          {groupInfo?.groupDescription}
-        </Span>
-      </GroupDescription>
-      <GroupTypeBadge
-        theme={theme}
-        icon={
-          <Image
-            cursor="default"
-            src={groupInfo?.isPublic ? LockIcon : LockSlashIcon}
-            height="24px"
-            maxHeight="24px"
-            width={'auto'}
-          />
-        }
-        header={groupInfo?.isPublic ? 'Open' : 'Encrypted'}
-        subheader={
-          groupInfo?.isPublic
-            ? 'Chats are not encrypted'
-            : 'Chats are end-to-end encrypted'
-        }
-      />
-      {!!Object.keys(groupInfo?.rules || {}).length && (
+            {!!copyText && (
+              <Span
+                cursor="pointer"
+                position="relative"
+                padding="2px 10px"
+                color={theme.textColor?.modalSubHeadingText}
+                fontSize="14px"
+                fontWeight="400"
+                background={theme.backgroundColor?.modalHoverBackground}
+                borderRadius="16px"
+              >
+                {copyText}
+              </Span>
+            )}
+          </Section>
+        </GroupDescription>
+      )}
+
+      {chatProfileInfo?.isGroup ||
+        (chatProfileInfo?.desc && (
+          <GroupDescription>
+            <Span
+              fontSize="18px"
+              color={theme.textColor?.modalHeadingText}
+            >
+              {chatProfileInfo?.isGroup ? 'Group Description' : 'Profile Description'}
+            </Span>
+            <Span
+              textAlign="start"
+              fontSize="16px"
+              fontWeight="400"
+              color={theme.textColor?.modalSubHeadingText}
+            >
+              {chatProfileInfo?.desc}
+            </Span>
+          </GroupDescription>
+        ))}
+
+      {chatProfileInfo?.isGroup && (
+        <GroupTypeBadge
+          theme={theme}
+          icon={
+            <Image
+              cursor="default"
+              src={groupInfo?.isPublic ? LockIcon : LockSlashIcon}
+              height="24px"
+              maxHeight="24px"
+              width={'auto'}
+            />
+          }
+          header={groupInfo?.isPublic ? 'Open' : 'Encrypted'}
+          subheader={groupInfo?.isPublic ? 'Chats are not encrypted' : 'Chats are end-to-end encrypted'}
+        />
+      )}
+
+      {chatProfileInfo?.isGroup && !!Object.keys(groupInfo?.rules || {}).length && (
         <GroupTypeBadge
           cursor="pointer"
           handleNextInformation={handleNextInformation}
@@ -406,10 +391,10 @@ const GroupInformation = ({
         />
       )}
 
-      {accountStatus?.role === GROUP_ROLES.ADMIN.toLowerCase() &&
+      {chatProfileInfo?.isGroup &&
+        accountStatus?.role === GROUP_ROLES.ADMIN.toLowerCase() &&
         groupMembers?.accepted &&
-        groupMembers?.accepted?.length <
-          (groupInfo?.isPublic ? 25000 : 5000) && (
+        groupMembers?.accepted?.length < (groupInfo?.isPublic ? 25000 : 5000) && (
           <AddWalletContainer
             theme={theme}
             onClick={() => setShowAddMoreWalletModal(true)}
@@ -434,19 +419,23 @@ const GroupInformation = ({
           </AddWalletContainer>
         )}
 
-      <Section borderRadius="16px" flexDirection="column" gap="16px">
-        {groupMembers.loading ? (
-          <Spinner size="40" color={theme.spinnerColor} />
-        ) : (
-          <>
-            {groupMembers &&
-              groupMembers?.pending &&
-              groupMembers?.pending?.length > 0 && (
+      {chatProfileInfo?.isGroup && (
+        <Section
+          borderRadius="16px"
+          flexDirection="column"
+          gap="16px"
+        >
+          {groupMembers.loading ? (
+            <Spinner
+              size="40"
+              color={theme.spinnerColor}
+            />
+          ) : (
+            <>
+              {groupMembers && groupMembers?.pending && groupMembers?.pending?.length > 0 && (
                 <PendingMembers
                   pendingMemberPaginationData={pendingMemberPaginationData}
-                  setPendingMemberPaginationData={
-                    setPendingMemberPaginationData
-                  }
+                  setPendingMemberPaginationData={setPendingMemberPaginationData}
                   pendingMembers={groupMembers?.pending}
                   setShowPendingRequests={setShowPendingRequests}
                   showPendingRequests={showPendingRequests}
@@ -454,16 +443,18 @@ const GroupInformation = ({
                   count={membersCount.pending}
                 />
               )}
-            <AcceptedMembers
-              theme={theme}
-              acceptedMemberPaginationData={acceptedMemberPaginationData}
-              setAcceptedMemberPaginationData={setAcceptedMemberPaginationData}
-              acceptedMembers={groupMembers?.accepted}
-              chatId={groupInfo!.chatId!}
-            />
-          </>
-        )}
-      </Section>
+              <AcceptedMembers
+                theme={theme}
+                accountStatus={accountStatus}
+                acceptedMemberPaginationData={acceptedMemberPaginationData}
+                setAcceptedMemberPaginationData={setAcceptedMemberPaginationData}
+                acceptedMembers={groupMembers?.accepted}
+                chatId={groupInfo!.chatId!}
+              />
+            </>
+          )}
+        </Section>
+      )}
     </ScrollSection>
   );
 };
@@ -473,134 +464,69 @@ export const GroupInfoModal = ({
   setModal,
   setGroupInfo,
   groupInfo,
+  chatProfileInfo,
   groupInfoModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
   groupInfoModalPositionType = MODAL_POSITION_TYPE.GLOBAL,
 }: GroupInfoModalProps) => {
-  const [activeComponent, setActiveComponent] = useState<GROUP_INFO_TYPE>(
-    GROUPINFO_STEPS.GROUP_INFO
-  );
+  const [activeComponent, setActiveComponent] = useState<GROUP_INFO_TYPE>(GROUPINFO_STEPS.GROUP_INFO);
   const [memberList, setMemberList] = useState<any>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [membersCount, setMembersCount] = useState<GroupParticipantCounts>({
     participants: 0,
     pending: 0,
   });
-  const [showAddMoreWalletModal, setShowAddMoreWalletModal] =
-    useState<boolean>(false);
+  const [showAddMoreWalletModal, setShowAddMoreWalletModal] = useState<boolean>(false);
   useState<boolean>(false);
 
-  const [pendingMemberPaginationData, setPendingMemberPaginationData] =
-    useState<MemberPaginationData>({
-      page: 1,
-      finishedFetching: false,
-      loading: false,
-      reset: false,
-    });
-  const [acceptedMemberPaginationData, setAcceptedMemberPaginationData] =
-    useState<MemberPaginationData>({
-      page: 1,
-      finishedFetching: false,
-      loading: false,
-      reset: false,
-    });
+  const [pendingMemberPaginationData, setPendingMemberPaginationData] = useState<MemberPaginationData>({
+    page: 1,
+    finishedFetching: false,
+    loading: false,
+    reset: false,
+  });
+  const [acceptedMemberPaginationData, setAcceptedMemberPaginationData] = useState<MemberPaginationData>({
+    page: 1,
+    finishedFetching: false,
+    loading: false,
+    reset: false,
+  });
 
   const isMobile = useMediaQuery(device.mobileL);
-  const groupInfoToast = useToast();
   const [groupMembers, setGroupMembers] = useState<MembersType>({
     accepted: [],
     pending: [],
     loading: false,
   });
   const { fetchMembers, loading: membersLoading } = useGroupMemberUtilities();
-  const { user } = useChatData();
+  const { user, toast } = useChatData();
   const { addMember } = useUpdateGroup();
   const { fetchMembersCount } = useGroupMemberUtilities();
-  const { fetchUserProfile } = useUserProfile();
+  const { fetchUserProfile } = usePushUser();
 
-  //hack for stream not working
-  const [chatAcceptStream, setChatAcceptStream] = useState<any>({}); // to track any new messages
-  const [chatRejectStream, setChatRejectStream] = useState<any>({}); // to track any rejected request
-
-  const [participantRoleChangeStream, setParticipantRoleChangeStream] =
-    useState<any>({}); // to track if a participant role is changed in a  group
-
-  const [participantRemoveStream, setParticipantRemoveStream] = useState<any>(
-    {}
-  ); // to track if a participant is removed from group
-  const [participantLeaveStream, setParticipantLeaveStream] = useState<any>({}); // to track if a participant leaves a group
-  const [participantJoinStream, setParticipantJoinStream] = useState<any>({}); // to track if a participant joins a group
-
-  const [groupUpdateStream, setGroupUpdateStream] = useState<any>({});
-
-  //event listners
-  usePushChatStream();
-  useEffect(() => {
-    window.addEventListener('chatAcceptStream', (e: any) =>
-      setChatAcceptStream(e.detail)
-    );
-    window.addEventListener('chatRejectStream', (e: any) =>
-      setChatRejectStream(e.detail)
-    );
-    window.addEventListener('participantRoleChangeStream', (e: any) =>
-      setParticipantRoleChangeStream(e.detail)
-    );
-    window.addEventListener('participantRemoveStream', (e: any) =>
-      setParticipantRemoveStream(e.detail)
-    );
-    window.addEventListener('participantLeaveStream', (e: any) =>
-      setParticipantLeaveStream(e.detail)
-    );
-    window.addEventListener('participantJoinStream', (e: any) =>
-      setParticipantJoinStream(e.detail)
-    );
-    window.addEventListener('groupUpdateStream', (e: any) =>
-      setGroupUpdateStream(e.detail)
-    );
-    return () => {
-      window.removeEventListener('chatAcceptStream', (e: any) =>
-        setChatAcceptStream(e.detail)
-      );
-      window.removeEventListener('chatRejectStream', (e: any) =>
-        setChatRejectStream(e.detail)
-      );
-      window.removeEventListener('participantRoleChangeStream', (e: any) =>
-        setParticipantRoleChangeStream(e.detail)
-      );
-      window.removeEventListener('participantRemoveStream', (e: any) =>
-        setParticipantRemoveStream(e.detail)
-      );
-      window.removeEventListener('participantLeaveStream', (e: any) =>
-        setParticipantLeaveStream(e.detail)
-      );
-      window.removeEventListener('participantJoinStream', (e: any) =>
-        setParticipantJoinStream(e.detail)
-      );
-      window.removeEventListener('groupUpdateStream', (e: any) =>
-        setGroupUpdateStream(e.detail)
-      );
-    };
-  }, []);
-
-  // const {
-  //   chatAcceptStream,
-  //   chatRejectStream,
-  //   participantRemoveStream,
-  //   participantLeaveStream,
-  //   participantJoinStream,
-  //   groupUpdateStream,
-  //   participantRoleChangeStream,
-  // } = usePushChatStream();
+  // setup stream
+  const {
+    chatAcceptStream,
+    chatRejectStream,
+    participantRemoveStream,
+    participantLeaveStream,
+    participantJoinStream,
+    participantRoleChangeStream,
+    groupUpdateStream,
+  } = useChatData();
 
   //stream listeners
   useEffect(() => {
     if (
+      chatProfileInfo?.isGroup &&
       Object.keys(chatAcceptStream || {}).length > 0 &&
       chatAcceptStream.constructor === Object
     )
       transformAcceptedRequest(chatAcceptStream);
   }, [chatAcceptStream]);
+
   useEffect(() => {
     if (
+      chatProfileInfo?.isGroup &&
       Object.keys(chatRejectStream || {}).length > 0 &&
       chatRejectStream.constructor === Object
     )
@@ -609,13 +535,16 @@ export const GroupInfoModal = ({
 
   useEffect(() => {
     if (
+      chatProfileInfo?.isGroup &&
       Object.keys(participantRemoveStream || {}).length > 0 &&
       participantRemoveStream.constructor === Object
     )
       transformParticipantRemove(participantRemoveStream);
   }, [participantRemoveStream]);
+
   useEffect(() => {
     if (
+      chatProfileInfo?.isGroup &&
       Object.keys(participantLeaveStream || {}).length > 0 &&
       participantLeaveStream.constructor === Object
     )
@@ -625,6 +554,7 @@ export const GroupInfoModal = ({
   useEffect(() => {
     (async () => {
       if (
+        chatProfileInfo?.isGroup &&
         Object.keys(participantJoinStream || {}).length > 0 &&
         participantJoinStream.constructor === Object
       )
@@ -634,6 +564,7 @@ export const GroupInfoModal = ({
 
   useEffect(() => {
     if (
+      chatProfileInfo?.isGroup &&
       Object.keys(groupUpdateStream || {}).length > 0 &&
       groupUpdateStream.constructor === Object
     )
@@ -642,23 +573,29 @@ export const GroupInfoModal = ({
 
   useEffect(() => {
     if (
+      chatProfileInfo?.isGroup &&
       Object.keys(participantRoleChangeStream || {}).length > 0 &&
       participantRoleChangeStream.constructor === Object
     )
       transformRoleChange(participantRoleChangeStream);
   }, [participantRoleChangeStream]);
+
+  // fetch members count if group is true
   useEffect(() => {
     (async () => {
-      const count = await fetchMembersCount({ chatId: groupInfo!.chatId! });
-      if (count) {
-        setMembersCount(count);
+      if (chatProfileInfo?.isGroup) {
+        const count = await fetchMembersCount({ chatId: chatProfileInfo!.chatId! });
+        if (count) {
+          setMembersCount(count);
+        }
       }
     })();
-  }, []);
+  }, [user]);
+
   //add dependencies
   useEffect(() => {
     (async () => {
-      if (Object.keys(groupInfo || {}).length) {
+      if (chatProfileInfo?.isGroup && Object.keys(groupInfo || {}).length) {
         setGroupMembers((prev) => ({ ...prev, loading: true }));
         await initialiseMemberPaginationData('pending', fetchPendingMembers);
         await initialiseMemberPaginationData('accepted', fetchAcceptedMembers);
@@ -669,23 +606,15 @@ export const GroupInfoModal = ({
 
   useEffect(() => {
     (async () => {
-      if (pendingMemberPaginationData?.page > 1)
-        await callMembers(
-          pendingMemberPaginationData?.page,
-          setPendingMemberPaginationData,
-          fetchPendingMembers
-        );
+      if (chatProfileInfo?.isGroup && pendingMemberPaginationData?.page > 1)
+        await callMembers(pendingMemberPaginationData?.page, setPendingMemberPaginationData, fetchPendingMembers);
     })();
   }, [pendingMemberPaginationData?.page]);
 
   useEffect(() => {
     (async () => {
-      if (acceptedMemberPaginationData?.page > 1)
-        await callMembers(
-          acceptedMemberPaginationData?.page,
-          setAcceptedMemberPaginationData,
-          fetchAcceptedMembers
-        );
+      if (chatProfileInfo?.isGroup && acceptedMemberPaginationData?.page > 1)
+        await callMembers(acceptedMemberPaginationData?.page, setAcceptedMemberPaginationData, fetchAcceptedMembers);
     })();
   }, [acceptedMemberPaginationData?.page]);
 
@@ -704,15 +633,9 @@ export const GroupInfoModal = ({
       }));
     setGroupMembers((prevMembers: MembersType) => ({
       ...prevMembers,
-      pending: [
-        ...prevMembers!.pending,
-        ...(fetchedPendingMembers?.members || ([] as ChatMemberProfile[])),
-      ]
+      pending: [...prevMembers!.pending, ...(fetchedPendingMembers?.members || ([] as ChatMemberProfile[]))]
         .slice()
-        .filter(
-          (item, index, self) =>
-            index === self.findIndex((t) => t.address === item.address)
-        ),
+        .filter((item, index, self) => index === self.findIndex((t) => t.address === item.address)),
     }));
   };
   const fetchAcceptedMembers = async (page: number): Promise<void> => {
@@ -728,24 +651,14 @@ export const GroupInfoModal = ({
       }));
     setGroupMembers((prevMembers: MembersType) => ({
       ...prevMembers,
-      accepted: [
-        ...prevMembers!.accepted,
-        ...(fetchedAcceptedMembers?.members || ([] as ChatMemberProfile[])),
-      ]
+      accepted: [...prevMembers!.accepted, ...(fetchedAcceptedMembers?.members || ([] as ChatMemberProfile[]))]
         .slice()
-        .filter(
-          (item, index, self) =>
-            index === self.findIndex((t) => t.address === item.address)
-        ),
+        .filter((item, index, self) => index === self.findIndex((t) => t.address === item.address)),
     }));
   };
 
-  const initialiseMemberPaginationData = async (
-    property: string,
-    fetchMembers: (page: number) => Promise<void>
-  ) => {
-    if (!groupMembers[property as 'accepted' | 'pending'].length)
-      await fetchMembers(1);
+  const initialiseMemberPaginationData = async (property: string, fetchMembers: (page: number) => Promise<void>) => {
+    if (!groupMembers[property as 'accepted' | 'pending'].length) await fetchMembers(1);
   };
 
   const removePendingMember = (items: string[]): void => {
@@ -754,10 +667,7 @@ export const GroupInfoModal = ({
       pending: [...groupMembers.pending!]
         .filter((item) => !items.includes(item.address!))
         .slice()
-        .filter(
-          (item, index, self) =>
-            index === self.findIndex((t) => t.address === item.address)
-        ),
+        .filter((item, index, self) => index === self.findIndex((t) => t.address === item.address)),
     }));
   };
 
@@ -767,10 +677,7 @@ export const GroupInfoModal = ({
       accepted: [...groupMembers.accepted!]
         .filter((item) => !items.includes(item.address!))
         .slice()
-        .filter(
-          (item, index, self) =>
-            index === self.findIndex((t) => t.address === item.address)
-        ),
+        .filter((item, index, self) => index === self.findIndex((t) => t.address === item.address)),
     }));
   };
   const addAcceptedMember = (items: ChatMemberProfile[]): void => {
@@ -778,20 +685,13 @@ export const GroupInfoModal = ({
       ...prevMembers,
       accepted: [...items, ...groupMembers.accepted]
         .slice()
-        .filter(
-          (item, index, self) =>
-            index === self.findIndex((t) => t.address === item.address)
-        ),
+        .filter((item, index, self) => index === self.findIndex((t) => t.address === item.address)),
     }));
   };
   const memberRoleChange = (item: any): void => {
-    const acceptedMember: ChatMemberProfile[] = groupMembers?.accepted.map(
-      (member) =>
-        member.address == item.to[0]
-          ? { ...member, role: item.newRole }
-          : member
+    const acceptedMember: ChatMemberProfile[] = groupMembers?.accepted.map((member) =>
+      member.address == item.to[0] ? { ...member, role: item.newRole } : member
     );
-    console.debug(acceptedMember);
     setGroupMembers((prevMembers: MembersType) => ({
       ...prevMembers,
       accepted: acceptedMember,
@@ -800,10 +700,9 @@ export const GroupInfoModal = ({
 
   const transformAcceptedRequest = (item: any): void => {
     if (item?.meta?.group && groupInfo?.chatId === item?.chatId) {
-      const acceptedMember: ChatMemberProfile | undefined =
-        groupMembers?.pending?.find((member: ChatMemberProfile) => {
-          return member?.address === item?.from;
-        });
+      const acceptedMember: ChatMemberProfile | undefined = groupMembers?.pending?.find((member: ChatMemberProfile) => {
+        return member?.address === item?.from;
+      });
       if (acceptedMember) {
         addAcceptedMember([acceptedMember]);
         removePendingMember([acceptedMember?.address]);
@@ -830,10 +729,7 @@ export const GroupInfoModal = ({
   const transformParticipantJoin = async (item: any): Promise<void> => {
     if (groupInfo?.chatId === item?.chatId) {
       const profile = await fetchUserProfile({ profileId: item?.from, user });
-      const transformedProfile = transformIUserToChatMemberProfile(
-        profile,
-        true
-      );
+      const transformedProfile = transformIUserToChatMemberProfile(profile, true);
       addAcceptedMember([transformedProfile]);
     }
   };
@@ -875,9 +771,7 @@ export const GroupInfoModal = ({
 
   const callMembers = async (
     page: number,
-    setMemberPaginationData: React.Dispatch<
-      React.SetStateAction<MemberPaginationData>
-    >,
+    setMemberPaginationData: React.Dispatch<React.SetStateAction<MemberPaginationData>>,
     fetchMembers: (page: number) => Promise<void>
   ) => {
     try {
@@ -912,57 +806,61 @@ export const GroupInfoModal = ({
       setIsLoading(true);
       let adminResponse = {};
       let memberResponse = {};
-      const admins = memberList
-        .filter((member: any) => member.isAdmin)
-        .map((member: any) => member.wallets);
-      const members = memberList
-        .filter((member: any) => !member.isAdmin)
-        .map((member: any) => member.wallets);
+      const admins = memberList.filter((member: any) => member.isAdmin).map((member: any) => member.wallets);
+      const members = memberList.filter((member: any) => !member.isAdmin).map((member: any) => member.wallets);
 
       if (admins.length) {
         adminResponse = await addMember({
-          memberList: memberList
-            .filter((member: any) => member.isAdmin)
-            .map((member: any) => member.wallets),
+          memberList: memberList.filter((member: any) => member.isAdmin).map((member: any) => member.wallets),
           chatId: groupInfo!.chatId!,
           role: GROUP_ROLES.ADMIN,
         });
       }
       if (members.length) {
         memberResponse = await addMember({
-          memberList: memberList
-            .filter((member: any) => !member.isAdmin)
-            .map((member: any) => member.wallets),
+          memberList: memberList.filter((member: any) => !member.isAdmin).map((member: any) => member.wallets),
           chatId: groupInfo!.chatId!,
           role: GROUP_ROLES.MEMBER,
         });
       }
 
-      if (
-        typeof adminResponse !== 'string' &&
-        typeof memberResponse !== 'string'
-      ) {
-        groupInfoToast.showMessageToast({
+      if (typeof adminResponse !== 'string' && typeof memberResponse !== 'string') {
+        toast.showMessageToast({
           toastTitle: 'Success',
           toastMessage: 'Group Invitation sent',
           toastType: 'SUCCESS',
-          getToastIcon: (size) => <MdCheckCircle size={size} color="green" />,
+          getToastIcon: (size: number) => (
+            <MdCheckCircle
+              size={size}
+              color="green"
+            />
+          ),
         });
       } else {
-        groupInfoToast.showMessageToast({
+        toast.showMessageToast({
           toastTitle: 'Error',
           toastMessage: 'Error in adding member',
           toastType: 'ERROR',
-          getToastIcon: (size) => <MdError size={size} color="red" />,
+          getToastIcon: (size: number) => (
+            <MdError
+              size={size}
+              color="red"
+            />
+          ),
         });
       }
     } catch (error) {
       console.error('Error', error);
-      groupInfoToast.showMessageToast({
+      toast.showMessageToast({
         toastTitle: 'Error',
         toastMessage: 'Please, try again',
         toastType: 'ERROR',
-        getToastIcon: (size) => <MdError size={size} color="red" />,
+        getToastIcon: (size: number) => (
+          <MdError
+            size={size}
+            color="red"
+          />
+        ),
       });
     } finally {
       setIsLoading(false);
@@ -979,6 +877,7 @@ export const GroupInfoModal = ({
             theme={theme}
             setModal={setModal}
             groupInfo={groupInfo}
+            chatProfileInfo={chatProfileInfo}
             setGroupInfo={setGroupInfo}
             groupMembers={groupMembers}
             pendingMemberPaginationData={pendingMemberPaginationData}
@@ -990,7 +889,12 @@ export const GroupInfoModal = ({
           />
         );
       case GROUPINFO_STEPS.CRITERIA:
-        return <ConditionsInformation groupInfo={groupInfo} theme={theme} />;
+        return (
+          <ConditionsInformation
+            groupInfo={groupInfo}
+            theme={theme}
+          />
+        );
 
       default:
         return (
@@ -999,6 +903,7 @@ export const GroupInfoModal = ({
             theme={theme}
             setModal={setModal}
             groupInfo={groupInfo}
+            chatProfileInfo={chatProfileInfo}
             setGroupInfo={setGroupInfo}
             groupMembers={groupMembers}
             pendingMemberPaginationData={pendingMemberPaginationData}
@@ -1020,7 +925,7 @@ export const GroupInfoModal = ({
     setModal(false);
   };
 
-  if (groupInfo) {
+  if (chatProfileInfo) {
     return (
       <Modal
         clickawayClose={onClose}
@@ -1036,29 +941,31 @@ export const GroupInfoModal = ({
             padding={isMobile ? '0px auto' : '0px 10px'}
           >
             <ModalHeader
-              handlePrevious={
-                activeComponent === 2 ? handlePreviousInfo : undefined
-              }
-              title="Group Info"
+              handlePrevious={activeComponent === 2 ? handlePreviousInfo : undefined}
+              title={chatProfileInfo?.isGroup ? 'Group Info' : 'Profile Info'}
               handleClose={onClose}
             />
 
             <GroupHeader>
               <Image
-                src={groupInfo?.groupImage ?? ''}
+                src={chatProfileInfo?.icon ?? ''}
                 height="64px"
                 maxHeight="64px"
                 width={'auto'}
                 borderRadius="16px"
               />
 
-              <Section flexDirection="column" alignItems="flex-start" gap="5px">
+              <Section
+                flexDirection="column"
+                alignItems="flex-start"
+                gap="5px"
+              >
                 <Span
                   fontSize="20px"
                   fontWeight="500"
                   color={theme.textColor?.modalHeadingText}
                 >
-                  {groupInfo?.groupName}
+                  {chatProfileInfo?.name}
                 </Span>
                 {/* <Span
                   fontSize="16px"
@@ -1072,7 +979,7 @@ export const GroupInfoModal = ({
             {renderComponent()}
           </Section>
         )}
-        {showAddMoreWalletModal && (
+        {chatProfileInfo?.isGroup && showAddMoreWalletModal && (
           <AddWalletContent
             onSubmit={handleAddMember}
             handlePrevious={handlePrevious}
@@ -1113,10 +1020,7 @@ const PublicEncrypted = styled(Section)<{ alert?: boolean }>`
   width: 100%;
   gap: 12px;
   align-items: center;
-  border: ${(props) =>
-    props?.alert
-      ? '1px solid #E93636'
-      : props.theme.border.modalInnerComponents};
+  border: ${(props) => (props?.alert ? '1px solid #E93636' : props.theme.border.modalInnerComponents)};
   border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
   padding: 12px 16px;
   box-sizing: border-box;
