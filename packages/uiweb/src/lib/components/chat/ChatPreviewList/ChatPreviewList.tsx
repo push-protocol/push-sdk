@@ -715,6 +715,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
       });
     }
   };
+
   // Attach scroll listener
   const onScroll = async () => {
     const element = listInnerRef.current;
@@ -802,7 +803,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
                 setChatPreviewList((prev) => ({
                   ...prev,
                   items: errorCode === ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_PRELOAD_ERROR ? [] : prev.items,
-                  page: errorCode === ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_PRELOAD_ERROR ? 1 : prev.page,
+                  page: errorCode === ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_PRELOAD_ERROR ? 0 : prev.page,
                   loading: errorCode === ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_LOAD_ERROR ? true : false,
                   reset: errorCode === ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_PRELOAD_ERROR ? true : false,
                   resume: errorCode === ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_LOAD_ERROR ? true : false,

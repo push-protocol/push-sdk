@@ -113,8 +113,8 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
             // if group is encrypted, check if user list is CHATS, encryptioon false takes care of public groups
             hidden = info.list === 'CHATS' ? false : true;
           } else {
-            // if it's not a group, then check if list is CHATS or REQUESTS
-            hidden = info.list === 'CHATS' || info.list === 'REQUESTS' ? false : true;
+            // if it's not a group, then dm is always not hidden
+            hidden = false;
           }
           hidden = false;
         } else {
