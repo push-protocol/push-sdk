@@ -30,7 +30,7 @@ import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, type FileMessageContent } f
 import { GIFType, Group, IChatTheme, MessageInputProps } from '../exportedTypes';
 import { checkIfAccessVerifiedGroup } from '../helpers';
 import { InfoContainer } from '../reusables';
-import { ChatInfoResponse } from '../types';
+import { IChatInfoResponse } from '../types';
 
 /**
  * @interface IThemeProps
@@ -89,7 +89,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   const { getGroupByIDnew } = useGetGroupByIDnew();
   const [groupInfo, setGroupInfo] = useState<Group | null>(null);
 
-  const [chatInfo, setChatInfo] = useState<ChatInfoResponse | null>(null);
+  const [chatInfo, setChatInfo] = useState<IChatInfoResponse | null>(null);
   const theme = useContext(ThemeContext);
   const isMobile = useDeviceWidthCheck(425);
   const { sendMessage, loading } = usePushSendMessage();
@@ -162,14 +162,19 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     (async () => {
       if (!user) return;
       if (chatId) {
-        let formattedChatId;
-        if (chatId.includes('.')) {
-          formattedChatId = (await deriveChatId(chatId, user))!;
-        } else formattedChatId = chatId;
-        setFormattedChatId(formattedChatId);
-        const chat = await fetchChat({ chatId: formattedChatId });
-        if (Object.keys(chat || {}).length) {
-          setChatInfo(chat as ChatInfoResponse);
+        let derivedChatId = chatId;
+        if (derivedChatId.includes('.')) {
+          derivedChatId = (await deriveChatId(chatId, user))!;
+        }
+
+        // set formatted chat id
+        setFormattedChatId(derivedChatId);
+
+        try {
+          const chat = await user.chat.info(derivedChatId);
+          setChatInfo(chat);
+        } catch (error) {
+          console.error('UIWeb::MessageInput::useEffect[chatId, user]::error while fetching chat info', error);
         }
       }
     })();
@@ -236,7 +241,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({
           chatId: prevInfo.chatId, // Directly use the existing chatId, ensuring it's not undefined
           meta: {
             group: prevInfo.meta?.group ?? false, // Provide default value if undefined
-            encryption: prevInfo.meta?.encryption ?? false,
+            encrypted: prevInfo.meta?.encrypted ?? false,
+            visibility: prevInfo.meta?.visibility ?? true,
           },
         };
       });

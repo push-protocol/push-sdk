@@ -27,7 +27,7 @@ import { ThemeContext } from '../theme/ThemeProvider';
 // Interfaces & Types
 import { Group, IChatViewListProps } from '../exportedTypes';
 import { IChatTheme } from '../theme';
-import { ChatInfoResponse } from '../types';
+import { IChatInfoResponse } from '../types';
 
 /**
  * @interface IThemeProps
@@ -40,7 +40,7 @@ interface IThemeProps {
 
 interface IChatViewListInitialized {
   loading: boolean;
-  chatInfo: ChatInfoResponse | null;
+  chatInfo: IChatInfoResponse | null;
   isHidden: boolean;
   invalidChat: boolean;
 }
@@ -92,31 +92,16 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
     (async () => {
       if (!user) return;
       if (chatId) {
-        const info = await fetchChat({ chatId: chatId });
+        const info = await user.chat.info(chatId);
         console.debug('UIWeb::components::ChatViewList::useEffect::fetchChat', info);
         // if readmode, then only public true is considered
-        // TODO: Hack for interface not declared properly (info?.meta as any)?.encryption
-        // TODO: Hack for interface not declared properly (info?.meta as any)?.groupInfo?.public
         let hidden = false;
         if (user && user.readmode()) {
-          //check if encryption is false, only true for public groups
-          hidden = !(info?.meta as any)?.groupInfo?.public ?? true;
+          //check if encrypted is false, only true for public groups
+          hidden = !info?.meta?.groupInfo?.public ?? true;
         } else if (user && info?.meta) {
-          // Only executes when user is not readmode
-          // if encryption is false, return as is
-          // covers public group
-          // TODO: Hack for interface not declared properly (info?.meta as any)?.encryption
-          if ((info?.meta as any)?.encryption === false) {
-            hidden = false;
-          } else if (info?.meta?.group) {
-            // if encryption is true and group is in user list then hidden is false else true
-            // if group is encrypted, check if user list is CHATS, encryptioon false takes care of public groups
-            hidden = info.list === 'CHATS' ? false : true;
-          } else {
-            // if it's not a group, then dm is always not hidden
-            hidden = false;
-          }
-          hidden = false;
+          // visibility is automatically defined
+          hidden = !info?.meta?.visibility;
         } else if (!info?.meta) {
           // TODO: Hack because chat.info doesn't return meta for UNINITIALIZED chats
           // Assuming this only happens for UNINITIALIZED chats which is a dm
@@ -130,7 +115,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
         // Finally initialize the component
         setInitialized({
           loading: false,
-          chatInfo: Object.keys(info || {}).length ? (info as ChatInfoResponse) : null,
+          chatInfo: Object.keys(info || {}).length ? (info as IChatInfoResponse) : null,
           isHidden: hidden,
           invalidChat: info === undefined ? true : false,
         });
@@ -160,24 +145,26 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
   // Change listtype to 'CHATS' and hidden to false when chatAcceptStream is received
   useEffect(() => {
     if (Object.keys(chatAcceptStream || {}).length > 0 && chatAcceptStream.constructor === Object) {
-      // Check if chat was encrypted, if so, reload the chat
-      if ((initialized.chatInfo?.meta as any)?.encryption === false) {
-        setInitialized({ loading: true, chatInfo: null, isHidden: false, invalidChat: false });
-      } else {
-        // If not encrypted, then set hidden to false
-        const updatedChatInfo = { ...(initialized.chatInfo as ChatInfoResponse) };
-        if (updatedChatInfo) updatedChatInfo.list = 'CHATS';
+      // Always change hidden to false and list will be CHATS
+      const updatedChatInfo = { ...(initialized.chatInfo as IChatInfoResponse) };
+      if (updatedChatInfo) updatedChatInfo.list = 'CHATS';
 
+      // set initialized after chat accept animation is done
+      const timer = setTimeout(() => {
         setInitialized({ ...initialized, chatInfo: updatedChatInfo, isHidden: false });
-      }
+      }, 1000);
+
+      return () => clearTimeout(timer);
     }
+
+    return () => {};
   }, [chatAcceptStream, participantJoinStream]);
 
   // Change listtype to 'UINITIALIZED' and hidden to true when participantRemoveStream or participantLeaveStream is received
   useEffect(() => {
     if (Object.keys(participantRemoveStream || {}).length > 0 && participantRemoveStream.constructor === Object) {
       // If not encrypted, then set hidden to false
-      const updatedChatInfo = { ...(initialized.chatInfo as ChatInfoResponse) };
+      const updatedChatInfo = { ...(initialized.chatInfo as IChatInfoResponse) };
       if (updatedChatInfo) updatedChatInfo.list = 'UNINITIALIZED';
 
       setInitialized({ ...initialized, chatInfo: updatedChatInfo, isHidden: true });
@@ -334,9 +321,8 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
           />
         )}
 
-        {/* TODO: Hack for interface not declared properly (initialized.chatInfo?.meta as any)?.encryption */}
         {!initialized.loading &&
-          ((initialized.chatInfo?.meta as any)?.encryption ? (
+          (initialized.chatInfo?.meta?.encrypted ? (
             <EncryptionMessage id={ENCRYPTION_KEYS.ENCRYPTED} />
           ) : user && user.readmode() ? (
             <EncryptionMessage id={ENCRYPTION_KEYS.PREVIEW} />

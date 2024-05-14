@@ -1810,7 +1810,7 @@ __metadata:
     react-twitter-embed: "npm:^4.0.4"
     uuid: "npm:^9.0.1"
   peerDependencies:
-    "@pushprotocol/restapi": 1.7.13
+    "@pushprotocol/restapi": 1.7.17
     "@pushprotocol/socket": ^0.5.0
     react: ">=16.8.0"
     styled-components: ^6.0.8
