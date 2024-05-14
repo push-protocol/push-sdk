@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { useChatData } from '../../../hooks';
-import { Button, Image, Section } from '../../reusables';
+import { Div, Button, Image, Section } from '../../reusables';
 
 import { CONSTANTS } from '@pushprotocol/restapi';
 import { ethers } from 'ethers';
@@ -13,6 +13,8 @@ import { CoreContractChainId, InfuraAPIKey } from '../../../config';
 import { resolveWeb3Name, shortenText } from '../../../helpers';
 import { IChatPreviewProps } from '../exportedTypes';
 import { formatAddress, formatDate } from '../helpers';
+import { pCAIP10ToWallet } from '../../../helpers';
+import { createBlockie } from '../../../helpers/blockies';
 import { IChatTheme } from '../theme';
 import { ThemeContext } from '../theme/ThemeProvider';
 /**
@@ -32,6 +34,7 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (options: IChatPreviewPr
   const [formattedAddress, setFormattedAddress] = useState<string>('');
   const [web3Name, setWeb3Name] = useState<string | null>(null);
 
+  // to resolve the web3 name
   useEffect(() => {
     (async () => {
       const address = await formatAddress(options.chatPreviewPayload, user?.env || CONSTANTS.ENV.PROD);
@@ -46,6 +49,22 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (options: IChatPreviewPr
       }
     })();
   }, []);
+
+  // For blockie if icon is missing
+  const blockieContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (
+      blockieContainerRef.current &&
+      !options.chatPreviewPayload?.chatPic &&
+      options.chatPreviewPayload?.chatParticipant
+    ) {
+      const wallet = pCAIP10ToWallet(options.chatPreviewPayload?.chatParticipant ?? '');
+      const blockie = createBlockie(wallet || '', { size: 8, scale: 6 });
+      blockieContainerRef.current.innerHTML = ''; // Clear the container to avoid duplicating the canvas
+      blockieContainerRef.current.appendChild(blockie);
+    }
+  }, [options.chatPreviewPayload?.chatParticipant]);
 
   const getProfileName = (formattedAddress: string) => {
     return options.chatPreviewPayload?.chatGroup ? formattedAddress : web3Name ? web3Name : formattedAddress;
@@ -92,11 +111,21 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (options: IChatPreviewPr
           height="48px"
           cursor="pointer"
         >
-          <Image
-            src={options.chatPreviewPayload?.chatPic || undefined}
-            height="48px"
-            width="48px"
-          />
+          {options.chatPreviewPayload?.chatPic ? (
+            <Image
+              src={options.chatPreviewPayload?.chatPic || undefined}
+              height="48px"
+              width="48px"
+            />
+          ) : (
+            <Div
+              ref={blockieContainerRef}
+              height={'48px'}
+              width={'48px'}
+              borderRadius="50%"
+              overflow="hidden"
+            ></Div>
+          )}
         </Section>
         <Section
           justifyContent="center"

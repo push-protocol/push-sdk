@@ -488,7 +488,13 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
   }, [chatPreviewList.loading, chatPreviewList.loaded, chatPreviewList.page]);
 
   useEffect(() => {
-    if (listInnerRef && listInnerRef?.current && listInnerRef?.current?.parentElement && !chatPreviewList.loading) {
+    if (
+      listInnerRef &&
+      listInnerRef?.current &&
+      listInnerRef?.current?.parentElement &&
+      !chatPreviewList.loading &&
+      !chatPreviewList.loaded
+    ) {
       if (listInnerRef.current.clientHeight + SCROLL_LIMIT < listInnerRef.current.parentElement.clientHeight) {
         // set loading to true
         setChatPreviewList((prev) => ({

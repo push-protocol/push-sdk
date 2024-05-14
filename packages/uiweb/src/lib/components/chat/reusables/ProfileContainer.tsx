@@ -53,7 +53,8 @@ export const ProfileContainer = ({ theme, member, copy, customStyle, loading }: 
 
   useEffect(() => {
     if (blockieContainerRef.current && !member?.icon) {
-      const blockie = createBlockie(member?.recipient || '', { size: 8, scale: 6 });
+      const address = pCAIP10ToWallet(member?.recipient || '');
+      const blockie = createBlockie(address, { size: 8, scale: 6 });
       blockieContainerRef.current.innerHTML = ''; // Clear the container to avoid duplicating the canvas
       blockieContainerRef.current.appendChild(blockie);
     }

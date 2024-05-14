@@ -229,22 +229,21 @@ export const ChatPreviewSearchList: React.FC<IChatPreviewSearchListProps> = (opt
             }
           } else {
             const userProfile = await user?.info({ overrideAccount: chatInfo.recipient });
+            console.debug('UIWeb::components::ChatPreviewSearchList::loadMoreChats::userProfile', userProfile);
 
-            if (userProfile) {
-              searchedChat = {
-                ...searchedChat,
-                chatId: derivedChatId,
-                chatParticipant: derivedChatId,
-                chatGroup: false,
-                chatPic: userProfile?.profile?.picture || null,
-                chatMsg: {
-                  messageType: 'Text',
-                  messageContent: chatInfo?.list === 'CHATS' ? 'Resume Chat!' : 'Start Chat!',
-                },
-              };
+            searchedChat = {
+              ...searchedChat,
+              chatId: derivedChatId,
+              chatParticipant: derivedChatId,
+              chatGroup: false,
+              chatPic: userProfile?.profile?.picture || null,
+              chatMsg: {
+                messageType: 'Text',
+                messageContent: chatInfo?.list === 'CHATS' ? 'Resume Chat!' : 'Start Chat!',
+              },
+            };
 
-              resolved = true;
-            }
+            resolved = true;
           }
         } else {
           error = {
@@ -376,28 +375,24 @@ export const ChatPreviewSearchList: React.FC<IChatPreviewSearchListProps> = (opt
     const modItem = transformStreamToIChatPreviewPayload(item);
 
     // now check if this message is already present in the list
-    const chatItem = chatPreviewList.items.find((chatItem) => chatItem.chatId === modItem.chatId);
+    // in this case, also check for address lookup
+    // If found, then swizzle chat id with this new one
+    const chatItem = chatPreviewList.items.find(
+      (chatItem) =>
+        chatItem.chatId === modItem.chatId ||
+        pCAIP10ToWallet(chatItem.chatId ?? '') === pCAIP10ToWallet(modItem.chatParticipant ?? '')
+    );
 
-    // if chat item is present, take pfp an group name if request
+    // only proceed if chat item is present as this is searched
     if (chatItem) {
+      // Override chat id
+      modItem.chatId = chatItem.chatId;
       modItem.chatPic = chatItem.chatPic;
       modItem.chatParticipant = chatItem.chatParticipant;
-    } else {
-      // if not present, fetch profile
-      if (!modItem.chatGroup) {
-        const profile = await user.profile.info({
-          overrideAccount: modItem.chatParticipant,
-        });
-        modItem.chatPic = profile.picture;
-      } else {
-        const profile = await user.chat.group.info(modItem.chatId!);
-        modItem.chatPic = profile.groupImage;
-        modItem.chatParticipant = profile.groupName;
-      }
-    }
 
-    // modify the chat items
-    addChatItems([modItem], true);
+      // modify the chat items
+      addChatItems([modItem], true);
+    }
   };
 
   // Transform accepted request
@@ -497,6 +492,13 @@ export const ChatPreviewSearchList: React.FC<IChatPreviewSearchListProps> = (opt
       transformAcceptedRequest(chatAcceptStream);
     }
   }, [chatAcceptStream]);
+
+  // When chat request comes in
+  useEffect(() => {
+    if (Object.keys(chatRequestStream || {}).length > 0 && chatRequestStream.constructor === Object) {
+      transformStreamMessage(chatRequestStream);
+    }
+  }, [chatRequestStream]);
 
   //search method for a chatId
 
