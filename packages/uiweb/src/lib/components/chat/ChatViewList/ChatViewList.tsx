@@ -93,7 +93,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
       if (!user) return;
       if (chatId) {
         const info = await fetchChat({ chatId: chatId });
-
+        console.debug('UIWeb::components::ChatViewList::useEffect::fetchChat', info);
         // if readmode, then only public true is considered
         // TODO: Hack for interface not declared properly (info?.meta as any)?.encryption
         // TODO: Hack for interface not declared properly (info?.meta as any)?.groupInfo?.public
@@ -113,9 +113,14 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
             // if group is encrypted, check if user list is CHATS, encryptioon false takes care of public groups
             hidden = info.list === 'CHATS' ? false : true;
           } else {
-            // if it's not a group, then check if list is CHATS or REQUESTS
-            hidden = info.list === 'CHATS' || info.list === 'REQUESTS' ? false : true;
+            // if it's not a group, then dm is always not hidden
+            hidden = false;
           }
+          hidden = false;
+        } else if (!info?.meta) {
+          // TODO: Hack because chat.info doesn't return meta for UNINITIALIZED chats
+          // Assuming this only happens for UNINITIALIZED chats which is a dm
+          // Just return false for this for now
           hidden = false;
         } else {
           // for everything else, set hidden to true

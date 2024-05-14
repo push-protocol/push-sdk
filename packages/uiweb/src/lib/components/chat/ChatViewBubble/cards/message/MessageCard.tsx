@@ -280,6 +280,7 @@ const MessageSection = styled(Section)`
 
 const MessageCardSection = styled(Section)`
   display: grid;
+  align-self: flex-start;
   flex-direction: column;
   max-width: 100%;
 

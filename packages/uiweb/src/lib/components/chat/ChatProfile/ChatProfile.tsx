@@ -156,6 +156,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
               const profileInfo = await fetchProfileInfo({
                 recipient,
               });
+
               if (profileInfo) {
                 console.debug('UIWeb::ChatProfile::user.profile.info fetched', profileInfo);
 
@@ -166,6 +167,10 @@ export const ChatProfile: React.FC<IChatProfile> = ({
                 profile.abbrRecipient = getAbbreiatedRecipient(recipient);
                 profile.desc = profileInfo.profile?.desc;
                 profile.isGroup = false;
+              } else {
+                throw new Error(
+                  'UIWeb::ChatProfile::user.profile.info fetch error, possible push user does not exist.'
+                );
               }
             } catch (error) {
               console.warn(
@@ -174,7 +179,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
               );
               profile.name = '';
               profile.icon = null;
-              profile.chatId = chatInfo.chatId;
+              profile.chatId = derivedChatId;
               profile.recipient = recipient;
               profile.abbrRecipient = getAbbreiatedRecipient(recipient);
               profile.desc = '';
