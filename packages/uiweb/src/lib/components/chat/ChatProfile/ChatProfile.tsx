@@ -38,7 +38,6 @@ import InfoIcon from '../../../icons/infodark.svg';
 // Interfaces & Types
 import useUserInfoUtilities from '../../../hooks/chat/useUserInfoUtilities';
 import { Group, IChatProfile } from '../exportedTypes';
-import { ChatInfoResponse } from '../types';
 
 // Constants
 
