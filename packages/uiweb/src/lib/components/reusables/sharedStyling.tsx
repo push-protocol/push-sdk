@@ -167,6 +167,7 @@ type SpanStyleProps = {
   cursor?: string;
   whiteSpace?: string;
   visibility?: string;
+  textWrap?: string;
 };
 
 export const Span = styled.span<SpanStyleProps>`
@@ -194,6 +195,7 @@ export const Span = styled.span<SpanStyleProps>`
   z-index: ${(props) => props.zIndex || 'auto'};
   max-width: ${(props) => props.maxWidth || 'initial'};
   white-space: ${(props) => props.whiteSpace || 'normal'};
+  text-wrap: ${(props) => props.textWrap || 'normal'};
 
   &.skeleton {
     > * {

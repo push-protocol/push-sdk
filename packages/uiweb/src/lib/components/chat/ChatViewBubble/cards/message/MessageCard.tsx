@@ -287,7 +287,7 @@ const MessageCardSection = styled(Section)`
   &.video,
   &.frame {
     max-width: 512px;
-    min-width: 240px;
+    min-width: 200px;
 
     & > ${MessageSection} {
       width: 100%;
