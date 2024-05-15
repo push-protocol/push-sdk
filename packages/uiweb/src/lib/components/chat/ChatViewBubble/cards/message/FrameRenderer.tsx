@@ -523,4 +523,5 @@ const FrameInput = styled.input<FrameInputProps>`
 
 const PreviewAnchor = styled(Anchor)`
   text-decoration: none;
+  align-self: flex-end;
 `;
