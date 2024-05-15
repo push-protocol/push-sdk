@@ -33,6 +33,8 @@ import {
 import { axiosGet, axiosPost } from '../utils/axiosUtil';
 import { PushAPI } from '../pushapi/PushAPI';
 import { channel } from 'diagnostics_channel';
+import * as viem from 'viem';
+
 
 // ERROR CONSTANTS
 const ERROR_ACCOUNT_NEEDED = 'Account is required';
@@ -843,7 +845,7 @@ export class PushNotificationBaseClass {
         throw new Error('Signer is not provided');
       }
       const pushSigner = new Signer(this.signer);
-      let addAliasRes
+      let addAliasRes;
       if (!pushSigner.isViemSigner(this.signer)) {
         if (!this.signer.provider) {
           throw new Error('ethers provider is not provided');
@@ -875,12 +877,13 @@ export class PushNotificationBaseClass {
         throw new Error('Signer is not provided');
       }
       const pushSigner = new Signer(this.signer);
-      let verifyAliasRes
+      let verifyAliasRes;
       if (!pushSigner.isViemSigner(this.signer)) {
         if (!this.signer.provider) {
           throw new Error('ethers provider is not provided');
         }
-        const addAliasTrxPromise = contract!['verifyChannelAlias'](channelAddress);
+        const addAliasTrxPromise =
+          contract!['verifyChannelAlias'](channelAddress);
         const addAliasTrx = await addAliasTrxPromise;
         await this.signer?.provider?.waitForTransaction(addAliasTrx.hash);
         verifyAliasRes = addAliasTrx.hash;
@@ -925,5 +928,14 @@ export class PushNotificationBaseClass {
 
   protected getAddressFromCaip(caipAddress: string): string {
     return caipAddress?.split(':')[caipAddress?.split(':').length - 1];
+  }
+
+  protected isValidPCaip(address: string): boolean {
+    const addressComponents = address.split(':');
+    return (
+      addressComponents.length == 2 &&
+      addressComponents[0] == 'eip155' &&
+      viem.isAddress(addressComponents[1])
+    );
   }
 }

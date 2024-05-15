@@ -53,7 +53,8 @@ export const ProfileContainer = ({ theme, member, copy, customStyle, loading }: 
 
   useEffect(() => {
     if (blockieContainerRef.current && !member?.icon) {
-      const blockie = createBlockie(member?.recipient || '', { size: 8, scale: 6 });
+      const address = pCAIP10ToWallet(member?.recipient || '');
+      const blockie = createBlockie(address, { size: 8, scale: 6 });
       blockieContainerRef.current.innerHTML = ''; // Clear the container to avoid duplicating the canvas
       blockieContainerRef.current.appendChild(blockie);
     }
@@ -98,26 +99,17 @@ export const ProfileContainer = ({ theme, member, copy, customStyle, loading }: 
         cursor="pointer"
       >
         <>
-          {member?.name ||
-            member?.web3Name ||
-            (loading && (
-              <Section
-                justifyContent="flex-start"
-                minWidth="120px"
-                className={loading ? 'skeleton' : ''}
-              >
-                <Span
-                  fontSize={customStyle?.fontSize ?? '18px'}
-                  fontWeight={customStyle?.fontWeight ?? '400'}
-                  color={customStyle?.textColor ?? theme.textColor?.modalSubHeadingText}
-                  position="relative"
-                  cursor="pointer"
-                >
-                  {/* If name and web3 name then show push user name else show web3 name */}
-                  {member.name && member.web3Name ? member.name : member.name ? member.name : member.web3Name}
-                </Span>
-              </Section>
-            ))}
+          {member?.name || member?.web3Name ? (
+            <Span
+              fontSize={customStyle?.fontSize ?? '18px'}
+              fontWeight={customStyle?.fontWeight ?? '400'}
+              color={customStyle?.textColor ?? theme.textColor?.modalSubHeadingText}
+              position="relative"
+              cursor="pointer"
+            >
+              {member.name && member.web3Name ? member.name : member.name || member.web3Name}
+            </Span>
+          ) : null}
 
           <Tooltip content={copyText}>
             <Section

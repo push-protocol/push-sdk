@@ -13,9 +13,6 @@ import { appendUniqueMessages, dateToFromNowDaily, pCAIP10ToWallet, walletToPCAI
 import { useChatData, usePushChatStream } from '../../../hooks';
 import useFetchChat from '../../../hooks/chat/useFetchChat';
 import useFetchMessageUtilities from '../../../hooks/chat/useFetchMessageUtilities';
-import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
-import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities';
-import usePushUser from '../../../hooks/usePushUser';
 import { Section, Span, Spinner } from '../../reusables';
 import { ChatViewBubble } from '../ChatViewBubble';
 import { checkIfNewRequest, transformStreamToIMessageIPFSWithCID } from '../helpers';
@@ -30,7 +27,7 @@ import { ThemeContext } from '../theme/ThemeProvider';
 // Interfaces & Types
 import { Group, IChatViewListProps } from '../exportedTypes';
 import { IChatTheme } from '../theme';
-import { ChatInfoResponse } from '../types';
+import { IChatInfoResponse } from '../types';
 
 /**
  * @interface IThemeProps
@@ -43,9 +40,7 @@ interface IThemeProps {
 
 interface IChatViewListInitialized {
   loading: boolean;
-  chatInfo: ChatInfoResponse | null;
-  groupInfo: Group | null;
-  isParticipant: boolean;
+  chatInfo: IChatInfoResponse | null;
   isHidden: boolean;
   invalidChat: boolean;
 }
@@ -64,15 +59,12 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
   const [initialized, setInitialized] = useState<IChatViewListInitialized>({
     loading: true,
     chatInfo: null,
-    groupInfo: null,
-    isParticipant: false,
     isHidden: false,
     invalidChat: false,
   });
 
   const { chatId, limit = chatLimit, chatFilterList = [] } = options || {};
   const { user, toast } = useChatData();
-  const [groupInfo, setGroupInfo] = useState<Group | null>(null);
 
   // const [chatStatusText, setChatStatusText] = useState<string>('');
   const [messages, setMessages] = useState<IMessageIPFSWithCID[]>([]);
@@ -80,8 +72,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
   const listInnerRef = useRef<HTMLDivElement>(null);
   const [stopPagination, setStopPagination] = useState<boolean>(false);
   const { fetchChat } = useFetchChat();
-  const { getGroupByIDnew } = useGetGroupByIDnew();
-  const { fetchMemberStatus } = useGroupMemberUtilities();
 
   // for stream
   const {
@@ -91,52 +81,41 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
     participantJoinStream,
     participantLeaveStream,
     participantRemoveStream,
-    groupUpdateStream,
   } = useChatData();
 
   const theme = useContext(ThemeContext);
   const dates = new Set();
 
-  // Primary Hook that fetches and sets ChatInfo which then fetches and sets UserInfo or GroupInfo
+  // Primary Hook that fetches and sets ChatInfo which then fetches and sets UserInfo
   // Which then calls await getMessagesCall(); to fetch messages
   useEffect(() => {
     (async () => {
       if (!user) return;
       if (chatId) {
-        const info = await fetchChat({ chatId: chatId });
-
-        // get group info
-        let groupMeta;
-        if (info && info?.meta?.group) {
-          groupMeta = await getGroupByIDnew({ groupId: chatId });
-        }
-
-        // get member status
-        const status = await fetchMemberStatus({
-          chatId: chatId,
-          accountId: user?.account || '',
-        });
-
-        // also find out if chat is encrypted
+        const info = await user.chat.info(chatId);
+        console.debug('UIWeb::components::ChatViewList::useEffect::fetchChat', info);
+        // if readmode, then only public true is considered
         let hidden = false;
-        if (
-          user &&
-          !user.readmode() &&
-          ((info?.meta?.group && status?.participant) ||
-            (!info?.meta?.group && (info?.list === 'CHATS' || info?.list === 'REQUESTS')) ||
-            (info?.meta?.group && groupMeta?.isPublic))
-        ) {
+        if (user && user.readmode()) {
+          //check if encrypted is false, only true for public groups
+          hidden = !info?.meta?.groupInfo?.public ?? true;
+        } else if (user && info?.meta) {
+          // visibility is automatically defined
+          hidden = !info?.meta?.visibility;
+        } else if (!info?.meta) {
+          // TODO: Hack because chat.info doesn't return meta for UNINITIALIZED chats
+          // Assuming this only happens for UNINITIALIZED chats which is a dm
+          // Just return false for this for now
           hidden = false;
         } else {
+          // for everything else, set hidden to true
           hidden = true;
         }
 
         // Finally initialize the component
         setInitialized({
           loading: false,
-          chatInfo: Object.keys(info || {}).length ? (info as ChatInfoResponse) : null,
-          groupInfo: groupMeta ? groupMeta : null,
-          isParticipant: status?.participant ?? false,
+          chatInfo: Object.keys(info || {}).length ? (info as IChatInfoResponse) : null,
           isHidden: hidden,
           invalidChat: info === undefined ? true : false,
         });
@@ -148,13 +127,11 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
       setInitialized({
         loading: true,
         chatInfo: null,
-        groupInfo: null,
-        isParticipant: false,
         isHidden: false,
         invalidChat: false,
       });
     };
-  }, [chatId, user, chatAcceptStream, participantJoinStream, participantLeaveStream, participantRemoveStream]);
+  }, [chatId, user]);
 
   // When loading is done
   useEffect(() => {
@@ -165,14 +142,32 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
     })();
   }, [initialized.loading]);
 
-  //moniters stream changes
+  // Change listtype to 'CHATS' and hidden to false when chatAcceptStream is received
   useEffect(() => {
     if (Object.keys(chatAcceptStream || {}).length > 0 && chatAcceptStream.constructor === Object) {
-      const updatedChatInfo = { ...(initialized.chatInfo as ChatInfoResponse) };
+      // Always change hidden to false and list will be CHATS
+      const updatedChatInfo = { ...(initialized.chatInfo as IChatInfoResponse) };
       if (updatedChatInfo) updatedChatInfo.list = 'CHATS';
-      setInitialized({ ...initialized, chatInfo: updatedChatInfo });
+
+      // set initialized after chat accept animation is done
+      const timer = setTimeout(() => {
+        setInitialized({ ...initialized, chatInfo: updatedChatInfo, isHidden: false });
+      }, 1000);
+
+      return () => clearTimeout(timer);
     }
-  }, [chatAcceptStream]);
+  }, [chatAcceptStream, participantJoinStream]);
+
+  // Change listtype to 'UINITIALIZED' and hidden to true when participantRemoveStream or participantLeaveStream is received
+  useEffect(() => {
+    if (Object.keys(participantRemoveStream || {}).length > 0 && participantRemoveStream.constructor === Object) {
+      // If not encrypted, then set hidden to false
+      const updatedChatInfo = { ...(initialized.chatInfo as IChatInfoResponse) };
+      if (updatedChatInfo) updatedChatInfo.list = 'UNINITIALIZED';
+
+      setInitialized({ ...initialized, chatInfo: updatedChatInfo, isHidden: true });
+    }
+  }, [participantRemoveStream, participantLeaveStream]);
 
   useEffect(() => {
     if (Object.keys(chatStream || {}).length > 0 && chatStream.constructor === Object) {
@@ -190,11 +185,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
     }
   }, [chatRequestStream]);
 
-  useEffect(() => {
-    if (Object.keys(groupUpdateStream || {}).length > 0 && groupUpdateStream.constructor === Object)
-      transformGroupDetails(groupUpdateStream);
-  }, [groupUpdateStream]);
-
   const transformSteamMessage = (item: any) => {
     if (!user) {
       return;
@@ -210,20 +200,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
       }
     }
   };
-  const transformGroupDetails = (item: any): void => {
-    if (groupInfo?.chatId === item?.chatId) {
-      const updatedGroupInfo = groupInfo;
-      if (updatedGroupInfo) {
-        updatedGroupInfo.groupName = item?.meta?.name;
-        updatedGroupInfo.groupDescription = item?.meta?.description;
-        updatedGroupInfo.groupImage = item?.meta?.image;
-        updatedGroupInfo.groupCreator = item?.meta?.owner;
-        updatedGroupInfo.isPublic = !item?.meta?.private;
-        updatedGroupInfo.rules = item?.meta?.rules;
-        setGroupInfo(updatedGroupInfo);
-      }
-    }
-  };
 
   useEffect(() => {
     if (messages && messages?.length && messages?.length <= limit) {
@@ -234,11 +210,11 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
 
   //methods
   const scrollToBottom = () => {
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       if (listInnerRef.current) {
-        listInnerRef.current.scrollTop = listInnerRef.current.scrollHeight + 100;
+        listInnerRef.current.scrollTop = listInnerRef.current.scrollHeight;
       }
-    }, 0);
+    });
   };
 
   const onScroll = async () => {
@@ -344,12 +320,14 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
         )}
 
         {!initialized.loading &&
-          ((user && user.pgpPublicKey) || (initialized.groupInfo && !initialized.groupInfo?.isPublic) ? (
+          (initialized.chatInfo?.meta?.encrypted ? (
             <EncryptionMessage id={ENCRYPTION_KEYS.ENCRYPTED} />
           ) : user && user.readmode() ? (
             <EncryptionMessage id={ENCRYPTION_KEYS.PREVIEW} />
           ) : (
-            <EncryptionMessage id={groupInfo ? ENCRYPTION_KEYS.NO_ENCRYPTED_GROUP : ENCRYPTION_KEYS.NO_ENCRYPTED} />
+            <EncryptionMessage
+              id={initialized.chatInfo?.meta?.group ? ENCRYPTION_KEYS.NO_ENCRYPTED_GROUP : ENCRYPTION_KEYS.NO_ENCRYPTED}
+            />
           ))}
       </Section>
 
@@ -361,19 +339,15 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
             margin="10px 0 0 0"
             flexDirection="column"
           >
-            <Span
-              fontSize="13px"
-              color={theme.textColor?.encryptionMessageText}
-              fontWeight="400"
-            >
-              {messages &&
-                messages.length === 0 &&
-                !messageLoading &&
-                !groupInfo &&
-                !initialized.invalidChat &&
-                CHAT_STATUS.FIRST_CHAT}
-              {initialized.invalidChat && CHAT_STATUS.INVALID_CHAT}
-            </Span>
+            {initialized.invalidChat && (
+              <Span
+                fontSize="13px"
+                color={theme.textColor?.encryptionMessageText}
+                fontWeight="400"
+              >
+                {CHAT_STATUS.INVALID_CHAT}
+              </Span>
+            )}
 
             {messageLoading ? <Spinner color={theme.spinnerColor} /> : ''}
           </Section>
@@ -390,7 +364,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
                   const dateNum = moment(chat.timestamp).format('L');
                   // TODO: This is a hack as chat.fromDID is converted with eip to match with user.account creating a bug for omnichain
                   const position =
-                    pCAIP10ToWallet(chat.fromDID)?.toLowerCase() !== pCAIP10ToWallet(user?.account || '')?.toLowerCase()
+                    pCAIP10ToWallet(chat.fromDID)?.toLowerCase() !== pCAIP10ToWallet(user?.account ?? '')?.toLowerCase()
                       ? 0
                       : 1;
                   return (
@@ -398,7 +372,9 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
                       {dates.has(dateNum) ? null : renderDate({ chat, dateNum })}
                       <Section
                         justifyContent={position ? 'end' : 'start'}
-                        margin="7px"
+                        margin={
+                          position ? theme.margin?.chatBubbleSenderMargin : theme.margin?.chatBubbleReceiverMargin
+                        }
                         key={index}
                       >
                         <ChatViewBubble
