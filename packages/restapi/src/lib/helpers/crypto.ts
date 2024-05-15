@@ -26,7 +26,7 @@ import PROGRESSHOOK from '../progressHook';
 import { Signer } from './signer';
 import * as viem from 'viem';
 import { mainnet } from 'viem/chains';
-import { split } from 'shamir-secret-sharing';
+import { combine, split } from 'shamir-secret-sharing';
 import { Lit } from './lit';
 
 const KDFSaltSize = 32; // bytes
@@ -81,7 +81,7 @@ export const encryptV1 = (
   return encryptedSecret;
 };
 
-/** DEPRECATED */
+/** @deprecated */
 export const decryptWithWalletRPCMethod = async (
   encryptedPGPPrivateKey: string,
   account: string
@@ -237,7 +237,44 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
         break;
       }
       case Constants.ENC_TYPE_V5: {
-        // TODO
+        const { shardInfo } = JSON.parse(
+          encryptedPGPPrivateKey
+        ) as encryptedPrivateKeyType;
+
+        if (!shardInfo) {
+          throw new Error('Invalid Shard Info');
+        }
+
+        const pushShard = shardInfo.shards[0].shard;
+        const litEncryptedShard = shardInfo.shards[1].shard;
+
+        const LitInstance = await Lit.createInstance(
+          wallet.signer as SignerType,
+          wallet.account as string,
+          'ethereum',
+          env
+        );
+
+        const pushSigner = new Signer(wallet.signer as SignerType);
+        const chainId = await pushSigner.getChainId();
+
+        const litShard = await LitInstance.decrypt(
+          litEncryptedShard.ciphertext,
+          litEncryptedShard.dataToEncryptHash,
+          chainId
+        );
+
+        const secret = await combine([
+          hexToBytes(pushShard),
+          hexToBytes(litShard),
+        ]);
+
+        const encodedPrivateKey = await decryptV2(
+          JSON.parse(encryptedPGPPrivateKey),
+          secret
+        );
+        const dec = new TextDecoder();
+        privateKey = dec.decode(encodedPrivateKey);
         break;
       }
       default:
@@ -266,13 +303,17 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
     progressHook?.(PROGRESSHOOK['PUSH-DECRYPT-02'] as ProgressHookType);
     return privateKey;
   } catch (err) {
+    // TODO: Remove Later
+    console.log(err);
     // Report Progress
     const errorProgressHook = PROGRESSHOOK[
       'PUSH-ERROR-00'
     ] as ProgressHookTypeFunction;
     progressHook?.(errorProgressHook(decryptPGPKey.name, err));
     throw Error(
-      `[Push SDK] - API - Error - API ${decryptPGPKey.name} -: ${err}`
+      `[Push SDK] - API - Error - API ${decryptPGPKey.name} -: ${JSON.stringify(
+        err
+      )}`
     );
   }
 };
@@ -468,6 +509,9 @@ export const encryptPGPKey = async (
       break;
     }
     case Constants.ENC_TYPE_V5: {
+      if (!additionalMeta?.SCWPGP_V1?.password) {
+        throw new Error('Password is required!');
+      }
       // 1. Generate secret to encrypt private key
       const encryptionSecret = await getRandomValues(new Uint8Array(32));
       // 2. Split secret into 3 shards ( Combining any 2 shards can decrypt the secret )
@@ -499,7 +543,13 @@ export const encryptPGPKey = async (
         env
       );
 
-      const litEncryptedShard = await LitInstance.encrypt(bytesToHex(shard2));
+      const pushSigner = new Signer(wallet.signer as SignerType);
+      const chainId = await pushSigner.getChainId();
+
+      const litEncryptedShard = await LitInstance.encrypt(
+        bytesToHex(shard2),
+        chainId
+      );
 
       // 6. Encrypt and store shard3 on push nodes
       const encodedShard3 = enc.encode(bytesToHex(shard3));
@@ -508,19 +558,19 @@ export const encryptPGPKey = async (
         hexToBytes(stringToHex(additionalMeta?.SCWPGP_V1?.password as string))
       );
 
-      encryptedPrivateKey.pushShard = {
+      encryptedPrivateKey.shardInfo = {
         shards: [
           {
             shard: pushShard,
-            type: 'PUSH_SHARD',
+            encryptionType: 'NONE',
           },
           {
             shard: litEncryptedShard,
-            type: 'LIT_SHARD_ENC_V1',
+            encryptionType: 'LIT_SHARD_ENC_V1',
           },
           {
             shard: pushEncryptedShard,
-            type: 'PUSH_SHARD_ENC_V1',
+            encryptionType: 'PUSH_SHARD_ENC_V1',
           },
         ],
         pattern: `${QUORUM}-${PARTS}`,

@@ -2,7 +2,8 @@ import * as LitJsSdk from '@lit-protocol/lit-node-client';
 import * as siwe from 'siwe';
 import { SignerType } from '../types';
 import { ENV } from '../constants';
-import { pCAIP10ToWallet } from './address';
+import { isValidSCWCAIP, pCAIP10ToWallet } from './address';
+import * as viem from 'viem';
 
 export class Lit {
   public static LitInstance: Lit;
@@ -19,7 +20,9 @@ export class Lit {
     litNodeClient: LitJsSdk.LitNodeClient
   ) {
     this.signer = signer;
-    this.address = address;
+    this.address = isValidSCWCAIP(address)
+      ? address.split(':')[3]
+      : pCAIP10ToWallet(address);
     this.chain = chain;
     this.litNodeClient = litNodeClient;
     // Access control conditions for encryption and decryption
@@ -33,22 +36,28 @@ export class Lit {
         parameters: [':userAddress'],
         returnValueTest: {
           comparator: '=',
-          value: address,
+          value: this.address,
         },
       },
     ];
   }
 
-  private async prepareSCWAuthSig(signer: SignerType, address: string) {
+  private async prepareSCWAuthSig(
+    signer: SignerType,
+    address: string,
+    chainId: number
+  ) {
     const domain = 'push.org';
     const origin = 'https://app.push.org';
-    const statement = 'Create Push Profile';
+    const statement = 'Enable Push Profile';
     const siweMessage = new siwe.SiweMessage({
       domain,
       address,
       statement,
       uri: origin,
       version: '1',
+      chainId,
+      expirationTime: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
     });
     const messageToSign = siweMessage.prepareMessage();
 
@@ -58,18 +67,29 @@ export class Lit {
     const authSig = {
       sig: signature,
       derivedVia: 'EIP1271',
-      signedMessage: messageToSign,
+      signedMessage: viem.hashMessage(messageToSign),
       address,
     };
     return authSig;
   }
 
-  public async encrypt(dataToEncrypt: string) {
-    const authSig = await this.prepareSCWAuthSig(this.signer, this.address);
+  public async encrypt(dataToEncrypt: string, chainId: number) {
+    const authSig = await this.prepareSCWAuthSig(
+      this.signer,
+      this.address,
+      chainId
+    );
+
+    console.log(authSig);
+    console.log(this.accessControlConditions);
+    console.log(this.chain);
+    console.log(dataToEncrypt);
+
     const { ciphertext, dataToEncryptHash } = await LitJsSdk.encryptString(
       {
         accessControlConditions: this.accessControlConditions,
         authSig,
+        // `ethereum` chain is valid for all EVM chains
         chain: this.chain,
         dataToEncrypt,
       },
@@ -84,11 +104,22 @@ export class Lit {
 
   public async decrypt(
     ciphertext: string,
-    dataToEncryptHash: string
+    dataToEncryptHash: string,
+    chainId: number
   ): Promise<string> {
-    const authSig = await this.prepareSCWAuthSig(this.signer, this.address);
+    const authSig = await this.prepareSCWAuthSig(
+      this.signer,
+      this.address,
+      chainId
+    );
 
-    return LitJsSdk.decryptToString(
+    console.log(authSig);
+    console.log(this.accessControlConditions);
+    console.log(this.chain);
+    console.log(dataToEncryptHash);
+    console.log(ciphertext);
+
+    return await LitJsSdk.decryptToString(
       {
         accessControlConditions: this.accessControlConditions,
         ciphertext,
@@ -112,12 +143,7 @@ export class Lit {
         litNetwork: env === ENV.PROD ? 'habanero' : 'manzano',
       });
       await litNodeClient.connect();
-      this.LitInstance = new Lit(
-        signer,
-        pCAIP10ToWallet(address),
-        chain,
-        LitNodeClient
-      );
+      this.LitInstance = new Lit(signer, address, chain, litNodeClient);
     }
     return this.LitInstance;
   }

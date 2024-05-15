@@ -810,8 +810,8 @@ export type encryptedPrivateKeyType = {
   salt?: string;
   preKey?: string;
   encryptedPassword?: encryptedPrivateKeyTypeV2;
-  pushShard?: {
-    shards: { shard: any; type: string }[];
+  shardInfo?: {
+    shards: { shard: any; encryptionType: string }[];
     pattern: string;
   };
 };

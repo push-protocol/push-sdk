@@ -66,6 +66,7 @@ export const createUserCore = async (
       NFTPGP_V1: {
         password: passPrefix + generateRandomSecret(10),
       },
+      // TODO: Remove Later
       SCWPGP_V1: {
         password: passPrefix + generateRandomSecret(10),
       },
@@ -86,7 +87,9 @@ export const createUserCore = async (
       throw new Error(`Invalid address!`);
     }
 
-    const pushAccount = await convertToValidDID(address, env);
+    const pushAccount = await convertToValidDID(address, env, signer);
+    // TODO: Remove Later
+    console.log(pushAccount);
     const encryptionType = encryptionVersionForDID(
       version,
       pushAccount,
@@ -120,6 +123,8 @@ export const createUserCore = async (
       wallet,
       additionalMeta
     );
+    // TODO: Remove Later
+    console.log(encryptedPrivateKey);
 
     // Report Progress
     progressHook?.(PROGRESSHOOK['PUSH-CREATE-04'] as ProgressHookType);
@@ -138,6 +143,8 @@ export const createUserCore = async (
     createdUser.decryptedPrivateKey = keyPairs.privateKeyArmored;
     return createdUser;
   } catch (err) {
+    // TODO: Remove Later
+    console.log(err);
     // Report Progress
     const errorProgressHook = PROGRESSHOOK[
       'PUSH-ERROR-00'
