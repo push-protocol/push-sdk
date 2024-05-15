@@ -65,10 +65,11 @@ export const ProfileContainer = ({ theme, member, copy, customStyle, loading }: 
       <Section
         height={customStyle?.imgHeight ?? '48px'}
         width={customStyle?.imgHeight ?? '48px'}
-        borderRadius="100%"
-        overflow="hidden"
         margin="0px 12px 0px 0px"
         position="relative"
+        flex="none"
+        borderRadius="100%"
+        overflow="hidden"
         className={loading ? 'skeleton' : ''}
       >
         {member?.icon && (
@@ -105,7 +106,7 @@ export const ProfileContainer = ({ theme, member, copy, customStyle, loading }: 
               fontWeight={customStyle?.fontWeight ?? '400'}
               color={customStyle?.textColor ?? theme.textColor?.modalSubHeadingText}
               position="relative"
-              cursor="pointer"
+              textAlign="left"
             >
               {member.name && member.web3Name ? member.name : member.name || member.web3Name}
             </Span>
@@ -117,7 +118,7 @@ export const ProfileContainer = ({ theme, member, copy, customStyle, loading }: 
               gap="5px"
               cursor="pointer"
               minHeight="22px"
-              minWidth="180px"
+              minWidth="140px"
               onMouseEnter={() => {
                 const text = member.chatId === member.recipient ? 'Copy Chat ID' : 'Copy Wallet';
                 setCopyText(text);
@@ -140,6 +141,8 @@ export const ProfileContainer = ({ theme, member, copy, customStyle, loading }: 
                 position="relative"
                 whiteSpace="nowrap"
                 cursor="pointer"
+                textWrap="wrap"
+                textAlign="left"
               >
                 {member?.name && member?.web3Name
                   ? `${member?.web3Name} | ${member.abbrRecipient}`

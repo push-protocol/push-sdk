@@ -256,6 +256,13 @@ export const ChatViewBubble = ({
             account={user?.account ?? ''}
           />
         )}
+
+      <Span
+        role="img"
+        aria-label="thumbs up"
+      >
+        👍
+      </Span>
     </MessageWrapper>
   );
 };
