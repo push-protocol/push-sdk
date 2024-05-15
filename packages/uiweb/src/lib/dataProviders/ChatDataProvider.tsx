@@ -3,6 +3,7 @@ import { ReactNode, useEffect, useRef, useState } from 'react';
 
 // External Packages
 import { CONSTANTS, PushAPI, SignerType } from '@pushprotocol/restapi';
+import { ThemeProvider } from 'styled-components';
 
 // Internal Compoonents
 import { ChatDataContext, IChatDataContextValues } from '../context/chatContext';

@@ -58,8 +58,8 @@ export class Notification extends PushNotificationBaseClass {
         } else {
           account = options.account;
         }
-      } else if(this.account){
-        account = getFallbackETHCAIPAddress(this.env!, this.account!)
+      } else if (this.account) {
+        account = getFallbackETHCAIPAddress(this.env!, this.account!);
       }
       // guest mode and valid address check
       this.checkUserAddressExists(account!);
@@ -112,8 +112,8 @@ export class Notification extends PushNotificationBaseClass {
         } else {
           account = options.account;
         }
-      } else if(this.account){
-        account = getFallbackETHCAIPAddress(this.env!, this.account!)
+      } else if (this.account) {
+        account = getFallbackETHCAIPAddress(this.env!, this.account!);
       }
       this.checkUserAddressExists(account!);
       return await PUSH_USER.getSubscriptions({
@@ -150,9 +150,13 @@ export class Notification extends PushNotificationBaseClass {
       if (!channel && channel != '') {
         throw new Error(ERROR_CHANNEL_NEEDED);
       }
+      // convert normal partial caip to wallet
+      if (this.isValidPCaip(channel)) {
+        channel = pCAIP10ToWallet(channel);
+      }
       // validates if caip is correct
       if (!validateCAIP(channel)) {
-        throw new Error(ERROR_INVALID_CAIP);
+        channel = getFallbackETHCAIPAddress(this.env!, channel);
       }
       // get channel caip
       const caipDetail = getCAIPDetails(channel);
@@ -201,9 +205,13 @@ export class Notification extends PushNotificationBaseClass {
       if (!channel && channel != '') {
         return new Error(ERROR_CHANNEL_NEEDED);
       }
+      // covert partial caip to normal wallet
+      if (this.isValidPCaip(channel)) {
+        channel = pCAIP10ToWallet(channel);
+      }
       // validates if caip is correct
       if (!validateCAIP(channel)) {
-        return new Error(ERROR_INVALID_CAIP);
+        channel = getFallbackETHCAIPAddress(this.env!, channel);
       }
       const caipDetail = getCAIPDetails(channel);
       const userAddressInCaip = getCAIPWithChainId(

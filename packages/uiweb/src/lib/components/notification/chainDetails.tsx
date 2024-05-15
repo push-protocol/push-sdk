@@ -9,6 +9,7 @@ import { OptimismSvg } from '../../icons/OptimismSvg';
 import { PolygonSvg } from '../../icons/PolygonSvg';
 import { PolygonzkevmSvg } from '../../icons/PolygonzkevmSvg';
 import { TheGraphSvg } from '../../icons/TheGraphSvg';
+import { CyberConnectSVG } from '../../icons/CyberConnectSVG';
 const createSVGIcon = (element: any, chainName: string) => {
   return (
     <Tooltip tooltipContent={`Delivered by ${chainName}`}>{element}</Tooltip>
@@ -82,5 +83,13 @@ export default {
   BERACHAIN_TESTNET: {
     label: 'BERACHAIN TESTNET',
     icon: createSVGIcon(<BerachainSVG />, 'Berachain Testnet'),
+  }, 
+  CYBER_CONNECT_TESTNET: {
+    label: 'CYBER CONNECT TESTNET',
+    icon: createSVGIcon(<CyberConnectSVG/>, 'CyberConnect Testnet'),
   },
+  CYBER_CONNECT_MAINNET: {
+    label: 'CYBER CONNECT MAINNET',
+    icon: createSVGIcon(<CyberConnectSVG/>, 'CyberConnect Mainnet'),
+  }
 };

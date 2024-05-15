@@ -36,6 +36,29 @@ interface IBorderRadius {
   userProfile?: string;
   chatWidget?: string;
 }
+
+interface IPadding {
+  chatPreviewListPadding?: string;
+  chatPreviewPadding?: string;
+  chatProfilePadding?: string;
+  chatViewPadding?: string;
+  chatViewListPadding?: string;
+  messageInputPadding?: string;
+  chatBubbleSenderPadding?: string;
+  chatBubbleReceiverPadding?: string;
+}
+
+interface IMargin {
+  chatPreviewListMargin?: string;
+  chatPreviewMargin?: string;
+  chatProfileMargin?: string;
+  chatViewMargin?: string;
+  chatViewListMargin?: string;
+  messageInputMargin?: string;
+  chatBubbleSenderMargin?: string;
+  chatBubbleReceiverMargin?: string;
+}
+
 interface IBackgroundColor {
   inputBackground?: string;
   inputHoverBackground?: string;
@@ -145,6 +168,8 @@ interface IIconColor {
 }
 export interface IChatTheme {
   borderRadius?: IBorderRadius;
+  padding?: IPadding;
+  margin?: IMargin;
 
   backgroundColor?: IBackgroundColor;
 
@@ -175,6 +200,28 @@ export const lightChatTheme: IChatTheme = {
     chatPreview: '24px',
     userProfile: '0px',
     chatWidget: '24px',
+  },
+
+  padding: {
+    chatPreviewListPadding: '0px 6px 0px 0px',
+    chatPreviewPadding: '10px 5px',
+    chatProfilePadding: '0px',
+    chatViewPadding: '0px',
+    chatViewListPadding: '0px 6px 0px 0px',
+    messageInputPadding: '0px',
+    chatBubbleSenderPadding: '0px',
+    chatBubbleReceiverPadding: '0px',
+  },
+
+  margin: {
+    chatPreviewListMargin: '0px',
+    chatPreviewMargin: '2px 0px',
+    chatProfileMargin: '10px 10px 2px 10px',
+    chatViewMargin: '0px',
+    chatViewListMargin: '0px 0px 0px 10px',
+    messageInputMargin: '2px 10px 10px 10px',
+    chatBubbleSenderMargin: '8px 8px 8px 0px',
+    chatBubbleReceiverMargin: '8px 0px 8px 8px',
   },
 
   backgroundColor: {
@@ -320,6 +367,28 @@ export const darkChatTheme: IChatTheme = {
     chatPreview: '24px',
     userProfile: '0px',
     chatWidget: '24px',
+  },
+
+  padding: {
+    chatPreviewListPadding: '0px 6px 0px 0px',
+    chatPreviewPadding: '10px 5px',
+    chatProfilePadding: '0px',
+    chatViewPadding: '0px',
+    chatViewListPadding: '0px 6px 0px 0px',
+    messageInputPadding: '0px',
+    chatBubbleSenderPadding: '0px',
+    chatBubbleReceiverPadding: '0px',
+  },
+
+  margin: {
+    chatPreviewListMargin: '0px',
+    chatPreviewMargin: '2px 0px',
+    chatProfileMargin: '10px 10px 2px 10px',
+    chatViewMargin: '0px',
+    chatViewListMargin: '0px 0px 0px 10px',
+    messageInputMargin: '2px 10px 10px 10px',
+    chatBubbleSenderMargin: '8px 8px 8px 0px',
+    chatBubbleReceiverMargin: '8px 0px 8px 8px',
   },
 
   backgroundColor: {
