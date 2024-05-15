@@ -24,12 +24,14 @@ const NETWORK_MAPPING: NwMappingType = {
   122: 'FUSE_MAINNET',
   123: 'FUSE_TESTNET',
   80085: 'BERACHAIN_TESTNET',
+  111557560: 'CYBER_CONNECT_TESTNET',
+  7560: 'CYBER_CONNECT_MAINNET'
 };
 
 const injected = new InjectedConnector({
   supportedChainIds: [
     1, 3, 4, 11155111, 42, 137, 80002, 56, 97, 10, 11155420, 2442, 1101, 421614,
-    42161, 122, 123, 80085,
+    42161, 122, 123, 80085, 111557560, 7560
   ],
 });
 
