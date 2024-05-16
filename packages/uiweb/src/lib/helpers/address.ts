@@ -38,7 +38,11 @@ export const walletToPCAIP10 = (account: string): string => {
 };
 
 export const pCAIP10ToWallet = (wallet: string): string => {
-  if (wallet) wallet = wallet.replace('eip155:', '');
+  // only return the last part of the wallet after :
+  if (wallet) {
+    wallet = wallet.split(':').pop() ?? '';
+  }
+
   return wallet;
 };
 

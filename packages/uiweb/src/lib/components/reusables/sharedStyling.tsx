@@ -34,6 +34,7 @@ type SectionStyleProps = {
   bottom?: string;
   top?: string;
   left?: string;
+  border?: string;
   borderColor?: string;
   borderStyle?: string;
   borderWidth?: string;
@@ -77,6 +78,7 @@ export const Section = styled.div<SectionStyleProps>`
   border-style: ${(props) => props.borderStyle || 'initial'};
   z-index: ${(props) => props.zIndex || '0'};
   white-space: ${(props) => props.whiteSpace || 'normal'};
+  border: ${(props) => props.border || 'initial'};
 
   &.skeleton {
     > * {
@@ -104,6 +106,8 @@ type DivStyleProps = {
   cursor?: string;
   alignSelf?: string;
   margin?: string;
+  overflow?: string;
+  borderRadius?: string;
   textAlign?: string;
   visibility?: string;
 };
@@ -113,6 +117,8 @@ export const Div = styled.div<DivStyleProps>`
   margin: ${(props) => props.margin || '0px'};
   cursor: ${(props) => props.cursor || 'default'};
   line-height: ${(props) => props.lineHeight || 'initial'};
+  overflow: ${(props) => props.overflow || 'default'};
+  border-radius: ${(props) => props.borderRadius || '0px'};
   align-self: ${(props) => props.alignSelf || 'center'};
   text-align: ${(props) => props.textAlign || 'default'};
 
@@ -277,6 +283,7 @@ type ImageStyleProps = {
   objectFit?: string;
   margin?: string;
 };
+
 export const Image = styled.img<ImageStyleProps>`
   display: ${(props) => props.display || 'flex'};
   height: ${(props) => props.height || 'auto'};

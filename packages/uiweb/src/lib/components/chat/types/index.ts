@@ -96,14 +96,19 @@ export const CRITERIA_TYPE = {
 
 export type CriteriaType = keyof typeof CRITERIA_TYPE;
 
-export interface ChatInfoResponse {
+export interface IChatInfoResponse {
   chatId: string;
-  meta: {
-    group: boolean;
+  list: string;
+  meta?: {
     encrypted: boolean;
+    visibility: boolean;
+    group: boolean;
+    groupInfo?: {
+      public: boolean;
+    };
+    recipents?: string[];
   };
   participants?: Array<string>;
   recipient?: string;
-  list: string;
 }
 export * from './tokenGatedGroupCreationType';

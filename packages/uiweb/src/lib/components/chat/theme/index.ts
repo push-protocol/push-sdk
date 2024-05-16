@@ -36,14 +36,41 @@ interface IBorderRadius {
   userProfile?: string;
   chatWidget?: string;
 }
+
+interface IPadding {
+  chatPreviewListPadding?: string;
+  chatPreviewPadding?: string;
+  chatProfilePadding?: string;
+  chatViewPadding?: string;
+  chatViewListPadding?: string;
+  messageInputPadding?: string;
+  chatBubbleSenderPadding?: string;
+  chatBubbleReceiverPadding?: string;
+}
+
+interface IMargin {
+  chatPreviewListMargin?: string;
+  chatPreviewMargin?: string;
+  chatProfileMargin?: string;
+  chatViewMargin?: string;
+  chatViewListMargin?: string;
+  messageInputMargin?: string;
+  chatBubbleSenderMargin?: string;
+  chatBubbleReceiverMargin?: string;
+}
+
 interface IBackgroundColor {
+  inputBackground?: string;
+  inputHoverBackground?: string;
   chatViewComponentBackground?: string;
   chatProfileBackground?: string;
   messageInputBackground?: string;
   chatSentBubbleBackground?: string;
   chatReceivedBubbleBackground?: string;
+  chatFrameBackground?: string;
   encryptionMessageBackground?: string;
   buttonBackground?: string;
+  buttonHotBackground?: string;
   buttonDisableBackground?: string;
   searchInputBackground?: string;
   modalBackground?: string;
@@ -67,6 +94,9 @@ interface ITextColor {
   messageInputText?: string;
   chatSentBubbleText?: string;
   chatReceivedBubbleText?: string;
+  chatFrameTitleText?: string;
+  chatFrameDescriptionText?: string;
+  chatFrameURLText?: string;
   timestamp?: string;
   encryptionMessageText?: string;
   buttonText?: string;
@@ -102,6 +132,8 @@ interface IFont {
   chatPreviewDateText?: string;
   chatPreviewBadgeText?: string;
   userProfileText?: string;
+  chatFrameTitleText?: string;
+  chatFrameDescriptionText?: string;
 }
 interface IFontWeight {
   chatProfileText?: string;
@@ -120,6 +152,7 @@ interface IFontWeight {
   chatPreviewDateText?: string;
   chatPreviewBadgeText?: string;
   userProfileText?: string;
+  chatFrameTitleText?: string;
 }
 interface IIconColor {
   emoji?: string;
@@ -135,6 +168,8 @@ interface IIconColor {
 }
 export interface IChatTheme {
   borderRadius?: IBorderRadius;
+  padding?: IPadding;
+  margin?: IMargin;
 
   backgroundColor?: IBackgroundColor;
 
@@ -167,14 +202,41 @@ export const lightChatTheme: IChatTheme = {
     chatWidget: '24px',
   },
 
+  padding: {
+    chatPreviewListPadding: '0px 6px 0px 0px',
+    chatPreviewPadding: '10px 5px',
+    chatProfilePadding: '0px',
+    chatViewPadding: '0px',
+    chatViewListPadding: '0px 6px 0px 0px',
+    messageInputPadding: '0px',
+    chatBubbleSenderPadding: '0px',
+    chatBubbleReceiverPadding: '0px',
+  },
+
+  margin: {
+    chatPreviewListMargin: '0px',
+    chatPreviewMargin: '2px 0px',
+    chatProfileMargin: '10px 10px 2px 10px',
+    chatViewMargin: '0px',
+    chatViewListMargin: '0px 0px 0px 10px',
+    messageInputMargin: '2px 10px 10px 10px',
+    chatBubbleSenderMargin: '8px 8px 8px 0px',
+    chatBubbleReceiverMargin: '8px 0px 8px 8px',
+  },
+
   backgroundColor: {
+    inputBackground: '#fff',
+    inputHoverBackground:
+      'linear-gradient(rgb(244, 245, 250), rgb(244, 245, 250)), linear-gradient(to right, rgb(182, 160, 245), rgb(244, 110, 246), rgb(255, 222, 211), rgba(161 159 161, 1))',
     chatViewComponentBackground: 'linear-gradient(179.97deg, #EEF5FF 0.02%, #ECE9FA 123.25%)',
     chatProfileBackground: '#fff',
     messageInputBackground: '#fff',
     chatSentBubbleBackground: 'rgb(202, 89, 155)',
     chatReceivedBubbleBackground: '#fff',
+    chatFrameBackground: '#f5f5f5',
     encryptionMessageBackground: '#fff',
     buttonBackground: 'rgb(202, 89, 155)',
+    buttonHotBackground: '#D53A94',
     searchInputBackground: 'rgb(244, 245, 250)',
     modalBackground: '#fff',
     modalInputBackground: 'transparent',
@@ -211,6 +273,8 @@ export const lightChatTheme: IChatTheme = {
     chatPreviewDateText: '12px',
     chatPreviewBadgeText: '12px',
     userProfileText: '18px',
+    chatFrameTitleText: '16px',
+    chatFrameDescriptionText: '14px',
   },
 
   fontWeight: {
@@ -230,6 +294,7 @@ export const lightChatTheme: IChatTheme = {
     chatPreviewDateText: '400',
     chatPreviewBadgeText: '600',
     userProfileText: '500',
+    chatFrameTitleText: '500',
   },
 
   fontFamily: 'inherit',
@@ -265,6 +330,9 @@ export const lightChatTheme: IChatTheme = {
     messageInputText: '#000',
     chatSentBubbleText: '#fff',
     chatReceivedBubbleText: '#000',
+    chatFrameTitleText: '#000',
+    chatFrameDescriptionText: 'rgba(0, 0, 0, 0.5)',
+    chatFrameURLText: '#000',
     timestamp: '400',
     encryptionMessageText: '#000',
     buttonText: '#fff',
@@ -301,14 +369,42 @@ export const darkChatTheme: IChatTheme = {
     chatWidget: '24px',
   },
 
+  padding: {
+    chatPreviewListPadding: '0px 6px 0px 0px',
+    chatPreviewPadding: '10px 5px',
+    chatProfilePadding: '0px',
+    chatViewPadding: '0px',
+    chatViewListPadding: '0px 6px 0px 0px',
+    messageInputPadding: '0px',
+    chatBubbleSenderPadding: '0px',
+    chatBubbleReceiverPadding: '0px',
+  },
+
+  margin: {
+    chatPreviewListMargin: '0px',
+    chatPreviewMargin: '2px 0px',
+    chatProfileMargin: '10px 10px 2px 10px',
+    chatViewMargin: '0px',
+    chatViewListMargin: '0px 0px 0px 10px',
+    messageInputMargin: '2px 10px 10px 10px',
+    chatBubbleSenderMargin: '8px 8px 8px 0px',
+    chatBubbleReceiverMargin: '8px 0px 8px 8px',
+  },
+
   backgroundColor: {
+    inputBackground: 'rgb(64, 70, 80)',
+    inputHoverBackground:
+      'linear-gradient(#404650, #404650), linear-gradient(to right, rgba(182, 160, 245, 1), rgba(244, 110, 246, 1), rgba(255, 222, 211, 1), rgba(161 159 161, 1))',
     chatViewComponentBackground: 'rgb(40, 42, 46)',
     chatProfileBackground: 'rgb(64, 70, 80)',
     messageInputBackground: 'rgb(64, 70, 80)',
     chatSentBubbleBackground: 'rgb(202, 89, 155)',
     chatReceivedBubbleBackground: 'rgb(64, 70, 80)',
+    chatFrameBackground: '#343536',
     encryptionMessageBackground: 'rgb(64, 70, 80)',
     buttonBackground: 'rgb(202, 89, 155)',
+    buttonHotBackground: '#D53A94',
+    searchInputBackground: 'rgb(64,70,80)',
     modalBackground: 'rgb(47, 49, 55)',
     criteriaLabelBackground: 'rgb(47, 49, 55)',
     modalInputBackground: 'transparent',
@@ -344,6 +440,8 @@ export const darkChatTheme: IChatTheme = {
     chatPreviewDateText: '12px',
     chatPreviewBadgeText: '12px',
     userProfileText: '18px',
+    chatFrameTitleText: '16px',
+    chatFrameDescriptionText: '14px',
   },
 
   fontWeight: {
@@ -363,6 +461,7 @@ export const darkChatTheme: IChatTheme = {
     chatPreviewDateText: '400',
     chatPreviewBadgeText: '600',
     userProfileText: '500',
+    chatFrameTitleText: '500',
   },
 
   fontFamily: 'inherit',
@@ -397,6 +496,9 @@ export const darkChatTheme: IChatTheme = {
     messageInputText: 'rgb(182, 188, 214)',
     chatSentBubbleText: '#fff',
     chatReceivedBubbleText: 'rgb(182, 188, 214)',
+    chatFrameTitleText: 'rgb(182, 188, 214)',
+    chatFrameDescriptionText: 'rgba(182, 188, 214, 0.5)',
+    chatFrameURLText: 'rgb(182, 188, 214)',
     timestamp: 'rgb(182, 188, 214)',
     encryptionMessageText: 'rgb(182, 188, 214)',
     buttonText: '#fff',

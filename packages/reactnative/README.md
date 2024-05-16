@@ -129,6 +129,13 @@ const spam = await alice.notification.list('SPAM', {
   page: 1,
 });
 
+```
+
+## Other Features
+
+All the remaining features of the `restapi` SDK are available in a similar manner to the `restapi` package. You can read more about them <a href="https://github.com/push-protocol/push-sdk/blob/main/packages/restapi/README.md">HERE</a>
+
+
 console.log('SPAM NOTIFICATIONS', spam);
 ```
 
@@ -149,7 +156,9 @@ Push Protocol is an open source Project. We firmly believe in a completely trans
 - Feature Request: Please submit a feature request if you have an idea or discover a capability that would make development simpler and more reliable.
 - Documentation Request: If you're reading the Push documentation and believe that we're missing something, please create a docs request.
 
-Read how you can contribute <a href="https://github.com/push-protocol/push-sdk/blob/main/CONTRIBUTING.md">HERE</a>
+
+Read how you can contribute <a href="https://github.com/push-protocol/push-sdk/blob/main/contributing.md">HERE</a>
+
 
 Not sure where to start? Join our discord and we will help you get started!
 

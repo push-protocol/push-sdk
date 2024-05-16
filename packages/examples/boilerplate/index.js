@@ -5,12 +5,16 @@ import { ethers } from 'ethers';
 const signerAlice = ethers.Wallet.createRandom();
 
 // Initialize wallet user, pass 'prod' instead of 'staging' for mainnet apps
-const userAlice = await PushAPI.initialize(signerAlice, { env: CONSTANTS.ENV.PROD });
-const userBobAddress = '0x8D4625b4e04d7dE7F158df470a71C5FC4D4d5F4B';
+const userAlice = await PushAPI.initialize(signerAlice, {
+  env: CONSTANTS.ENV.PROD,
+});
+const userBobAddress = '0x60cD05eb31cc16cC37163D514bEF162406d482e1';
 
 const generateRandomWordsWithTimestamp = () => {
-  return `${Math.random().toString(36).substring(2)} - ${new Date().toISOString()}`;
-}
+  return `${Math.random()
+    .toString(36)
+    .substring(2)} - ${new Date().toISOString()}`;
+};
 
 userAlice.chat.send(userBobAddress, {
   content: "Gm gm! It's a me... Alice! - " + generateRandomWordsWithTimestamp(),

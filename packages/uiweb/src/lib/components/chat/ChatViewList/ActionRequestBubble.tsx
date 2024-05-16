@@ -10,7 +10,7 @@ import ParticleEffectButton from '../../reusables/ParticleEffectButton';
 import { Group } from '../exportedTypes';
 import { IChatTheme } from '../theme';
 import { ThemeContext } from '../theme/ThemeProvider';
-import { ChatInfoResponse } from '../types';
+import { IChatInfoResponse } from '../types';
 import { AcceptCircleIcon, CancelCircleIcon } from '../../../icons/PushIcons';
 
 // Constants
@@ -27,7 +27,7 @@ interface IThemeProps {
   theme?: IChatTheme;
 }
 export interface IActionRequestBubbleProps {
-  chatInfo?: ChatInfoResponse | null;
+  chatInfo?: IChatInfoResponse | null;
 }
 
 export const ActionRequestBubble = ({ chatInfo = null }: IActionRequestBubbleProps) => {
