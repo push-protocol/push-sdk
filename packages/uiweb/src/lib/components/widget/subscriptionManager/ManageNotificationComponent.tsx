@@ -2,10 +2,7 @@ import React, { useContext, useState } from 'react';
 import { Button, PoweredByPush } from '../reusables';
 import { Anchor, Section, Span, Spinner } from '../../reusables';
 import styled from 'styled-components';
-import {
-  useManageSubscriptionsUtilities,
-  useWidgetData,
-} from '../../../hooks';
+import { useManageSubscriptionsUtilities, useWidgetData } from '../../../hooks';
 import useToast from '../reusables/NewToast';
 import { MdCheckCircle, MdError } from 'react-icons/md';
 import { ThemeContext } from '../theme/ThemeProvider';
@@ -21,7 +18,7 @@ import { device } from '../../../config';
 import * as PushAPI from '@pushprotocol/restapi';
 import { notifStrictUserSettingFromat, notifUserSettingFormatString } from '../helpers';
 import { ChannelDetailsComponent } from './ChannelDetailsComponent';
-import { ConnectButtonComp } from '../ConnectButton';
+import { ConnectButton } from '../ConnectButton';
 
 /**
  * @interface IThemeProps
@@ -38,19 +35,11 @@ interface IManageNotificationComponentProps {
   userSettings: any;
   handleNext: () => void;
 }
-export const ManageNotficationsComponent: React.FC<
-  IManageNotificationComponentProps
-> = (options: IManageNotificationComponentProps) => {
-  const {
-    userSettings,
-    channelAddress,
-    channelInfo,
-    handleNext,
-    autoconnect = false,
-  } = options || {};
-  const [modifiedSettings, setModifiedSettings] = useState<
-    PushAPI.NotificationSettingType[] | null
-  >([...userSettings]);
+export const ManageNotficationsComponent: React.FC<IManageNotificationComponentProps> = (
+  options: IManageNotificationComponentProps
+) => {
+  const { userSettings, channelAddress, channelInfo, handleNext, autoconnect = false } = options || {};
+  const [modifiedSettings, setModifiedSettings] = useState<PushAPI.NotificationSettingType[] | null>([...userSettings]);
   const {
     unsubscribeError,
     unsubscribeLoading,
@@ -71,7 +60,12 @@ export const ManageNotficationsComponent: React.FC<
       toastTitle: title,
       toastMessage: subTitle,
       toastType: 'ERROR',
-      getToastIcon: (size) => <MdError size={size} color="red" />,
+      getToastIcon: (size) => (
+        <MdError
+          size={size}
+          color="red"
+        />
+      ),
     });
   };
 
@@ -80,7 +74,12 @@ export const ManageNotficationsComponent: React.FC<
       toastTitle: title,
       toastMessage: subTitle,
       toastType: 'SUCCESS',
-      getToastIcon: (size) => <MdCheckCircle size={size} color="green" />,
+      getToastIcon: (size) => (
+        <MdCheckCircle
+          size={size}
+          color="green"
+        />
+      ),
     });
   };
   const handleUnsubscribe = async () => {
@@ -90,10 +89,7 @@ export const ManageNotficationsComponent: React.FC<
       });
       if (response && response?.status === 204) {
         //show toast
-        showSuccess(
-          'Notification Disabled',
-          `You have successfully disabled notifications from ${channelInfo?.name}`
-        );
+        showSuccess('Notification Disabled', `You have successfully disabled notifications from ${channelInfo?.name}`);
         handleNext();
       }
     } catch (e) {
@@ -107,7 +103,6 @@ export const ManageNotficationsComponent: React.FC<
       );
     }
   };
-
 
   const getFlexDirection = () => {
     if (userSettings && userSettings.length) {
@@ -125,10 +120,7 @@ export const ManageNotficationsComponent: React.FC<
       });
       if (response && response?.status === 204) {
         //show toast
-        showSuccess(
-          'Notification Preferences Updated',
-          'Your notification settings were updated successfully.'
-        );
+        showSuccess('Notification Preferences Updated', 'Your notification settings were updated successfully.');
       }
     } catch (e) {
       console.debug(e);
@@ -142,7 +134,10 @@ export const ManageNotficationsComponent: React.FC<
     }
   };
   return (
-    <Section flexDirection="column" margin="14px 10px 0px 10px">
+    <Section
+      flexDirection="column"
+      margin="14px 10px 0px 10px"
+    >
       <Section
         flexDirection="column"
         alignItems="start"
@@ -186,16 +181,20 @@ export const ManageNotficationsComponent: React.FC<
                 settings={userSettings}
                 setSettings={setModifiedSettings}
               />
-              {(user?.readmode()) && (
-                <ConnectButtonComp
+              {user?.readmode() && (
+                <ConnectButton
                   autoconnect={autoconnect}
                   setAccount={setAccount}
                   setSigner={setSigner}
                   signer={signer}
                 />
               )}
-              {!(user?.readmode()) && (
-                <Button height="auto" width="100%" onClick={handleSubscribe}>
+              {!user?.readmode() && (
+                <Button
+                  height="auto"
+                  width="100%"
+                  onClick={handleSubscribe}
+                >
                   Update Preferences
                 </Button>
               )}
@@ -206,10 +205,16 @@ export const ManageNotficationsComponent: React.FC<
             fontSize="12px"
             fontWeight="400"
           >
-            <Anchor onClick={handleUnsubscribe} textDecoration="underline">
+            <Anchor
+              onClick={handleUnsubscribe}
+              textDecoration="underline"
+            >
               {' '}
               {unsubscribeLoading ? (
-                <Spinner color="#fff" size="20" />
+                <Spinner
+                  color="#fff"
+                  size="20"
+                />
               ) : (
                 'Unsubscribe'
               )}{' '}
@@ -238,7 +243,11 @@ const GettingStarted = ({ divider }: { divider: string }) => {
       theme={theme}
       divider={divider}
     >
-      <Section flexDirection="column" gap="5px" alignItems="start">
+      <Section
+        flexDirection="column"
+        gap="5px"
+        alignItems="start"
+      >
         <Span
           color={theme?.textColor?.modalTitleText}
           fontSize="14px"

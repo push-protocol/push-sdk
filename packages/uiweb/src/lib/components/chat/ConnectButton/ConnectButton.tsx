@@ -19,7 +19,7 @@ interface IThemeProps {
   theme?: IChatTheme;
 }
 
-export const ConnectButtonSub = ({ autoConnect = false }) => {
+export const ConnectButton = ({ autoConnect = false }) => {
   const { user, preInitializeUser } = useChatData();
   const { wallet, connecting, connect, disconnect } = useAccount({ env: user ? user.env : CONSTANTS.ENV.PROD });
 
