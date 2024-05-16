@@ -219,10 +219,11 @@ export const ChatProfile: React.FC<IChatProfile> = ({
     return (
       <Container theme={theme}>
         {/* For showing Chat Profile */}
-        <Section gap="10px">
+        <AddonComponentSection>
           {chatProfileLeftHelperComponent && (
             <Section
               cursor="pointer"
+              flex="none"
               maxHeight="1.75rem"
               overflow="hidden"
               justifyContent="center"
@@ -249,10 +250,10 @@ export const ChatProfile: React.FC<IChatProfile> = ({
             }}
             loading={initialized.loading || initialized.profile.recipient === '' || initialized.profile.icon === ''}
           />
-        </Section>
+        </AddonComponentSection>
 
         {/* For showing group related icons and menu */}
-        <Section
+        <AddonComponentSection
           zIndex="unset"
           flexDirection="row"
           gap="10px"
@@ -265,6 +266,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
               cursor="pointer"
               maxHeight="1.75rem"
               overflow="hidden"
+              flex="none"
             >
               {chatProfileRightHelperComponent}
             </Section>
@@ -322,7 +324,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
               )}
             </ImageItem>
           )}
-        </Section>
+        </AddonComponentSection>
 
         {/* For showing chat info modal | modal && */}
         {modal &&
@@ -352,6 +354,8 @@ export const ChatProfile: React.FC<IChatProfile> = ({
 
 const Container = styled(Section)`
   width: auto;
+  max-width: 100%;
+  overflow: hidden;
   background: ${(props) => props.theme.backgroundColor.chatProfileBackground};
   border: ${(props) => props.theme.border?.chatProfile};
   border-radius: ${(props) => props.theme.borderRadius?.chatProfile};
@@ -362,7 +366,14 @@ const Container = styled(Section)`
   padding: 6px;
   box-sizing: border-box;
   align-self: stretch;
-  box-sizing: border-box;
+`;
+
+const AddonComponentSection = styled(Section)`
+  gap: 10px;
+
+  @media ${device.mobileL} {
+    gap: 5px;
+  } ;
 `;
 
 const ImageItem = styled.div`
