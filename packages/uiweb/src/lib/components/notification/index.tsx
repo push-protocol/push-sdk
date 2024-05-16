@@ -410,7 +410,7 @@ const BlockchainContainer = styled.div`
 `;
 
 const ChainIconSVG = styled.div<OffsetWidthType>`
-  width: 33px;
+  width: 28px;
   height: 28px;
 
   svg,
