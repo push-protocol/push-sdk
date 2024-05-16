@@ -41,8 +41,8 @@ export type chainNameType =
   | 'FUSE_MAINNET'
   | 'THE_GRAPH'
   | 'BERACHAIN_TESTNET'
-  | "CYBER_CONNECT_TESTNET"
-  | "CYBER_CONNECT_MAINNET"
+  | 'CYBER_CONNECT_TESTNET'
+  | 'CYBER_CONNECT_MAINNET'
   | undefined;
 
 export type NotificationItemProps = {
@@ -410,7 +410,7 @@ const BlockchainContainer = styled.div`
 `;
 
 const ChainIconSVG = styled.div<OffsetWidthType>`
-  width: 28px;
+  width: 33px;
   height: 28px;
 
   svg,
