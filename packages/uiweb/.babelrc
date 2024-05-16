@@ -8,5 +8,17 @@
       }
     ]
   ],
-  "plugins": [["styled-components", { "pure": true, "ssr": true }]]
+  "plugins": [
+    ["styled-components", { "pure": true, "ssr": true }],
+    [
+      "module-resolver",
+      {
+        "root": ["./src"],
+        "alias": {
+          "components": "./src/lib/components"
+          // Add more aliases as needed
+        }
+      }
+    ]
+  ]
 }
