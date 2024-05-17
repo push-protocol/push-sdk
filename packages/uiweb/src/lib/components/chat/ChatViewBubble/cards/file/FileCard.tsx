@@ -8,6 +8,7 @@ import {
   formatFileSize,
   getPfp,
   pCAIP10ToWallet,
+  parseJson,
   shortenText,
   sign,
   toSerialisedHexString,
@@ -30,7 +31,7 @@ import { IMessagePayload } from '../../../exportedTypes';
 
 // Exported Functions
 export const FileCard = ({ chat, isGroup }: { chat: IMessagePayload; position: number; isGroup: boolean }) => {
-  const fileContent: FileMessageContent = JSON.parse(chat?.messageContent);
+  const fileContent: FileMessageContent = parseJson(chat?.messageContent);
   const name = fileContent.name;
 
   const content = fileContent.content as string;

@@ -17,6 +17,7 @@ import { IMessagePayload } from '../../../exportedTypes';
 // Exported Interfaces & Types
 
 // Exported Functions
+import { parseJson } from '../../../../../helpers';
 
 export const ImageCard = ({
   chat,
@@ -35,7 +36,7 @@ export const ImageCard = ({
       margin="5px 0"
     >
       <Image
-        src={JSON.parse(chat?.messageContent)?.content}
+        src={parseJson(chat?.messageContent)?.content}
         alt=""
         width="100%"
         borderRadius={position ? '12px 0px 12px 12px' : '0px 12px 12px 12px'}

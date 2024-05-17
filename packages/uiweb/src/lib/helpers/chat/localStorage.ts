@@ -3,6 +3,7 @@ import * as PUSHAPI from '@pushprotocol/restapi';
 import { IMessageIPFS } from '@pushprotocol/restapi';
 import { ENV } from '../../config';
 import { ChatFeedsType, LocalStorageKeys } from '../../types';
+import { parseJson } from '../utils';
 
 type SetDataType = {
   chatId: string;
@@ -21,7 +22,7 @@ export const setData = ({ chatId, value }: SetDataType): void => {
 //add return type
 export const getData = (key: string): IFeeds | null => {
   const chatJson = localStorage.getItem(key);
-  const chat = chatJson ? JSON.parse(chatJson) : null;
+  const chat = chatJson ? parseJson(chatJson) : null;
   return chat;
 };
 

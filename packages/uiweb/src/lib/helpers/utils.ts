@@ -33,3 +33,12 @@ export const deriveChatId = async (chatId: string, user: PushAPI | undefined): P
 
   return chatId;
 };
+
+export const parseJson = (json: string) => {
+  try {
+    const obj = JSON.parse(json);
+    return obj;
+  } catch (e) {
+    console.debug(`Errored: helpers::parseJson::Error in parsing JSON,${e}`);
+  }
+};
