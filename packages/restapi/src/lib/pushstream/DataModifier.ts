@@ -239,7 +239,7 @@ export class DataModifier {
       to: [data.toCAIP10], // TODO: Assuming 'to' is an array in MessageEvent. Update as necessary.
       message: {
         type: data.messageType,
-        content: data.messageContent,
+        ...data.messageObj,
       },
       meta: {
         group: data.isGroup || false,
