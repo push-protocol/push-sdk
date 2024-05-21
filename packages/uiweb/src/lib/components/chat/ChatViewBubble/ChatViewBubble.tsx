@@ -215,10 +215,6 @@ export const ChatViewBubble = ({
     showChatMeta = false;
   }
 
-  if (chatReactions.length > 0) {
-    console.debug(`UIWeb::components::ChatViewBubble::chatReactions::${new Date().toISOString()}`, chatReactions);
-  }
-
   // setup reactions picker visibility
   const [showReactionPicker, setShowReactionPicker] = useState(false);
   const [userSelectingReaction, setUserSelectingReaction] = useState(false);
