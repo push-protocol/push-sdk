@@ -16,75 +16,8 @@ import {
   fuse,
   fuseSparknet,
 } from 'viem/chains';
-import { defineChain } from 'viem';
+import { berachainTestnet, polygonAmoy, polygonZkEvmCordona, cyberConnectMainnet, cyberConnectTestnet } from './customChains';
 
-const polygonZkEvmCordona = defineChain({
-  id: 2442,
-  name: 'Polygon zkEVM Cardona Testnet',
-  network: 'polygon-zkevm-testnet',
-  nativeCurrency: {
-    decimals: 18,
-    name: 'ETH',
-    symbol: 'ETH',
-  },
-  rpcUrls: {
-    default: { http: ['https://rpc.cardona.zkevm-rpc.com/'] },
-    public: { http: ['https://rpc.cardona.zkevm-rpc.com/'] },
-  },
-  blockExplorers: {
-    default: {
-      name: 'Polygon zkEVM Cardona',
-      url: ' https://cardona-zkevm.polygonscan.com/',
-    },
-  },
-  testnet: true,
-})
-
-const polygonAmoy = defineChain({
-  id: 80002,
-  name: 'Polygon Amoy Testnet',
-  network: 'polygon-amoy',
-  nativeCurrency: {
-    decimals: 18,
-    name: 'MATIC',
-    symbol: 'MATIC',
-  },
-  rpcUrls: {
-    default: { http: ['https://rpc-amoy.polygon.technology/'] },
-    public: { http: ['https://rpc-amoy.polygon.technology/'] },
-  },
-  blockExplorers: {
-    default: {
-      name: 'Polygon Amoy',
-      url: 'https://www.oklink.com/amoy',
-    },
-  },
-  testnet: true,
-});
-
-
-
-const berachainTestnet = defineChain({
-  id: 80085,
-  name: 'Berachain Artio',
-  network: 'berachain-testnet',
-  nativeCurrency: {
-    decimals: 18,
-    name: 'BERA Token',
-    symbol: 'BERA',
-  },
-  rpcUrls: {
-    default: { http: ['https://artio.rpc.berachain.com'] },
-    public: { http: ['https://artio.rpc.berachain.com'] },
-  },
-  blockExplorers: {
-    default: {
-      name: 'Berachain',
-      url: 'https://artio.beratrail.io',
-    },
-  },
-  testnet: true,
-});
 
 // for methods not needing the entire config
 export const API_BASE_URL = {
@@ -114,6 +47,8 @@ const BLOCKCHAIN_NETWORK = {
   FUSE_TESTNET: 'eip155:123',
   FUSE_MAINNET: 'eip155:122',
   BERACHAIN_TESTNET: 'eip155:80085',
+  CYBER_CONNECT_TESTNET: 'eip155:111557560',
+  CYBER_CONNECT_MAINNET: 'eip155:7560'
 };
 
 export type ALIAS_CHAIN =
@@ -123,7 +58,8 @@ export type ALIAS_CHAIN =
   | 'POLYGONZKEVM'
   | 'ARBITRUMONE'
   | 'FUSE'
-  | 'BERACHAIN';
+  | 'BERACHAIN'
+  | 'CYBERCONNECT';
 
 export const ETH_CHAIN_ID = {
   [ENV.PROD]: 1,
@@ -176,6 +112,12 @@ export const ALIAS_CHAIN_ID: {
     [ENV.DEV]: 80085,
     [ENV.LOCAL]: 80085,
   },
+  CYBERCONNECT: {
+    [ENV.PROD]: 7560,
+    [ENV.STAGING]: 111557560,
+    [ENV.DEV]: 111557560,
+    [ENV.LOCAL]: 111557560,
+  }
 };
 
 export const CHAIN_ID = {
@@ -207,6 +149,9 @@ export const CHAIN_NAME: { [key: number]: string } = {
   123: 'FUSE',
   // berachain
   80085: 'BERACHAIN',
+  // cyberconnect
+  7560: 'CYBER_CONNECT_MAINNET',
+  111557560: 'CYBER_CONNECT_TESTNET'
 };
 export interface ConfigType {
   API_BASE_URL: string;
@@ -284,6 +229,10 @@ const CONFIG = {
     [BLOCKCHAIN_NETWORK.FUSE_MAINNET]: {
       API_BASE_URL: API_BASE_URL[ENV.PROD],
       EPNS_COMMUNICATOR_CONTRACT: '0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa',
+    },    
+    [BLOCKCHAIN_NETWORK.CYBER_CONNECT_MAINNET]: {
+      API_BASE_URL: API_BASE_URL[ENV.PROD],
+      EPNS_COMMUNICATOR_CONTRACT: '0xbf895df410b7fcbe093973600950ba392f7e1d8e',
     },
   },
   [ENV.STAGING]: {
@@ -319,6 +268,10 @@ const CONFIG = {
       API_BASE_URL: API_BASE_URL[ENV.STAGING],
       EPNS_COMMUNICATOR_CONTRACT: '0x7b9C405e261ba671f008c20D0321f62d08C140EC',
     },
+    [BLOCKCHAIN_NETWORK.CYBER_CONNECT_TESTNET]: {
+      API_BASE_URL: API_BASE_URL[ENV.STAGING],
+      EPNS_COMMUNICATOR_CONTRACT: '0x6e489B7af21cEb969f49A90E481274966ce9D74d',
+    },
   },
   [ENV.DEV]: {
     [BLOCKCHAIN_NETWORK.ETH_SEPOLIA]: {
@@ -353,6 +306,10 @@ const CONFIG = {
       API_BASE_URL: API_BASE_URL[ENV.DEV],
       EPNS_COMMUNICATOR_CONTRACT: '0xA1DF3E68D085aa6918bcc2506b24e499830Db0eB',
     },
+    [BLOCKCHAIN_NETWORK.CYBER_CONNECT_TESTNET]: {
+      API_BASE_URL: API_BASE_URL[ENV.DEV],
+      EPNS_COMMUNICATOR_CONTRACT: '0x9cb3bd7550B5c92baA056Fc0F08132f49508145F',
+    },
   },
   [ENV.LOCAL]: {
     [BLOCKCHAIN_NETWORK.ETH_SEPOLIA]: {
@@ -386,6 +343,10 @@ const CONFIG = {
     [BLOCKCHAIN_NETWORK.BERACHAIN_TESTNET]: {
       API_BASE_URL: API_BASE_URL[ENV.LOCAL],
       EPNS_COMMUNICATOR_CONTRACT: '0xA1DF3E68D085aa6918bcc2506b24e499830Db0eB',
+    },
+    [BLOCKCHAIN_NETWORK.CYBER_CONNECT_TESTNET]: {
+      API_BASE_URL: API_BASE_URL[ENV.DEV],
+      EPNS_COMMUNICATOR_CONTRACT: '0x9cb3bd7550B5c92baA056Fc0F08132f49508145F',
     },
   },
 };
@@ -459,6 +420,11 @@ export const VIEM_CONFIG = {
       API_BASE_URL: API_BASE_URL[ENV.PROD],
       EPNS_COMMUNICATOR_CONTRACT: '0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa',
     },
+    [BLOCKCHAIN_NETWORK.CYBER_CONNECT_MAINNET]: {
+      NETWORK: cyberConnectMainnet,
+      API_BASE_URL: API_BASE_URL[ENV.PROD],
+      EPNS_COMMUNICATOR_CONTRACT: '0xbf895df410b7fcbe093973600950ba392f7e1d8e',
+    },
   },
   [ENV.STAGING]: {
     [BLOCKCHAIN_NETWORK.ETH_SEPOLIA]: {
@@ -500,6 +466,11 @@ export const VIEM_CONFIG = {
       NETWORK: berachainTestnet,
       API_BASE_URL: API_BASE_URL[ENV.STAGING],
       EPNS_COMMUNICATOR_CONTRACT: '0x7b9C405e261ba671f008c20D0321f62d08C140EC',
+    },
+    [BLOCKCHAIN_NETWORK.CYBER_CONNECT_TESTNET]: {
+      NETWORK: cyberConnectTestnet,
+      API_BASE_URL: API_BASE_URL[ENV.STAGING],
+      EPNS_COMMUNICATOR_CONTRACT: '0x6e489B7af21cEb969f49A90E481274966ce9D74d',
     },
   },
   [ENV.DEV]: {
@@ -543,6 +514,11 @@ export const VIEM_CONFIG = {
       API_BASE_URL: API_BASE_URL[ENV.DEV],
       EPNS_COMMUNICATOR_CONTRACT: '0xA1DF3E68D085aa6918bcc2506b24e499830Db0eB',
     },
+    [BLOCKCHAIN_NETWORK.CYBER_CONNECT_TESTNET]: {
+      NETWORK: cyberConnectTestnet,
+      API_BASE_URL: API_BASE_URL[ENV.STAGING],
+      EPNS_COMMUNICATOR_CONTRACT: '0x9cb3bd7550B5c92baA056Fc0F08132f49508145F',
+    },
   },
   [ENV.LOCAL]: {
     [BLOCKCHAIN_NETWORK.ETH_SEPOLIA]: {
@@ -584,6 +560,11 @@ export const VIEM_CONFIG = {
       NETWORK: berachainTestnet,
       API_BASE_URL: API_BASE_URL[ENV.LOCAL],
       EPNS_COMMUNICATOR_CONTRACT: '0xA1DF3E68D085aa6918bcc2506b24e499830Db0eB',
+    },
+    [BLOCKCHAIN_NETWORK.CYBER_CONNECT_TESTNET]: {
+      NETWORK: cyberConnectTestnet,
+      API_BASE_URL: API_BASE_URL[ENV.STAGING],
+      EPNS_COMMUNICATOR_CONTRACT: '0x9cb3bd7550B5c92baA056Fc0F08132f49508145F',
     },
   },
 };

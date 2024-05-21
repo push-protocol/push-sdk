@@ -106,6 +106,7 @@ import { SubscriptionManagerTest } from './widget/SubscriptionManagerTest';
 import Widget from './widget/Widget';
 // import { SubscriptionManagerTest } from './widget/SubscriptionManagerTest';
 import { UserProfileTest } from './ChatUITest/UserProfileTest';
+import ChatPreviewSearchListTest from './ChatUITest/ChatPreviewSearchList';
 
 window.Buffer = window.Buffer || Buffer;
 
@@ -655,6 +656,10 @@ export function App() {
                         <Route
                           path="ChatPreview"
                           element={<ChatPreviewTest />}
+                        />
+                        <Route
+                          path="ChatPreviewSearchList"
+                          element={<ChatPreviewSearchListTest />}
                         />
                         <Route
                           path="ChatPreviewList"

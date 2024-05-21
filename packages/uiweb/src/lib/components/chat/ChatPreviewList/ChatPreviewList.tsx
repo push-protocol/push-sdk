@@ -625,10 +625,9 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
               message: 'Invalid search',
             };
           }
-
+          console.debug(error);
           if (!error) {
             const chatInfo = await fetchChat({ chatId: formattedChatId });
-
             if (chatInfo && chatInfo?.meta?.group)
               groupProfile = await getGroupByIDnew({
                 groupId: formattedChatId,
@@ -637,7 +636,6 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
               formattedChatId = pCAIP10ToWallet(
                 chatInfo?.participants.find((address) => address != walletToPCAIP10(user?.account)) || formattedChatId
               );
-
             //fetch  profile
             if (!groupProfile) {
               userProfile = await getNewChatUser({

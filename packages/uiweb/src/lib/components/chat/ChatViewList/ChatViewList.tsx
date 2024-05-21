@@ -292,8 +292,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
 
       return () => clearTimeout(timer);
     }
-
-    return () => {};
   }, [chatAcceptStream, participantJoinStream]);
 
   // Change listtype to 'UINITIALIZED' and hidden to true when participantRemoveStream or participantLeaveStream is received

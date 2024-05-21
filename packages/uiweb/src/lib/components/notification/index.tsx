@@ -41,6 +41,8 @@ export type chainNameType =
   | 'FUSE_MAINNET'
   | 'THE_GRAPH'
   | 'BERACHAIN_TESTNET'
+  | 'CYBER_CONNECT_TESTNET'
+  | 'CYBER_CONNECT_MAINNET'
   | undefined;
 
 export type NotificationItemProps = {
