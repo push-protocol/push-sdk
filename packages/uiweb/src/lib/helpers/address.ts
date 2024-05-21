@@ -96,6 +96,10 @@ export const resolveWeb3Name = async (address: string, user: PushAPI | undefined
     } else {
       try {
         const udResolver = getUdResolver(user ? user.env : CONSTANTS.ENV.PROD);
+        if (!udResolver) {
+          throw new Error('UIWeb::helpers::address::resolveWeb3Name::Error in UD resolver');
+        }
+
         // attempt reverse resolution on provided address
         const udName = await udResolver.reverse(checksumWallet);
         if (udName) {

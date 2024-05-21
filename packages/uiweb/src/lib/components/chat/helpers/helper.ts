@@ -215,7 +215,7 @@ export const transformStreamToIMessageIPFSWithCID: (item: any) => IMessageIPFSWi
     fromDID: item?.from,
     toDID: item?.to[0],
     messageType: item?.message?.type,
-    messageObj: { content: item?.message?.content },
+    messageObj: { content: item?.message?.content, reference: item?.message?.reference },
     sigType: item?.raw?.sigType || '',
     link: `previous:v2${item?.reference}`,
     timestamp: parseInt(item?.timestamp),

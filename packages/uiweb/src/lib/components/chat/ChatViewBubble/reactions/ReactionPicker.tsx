@@ -145,7 +145,6 @@ export const ReactionPicker = ({
           position="absolute"
           top="100%"
           bottom="-70px"
-          left="0px"
           gap={theme.padding?.reactionsPickerPadding}
           fontSize="x-large"
           alignSelf="center"
@@ -222,26 +221,26 @@ export const ReactionPicker = ({
               <Button
                 borderRadius={theme.borderRadius?.reactionsPickerBorderRadius}
                 padding={theme.padding?.reactionsPickerPadding}
-                onClick={() => processSendReaction('😄')}
+                onClick={() => processSendReaction('😂')}
               >
                 <span
                   role="img"
                   aria-label="laugh"
                 >
-                  😄
+                  😂
                 </span>
               </Button>
 
               <Button
                 borderRadius={theme.borderRadius?.reactionsPickerBorderRadius}
                 padding={theme.padding?.reactionsPickerPadding}
-                onClick={() => processSendReaction('😔')}
+                onClick={() => processSendReaction('😢')}
               >
                 <span
                   role="img"
                   aria-label="sad"
                 >
-                  😔
+                  😢
                 </span>
               </Button>
             </>
