@@ -60,6 +60,7 @@ const TESTNET_NETWORK = {
   ARBITRUM: 'eip155:421614',
   FUSE: 'eip155:123',
   BERACHAIN: 'eip155:80085',
+  CYBER_CONNECT: 'eip155:111557560'
 };
 const MAINET_NETWORK = {
   ETHEREUM: 'eip155:1',
@@ -69,6 +70,7 @@ const MAINET_NETWORK = {
   POLYGON_ZK_EVM: 'eip155:1101',
   ARBITRUM: 'eip155:42161',
   FUSE: 'eip155:122',
+  CYBER_CONNECT: "eip155:7560"
 };
 
 export const BLOCKCHAIN_NETWORK = {
@@ -86,6 +88,7 @@ export const allowedNetworks = {
     10, // for optimism mainnet
     42161, // for arbitrum mainnet
     122, // for fuse mainnet
+    7569 // for cyber connect mainnet
   ],
   dev: [
     11155111, // for eth sepolia
@@ -95,7 +98,8 @@ export const allowedNetworks = {
     421614, // for arbitrum testnet
     123, // for fuse testnet
     80085, // for berachain testnet
-    2442 // polygon zkevm
+    2442, // polygon zkevm
+    111557560 // cyber connect testnet
   ],
   staging: [
     // 42, //for kovan
@@ -106,7 +110,8 @@ export const allowedNetworks = {
     421614, // for arbitrum testnet
     123, // for fuse testnet
     80085, // for berachain testnet
-    2442 // polygon zkevm
+    2442, // polygon zkevm
+    111557560 // cyber connect testnet
   ],
   local: [
     11155111, // for eth sepolia
@@ -116,7 +121,8 @@ export const allowedNetworks = {
     421614, // for arbitrum testnet
     123, // for fuse testnet
     80085, // for berachain testnet
-    2442 // polygon zkevm
+    2442, // polygon zkevm
+    111557560 // cyber connect testnet
   ],
 };
 
