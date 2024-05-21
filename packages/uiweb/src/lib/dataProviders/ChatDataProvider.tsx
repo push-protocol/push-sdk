@@ -115,7 +115,7 @@ export const ChatUIProvider = ({
 
     console.debug(`UIWeb::ChatDataProvider::user changed - ${new Date().toISOString()}`, user);
 
-    if (!user.readmode()) {
+    if (!user?.readmode()) {
       await initStream(user);
     }
 
