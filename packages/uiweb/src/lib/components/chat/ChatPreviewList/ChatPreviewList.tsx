@@ -625,7 +625,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
               message: 'Invalid search',
             };
           }
-          console.debug(error);
+
           if (!error) {
             const chatInfo = await fetchChat({ chatId: formattedChatId });
             if (chatInfo && chatInfo?.meta?.group)
