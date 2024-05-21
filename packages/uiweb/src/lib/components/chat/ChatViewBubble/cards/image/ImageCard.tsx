@@ -18,27 +18,30 @@ import { IMessagePayload } from '../../../exportedTypes';
 
 // Exported Functions
 
-export const ImageCard = ({
-  chat,
-  position,
-  isGroup,
-}: {
-  chat: IMessagePayload;
-  position: number;
-  isGroup: boolean;
-}) => {
+export const ImageCard = ({ chat }: { chat: IMessagePayload }) => {
+  // derive message
+  const message =
+    typeof chat.messageObj === 'object' ? (chat.messageObj?.content as string) ?? '' : (chat.messageObj as string);
+
+  let parsedMessage = '';
+  let imageContent = '';
+
+  try {
+    parsedMessage = JSON.parse(message);
+    imageContent = (parsedMessage as any)?.content ?? '';
+  } catch (error) {
+    console.error('UIWeb::components::ChatViewBubble::ImageCard::error while parsing image', error);
+  }
+
   return (
     <Section
-      alignSelf={position ? 'end' : 'start'}
-      maxWidth="65%"
+      maxWidth="512px"
       width="fit-content"
-      margin="5px 0"
     >
       <Image
-        src={JSON.parse(chat?.messageContent)?.content}
+        src={imageContent}
         alt=""
         width="100%"
-        borderRadius={position ? '12px 0px 12px 12px' : '0px 12px 12px 12px'}
       />
     </Section>
   );

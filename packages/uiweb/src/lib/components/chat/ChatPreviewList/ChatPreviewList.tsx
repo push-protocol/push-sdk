@@ -174,7 +174,9 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
         overrideAccount,
       });
 
-      console.debug('UIWeb::ChatPreviewList::loadMoreChats:: Fetched', type, nextpage, currentNonce, chatList);
+      console.debug(
+        `UIWeb::ChatPreviewList::loadMoreChats:: Fetched type - ${type} - nextpage - ${nextpage} - currentNonce - ${currentNonce} - chatList - ${chatList}`
+      );
 
       if (chatList) {
         // get and transform chats
@@ -489,12 +491,25 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
 
   useEffect(() => {
     if (
+      chatPreviewList.page !== 0 &&
       listInnerRef &&
       listInnerRef?.current &&
       listInnerRef?.current?.parentElement &&
-      !chatPreviewList.loading &&
-      !chatPreviewList.loaded
+      !chatPreviewList.loading
     ) {
+      console.debug(
+        'UIWeb::ChatPreviewList::useEffect[chatPreviewList.items]::Checking if we need to load more chats::',
+        chatPreviewList,
+        listInnerRef.current.clientHeight,
+        SCROLL_LIMIT,
+        listInnerRef.current.parentElement.clientHeight,
+        listInnerRef.current.clientHeight + SCROLL_LIMIT < listInnerRef.current.parentElement.clientHeight
+      );
+
+      if (chatPreviewList.loaded) {
+        return;
+      }
+
       if (listInnerRef.current.clientHeight + SCROLL_LIMIT < listInnerRef.current.parentElement.clientHeight) {
         // set loading to true
         setChatPreviewList((prev) => ({
@@ -504,7 +519,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
         }));
       }
     }
-  }, [chatPreviewList.page]);
+  }, [chatPreviewList.items]);
 
   // If badges count change
   useEffect(() => {

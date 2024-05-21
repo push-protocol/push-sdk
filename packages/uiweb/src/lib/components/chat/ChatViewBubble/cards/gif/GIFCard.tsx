@@ -17,19 +17,20 @@ import { IMessagePayload } from '../../../exportedTypes';
 // Exported Interfaces & Types
 
 // Exported Functions
-export const GIFCard = ({ chat, position, isGroup }: { chat: IMessagePayload; position: number; isGroup: boolean }) => {
+export const GIFCard = ({ chat }: { chat: IMessagePayload }) => {
+  // derive message
+  const message =
+    typeof chat.messageObj === 'object' ? (chat.messageObj?.content as string) ?? '' : (chat.messageObj as string);
+
   return (
     <Section
-      alignSelf={position ? 'end' : 'start'}
-      maxWidth="65%"
-      margin="5px 0"
+      maxWidth="512px"
       width="fit-content"
     >
       <Image
-        src={chat?.messageContent}
+        src={message}
         alt=""
         width="100%"
-        borderRadius={position ? '12px 0px 12px 12px' : '0px 12px 12px 12px'}
       />
     </Section>
   );

@@ -8,7 +8,7 @@ const signerAlice = ethers.Wallet.createRandom();
 const userAlice = await PushAPI.initialize(signerAlice, {
   env: CONSTANTS.ENV.PROD,
 });
-const userBobAddress = '0x60cD05eb31cc16cC37163D514bEF162406d482e1';
+const userBobAddress = '0x0149C2723496fEF62e6e7fa79A31E5ea22bA70C7';
 
 const generateRandomWordsWithTimestamp = () => {
   return `${Math.random()
@@ -17,7 +17,13 @@ const generateRandomWordsWithTimestamp = () => {
 };
 
 userAlice.chat.send(userBobAddress, {
-  content: "Gm gm! It's a me... Alice! - " + generateRandomWordsWithTimestamp(),
+  type: 'Reaction',
+  content: '👍',
+  reference: 'bafyreia2okco5ocdxmoxon72erviypaht74u3dqunf3vydu237ybju4kw4',
 });
 
 console.log('Message sent from Alice to ', userBobAddress);
+// const groupPermissions = await userAlice.chat.group.info(
+//   'a7d0581affdaea7b80be836ea5f8a982c0dfd56fb30ee2b01c64980afb152af7'
+// );
+// console.log('info', groupPermissions);

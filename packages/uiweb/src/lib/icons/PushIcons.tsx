@@ -182,3 +182,69 @@ export const CancelCircleIcon: React.FC<IconProps> = ({ size, color }) => {
     </svg>
   );
 };
+
+// ------
+// CATEGORY - REACTION & EMOJI
+// ------
+// Emoji Icon
+export const EmojiCircleIcon: React.FC<IconProps> = ({ size, color }) => {
+  return (
+    <svg
+      width={returnWSize(size)}
+      height={returnHSize(size)}
+      viewBox={returnViewBox(24)}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M23 12C23 18.0751 18.0751 23 12 23C5.92487 23 1 18.0751 1 12C1 5.92487 5.92487 1 12 1C18.0751 1 23 5.92487 23 12Z"
+        stroke={color}
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M8.04746 10.9393C8.77509 10.9393 9.36494 10.3494 9.36494 9.6218C9.36494 8.89418 8.77509 8.30432 8.04746 8.30432C7.31984 8.30432 6.72998 8.89418 6.72998 9.6218C6.72998 10.3494 7.31984 10.9393 8.04746 10.9393Z"
+        fill={color}
+      />
+      <path
+        d="M15.9525 10.9393C16.6801 10.9393 17.27 10.3494 17.27 9.6218C17.27 8.89418 16.6801 8.30432 15.9525 8.30432C15.2249 8.30432 14.635 8.89418 14.635 9.6218C14.635 10.3494 15.2249 10.9393 15.9525 10.9393Z"
+        fill={color}
+      />
+      <path
+        d="M16.3916 14.4525C15.4803 16.028 13.951 17.0875 12 17.0875C10.049 17.0875 8.51966 16.028 7.6084 14.4525"
+        stroke={color}
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  );
+};
+
+// Reply Icon
+export const ReplyIcon: React.FC<IconProps> = ({ size, color }) => {
+  return (
+    <svg
+      fill="none"
+      width={returnWSize(size)}
+      height={returnHSize(size)}
+      viewBox={returnViewBox(48)}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="m0 0h48v48h-48z"
+        fill={color}
+      />
+      <g
+        stroke={color}
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="4"
+      >
+        <path d="m12.3638 8-6.36399 6.364 6.36399 6.3639" />
+        <path d="m6 14.364h22.6722c6.8848 0 12.54 5.4388 12.8083 12.3184.2836 7.2696-5.5331 13.3176-12.8083 13.3176h-16.6722" />
+      </g>
+    </svg>
+  );
+};

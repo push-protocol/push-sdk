@@ -33,12 +33,10 @@ interface IMsgFragments {
 export const MessageCard = ({
   chat,
   position,
-  isGroup,
   account,
 }: {
   chat: IMessagePayload;
   position: number;
-  isGroup: boolean;
   account: string;
 }) => {
   // get theme
@@ -195,12 +193,9 @@ export const MessageCard = ({
     <MessageCardSection className={initialized.additionalClasses}>
       {/* Preview Renderer - Start with assuming preview is there, callback handles no preview */}
       <MessagePreviewSection
-        alignSelf={position ? 'end' : 'start'}
-        borderRadius={position ? '12px 0px 0px 0px' : '0px 12px 0px 0px'}
         width="100%"
         minWidth="inherit"
         maxWidth="inherit"
-        margin="10px 0 0 0"
       >
         <PreviewRenderer
           message={message}
@@ -220,8 +215,6 @@ export const MessageCard = ({
         }
         border={position ? `${theme.border?.chatSentBubble}` : `${theme.border?.chatReceivedBubble}`}
         padding="8px 12px"
-        borderRadius={position ? '12px 0px 12px 12px' : '0px 12px 12px 12px'}
-        alignSelf={position ? 'end' : 'start'}
         justifyContent="start"
         maxWidth="inherit"
         minWidth="72px"

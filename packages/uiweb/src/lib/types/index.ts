@@ -1,4 +1,4 @@
-import type { IFeeds, ParsedResponseType, PushAPI, Rules } from '@pushprotocol/restapi';
+import type { IFeeds, IMessageIPFSWithCID, ParsedResponseType, PushAPI, Rules } from '@pushprotocol/restapi';
 import { Bytes, TypedDataDomain, TypedDataField, providers } from 'ethers';
 import type { ReactElement } from 'react';
 import type { ENV } from '../config';
@@ -214,4 +214,8 @@ export interface IFrame {
   frameType: string;
   frameDetails?: FrameDetails;
   message?: string;
+}
+
+export interface IReactionsForChatMessages {
+  [key: string]: IMessageIPFSWithCID[]; // key is the message CID, value is an array of reactions
 }

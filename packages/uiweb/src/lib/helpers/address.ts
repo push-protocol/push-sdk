@@ -111,7 +111,7 @@ export const resolveWeb3Name = async (address: string, user: PushAPI | undefined
     console.error('UIWeb::helpers::address::resolveWeb3Name::Error in resolving via ENS', err);
   }
 
-  console.debug(`UIWeb::helpers::address::resolveWeb3Name::Wallet: ${checksumWallet} resolved to ${result}`);
+  // console.debug(`UIWeb::helpers ::address::resolveWeb3Name::Wallet: ${checksumWallet} resolved to ${result}`);
   return result;
 };
 
