@@ -9,6 +9,7 @@
 </clipPath>
 </defs>
 <g id="surface1">
+<path style=" stroke:none;fill-rule:nonzero;fill:rgb(38.039216%,87.45098%,100%);fill-opacity:1;" d="M 0 0 L 23.929688 0 L 23.929688 23.957031 L 0 23.957031 Z M 0 0 "/>
 <g clip-path="url(#clip1)" clip-rule="nonzero">
 <path style=" stroke:none;fill-rule:nonzero;fill:rgb(7.058824%,7.058824%,7.058824%);fill-opacity:1;" d="M 15.882812 18 L 5.964844 18 L 5.964844 7.949219 L 8.234375 7.949219 L 8.234375 16.050781 L 15.882812 16.050781 Z M 15.882812 18 "/>
 </g>

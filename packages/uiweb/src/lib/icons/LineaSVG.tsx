@@ -17,6 +17,15 @@ const LineaSVG = (props: SVGProps<SVGSVGElement>) => (
         <path d="M13 6h4.91v4H13Zm0 0" />
       </clipPath>
     </defs>
+    <path
+      style={{
+        stroke: "none",
+        fillRule: "nonzero",
+        fill: "#61dfff",
+        fillOpacity: 1,
+      }}
+      d="M0 0h23.93v23.957H0Zm0 0"
+    />
     <g clipPath="url(#a)">
       <path
         style={{
