@@ -1,16 +1,15 @@
-import { useState, ReactNode, useEffect } from 'react';
-import { Constants, ENV } from '../config';
-import {
-  WidgetDataContext,
-  IWidgetDataContextValues,
-} from '../context/widgetContext';
 import { PushAPI, SignerType } from '@pushprotocol/restapi';
-import { getAddressFromSigner, pCAIP10ToWallet } from '../helpers';
-import { GUEST_MODE_ACCOUNT } from '../config/constants';
+import { ReactNode, useEffect, useState } from 'react';
 import { IWidgetTheme, lightWidgetTheme } from '../components/widget/theme';
 import { ThemeContext } from '../components/widget/theme/ThemeProvider';
-import useUserProfile from '../hooks/useUserProfile';
-import useInitializeUser from '../hooks/useInitializeUser';
+import { Constants, ENV } from '../config';
+import { GUEST_MODE_ACCOUNT } from '../config/constants';
+import {
+  IWidgetDataContextValues,
+  WidgetDataContext,
+} from '../context/widgetContext';
+import { getAddressFromSigner, pCAIP10ToWallet } from '../helpers';
+import usePushUser from '../hooks/usePushUser';
 
 export interface IWidgetUIProviderProps {
   children: ReactNode;
@@ -35,8 +34,7 @@ export const WidgetUIProvider = ({
   const [signerVal, setSignerVal] = useState<SignerType | undefined>(signer);
   const [userVal, setUserVal] = useState<PushAPI | undefined>(user);
   const [envVal, setEnvVal] = useState<ENV>(env);
-  const { initializeUser } = useInitializeUser();
-  const { fetchUserProfile } = useUserProfile();
+  const { initializeUser, fetchUserProfile } = usePushUser();
 
   useEffect(() => {
     (async () => {

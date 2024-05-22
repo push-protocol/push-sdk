@@ -89,6 +89,14 @@ describe('PushAPI.notification functionality', () => {
       expect(response).not.null;
     });
 
+    it('Should return feeds when signer with provider is used', async () => {
+      const response = await userKate.notification.list('SPAM', {
+        account: 'eip155:0xD8634C39BBFd4033c0d3289C4515275102423681',
+      });
+      // console.log(response)
+      expect(response).not.null;
+    });
+
     it('Should return feeds when viem is used', async () => {
       const response = await userViem.notification.list('SPAM');
       // console.log(response);
@@ -157,12 +165,20 @@ describe('PushAPI.notification functionality', () => {
       ).to.Throw;
     });
 
-    it.skip('With signer object: should throw error for invalid channel caip', async () => {
-      await expect(() => {
-        userAlice.notification.subscribe(
-          '0xD8634C39BBFd4033c0d3289C4515275102423681'
-        );
-      }).to.Throw;
+    it('With signer object: should convert to eth caip for normal address', async () => {
+      const res = await userKate.notification.subscribe(
+        '0xD8634C39BBFd4033c0d3289C4515275102423681'
+      );
+      // console.log(res);
+      expect(res).not.null;
+    });
+
+    it('With signer object: should optin with partial caip', async () => {
+      const res = await userKate.notification.subscribe(
+        'eip155:0xD8634C39BBFd4033c0d3289C4515275102423681'
+      );
+      // console.log(res);
+      expect(res).not.null;
     });
 
     it('With signer object: Should subscribe', async () => {
@@ -238,6 +254,14 @@ describe('PushAPI.notification functionality', () => {
       );
       expect(res.message).to.equal('successfully opted out channel');
     });
+
+    it('With signer object: should convert to eth caip for normal address', async () => {
+      const res = await userKate.notification.unsubscribe(
+        '0xD8634C39BBFd4033c0d3289C4515275102423681'
+      );
+      // console.log(res);
+      expect(res).not.null;
+    });
   });
 
   describe('notification :: subscriptions', () => {
@@ -269,9 +293,16 @@ describe('PushAPI.notification functionality', () => {
 
     it('Signer with account: Should return response', async () => {
       const response = await userKate.notification.subscriptions({
+        account: 'eip155:0xD8634C39BBFd4033c0d3289C4515275102423681',
+      });
+      expect(response).not.null;
+      expect(response.length).not.equal(0);
+    });
+
+    it('Signer with account: Should return response', async () => {
+      const response = await userKate.notification.subscriptions({
         account: '0xD8634C39BBFd4033c0d3289C4515275102423681',
       });
-      // console.log(JSON.stringify(response));
       expect(response).not.null;
       expect(response.length).not.equal(0);
     });
@@ -282,7 +313,6 @@ describe('PushAPI.notification functionality', () => {
         raw: false,
         channel: '0xD8634C39BBFd4033c0d3289C4515275102423681',
       });
-      console.log(JSON.stringify(response));
       expect(response).not.null;
     });
   });

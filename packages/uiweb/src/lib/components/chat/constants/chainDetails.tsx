@@ -10,8 +10,12 @@ import { ArbitrumSvg } from "../../../icons/ArbitrumSvg"
 import { FuseSvg } from "../../../icons/FuseSvg"
 import React from "react";
 import { BerachainSVG } from "../../../icons/BerachainSVG";
+<<<<<<< HEAD
 import LineaSVG from "../../../icons/LineaSVG";
 
+=======
+import { CyberConnectSVG } from "../../../icons/CyberConnectSVG";
+>>>>>>> 836e5c1961d044480c26b4eeb28645ab03c17904
 const createSVGIcon = (element:any, chainName: string) => {
   return (
     <Tooltip tooltipContent={`${chainName}`}>
@@ -82,6 +86,7 @@ export const NETWORK_ICON_DETAILS =  {
     label: 'BERACHAIN TESTNET',
     icon: createSVGIcon(<BerachainSVG/>, 'Berachain Testnet'),
   },
+<<<<<<< HEAD
   59141 : {
     label: 'LINEA TESTNET',
     icon: createSVGIcon(<LineaSVG/>, 'Linea Testnet'),
@@ -90,4 +95,14 @@ export const NETWORK_ICON_DETAILS =  {
     label: 'LIENA MAINNET',
     icon: createSVGIcon(<LineaSVG/>, 'Linea Mainnet'),
   },
+=======
+  111557560: {
+    label: 'CYBER CONNECT TESTNET',
+    icon: createSVGIcon(<CyberConnectSVG/>, 'CyberConnect Testnet'),
+  },
+  7560: {
+    label: 'CYBER CONNECT MAINNET',
+    icon: createSVGIcon(<CyberConnectSVG/>, 'CyberConnect Mainnet'),
+  }
+>>>>>>> 836e5c1961d044480c26b4eeb28645ab03c17904
 };

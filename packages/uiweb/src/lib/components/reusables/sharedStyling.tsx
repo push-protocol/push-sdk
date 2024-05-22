@@ -1,4 +1,146 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
+
+// Define keyframes
+const skeletonLoading = keyframes`
+  0% {
+    background-color: hsl(200, 20%, 80%);
+  }
+  100% {
+    background-color: hsl(200, 20%, 95%);
+  }
+`;
+
+// Define types and export components
+type SectionStyleProps = {
+  flexDirection?: string;
+  gap?: string;
+  cursor?: string;
+  alignItems?: string;
+  alignSelf?: string;
+  minHeight?: string;
+  minWidth?: string;
+  margin?: string;
+  gradient?: string;
+  position?: string;
+  padding?: string;
+  overflow?: string;
+  background?: string;
+  justifyContent?: string;
+  maxHeight?: string;
+  height?: string;
+  maxWidth?: string;
+  width?: string;
+  right?: string;
+  bottom?: string;
+  top?: string;
+  left?: string;
+  border?: string;
+  borderColor?: string;
+  borderStyle?: string;
+  borderWidth?: string;
+  borderRadius?: string;
+  lineHeight?: string;
+  flex?: string;
+  whiteSpace?: string;
+  visibility?: string;
+  zIndex?: string;
+};
+
+export const Section = styled.div<SectionStyleProps>`
+  display: flex;
+  cursor: ${(props) => props.cursor || 'default'};
+  flex: ${(props) => props.flex || 'default'};
+  flex-direction: ${(props) => props.flexDirection || 'row'};
+  gap: ${(props) => props.gap || '0px'};
+  align-items: ${(props) => props.alignItems || 'center'};
+  justify-content: ${(props) => props.justifyContent || 'center'};
+  align-self: ${(props) => props.alignSelf || 'stretch'};
+  margin: ${(props) => props.margin || '0px'};
+  min-height: ${(props) => props.minHeight || 'auto'};
+  max-height: ${(props) => props.maxHeight || 'auto'};
+  max-width: ${(props) => props.maxWidth || 'auto'};
+  min-width: ${(props) => props.minWidth || 'auto'};
+  height: ${(props) => props.height || 'auto'};
+  width: ${(props) => props.width || 'auto'};
+  line-height: ${(props) => props.lineHeight || 'initial'};
+  overflow: ${(props) => props.overflow || 'default'};
+  padding: ${(props) => props.padding || '0px'};
+  position: ${(props) => props.position || 'relative'};
+  background: ${(props) =>
+    props.gradient ? props.gradient : props.background ? props.background : 'transparent' || 'transparent'};
+  right: ${(props) => props.right || 'auto'};
+  top: ${(props) => props.top || 'auto'};
+  bottom: ${(props) => props.bottom || 'auto'};
+  left: ${(props) => props.left || 'auto'};
+  border-radius: ${(props) => props.borderRadius || '0px'};
+  border-width: ${(props) => props.borderWidth || 'initial'};
+  border-color: ${(props) => props.borderColor || 'initial'};
+  border-style: ${(props) => props.borderStyle || 'initial'};
+  z-index: ${(props) => props.zIndex || '0'};
+  white-space: ${(props) => props.whiteSpace || 'normal'};
+  border: ${(props) => props.border || 'initial'};
+
+  &.skeleton {
+    > * {
+      visibility: ${(props) => (props.visibility || skeletonLoading ? 'hidden' : 'visible')};
+    }
+
+    &:after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 1;
+      animation: ${skeletonLoading} 1s linear infinite alternate;
+      border-radius: 8px;
+    }
+  }
+`;
+
+type DivStyleProps = {
+  height?: string;
+  lineHeight?: string;
+  width?: string;
+  cursor?: string;
+  alignSelf?: string;
+  margin?: string;
+  overflow?: string;
+  borderRadius?: string;
+  textAlign?: string;
+  visibility?: string;
+};
+export const Div = styled.div<DivStyleProps>`
+  height: ${(props) => props.height || 'auto'};
+  width: ${(props) => props.width || '100%'};
+  margin: ${(props) => props.margin || '0px'};
+  cursor: ${(props) => props.cursor || 'default'};
+  line-height: ${(props) => props.lineHeight || 'initial'};
+  overflow: ${(props) => props.overflow || 'default'};
+  border-radius: ${(props) => props.borderRadius || '0px'};
+  align-self: ${(props) => props.alignSelf || 'center'};
+  text-align: ${(props) => props.textAlign || 'default'};
+
+  &.skeleton {
+    > * {
+      visibility: ${(props) => (props.visibility || skeletonLoading ? 'hidden' : 'visible')};
+    }
+
+    &:after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      opacity: 1;
+      z-index: 1;
+      animation: ${skeletonLoading} 1s linear infinite alternate;
+      border-radius: 8px;
+    }
+  }
+`;
 
 type SpanStyleProps = {
   alignSelf?: string;
@@ -23,7 +165,8 @@ type SpanStyleProps = {
   maxWidth?: string;
   width?: string;
   cursor?: string;
-  whiteSpace?:string;
+  whiteSpace?: string;
+  visibility?: string;
 };
 
 export const Span = styled.span<SpanStyleProps>`
@@ -51,6 +194,25 @@ export const Span = styled.span<SpanStyleProps>`
   z-index: ${(props) => props.zIndex || 'auto'};
   max-width: ${(props) => props.maxWidth || 'initial'};
   white-space: ${(props) => props.whiteSpace || 'normal'};
+
+  &.skeleton {
+    > * {
+      visibility: ${(props) => (props.visibility || skeletonLoading ? 'hidden' : 'visible')};
+    }
+
+    &:after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      opacity: 1;
+      z-index: 1;
+      animation: ${skeletonLoading} 1s linear infinite alternate;
+      border-radius: 8px;
+    }
+  }
 `;
 
 type AnchorStyleProps = {
@@ -106,76 +268,6 @@ export const Anchor = styled.a<AnchorStyleProps>`
   max-width: ${(props) => props.maxWidth || 'initial'};
 `;
 
-type SectionStyleProps = {
-  flexDirection?: string;
-  gap?: string;
-  cursor?: string;
-  alignItems?: string;
-  alignSelf?: string;
-  minHeight?: string;
-  minWidth?: string;
-  margin?: string;
-  gradient?: string;
-  position?: string;
-  padding?: string;
-  overflow?: string;
-  background?: string;
-  justifyContent?: string;
-  maxHeight?: string;
-  height?: string;
-  maxWidth?: string;
-  width?: string;
-  right?: string;
-  bottom?: string;
-  top?: string;
-  left?: string;
-  borderColor?: string;
-  borderStyle?: string;
-  borderWidth?: string;
-  borderRadius?: string;
-  flex?: string;
-  whiteSpace?:string;
-  zIndex?: string;
-};
-
-export const Section = styled.div<SectionStyleProps>`
-  display: flex;
-  cursor: ${(props) => props.cursor || 'default'};
-  flex: ${(props) => props.flex || 'default'};
-  flex-direction: ${(props) => props.flexDirection || 'row'};
-  gap: ${(props) => props.gap || '0px'};
-  align-items: ${(props) => props.alignItems || 'center'};
-  justify-content: ${(props) => props.justifyContent || 'center'};
-  align-self: ${(props) => props.alignSelf || 'stretch'};
-  margin: ${(props) => props.margin || '0px'};
-  min-height: ${(props) => props.minHeight || 'auto'};
-  max-height: ${(props) => props.maxHeight || 'auto'};
-  max-width: ${(props) => props.maxWidth || 'auto'};
-  min-width: ${(props) => props.minWidth || 'auto'};
-  height: ${(props) => props.height || 'auto'};
-  width: ${(props) => props.width || 'auto'};
-  overflow: ${(props) => props.overflow || 'default'};
-  padding: ${(props) => props.padding || '0px'};
-  position: ${(props) => props.position || 'relative'};
-  background: ${(props) =>
-    props.gradient
-      ? props.gradient
-      : props.background
-      ? props.background
-      : 'transparent' || 'transparent'};
-  right: ${(props) => props.right || 'auto'};
-  top: ${(props) => props.top || 'auto'};
-  bottom: ${(props) => props.bottom || 'auto'};
-  left: ${(props) => props.left || 'auto'};
-  border-radius: ${(props) => props.borderRadius || '0px'};
-  border-width: ${(props) => props.borderWidth || 'initial'};
-  border-color: ${(props) => props.borderColor || 'initial'};
-  border-style: ${(props) => props.borderStyle || 'initial'};
-  z-index: ${(props) => props.zIndex || '0'};
-  white-space: ${(props) => props.whiteSpace || 'normal'};
-
-`;
-
 type ImageStyleProps = {
   display?: string;
   height?: string;
@@ -191,6 +283,7 @@ type ImageStyleProps = {
   objectFit?: string;
   margin?: string;
 };
+
 export const Image = styled.img<ImageStyleProps>`
   display: ${(props) => props.display || 'flex'};
   height: ${(props) => props.height || 'auto'};
@@ -206,7 +299,6 @@ export const Image = styled.img<ImageStyleProps>`
   alt: ${(props) => props.alt || 'Image'};
   object-fit: ${(props) => props.objectFit || 'fill'};
 `;
-
 
 type ButtonStyleProps = {
   display?: string;
@@ -240,36 +332,36 @@ type ButtonStyleProps = {
 };
 
 export const Button = styled.button<ButtonStyleProps>`
-  display: ${(props) => props.display || "initial"};
-  line-height: ${(props) => props.lineHeight || "26px"};
-  flex: ${(props) => props.flex || "initial"};
-  flex-direction: ${(props) => props.flexDirection || "row"};
-  align-self: ${(props) => props.alignSelf || "auto"};
-  align-items: ${(props) => props.alignItems || "center"};
-  justify-content: ${(props) => props.justifyContent || "center"};
+  display: ${(props) => props.display || 'initial'};
+  line-height: ${(props) => props.lineHeight || '26px'};
+  flex: ${(props) => props.flex || 'initial'};
+  flex-direction: ${(props) => props.flexDirection || 'row'};
+  align-self: ${(props) => props.alignSelf || 'auto'};
+  align-items: ${(props) => props.alignItems || 'center'};
+  justify-content: ${(props) => props.justifyContent || 'center'};
   font-weight: ${(props) => props.fontWeight || 400};
-  font-size: ${(props) => props.fontSize || "inherit"};
-  color: ${(props) => props.color || "inherit"};
-  background: ${(props) => props.background || "inherit"};
-  margin: ${(props) => props.margin || "initial"};
+  font-size: ${(props) => props.fontSize || 'inherit'};
+  color: ${(props) => props.color || 'inherit'};
+  background: ${(props) => props.background || 'inherit'};
+  margin: ${(props) => props.margin || 'initial'};
 
-  height: ${(props) => props.height || "initial"};
+  height: ${(props) => props.height || 'initial'};
   min-height: ${(props) => props.minHeight || 'auto'};
-  padding: ${(props) => props.padding || "initial"};
-  border: ${(props) => props.border || "none"};
-  border-radius: ${(props) => props.borderRadius || "inherit"};
-  position: ${(props) => props.position || "relative"};
-  text-decoration: ${(props) => props.textDecoration || "none"};
-  width: ${(props) => props.width || "initial"};
-  overflow: ${(props) => props.overflow || "hidden"};
-  z-index: ${(props) => props.zIndex || "3"};
-  cursor: ${(props) => props.cursor || "pointer"};
-  font-family: ${(props) => props.fontFamily || "inherit"};
+  padding: ${(props) => props.padding || 'initial'};
+  border: ${(props) => props.border || 'none'};
+  border-radius: ${(props) => props.borderRadius || 'inherit'};
+  position: ${(props) => props.position || 'relative'};
+  text-decoration: ${(props) => props.textDecoration || 'none'};
+  width: ${(props) => props.width || 'initial'};
+  overflow: ${(props) => props.overflow || 'hidden'};
+  z-index: ${(props) => props.zIndex || '3'};
+  cursor: ${(props) => props.cursor || 'pointer'};
+  font-family: ${(props) => props.fontFamily || 'inherit'};
 
   &:before {
-    background: ${(props) => props.hover || (props.background ? props.background : "transparent")};
+    background: ${(props) => props.hover || (props.background ? props.background : 'transparent')};
     bottom: 0;
-    content: "";
+    content: '';
     display: none;
     left: 0;
     position: absolute;
@@ -279,9 +371,9 @@ export const Button = styled.button<ButtonStyleProps>`
   }
 
   &:after {
-    background: ${(props) => props.hoverBackground || "#000"};
+    background: ${(props) => props.hoverBackground || '#000'};
     bottom: 0;
-    content: "";
+    content: '';
     left: 0;
     opacity: 0;
     position: absolute;
@@ -291,10 +383,10 @@ export const Button = styled.button<ButtonStyleProps>`
   }
 
   &:hover {
-    border: ${(props) => props.hoverBorder || "inherit"};
+    border: ${(props) => props.hoverBorder || 'inherit'};
 
     & svg > path {
-      stroke: ${(props) => props.hoverSVGPathStroke || "auto"};
+      stroke: ${(props) => props.hoverSVGPathStroke || 'auto'};
     }
   }
 
@@ -313,21 +405,3 @@ export const Button = styled.button<ButtonStyleProps>`
     display: flex;
   }
 `;
-
-type DivStyleProps = {
-  height?: string;
-  width?: string;
-  cursor?: string;
-  alignSelf?: string;
-  margin?: string;
-  textAlign?:string;
-};
-export const Div = styled.div<DivStyleProps>`
-  height: ${(props) => props.height || 'auto'};
-  width: ${(props) => props.width || '100%'};
-  margin: ${(props) => props.margin || '0px'};
-  cursor: ${(props) => props.cursor || 'default'};
-  align-self: ${(props) => props.alignSelf || 'center'};
-  text-align: ${(props) => props.textAlign || 'default'};
-`;
-

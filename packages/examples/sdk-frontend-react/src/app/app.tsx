@@ -268,7 +268,7 @@ export function App() {
       const user = await PushApi.user.get({ account: account, env });
       let pgpPrivateKey;
       const librarySigner = await library.getSigner(account);
-      const pushUser = await PushAPI.initialize(librarySigner!, {
+      const pushUser = await PushAPI.initialize({
         env: env,
         account: account,
         alpha: { feature: ['SCALABILITY_V2'] },
@@ -339,13 +339,13 @@ export function App() {
           <Web3Context.Provider value={{ account, active, library, chainId }}>
             <SocketContext.Provider value={socketData}>
               <AccountContext.Provider value={{ pgpPrivateKey, setSpaceId }}>
-                <WidgetUIProvider
-               
-                >
+                <WidgetUIProvider>
                   <ChatUIProvider
                     env={env}
                     theme={darkChatTheme}
                     signer={signer}
+                    // user={pushUser}
+                    debug={true}
                   >
                     <SpacesUIProvider spaceUI={spaceUI} theme={customDarkTheme}>
                       <Routes>
@@ -410,7 +410,10 @@ export function App() {
                           element={<SecretNotificationsTest />}
                         />
                         <Route path="/channels" element={<ChannelsTest />} />
-                        <Route path="/listchannels" element={<ListChannelsTest />} />
+                        <Route
+                          path="/listchannels"
+                          element={<ListChannelsTest />}
+                        />
                         <Route path="/alias" element={<AliasTest />} />
                         <Route
                           path="/delegations"

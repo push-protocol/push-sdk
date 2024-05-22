@@ -1,4 +1,4 @@
-import { isValidETHAddress } from '../../helpers';
+import { isValidPushCAIP } from '../../helpers';
 import { VIDEO_NOTIFICATION_ACCESS_TYPE } from '../../payloads/constants';
 import { VideoPeerInfo } from '../../types';
 
@@ -9,7 +9,7 @@ export const validatePeerInfo = (peerInfo: VideoPeerInfo) => {
     throw new Error('Invalid signal data received');
   }
 
-  if (!isValidETHAddress(address)) {
+  if (!isValidPushCAIP(address)) {
     throw new Error('Invalid address received');
   }
 

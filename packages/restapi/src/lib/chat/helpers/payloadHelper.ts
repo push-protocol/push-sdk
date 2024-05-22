@@ -1,4 +1,4 @@
-import { isValidETHAddress, walletToPCAIP10 } from '../../helpers';
+import { isValidPushCAIP, walletToPCAIP10 } from '../../helpers';
 import { getEncryptedRequestCore } from './crypto';
 import {
   IConnectedUser,
@@ -110,7 +110,7 @@ export const sendMessagePayloadCore = async (
   env: ENV,
   pgpHelper: IPGPHelper
 ): Promise<ISendMessagePayload> => {
-  const isGroup = !isValidETHAddress(receiverAddress);
+  const isGroup = !isValidPushCAIP(receiverAddress);
 
   let secretKey: string;
   if (isGroup && group?.encryptedSecret && group.sessionKey) {
@@ -374,7 +374,9 @@ export const spaceDtoToSpaceInfoDto = (spaceDto: SpaceDTO): SpaceInfoDTO => {
   };
 };
 
-export const mapSpaceListTypeToChatListType = (type: SpaceListType): ChatListType => {
+export const mapSpaceListTypeToChatListType = (
+  type: SpaceListType
+): ChatListType => {
   switch (type) {
     case SpaceListType.SPACES:
       return ChatListType.CHATS;
@@ -383,7 +385,7 @@ export const mapSpaceListTypeToChatListType = (type: SpaceListType): ChatListTyp
     default:
       throw new Error(`Unsupported SpaceListType: ${type}`);
   }
-}
+};
 
 export const convertSpaceRulesToRules = (spaceRules: SpaceRules): Rules => {
   return {

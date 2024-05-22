@@ -14,8 +14,9 @@ import {
   NOTIFICATION_TYPE,
   CHAIN_ID_TO_SOURCE,
   SOURCE_TYPES,
+  SUPPORTED_CHAINS,
 } from './constants';
-import { getConnectedUser, sign } from '../chat/helpers';
+import { sign } from '../chat/helpers';
 
 export function getUUID() {
   return uuidv4();
@@ -327,12 +328,7 @@ export function getSource(
 
 export function getCAIPFormat(chainId: number, address: string) {
   // EVM based chains
-  if (
-    [
-      1, 11155111, 42, 137, 80002, 56, 97, 10, 11155420, 1442, 1101, 421614,
-      42161, 122, 123, 80085, 59141, 59144,
-    ].includes(chainId)
-  ) {
+  if (SUPPORTED_CHAINS.includes(chainId)) {
     return `eip155:${chainId}:${address}`;
   }
 

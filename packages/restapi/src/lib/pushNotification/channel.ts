@@ -38,7 +38,7 @@ export class Channel extends PushNotificationBaseClass {
   constructor(signer?: SignerType, env?: ENV, account?: string) {
     super(signer, env, account);
     this.delegate = new Delegate(signer, env, account);
-    this.alias = new Alias(env!);
+    this.alias = new Alias(signer, env, account);
   }
 
   /**

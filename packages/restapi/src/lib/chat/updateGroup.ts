@@ -1,4 +1,4 @@
-import { getAPIBaseUrls } from '../helpers';
+import { convertToValidDID, getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
 import {
   ChatStatus,
@@ -15,7 +15,6 @@ import {
   PGPHelper,
   getConnectedUserV2Core,
   getAccountAddress,
-  getUserDID,
   updateGroupRequestValidator,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
@@ -97,10 +96,10 @@ export const updateGroupCore = async (
       pgpHelper
     );
     const convertedMembersPromise = members.map(async (each) => {
-      return getUserDID(each, env);
+      return convertToValidDID(each, env);
     });
     const convertedAdminsPromise = admins.map(async (each) => {
-      return getUserDID(each, env);
+      return convertToValidDID(each, env);
     });
     const convertedMembers = await Promise.all(convertedMembersPromise);
     const convertedAdmins = await Promise.all(convertedAdminsPromise);

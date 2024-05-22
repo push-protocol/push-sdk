@@ -1,15 +1,22 @@
 import Tooltip from '../tooltip';
 
-import { EthereumSvg } from '../../icons/EthereumSvg';
-import { PolygonSvg } from '../../icons/PolygonSvg';
+import { ArbitrumSvg } from '../../icons/ArbitrumSvg';
 import { BSCSvg } from '../../icons/BSCSvg';
+import { BerachainSVG } from '../../icons/BerachainSVG';
+import { EthereumSvg } from '../../icons/EthereumSvg';
+import { FuseSvg } from '../../icons/FuseSvg';
 import { OptimismSvg } from '../../icons/OptimismSvg';
+import { PolygonSvg } from '../../icons/PolygonSvg';
 import { PolygonzkevmSvg } from '../../icons/PolygonzkevmSvg';
 import { TheGraphSvg } from '../../icons/TheGraphSvg';
+<<<<<<< HEAD
 import { ArbitrumSvg } from '../../icons/ArbitrumSvg';
 import { FuseSvg } from '../../icons/FuseSvg';
 import { BerachainSVG } from '../../icons/BerachainSVG';
 import LineaSVG from '../../icons/LineaSVG';
+=======
+import { CyberConnectSVG } from '../../icons/CyberConnectSVG';
+>>>>>>> 836e5c1961d044480c26b4eeb28645ab03c17904
 const createSVGIcon = (element: any, chainName: string) => {
   return (
     <Tooltip tooltipContent={`Delivered by ${chainName}`}>{element}</Tooltip>
@@ -25,13 +32,13 @@ export default {
     label: 'ETHEREUM MAINNET',
     icon: createSVGIcon(<EthereumSvg />, 'Ethereum Mainnet'),
   },
-  POLYGON_TEST_AMOY: {
-    label: 'POLYGON AMOY',
-    icon: createSVGIcon(<PolygonSvg />, 'Polygon Amoy'),
-  },
   POLYGON_MAINNET: {
     label: 'POLYGON MAINNET',
     icon: createSVGIcon(<PolygonSvg />, 'Polygon Mainnet'),
+  },
+  POLYGON_TEST_AMOY: {
+    label: 'POLYGON AMOY',
+    icon: createSVGIcon(<PolygonSvg />, 'Polygon Amoy'),
   },
   BSC_TESTNET: {
     label: 'BSC TESTNET',
@@ -83,7 +90,12 @@ export default {
   BERACHAIN_TESTNET: {
     label: 'BERACHAIN TESTNET',
     icon: createSVGIcon(<BerachainSVG />, 'Berachain Testnet'),
+  }, 
+  CYBER_CONNECT_TESTNET: {
+    label: 'CYBER CONNECT TESTNET',
+    icon: createSVGIcon(<CyberConnectSVG/>, 'CyberConnect Testnet'),
   },
+<<<<<<< HEAD
   LINEA_TESTNET : {
     label: 'LINEA TESTNET',
     icon: createSVGIcon(<LineaSVG/>, 'Linea Testnet'),
@@ -92,4 +104,10 @@ export default {
     label: 'LIENA MAINNET',
     icon: createSVGIcon(<LineaSVG/>, 'Linea Mainnet'),
   },
+=======
+  CYBER_CONNECT_MAINNET: {
+    label: 'CYBER CONNECT MAINNET',
+    icon: createSVGIcon(<CyberConnectSVG/>, 'CyberConnect Mainnet'),
+  }
+>>>>>>> 836e5c1961d044480c26b4eeb28645ab03c17904
 };

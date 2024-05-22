@@ -8,7 +8,7 @@ import { Chat } from './chat';
 import { Profile } from './profile';
 import { Encryption } from './encryption';
 import { User } from './user';
-import { PushStream } from '../pushstream/PushStream';
+import { PushStream, StreamType } from '../pushstream/PushStream';
 import { Channel } from '../pushNotification/channel';
 import { Notification } from '../pushNotification/notification';
 import {
@@ -18,19 +18,20 @@ import {
 import { ALPHA_FEATURE_CONFIG } from '../config';
 import { Space } from './space';
 import { Video } from './video';
-import { isValidCAIP10NFTAddress } from '../helpers';
+import { isValidNFTCAIP, walletToPCAIP10 } from '../helpers';
 import { LRUCache } from 'lru-cache';
 import { cache } from '../helpers/cache';
 import { v4 as uuidv4 } from 'uuid';
 
 export class PushAPI {
-  private signer?: SignerType;
+  public signer?: SignerType;
   private readMode: boolean;
   private alpha: { feature: string[] };
-  private account: string;
-  private decryptedPgpPvtKey?: string;
-  private pgpPublicKey?: string;
-  private env: ENV;
+  public account: string;
+  public chainWiseAccount: string;
+  public decryptedPgpPvtKey?: string;
+  public pgpPublicKey?: string;
+  public env: ENV;
   private progressHook?: (progress: ProgressHookType) => void;
   private cache: LRUCache<string, any>;
 
@@ -65,6 +66,7 @@ export class PushAPI {
     this.alpha = alpha;
     this.env = env;
     this.account = account;
+    this.chainWiseAccount = walletToPCAIP10(account);
     this.decryptedPgpPvtKey = decryptedPgpPvtKey;
     this.pgpPublicKey = pgpPublicKey;
     this.progressHook = progressHook;
@@ -118,7 +120,7 @@ export class PushAPI {
   }
   // Overloaded initialize method signatures
   static async initialize(
-    signer?: SignerType,
+    signer?: SignerType | null,
     options?: PushAPIInitializeProps
   ): Promise<PushAPI>;
   static async initialize(options?: PushAPIInitializeProps): Promise<PushAPI>;
@@ -261,7 +263,7 @@ export class PushAPI {
             message: decryptionError,
           });
           console.error(decryptionError);
-          if (isValidCAIP10NFTAddress(derivedAccount)) {
+          if (isValidNFTCAIP(derivedAccount)) {
             const nftDecryptionError =
               'NFT Account Detected. If this NFT was recently transferred to you, please ensure you have received the correct password from the previous owner. Alternatively, you can reinitialize for a fresh start. Please be aware that reinitialization will result in the loss of all previous account data.';
 
@@ -274,7 +276,6 @@ export class PushAPI {
           readMode = true;
         }
       }
-
       // Initialize PushAPI instance
       const api = new PushAPI(
         settings.env as ENV,
@@ -315,7 +316,7 @@ export class PushAPI {
     this.pgpPublicKey = newUser.publicKey;
     this.readMode = false;
     this.errors = [];
-    this.uid = uuidv4(); 
+    this.uid = uuidv4();
     // Initialize the instances of the four classes
     this.chat = new Chat(
       this.account,
@@ -343,7 +344,7 @@ export class PushAPI {
   }
 
   async initStream(
-    listen: STREAM[],
+    listen: StreamType[],
     options?: PushStreamInitializeProps
   ): Promise<PushStream> {
     if (this.stream) {

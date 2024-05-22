@@ -6,7 +6,7 @@ import {
 import Constants, { ENV, ENCRYPTION_TYPE } from '../constants';
 import {
   encryptPGPKey,
-  isValidETHAddress,
+  isValidPushCAIP,
   preparePGPPublicKey,
   walletToPCAIP10,
 } from '../helpers';
@@ -68,7 +68,7 @@ export const authUpdate = async (options: AuthUpdateProps): Promise<IUser> => {
         ? true
         : false;
 
-    if (!isValidETHAddress(address)) {
+    if (!isValidPushCAIP(address)) {
       throw new Error(`Invalid address!`);
     }
 

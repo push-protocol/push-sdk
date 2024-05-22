@@ -10,62 +10,15 @@ import {
   optimism,
   optimismSepolia,
   polygonZkEvm,
-  polygonZkEvmTestnet,
   sepolia,
   arbitrum,
   arbitrumSepolia,
   fuse,
   fuseSparknet,
   linea,
-  lineaTestnet
 } from 'viem/chains';
-import { defineChain } from 'viem';
+import { berachainTestnet, polygonAmoy, polygonZkEvmCordona, cyberConnectMainnet, cyberConnectTestnet, lineaSepoliaTestnet } from './customChains';
 
-const polygonAmoy = defineChain({
-  id: 80002,
-  name: 'Polygon Amoy Testnet',
-  network: 'polygon-amoy',
-  nativeCurrency: {
-    decimals: 18,
-    name: 'MATIC',
-    symbol: 'MATIC',
-  },
-  rpcUrls: {
-    default: { http: ['https://rpc-amoy.polygon.technology/'] },
-    public: { http: ['https://rpc-amoy.polygon.technology/'] },
-  },
-  blockExplorers: {
-    default: {
-      name: 'Polygon Amoy',
-      url: 'https://www.oklink.com/amoy',
-    },
-  },
-  testnet: true,
-});
-
-
-
-const berachainTestnet = defineChain({
-  id: 80085,
-  name: 'Berachain Artio',
-  network: 'berachain-testnet',
-  nativeCurrency: {
-    decimals: 18,
-    name: 'BERA Token',
-    symbol: 'BERA',
-  },
-  rpcUrls: {
-    default: { http: ['https://artio.rpc.berachain.com'] },
-    public: { http: ['https://artio.rpc.berachain.com'] },
-  },
-  blockExplorers: {
-    default: {
-      name: 'Berachain',
-      url: 'https://artio.beratrail.io',
-    },
-  },
-  testnet: true,
-});
 
 // for methods not needing the entire config
 export const API_BASE_URL = {
@@ -88,7 +41,7 @@ const BLOCKCHAIN_NETWORK = {
   BSC_TESTNET: 'eip155:97',
   OPTIMISM_TESTNET: 'eip155:11155420',
   OPTIMISM_MAINNET: 'eip155:10',
-  POLYGON_ZK_EVM_TESTNET: 'eip155:1442',
+  POLYGON_ZK_EVM_TESTNET: 'eip155:2442',
   POLYGON_ZK_EVM_MAINNET: 'eip155:1101',
   ARBITRUM_TESTNET: 'eip155:421614',
   ARBITRUMONE_MAINNET: 'eip155:42161',
@@ -96,7 +49,9 @@ const BLOCKCHAIN_NETWORK = {
   FUSE_MAINNET: 'eip155:122',
   BERACHAIN_TESTNET: 'eip155:80085',
   LINEA_MAINNET: 'eip155:59144',
-  LINEA_TESTNET: 'eip155:59141'
+  LINEA_TESTNET: 'eip155:59141',
+  CYBER_CONNECT_TESTNET: 'eip155:111557560',
+  CYBER_CONNECT_MAINNET: 'eip155:7560'
 };
 
 export type ALIAS_CHAIN =
@@ -107,7 +62,8 @@ export type ALIAS_CHAIN =
   | 'ARBITRUMONE'
   | 'FUSE'
   | 'BERACHAIN'
-  | 'LINEA';
+  | 'LINEA'
+  | 'CYBERCONNECT';
 
 export const ETH_CHAIN_ID = {
   [ENV.PROD]: 1,
@@ -138,9 +94,9 @@ export const ALIAS_CHAIN_ID: {
   },
   POLYGONZKEVM: {
     [ENV.PROD]: 1101,
-    [ENV.STAGING]: 1442,
-    [ENV.DEV]: 1442,
-    [ENV.LOCAL]: 1442,
+    [ENV.STAGING]: 2442,
+    [ENV.DEV]: 2442,
+    [ENV.LOCAL]: 2442,
   },
   ARBITRUMONE: {
     [ENV.PROD]: 42161,
@@ -165,6 +121,12 @@ export const ALIAS_CHAIN_ID: {
     [ENV.STAGING]: 59141,
     [ENV.DEV]: 59141,
     [ENV.LOCAL]: 59141,
+  },
+  CYBERCONNECT: {
+    [ENV.PROD]: 7560,
+    [ENV.STAGING]: 111557560,
+    [ENV.DEV]: 111557560,
+    [ENV.LOCAL]: 111557560,
   }
 };
 
@@ -188,7 +150,7 @@ export const CHAIN_NAME: { [key: number]: string } = {
   11155420: 'OPTIMISM',
   // plygonzkevm
   1101: 'POLYGONZKEVM',
-  1442: 'POLYGONZKEVM',
+  2442: 'POLYGONZKEVM',
   // arbitrun
   421614: 'ARBITRUN',
   42161: 'ARBITRUM',
@@ -199,7 +161,10 @@ export const CHAIN_NAME: { [key: number]: string } = {
   80085: 'BERACHAIN',
   // linea
   59144: 'LINEA',
-  59141: 'LINEA'
+  59141: 'LINEA',
+  // cyberconnect
+  7560: 'CYBER_CONNECT_MAINNET',
+  111557560: 'CYBER_CONNECT_TESTNET'
 };
 export interface ConfigType {
   API_BASE_URL: string;
@@ -277,6 +242,10 @@ const CONFIG = {
     [BLOCKCHAIN_NETWORK.FUSE_MAINNET]: {
       API_BASE_URL: API_BASE_URL[ENV.PROD],
       EPNS_COMMUNICATOR_CONTRACT: '0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa',
+    },    
+    [BLOCKCHAIN_NETWORK.CYBER_CONNECT_MAINNET]: {
+      API_BASE_URL: API_BASE_URL[ENV.PROD],
+      EPNS_COMMUNICATOR_CONTRACT: '0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa',
     },
     [BLOCKCHAIN_NETWORK.LINEA_MAINNET]:{
       API_BASE_URL: API_BASE_URL[ENV.PROD],
@@ -302,7 +271,7 @@ const CONFIG = {
     },
     [BLOCKCHAIN_NETWORK.POLYGON_ZK_EVM_TESTNET]: {
       API_BASE_URL: API_BASE_URL[ENV.STAGING],
-      EPNS_COMMUNICATOR_CONTRACT: '0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa',
+      EPNS_COMMUNICATOR_CONTRACT: '0x6e489b7af21ceb969f49a90e481274966ce9d74d',
     },
     [BLOCKCHAIN_NETWORK.ARBITRUM_TESTNET]: {
       API_BASE_URL: API_BASE_URL[ENV.STAGING],
@@ -319,7 +288,11 @@ const CONFIG = {
     [BLOCKCHAIN_NETWORK.LINEA_TESTNET]:{
       API_BASE_URL: API_BASE_URL[ENV.STAGING],
       EPNS_COMMUNICATOR_CONTRACT: '0x9cb3bd7550B5c92baA056Fc0F08132f49508145F',
-    }
+    },
+    [BLOCKCHAIN_NETWORK.CYBER_CONNECT_TESTNET]: {
+      API_BASE_URL: API_BASE_URL[ENV.STAGING],
+      EPNS_COMMUNICATOR_CONTRACT: '0x6e489B7af21cEb969f49A90E481274966ce9D74d',
+    },
   },
   [ENV.DEV]: {
     [BLOCKCHAIN_NETWORK.ETH_SEPOLIA]: {
@@ -340,7 +313,7 @@ const CONFIG = {
     },
     [BLOCKCHAIN_NETWORK.POLYGON_ZK_EVM_TESTNET]: {
       API_BASE_URL: API_BASE_URL[ENV.DEV],
-      EPNS_COMMUNICATOR_CONTRACT: '0x630b152e4185c63D7177c656b56b26f878C61572',
+      EPNS_COMMUNICATOR_CONTRACT: '0x9cb3bd7550b5c92baa056fc0f08132f49508145f',
     },
     [BLOCKCHAIN_NETWORK.ARBITRUM_TESTNET]: {
       API_BASE_URL: API_BASE_URL[ENV.DEV],
@@ -357,7 +330,11 @@ const CONFIG = {
     [BLOCKCHAIN_NETWORK.LINEA_TESTNET]:{
       API_BASE_URL: API_BASE_URL[ENV.DEV],
       EPNS_COMMUNICATOR_CONTRACT: '0x9cb3bd7550B5c92baA056Fc0F08132f49508145F',
-    }
+    },
+    [BLOCKCHAIN_NETWORK.CYBER_CONNECT_TESTNET]: {
+      API_BASE_URL: API_BASE_URL[ENV.DEV],
+      EPNS_COMMUNICATOR_CONTRACT: '0x9cb3bd7550B5c92baA056Fc0F08132f49508145F',
+    },
   },
   [ENV.LOCAL]: {
     [BLOCKCHAIN_NETWORK.ETH_SEPOLIA]: {
@@ -378,7 +355,7 @@ const CONFIG = {
     },
     [BLOCKCHAIN_NETWORK.POLYGON_ZK_EVM_TESTNET]: {
       API_BASE_URL: API_BASE_URL[ENV.LOCAL],
-      EPNS_COMMUNICATOR_CONTRACT: '0x630b152e4185c63D7177c656b56b26f878C61572',
+      EPNS_COMMUNICATOR_CONTRACT: '0x9cb3bd7550b5c92baa056fc0f08132f49508145f',
     },
     [BLOCKCHAIN_NETWORK.ARBITRUM_TESTNET]: {
       API_BASE_URL: API_BASE_URL[ENV.LOCAL],
@@ -395,7 +372,11 @@ const CONFIG = {
     [BLOCKCHAIN_NETWORK.LINEA_TESTNET]:{
       API_BASE_URL: API_BASE_URL[ENV.LOCAL],
       EPNS_COMMUNICATOR_CONTRACT: '0x9cb3bd7550B5c92baA056Fc0F08132f49508145F',
-    }
+    },
+    [BLOCKCHAIN_NETWORK.CYBER_CONNECT_TESTNET]: {
+      API_BASE_URL: API_BASE_URL[ENV.DEV],
+      EPNS_COMMUNICATOR_CONTRACT: '0x9cb3bd7550B5c92baA056Fc0F08132f49508145F',
+    },
   },
 };
 
@@ -472,7 +453,12 @@ export const VIEM_CONFIG = {
       NETWORK:linea,
       API_BASE_URL: API_BASE_URL[ENV.PROD],
       EPNS_COMMUNICATOR_CONTRACT: '0x0d8e75CB5d8873c43c5d9Add71Fd71a09F7Ef890',
-    }
+    },
+    [BLOCKCHAIN_NETWORK.CYBER_CONNECT_MAINNET]: {
+      NETWORK: cyberConnectMainnet,
+      API_BASE_URL: API_BASE_URL[ENV.PROD],
+      EPNS_COMMUNICATOR_CONTRACT: '0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa',
+    },
   },
   [ENV.STAGING]: {
     [BLOCKCHAIN_NETWORK.ETH_SEPOLIA]: {
@@ -496,9 +482,9 @@ export const VIEM_CONFIG = {
       EPNS_COMMUNICATOR_CONTRACT: '0x9Dc25996ba72A2FD7E64e7a674232a683f406F1A',
     },
     [BLOCKCHAIN_NETWORK.POLYGON_ZK_EVM_TESTNET]: {
-      NETWORK: polygonZkEvmTestnet,
+      NETWORK: polygonZkEvmCordona,
       API_BASE_URL: API_BASE_URL[ENV.STAGING],
-      EPNS_COMMUNICATOR_CONTRACT: '0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa',
+      EPNS_COMMUNICATOR_CONTRACT: '0x6e489b7af21ceb969f49a90e481274966ce9d74d',
     },
     [BLOCKCHAIN_NETWORK.ARBITRUM_TESTNET]: {
       NETWORK: arbitrumSepolia,
@@ -516,10 +502,15 @@ export const VIEM_CONFIG = {
       EPNS_COMMUNICATOR_CONTRACT: '0x7b9C405e261ba671f008c20D0321f62d08C140EC',
     },
     [BLOCKCHAIN_NETWORK.LINEA_TESTNET]:{
-      NETWORK: lineaTestnet,
+      NETWORK: lineaSepoliaTestnet,
       API_BASE_URL: API_BASE_URL[ENV.STAGING],
       EPNS_COMMUNICATOR_CONTRACT: '0x9cb3bd7550B5c92baA056Fc0F08132f49508145F',
-    }
+    },
+    [BLOCKCHAIN_NETWORK.CYBER_CONNECT_TESTNET]: {
+      NETWORK: cyberConnectTestnet,
+      API_BASE_URL: API_BASE_URL[ENV.STAGING],
+      EPNS_COMMUNICATOR_CONTRACT: '0x6e489B7af21cEb969f49A90E481274966ce9D74d',
+    },
   },
   [ENV.DEV]: {
     [BLOCKCHAIN_NETWORK.ETH_SEPOLIA]: {
@@ -543,9 +534,9 @@ export const VIEM_CONFIG = {
       EPNS_COMMUNICATOR_CONTRACT: '0x754787358fac861ef904c92d54f7adb659779317',
     },
     [BLOCKCHAIN_NETWORK.POLYGON_ZK_EVM_TESTNET]: {
-      NETWORK: polygonZkEvmTestnet,
+      NETWORK: polygonZkEvmCordona,
       API_BASE_URL: API_BASE_URL[ENV.DEV],
-      EPNS_COMMUNICATOR_CONTRACT: '0x630b152e4185c63D7177c656b56b26f878C61572',
+      EPNS_COMMUNICATOR_CONTRACT: '0x9cb3bd7550b5c92baa056fc0f08132f49508145f',
     },
     [BLOCKCHAIN_NETWORK.ARBITRUM_TESTNET]: {
       NETWORK: arbitrumSepolia,
@@ -563,10 +554,15 @@ export const VIEM_CONFIG = {
       EPNS_COMMUNICATOR_CONTRACT: '0xA1DF3E68D085aa6918bcc2506b24e499830Db0eB',
     },
     [BLOCKCHAIN_NETWORK.LINEA_TESTNET]:{
-      NETWORK: lineaTestnet,
+      NETWORK: lineaSepoliaTestnet,
       API_BASE_URL: API_BASE_URL[ENV.DEV],
       EPNS_COMMUNICATOR_CONTRACT: '0x9cb3bd7550B5c92baA056Fc0F08132f49508145F',
-    }
+    },
+    [BLOCKCHAIN_NETWORK.CYBER_CONNECT_TESTNET]: {
+      NETWORK: cyberConnectTestnet,
+      API_BASE_URL: API_BASE_URL[ENV.STAGING],
+      EPNS_COMMUNICATOR_CONTRACT: '0x9cb3bd7550B5c92baA056Fc0F08132f49508145F',
+    },
   },
   [ENV.LOCAL]: {
     [BLOCKCHAIN_NETWORK.ETH_SEPOLIA]: {
@@ -590,9 +586,9 @@ export const VIEM_CONFIG = {
       EPNS_COMMUNICATOR_CONTRACT: '0x754787358fac861ef904c92d54f7adb659779317',
     },
     [BLOCKCHAIN_NETWORK.POLYGON_ZK_EVM_TESTNET]: {
-      NETWORK: polygonZkEvmTestnet,
+      NETWORK: polygonZkEvmCordona,
       API_BASE_URL: API_BASE_URL[ENV.DEV],
-      EPNS_COMMUNICATOR_CONTRACT: '0x630b152e4185c63D7177c656b56b26f878C61572',
+      EPNS_COMMUNICATOR_CONTRACT: '0x9cb3bd7550b5c92baa056fc0f08132f49508145f',
     },
     [BLOCKCHAIN_NETWORK.ARBITRUM_TESTNET]: {
       NETWORK: arbitrumSepolia,
@@ -610,10 +606,15 @@ export const VIEM_CONFIG = {
       EPNS_COMMUNICATOR_CONTRACT: '0xA1DF3E68D085aa6918bcc2506b24e499830Db0eB',
     },
     [BLOCKCHAIN_NETWORK.LINEA_TESTNET]:{
-      NETWORK: lineaTestnet,
+      NETWORK: lineaSepoliaTestnet,
       API_BASE_URL: API_BASE_URL[ENV.LOCAL],
       EPNS_COMMUNICATOR_CONTRACT: '0x9cb3bd7550B5c92baA056Fc0F08132f49508145F',
-    }
+    },
+    [BLOCKCHAIN_NETWORK.CYBER_CONNECT_TESTNET]: {
+      NETWORK: cyberConnectTestnet,
+      API_BASE_URL: API_BASE_URL[ENV.STAGING],
+      EPNS_COMMUNICATOR_CONTRACT: '0x9cb3bd7550B5c92baA056Fc0F08132f49508145F',
+    },
   },
 };
 
