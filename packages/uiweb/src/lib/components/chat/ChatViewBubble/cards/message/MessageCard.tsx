@@ -216,6 +216,7 @@ export const MessageCard = ({
         border={position ? `${theme.border?.chatSentBubble}` : `${theme.border?.chatReceivedBubble}`}
         padding="8px 12px"
         justifyContent="start"
+        flexDirection="column"
         maxWidth="inherit"
         minWidth="72px"
         position="relative"
@@ -223,7 +224,6 @@ export const MessageCard = ({
       >
         <Section
           flexDirection="column"
-          padding="5px 0 15px 0"
           maxWidth="inherit"
         >
           {fragments.map((fragment, fragmentIndex) => {
@@ -239,7 +239,6 @@ export const MessageCard = ({
 
         {/* Timestamp rendering */}
         <Span
-          position="absolute"
           fontSize={
             position
               ? `${theme.fontSize?.chatSentBubbleTimestampText}`
@@ -251,8 +250,9 @@ export const MessageCard = ({
               : `${theme.fontWeight?.chatReceivedBubbleTimestampText}`
           }
           color={position ? `${theme.textColor?.chatSentBubbleText}` : `${theme.textColor?.chatReceivedBubbleText}`}
-          bottom="6px"
-          right="10px"
+          right="0px"
+          width="auto"
+          alignSelf="flex-end"
         >
           {time}
         </Span>

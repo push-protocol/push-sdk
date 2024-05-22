@@ -271,6 +271,7 @@ export const ChatViewBubble = ({
         >
           {/* hide overflow for chat cards and border them */}
           <Section
+            alignSelf={chatPosition ? 'flex-end' : 'flex-start'}
             borderRadius={
               chatPosition
                 ? `${theme.borderRadius?.chatBubbleBorderRadius} 0px ${theme.borderRadius?.chatBubbleBorderRadius} ${theme.borderRadius?.chatBubbleBorderRadius}`

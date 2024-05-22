@@ -29,25 +29,27 @@ import { IMessagePayload } from '../../../exportedTypes';
 // Exported Interfaces & Types
 
 // Exported Functions
+
+const getParsedMessage = (message: string): FileMessageContent => {
+  try {
+    return JSON.parse(message);
+  } catch (error) {
+    console.error('UIWeb::components::ChatViewBubble::FileCard::error while parsing image', error);
+    return {
+      name: 'Unable to load file',
+      content: '',
+      size: 0,
+      type: '',
+    };
+  }
+};
+
 export const FileCard = ({ chat }: { chat: IMessagePayload }) => {
   // derive message
   const message =
     typeof chat.messageObj === 'object' ? (chat.messageObj?.content as string) ?? '' : (chat.messageObj as string);
 
-  const parsedMessage = {
-    name: 'Unable to load file',
-    content: '',
-    size: 0,
-  };
-
-  try {
-    const fileContent: FileMessageContent = JSON.parse(message);
-    parsedMessage.name = fileContent.name;
-    parsedMessage.content = fileContent.content;
-    parsedMessage.size = fileContent.size;
-  } catch (error) {
-    console.error('UIWeb::components::ChatViewBubble::FileCard::error while parsing image', error);
-  }
+  const parsedMessage = getParsedMessage(message);
 
   return (
     <Section
