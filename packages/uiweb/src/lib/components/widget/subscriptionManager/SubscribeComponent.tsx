@@ -37,12 +37,12 @@ export const SubscribeComponent: React.FC<ISubscribeComponentProps> = (options: 
   const theme = useContext(ThemeContext);
   const { signer, setAccount, setSigner, user, account } = useWidgetData();
   const subscribeToast = useToast();
-  const [modifiedSettings, setModifiedSettings] = useState<NotificationSettingType[] | null>(
+  const [modifiedSettings, setModifiedSettings] = useState<NotificationSettingType[]>(
     useMemo(() => {
       if (channelInfo && channelInfo?.channel_settings) {
         return notifUserSettingFromChannelSetting({ settings: JSON.parse(channelInfo?.channel_settings) });
       }
-      return null;
+      return [];
     }, [channelInfo])
   );
 
@@ -51,7 +51,7 @@ export const SubscribeComponent: React.FC<ISubscribeComponentProps> = (options: 
       const response = await subscribeToChannel({
         channelAddress: channelAddress,
         channelSettings: notifUserSettingFormatString({
-          settings: modifiedSettings!,
+          settings: modifiedSettings,
         }),
       });
       if (response && response?.status === 204) {

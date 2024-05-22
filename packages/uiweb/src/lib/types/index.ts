@@ -127,12 +127,12 @@ export const SIDEBAR_PLACEHOLDER_KEYS = {
   NEW_CHAT: 'NEW_CHAT',
 } as const;
 
-export type SidebarPlaceholderKeys = typeof SIDEBAR_PLACEHOLDER_KEYS[keyof typeof SIDEBAR_PLACEHOLDER_KEYS];
+export type SidebarPlaceholderKeys = (typeof SIDEBAR_PLACEHOLDER_KEYS)[keyof typeof SIDEBAR_PLACEHOLDER_KEYS];
 
-export type LocalStorageKeys = typeof LOCAL_STORAGE_KEYS[keyof typeof LOCAL_STORAGE_KEYS];
-export type PushTabs = typeof PUSH_TABS[keyof typeof PUSH_TABS];
-export type PushSubTabs = typeof PUSH_SUB_TABS[keyof typeof PUSH_SUB_TABS];
-export type SocketType = typeof SOCKET_TYPE[keyof typeof SOCKET_TYPE];
+export type LocalStorageKeys = (typeof LOCAL_STORAGE_KEYS)[keyof typeof LOCAL_STORAGE_KEYS];
+export type PushTabs = (typeof PUSH_TABS)[keyof typeof PUSH_TABS];
+export type PushSubTabs = (typeof PUSH_SUB_TABS)[keyof typeof PUSH_SUB_TABS];
+export type SocketType = (typeof SOCKET_TYPE)[keyof typeof SOCKET_TYPE];
 
 export interface FileMessageContent {
   content: string;
@@ -215,3 +215,22 @@ export interface IFrame {
   frameDetails?: FrameDetails;
   message?: string;
 }
+
+export type WalletType = {
+  name: string;
+  url: string;
+};
+
+export type AppMetaDataType = {
+  name: string;
+  logo: string;
+  icon: string;
+  description: string;
+  recommendedInjectedWallets: WalletType[];
+};
+export type ChainType = {
+  id: string; // Assuming all IDs are in hexadecimal string format
+  token: string;
+  label: string;
+  rpcUrl: string;
+};

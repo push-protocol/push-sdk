@@ -340,13 +340,7 @@ export function App() {
             <SocketContext.Provider value={socketData}>
               <AccountContext.Provider value={{ pgpPrivateKey, setSpaceId }}>
                 <WidgetUIProvider>
-                  <ChatUIProvider
-                    env={env}
-                    theme={darkChatTheme}
-                    // signer={signer}
-                    // user={pushUser}
-                    debug={true}
-                  >
+                  <ChatUIProvider env={env} theme={darkChatTheme} debug={true}>
                     <SpacesUIProvider spaceUI={spaceUI} theme={customDarkTheme}>
                       <Routes>
                         <Route

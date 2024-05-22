@@ -39,7 +39,7 @@ export const ManageNotficationsComponent: React.FC<IManageNotificationComponentP
   options: IManageNotificationComponentProps
 ) => {
   const { userSettings, channelAddress, channelInfo, handleNext, autoconnect = false } = options || {};
-  const [modifiedSettings, setModifiedSettings] = useState<PushAPI.NotificationSettingType[] | null>([...userSettings]);
+  const [modifiedSettings, setModifiedSettings] = useState<PushAPI.NotificationSettingType[]>([...userSettings]);
   const {
     unsubscribeError,
     unsubscribeLoading,

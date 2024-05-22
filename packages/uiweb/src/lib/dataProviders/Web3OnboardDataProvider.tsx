@@ -7,8 +7,9 @@ import walletConnectModule from '@web3-onboard/walletconnect';
 import init from '@web3-onboard/core';
 import PushIcon from '../icons/Bell.svg';
 import { ReactNode } from 'react';
+import { AppMetaDataType, ChainType } from '../types';
 
-const APP_META_DATA = {
+const APP_META_DATA: AppMetaDataType = {
   name: 'Push Protocol',
   logo: PushIcon,
   icon: PushIcon,
@@ -24,7 +25,7 @@ const wcv2InitOptions = {
 
 const walletConnect = walletConnectModule(wcv2InitOptions);
 const coinbaseWalletSdk = coinbaseWalletModule({ darkMode: true });
-const CHAINS = [
+const CHAINS: ChainType[] = [
   {
     id: '0x1',
     token: 'ETH',
