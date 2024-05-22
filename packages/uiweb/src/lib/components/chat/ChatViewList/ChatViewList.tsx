@@ -157,7 +157,6 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
       return () => clearTimeout(timer);
     }
 
-    return () => {};
   }, [chatAcceptStream, participantJoinStream]);
 
   // Change listtype to 'UINITIALIZED' and hidden to true when participantRemoveStream or participantLeaveStream is received
@@ -416,5 +415,5 @@ const ChatViewListCard = styled(Section)<IThemeProps>`
 `;
 
 const ChatViewListCardInner = styled(Section)<IThemeProps>`
-  filter: ${(props) => (props.blur ? 'blur(6px)' : 'none')};
+  filter: ${(props) => (props.blur ? 'blur(12px)' : 'none')};
 `;
