@@ -6,7 +6,7 @@ export const GROUP_ROLES = {
   MEMBER: 'MEMBER',
 } as const;
 
-export type GroupRolesKeys = typeof GROUP_ROLES[keyof typeof GROUP_ROLES];
+export type GroupRolesKeys = (typeof GROUP_ROLES)[keyof typeof GROUP_ROLES];
 export interface ChatMemberCounts {
   overallCount: number;
   adminsCount: number;
@@ -37,7 +37,7 @@ export const TYPE = {
   GUILD: 'GUILD',
 } as const;
 
-export type TypeKeys = typeof TYPE[keyof typeof TYPE];
+export type TypeKeys = (typeof TYPE)[keyof typeof TYPE];
 
 export const CATEGORY = {
   ERC20: 'ERC20',
@@ -51,7 +51,7 @@ export const UNIT = {
   ERC20: 'TOKEN',
   ERC721: 'NFT',
 } as const;
-export type UnitKeys = typeof UNIT[keyof typeof UNIT];
+export type UnitKeys = (typeof UNIT)[keyof typeof UNIT];
 export const SUBCATEGORY = {
   HOLDER: 'holder',
   OWENER: 'owner',
@@ -65,7 +65,7 @@ export type ReadonlyInputType = {
   title: string;
 };
 export type InputType = DropdownValueType[] | ReadonlyInputType;
-export type SubCategoryKeys = typeof CATEGORY[keyof typeof CATEGORY];
+export type SubCategoryKeys = (typeof CATEGORY)[keyof typeof CATEGORY];
 
 export type DropdownCategoryValuesType = {
   [key in TypeKeys]: InputType;
@@ -110,5 +110,12 @@ export interface IChatInfoResponse {
   };
   participants?: Array<string>;
   recipient?: string;
+}
+
+export interface FrameCommand {
+  owner: string;
+  command: string;
+  url: string;
+  description?: string;
 }
 export * from './tokenGatedGroupCreationType';

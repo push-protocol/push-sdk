@@ -99,7 +99,9 @@ export const allowedNetworks = {
     123, // for fuse testnet
     80085, // for berachain testnet
     2442, // polygon zkevm
+
     111557560 // cyber connect testnet
+
   ],
   staging: [
     // 42, //for kovan
@@ -111,7 +113,9 @@ export const allowedNetworks = {
     123, // for fuse testnet
     80085, // for berachain testnet
     2442, // polygon zkevm
+
     111557560 // cyber connect testnet
+
   ],
   local: [
     11155111, // for eth sepolia
@@ -122,7 +126,9 @@ export const allowedNetworks = {
     123, // for fuse testnet
     80085, // for berachain testnet
     2442, // polygon zkevm
+
     111557560 // cyber connect testnet
+
   ],
 };
 
@@ -152,8 +158,7 @@ export const FILE_ICON = (extension: string) =>
 
 // Livekit Server URLs
 export const LIVEKIT_SERVER_URL = 'https://spacev2-demo-17wvllxz.livekit.cloud';
-export const LIVEKIT_SERVER_WEBSOCKET_URL =
-  'wss://spacev2-demo-17wvllxz.livekit.cloud';
-export const LIVEKIT_TOKEN_GENERATOR_SERVER_URL =
-  'https://ms-lk-server.onrender.com';
+export const LIVEKIT_SERVER_WEBSOCKET_URL = 'wss://spacev2-demo-17wvllxz.livekit.cloud';
+export const LIVEKIT_TOKEN_GENERATOR_SERVER_URL = 'https://ms-lk-server.onrender.com';
 export const GUEST_MODE_ACCOUNT = '0x0000000000000000000000000000000000000001';
+export const FRAMES_REGISTRY_URL = 'https://frames.push.org/api/register-frame';

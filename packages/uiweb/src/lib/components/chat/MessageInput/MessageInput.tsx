@@ -24,13 +24,15 @@ import { ConnectButtonComp } from '../ConnectButton';
 import { Modal, ModalHeader } from '../reusables/Modal';
 import { ThemeContext } from '../theme/ThemeProvider';
 
-import { PUBLIC_GOOGLE_TOKEN, device } from '../../../config';
+import { FRAMES_REGISTRY_URL, PUBLIC_GOOGLE_TOKEN, device } from '../../../config';
 import usePushUser from '../../../hooks/usePushUser';
 import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, type FileMessageContent } from '../../../types';
 import { GIFType, Group, IChatTheme, MessageInputProps } from '../exportedTypes';
 import { checkIfAccessVerifiedGroup } from '../helpers';
 import { InfoContainer } from '../reusables';
-import { IChatInfoResponse } from '../types';
+
+import { IChatInfoResponse, FrameCommand } from '../types';
+import { extractDynamicArgs } from '../../../utilities/getFrameUrlDynamicParams';
 
 /**
  * @interface IThemeProps
@@ -85,7 +87,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   const [isRules, setIsRules] = useState<boolean>(false);
   const [isMember, setIsMember] = useState<boolean>(false);
   const [formattedChatId, setFormattedChatId] = useState<string>('');
-
+  const [allFrameCommands, setAllFrameCommands] = useState<FrameCommand[]>([]); // all available frame commands
+  const [filteredFrameCommands, setFilteredFrameCommands] = useState<FrameCommand[]>([]); // filtered frame commands based on typed command
   const { getGroupByIDnew } = useGetGroupByIDnew();
   const [groupInfo, setGroupInfo] = useState<Group | null>(null);
 
@@ -119,6 +122,22 @@ export const MessageInput: React.FC<MessageInputProps> = ({
 
   const onChangeTypedMessage = (val: string) => {
     setTypedMessage(val);
+    if (val === '') setFilteredFrameCommands([]);
+    // Check if the message contains a slash and process accordingly
+    if (val.includes('/')) {
+      const parts = val.split(' ');
+
+      const commandIndex = parts.findIndex((part) => part.startsWith('/'));
+
+      if (commandIndex !== -1) {
+        // Filter commands that start with the typed command part
+        const matchingCommands = allFrameCommands.filter((command) => command.command.startsWith(parts[commandIndex]));
+
+        if (matchingCommands.length > 0) {
+          setFilteredFrameCommands(matchingCommands);
+        }
+      }
+    }
   };
   useClickAway(modalRef, () => {
     setShowEmojis(false);
@@ -248,6 +267,20 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       });
     }
   }, [chatAcceptStream]);
+
+  // fetch all available frame commands on mount
+  useEffect(() => {
+    const fetchAllFrameCommands = async () => {
+      console.log('fetching all frame commands');
+      const response = await fetch(FRAMES_REGISTRY_URL);
+      const data = await response.json();
+      if (data) {
+        console.log('data', data);
+        setAllFrameCommands(data);
+      }
+    };
+    fetchAllFrameCommands();
+  }, []);
 
   const transformGroupDetails = (item: any): void => {
     if (groupInfo?.chatId === item?.chatId) {
@@ -387,11 +420,32 @@ export const MessageInput: React.FC<MessageInputProps> = ({
 
   const sendPushMessage = async (content: string, type: string) => {
     try {
+      if (content.includes('/')) {
+        const parts = content.split(' ');
+        const commandIndex = parts.findIndex((part) => part.startsWith('/'));
+        const frameCommand = parts[commandIndex];
+        const matchingCommand = allFrameCommands.find((command) => command.command === frameCommand);
+        if (matchingCommand) {
+          let url = matchingCommand.url;
+          const dynamicArgs = extractDynamicArgs(url);
+          const dynamicArgsValues = parts.slice(commandIndex + 1, parts.length);
+
+          dynamicArgs.forEach((arg, index) => {
+            url = url.replace(`\${${arg}}`, dynamicArgsValues[index]);
+          });
+          const textBeforeCommand = parts.slice(0, commandIndex).join(' ');
+          content = `${textBeforeCommand} ${url} ${dynamicArgsValues.slice(dynamicArgs.length).join(' ')}`;
+        }
+
+        setFilteredFrameCommands([]);
+      }
+
       const sendMessageResponse = await sendMessage({
         message: content,
         chatId: formattedChatId,
         messageType: type as any,
       });
+
       if (sendMessageResponse && typeof sendMessageResponse === 'string' && sendMessageResponse.includes('403')) {
         setAccessControl(chatId, true);
         setVerified(false);
@@ -401,7 +455,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       console.log(error);
     }
   };
-
   const sendTextMsg = async () => {
     if (typedMessage.trim() !== '') {
       await sendPushMessage(typedMessage as string, 'Text');
@@ -433,7 +486,53 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       justifyContent="space-between"
       alignItems="center"
       className={chatInfo?.list === 'REQUESTS' ? 'hide' : ''}
+      position="relative"
     >
+      {filteredFrameCommands && filteredFrameCommands.length > 0 && (
+        <Section
+          background="white"
+          flexDirection="column"
+          gap="10px"
+          position="absolute"
+          bottom="55px"
+          width="100%"
+          padding="8px 0"
+          borderRadius="13px"
+          maxHeight="200px"
+          overflow="auto"
+        >
+          {filteredFrameCommands.map((command, index) => (
+            <Section
+              key={index}
+              gap="4px"
+              flexDirection="column"
+              padding="8px"
+              alignItems="flex-start"
+              justifyContent="flex-start"
+              width="94%"
+              margin="0 auto"
+              border="1px solid #eadfdf"
+              borderRadius="13px"
+            >
+              <Span
+                fontWeight="600"
+                fontSize="18px"
+              >
+                {command.command}
+                {`${
+                  extractDynamicArgs(command.url).length > 0 ? ` [${extractDynamicArgs(command.url).join('] [')}]` : ``
+                }`}
+              </Span>
+              <Span
+                fontSize="14px"
+                fontWeight="400"
+              >
+                {command.description ?? 'This Frame does something '}
+              </Span>
+            </Section>
+          ))}
+        </Section>
+      )}
       <TypebarSection
         width="100%"
         overflow="hidden"
@@ -582,6 +681,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                   />
                 </Section>
               )}
+
               <MultiLineInput
                 disabled={loading ? true : false}
                 theme={theme}
