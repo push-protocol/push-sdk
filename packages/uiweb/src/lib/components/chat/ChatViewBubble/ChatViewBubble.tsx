@@ -17,9 +17,17 @@ import { BsLightning } from 'react-icons/bs';
 import { FaBell, FaLink, FaRegThumbsUp } from 'react-icons/fa';
 import { MdError, MdOpenInNew } from 'react-icons/md';
 import { FILE_ICON, allowedNetworks, device } from '../../../config';
-import { formatFileSize, getPfp, pCAIP10ToWallet, shortenText, sign, toSerialisedHexString } from '../../../helpers';
+import {
+  formatFileSize,
+  getPfp,
+  pCAIP10ToWallet,
+  shortenText,
+  sign,
+  toSerialisedHexString,
+  isMessageEncrypted,
+} from '../../../helpers';
 import { createBlockie } from '../../../helpers/blockies';
-import { FileMessageContent, FrameDetails, IFrame, IFrameButton } from '../../../types';
+import { FileMessageContent, FrameDetails, IFrame, IFrameButton, IReactionsForChatMessages } from '../../../types';
 import { extractWebLink, getFormattedMetadata, hasWebLink } from '../../../utilities';
 import { IMessagePayload, TwitterFeedReturnType } from '../exportedTypes';
 import { Button, TextInput } from '../reusables';
@@ -29,6 +37,9 @@ import { GIFCard } from './cards/gif/GIFCard';
 import { ImageCard } from './cards/image/ImageCard';
 import { MessageCard } from './cards/message/MessageCard';
 import { TwitterCard } from './cards/twitter/TwitterCard';
+
+import { Reactions } from './reactions/Reactions';
+import { ReactionPicker } from './reactions/ReactionPicker';
 
 const SenderMessageAddress = ({ chat }: { chat: IMessagePayload }) => {
   const { user } = useContext(ChatDataContext);
@@ -136,13 +147,13 @@ const SenderMessageProfilePicture = ({ chat }: { chat: IMessagePayload }) => {
 };
 
 const MessageWrapper = ({
-  chat,
+  chatPayload,
+  showChatMeta,
   children,
-  isGroup,
 }: {
-  chat: IMessagePayload;
+  chatPayload: IMessagePayload;
+  showChatMeta: boolean;
   children: ReactNode;
-  isGroup: boolean;
 }) => {
   const { user } = useChatData();
   const theme = useContext(ThemeContext);
@@ -152,18 +163,20 @@ const MessageWrapper = ({
       flexDirection="row"
       justifyContent="start"
       gap="6px"
+      width="100%"
       maxWidth="100%"
     >
-      {isGroup && pCAIP10ToWallet(chat?.fromCAIP10) !== pCAIP10ToWallet(user?.account ?? '') && (
-        <SenderMessageProfilePicture chat={chat} />
+      {showChatMeta && pCAIP10ToWallet(chatPayload?.fromCAIP10) !== pCAIP10ToWallet(user?.account ?? '') && (
+        <SenderMessageProfilePicture chat={chatPayload} />
       )}
       <Section
         justifyContent="start"
         flexDirection="column"
         maxWidth="100%"
+        width="100%"
       >
-        {isGroup && pCAIP10ToWallet(chat?.fromCAIP10) !== pCAIP10ToWallet(user?.account ?? '') && (
-          <SenderMessageAddress chat={chat} />
+        {showChatMeta && pCAIP10ToWallet(chatPayload?.fromCAIP10) !== pCAIP10ToWallet(user?.account ?? '') && (
+          <SenderMessageAddress chat={chatPayload} />
         )}
         {children}
       </Section>
@@ -173,94 +186,183 @@ const MessageWrapper = ({
 
 export const ChatViewBubble = ({
   decryptedMessagePayload,
-  isGroup,
+  chatPayload: payload,
+  chatReactions,
+  showChatMeta = false,
+  chatId,
+  actionId,
+  singularActionId,
+  setSingularActionId,
 }: {
   decryptedMessagePayload: IMessagePayload;
-  isGroup: boolean;
+  chatPayload?: IMessagePayload;
+  chatReactions?: any;
+  showChatMeta?: boolean;
+  chatId?: string;
+  actionId?: string | null | undefined;
+  singularActionId?: string | null | undefined;
+  setSingularActionId?: (singularActionId: string | null | undefined) => void;
 }) => {
+  // get theme
+  const theme = useContext(ThemeContext);
+
+  // TODO: Remove decryptedMessagePayload in v2 component
+  const chatPayload = payload ?? decryptedMessagePayload;
+
+  // setup reactions picker visibility
+  const [showReactionPicker, setShowReactionPicker] = useState(false);
+  const [userSelectingReaction, setUserSelectingReaction] = useState(false);
+
+  // get user
   const { user } = useChatData();
-  const position =
-    pCAIP10ToWallet(decryptedMessagePayload.fromDID).toLowerCase() !==
-    pCAIP10ToWallet(user?.account ?? '')?.toLowerCase()
-      ? 0
-      : 1;
+
+  // get chat position
+  const chatPosition =
+    pCAIP10ToWallet(chatPayload.fromDID).toLowerCase() !== pCAIP10ToWallet(user?.account ?? '')?.toLowerCase() ? 0 : 1;
+
+  // derive message
+  const message =
+    typeof chatPayload.messageObj === 'object'
+      ? (chatPayload.messageObj?.content as string) ?? ''
+      : (chatPayload.messageObj as string);
+
+  // check and render tweets
   const { tweetId, messageType }: TwitterFeedReturnType = checkTwitterUrl({
-    message: decryptedMessagePayload?.messageContent,
+    message: message,
   });
+
   if (messageType === 'TwitterFeedLink') {
-    decryptedMessagePayload.messageType = 'TwitterFeedLink';
+    chatPayload.messageType = 'TwitterFeedLink';
   }
+
+  // test if the payload is encrypted, if so convert it to text
+  if (isMessageEncrypted(message)) {
+    chatPayload.messageType = 'Text';
+  }
+
+  // attach a ref to chat sidebar
+  const chatSidebarRef = useRef<HTMLDivElement>(null);
 
   return (
     <MessageWrapper
-      chat={decryptedMessagePayload}
-      isGroup={isGroup}
+      chatPayload={chatPayload}
+      showChatMeta={showChatMeta}
     >
-      {/* Message Card */}
-      {decryptedMessagePayload.messageType === 'Text' && (
-        <MessageCard
-          isGroup={isGroup}
-          chat={decryptedMessagePayload}
-          position={position}
-          account={user?.account ?? ''}
-        />
-      )}
+      {/* Chat Card + Reaction Container */}
+      <ChatWrapperSection
+        flexDirection={chatPosition ? 'row-reverse' : 'row'}
+        alignSelf={chatPosition ? 'start' : 'end'}
+        justifyContent="start"
+        gap="10px"
+        maxWidth="100%"
+        width="100%"
+        onMouseEnter={() => setShowReactionPicker(true)}
+        onMouseLeave={() => setShowReactionPicker(false)}
+      >
+        <ChatBubbleSection
+          margin="6px 0px 0px 0px"
+          flexDirection="column"
+        >
+          {/* hide overflow for chat cards and border them */}
+          <Section
+            alignSelf={chatPosition ? 'flex-end' : 'flex-start'}
+            borderRadius={
+              chatPosition
+                ? `${theme.borderRadius?.chatBubbleBorderRadius} 0px ${theme.borderRadius?.chatBubbleBorderRadius} ${theme.borderRadius?.chatBubbleBorderRadius}`
+                : `0px ${theme.borderRadius?.chatBubbleBorderRadius} ${theme.borderRadius?.chatBubbleBorderRadius} ${theme.borderRadius?.chatBubbleBorderRadius}`
+            }
+            overflow="hidden"
+          >
+            {/* Message Card */}
+            {chatPayload.messageType === 'Text' && (
+              <MessageCard
+                chat={chatPayload}
+                position={chatPosition}
+                account={user?.account ?? ''}
+              />
+            )}
 
-      {/* Image Card */}
-      {decryptedMessagePayload.messageType === 'Image' && (
-        <ImageCard
-          isGroup={isGroup}
-          chat={decryptedMessagePayload}
-          position={position}
-        />
-      )}
+            {/* Image Card */}
+            {chatPayload.messageType === 'Image' && <ImageCard chat={chatPayload} />}
 
-      {/* File Card */}
-      {decryptedMessagePayload.messageType === 'File' && (
-        <FileCard
-          isGroup={isGroup}
-          chat={decryptedMessagePayload}
-          position={position}
-        />
-      )}
+            {/* File Card */}
+            {chatPayload.messageType === 'File' && <FileCard chat={chatPayload} />}
 
-      {/* Gif Card */}
-      {decryptedMessagePayload.messageType === 'GIF' && (
-        <GIFCard
-          isGroup={isGroup}
-          chat={decryptedMessagePayload}
-          position={position}
-        />
-      )}
+            {/* Gif Card */}
+            {chatPayload.messageType === 'GIF' && <GIFCard chat={chatPayload} />}
 
-      {/* Twitter Card */}
-      {decryptedMessagePayload.messageType === 'TwitterFeedLink' && (
-        <TwitterCard
-          tweetId={tweetId}
-          isGroup={isGroup}
-          chat={decryptedMessagePayload}
-          position={position}
-        />
-      )}
+            {/* Twitter Card */}
+            {chatPayload.messageType === 'TwitterFeedLink' && (
+              <TwitterCard
+                tweetId={tweetId}
+                chat={chatPayload}
+              />
+            )}
 
-      {/* Default Message Card */}
-      {decryptedMessagePayload.messageType !== 'Text' &&
-        decryptedMessagePayload.messageType !== 'Image' &&
-        decryptedMessagePayload.messageType !== 'File' &&
-        decryptedMessagePayload.messageType !== 'GIF' &&
-        decryptedMessagePayload.messageType !== 'TwitterFeedLink' && (
-          <MessageCard
-            isGroup={isGroup}
-            chat={decryptedMessagePayload}
-            position={position}
-            account={user?.account ?? ''}
-          />
-        )}
+            {/* Default Message Card */}
+            {chatPayload.messageType !== 'Text' &&
+              chatPayload.messageType !== 'Image' &&
+              chatPayload.messageType !== 'File' &&
+              chatPayload.messageType !== 'GIF' &&
+              chatPayload.messageType !== 'TwitterFeedLink' && (
+                <MessageCard
+                  chat={chatPayload}
+                  position={chatPosition}
+                  account={user?.account ?? ''}
+                />
+              )}
+          </Section>
+
+          {/* render if reactions are present */}
+          {chatReactions && !!chatReactions.length && (
+            <Section
+              gap="4px"
+              margin="-5px 0px 0px 0px"
+              left="10px"
+              justifyContent="flex-start"
+            >
+              <Reactions chatReactions={chatReactions} />
+            </Section>
+          )}
+        </ChatBubbleSection>
+
+        <ChatBubbleSidebarSection
+          ref={chatSidebarRef}
+          alignItems="flex-end"
+          justifyContent={chatPosition ? 'flex-end' : 'flex-start'}
+          margin={chatReactions && !!chatReactions.length ? '0px 0px 41px 0px' : '0px 0px 15px 0px'}
+          width="auto"
+          flex="1 0 auto"
+          style={{
+            visibility:
+              showReactionPicker || (userSelectingReaction && actionId === singularActionId) ? 'visible' : 'hidden',
+          }}
+        >
+          {/* Only render if user and user readmode is false}
+          {/* For reaction - additional condition - only render if chatId is passed and setSelectedChatMsgId is passed */}
+          {user && !user.readmode() && chatId && (
+            <ReactionPicker
+              chatId={chatId}
+              chat={chatPayload}
+              userSelectingReaction={userSelectingReaction && actionId === singularActionId}
+              setUserSelectingReaction={setUserSelectingReaction}
+              actionId={actionId}
+              singularActionId={singularActionId}
+              setSingularActionId={setSingularActionId}
+              chatSidebarRef={chatSidebarRef}
+            />
+          )}
+        </ChatBubbleSidebarSection>
+      </ChatWrapperSection>
     </MessageWrapper>
   );
 };
 
-const MessageSection = styled(Section)`
+const MessageSection = styled(Section)``;
+
+const ChatWrapperSection = styled(Section)``;
+
+const ChatBubbleSection = styled(Section)`
   max-width: 70%;
 
   @media ${device.tablet} {
@@ -270,4 +372,9 @@ const MessageSection = styled(Section)`
   @media ${device.mobileL} {
     max-width: 90%;
   }
+`;
+
+const ChatBubbleSidebarSection = styled(Section)`
+  width: auto;
+  position: relative;
 `;

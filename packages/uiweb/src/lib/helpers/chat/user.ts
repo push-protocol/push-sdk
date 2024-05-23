@@ -1,11 +1,7 @@
 import type { Env, IUser } from '@pushprotocol/restapi';
-import {
-
-  ProfilePicture,
-} from '../../config';
+import { ProfilePicture } from '../../config';
 import { ethers } from 'ethers';
 import { getUdResolver } from '../udResolver';
-
 
 export const displayDefaultUser = ({ caip10 }: { caip10: string }): IUser => {
   const userCreated: IUser = {
@@ -61,6 +57,9 @@ export const getUnstoppableName = async (
 ) => {
   // Unstoppable Domains resolution library
   const udResolver = getUdResolver(env);
+  if (!udResolver) {
+    return null;
+  }
 
   // attempt reverse resolution on provided address
   let udName = await udResolver.reverse(checksumWallet);
@@ -71,5 +70,3 @@ export const getUnstoppableName = async (
   }
   return udName;
 };
-
-

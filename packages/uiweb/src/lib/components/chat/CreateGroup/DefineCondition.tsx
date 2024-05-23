@@ -16,12 +16,7 @@ import { IChatTheme } from '../theme';
 import { device } from '../../../config';
 import { OPERATOR_OPTIONS_INFO } from '../constants';
 
-export const DefineCondtion = ({
-  onClose,
-  handlePrevious,
-  handleNext,
-  criteriaStateManager,
-}: ModalHeaderProps) => {
+export const DefineCondtion = ({ onClose, handlePrevious, handleNext, criteriaStateManager }: ModalHeaderProps) => {
   const theme = useContext(ThemeContext);
   const isMobile = useMediaQuery(device.mobileL);
 
@@ -32,10 +27,7 @@ export const DefineCondtion = ({
       criteriaState.selectedRules.length < 1
         ? theme.backgroundColor?.buttonDisableBackground
         : theme.backgroundColor?.buttonBackground,
-    color:
-      criteriaState.selectedRules.length < 1
-        ? theme.textColor?.buttonDisableText
-        : theme.textColor?.buttonText,
+    color: criteriaState.selectedRules.length < 1 ? theme.textColor?.buttonDisableText : theme.textColor?.buttonText,
   };
 
   const verifyAndDoNext = () => {
@@ -43,26 +35,19 @@ export const DefineCondtion = ({
   };
 
   const getRules = () => {
-    return [
-      [{ operator: criteriaState.entryRuleTypeCondition }],
-      ...criteriaState.selectedRules.map((el) => [el]),
-    ];
+    return [[{ operator: criteriaState.entryRuleTypeCondition }], ...criteriaState.selectedRules.map((el) => [el])];
   };
 
   // set state for edit condition
   useEffect(() => {
     if (criteriaState.isCondtionUpdateEnabled()) {
       criteriaState.setEntryRuleTypeCondition(
-        criteriaState.entryOptionTypeArray[
-          criteriaState.entryOptionsDataArrayUpdate
-        ]
+        criteriaState.entryOptionTypeArray[criteriaState.entryOptionsDataArrayUpdate]
       );
 
       if (criteriaState.selectedRules.length === 0) {
         criteriaState.setSelectedRule([
-          ...criteriaState.entryOptionsDataArray[
-            criteriaState.entryOptionsDataArrayUpdate
-          ],
+          ...criteriaState.entryOptionsDataArray[criteriaState.entryOptionsDataArrayUpdate],
         ]);
       }
     } else {
@@ -77,29 +62,23 @@ export const DefineCondtion = ({
       width={isMobile ? '300px' : '400px'}
     >
       <ModalHeader
-        title={
-          criteriaState.isCondtionUpdateEnabled()
-            ? 'Update Condition'
-            : 'Define Condition'
-        }
+        title={criteriaState.isCondtionUpdateEnabled() ? 'Update Condition' : 'Define Condition'}
         handleClose={onClose}
-        handlePrevious={handlePrevious}
+        handlePrevious={verifyAndDoNext}
       />
-         <Section flexDirection="column" >
-  
-          {criteriaState.selectedRules.length > 1 && (
-            <Section margin="5px 0 16px 0">
-              <OperatorContainer
-                operator={criteriaState.entryRuleTypeCondition}
-                setOperator={(newEl: string) => {
-                  criteriaState.setEntryRuleTypeCondition(
-                    newEl as keyof typeof OPERATOR_OPTIONS_INFO
-                  );
-                }}
-              />
-            </Section>
-          )}
-         {criteriaState.selectedRules.length > 0 && <ConditionSection
+      <Section flexDirection="column">
+        {criteriaState.selectedRules.length > 1 && (
+          <Section margin="5px 0 16px 0">
+            <OperatorContainer
+              operator={criteriaState.entryRuleTypeCondition}
+              setOperator={(newEl: string) => {
+                criteriaState.setEntryRuleTypeCondition(newEl as keyof typeof OPERATOR_OPTIONS_INFO);
+              }}
+            />
+          </Section>
+        )}
+        {criteriaState.selectedRules.length > 0 && (
+          <ConditionSection
             width="100%"
             overflow="hidden auto"
             maxHeight="15vh"
@@ -118,28 +97,37 @@ export const DefineCondtion = ({
                 }
               }}
             />
-          </ConditionSection>}
-   
-   
-        <AddButtons handleNext={handleNext} title={'+ Add criteria'} />
-        </Section>
-        {!criteriaState.selectedRules.length &&   <Span
+          </ConditionSection>
+        )}
+
+        <AddButtons
+          handleNext={handleNext}
+          title={'+ Add criteria'}
+        />
+      </Section>
+      {!criteriaState.selectedRules.length && (
+        <Span
           fontSize="15px"
           fontWeight="400"
           color={theme.textColor?.modalSubHeadingText}
         >
           You must add at least 1 criteria to enable gating
-        </Span>}
-     
-      <Button
+        </Span>
+      )}
+
+      {/* Button is not needed, back button is enough */}
+      {/* <Button
         onClick={verifyAndDoNext}
         customStyle={customButtonStyle}
         width="158px"
       >
         {criteriaState.isCondtionUpdateEnabled() ? 'Update' : 'Add'}
-      </Button>
+      </Button> */}
 
-      <InfoContainer label='Learn more about access gating rules' cta='https://push.org/docs/chat/build/conditional-rules-for-group/' />
+      <InfoContainer
+        label="Learn more about access gating rules"
+        cta="https://push.org/docs/chat/build/conditional-rules-for-group/"
+      />
     </Section>
   );
 };

@@ -35,7 +35,6 @@ const useFetchMessageUtilities = () => {
           page: page,
           limit: limit,
         });
-        console.debug(chats, 'chats from hook');
         return chats;
       } catch (error: Error | any) {
         setChatListLoading(false);
