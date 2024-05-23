@@ -186,9 +186,9 @@ const MessageWrapper = ({
 
 export const ChatViewBubble = ({
   decryptedMessagePayload,
-  chatPayload,
+  chatPayload: payload,
   chatReactions,
-  showChatMeta,
+  showChatMeta = false,
   chatId,
   actionId,
   singularActionId,
@@ -207,13 +207,7 @@ export const ChatViewBubble = ({
   const theme = useContext(ThemeContext);
 
   // TODO: Remove decryptedMessagePayload in v2 component
-  if (!chatPayload) {
-    chatPayload = decryptedMessagePayload;
-  }
-
-  if (!showChatMeta) {
-    showChatMeta = false;
-  }
+  const chatPayload = payload ?? decryptedMessagePayload;
 
   // setup reactions picker visibility
   const [showReactionPicker, setShowReactionPicker] = useState(false);
