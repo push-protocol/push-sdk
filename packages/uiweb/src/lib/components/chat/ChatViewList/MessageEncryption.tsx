@@ -68,6 +68,7 @@ export const EncryptionMessage = ({ id, className }: { id: EncryptionKeys; class
           fontWeight="400"
           textAlign="left"
           className={className}
+          animation={theme.skeletonBG}
         >
           {EncryptionMessageContent[id].text}
         </Span>

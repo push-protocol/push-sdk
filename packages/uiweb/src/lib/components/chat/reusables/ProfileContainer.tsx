@@ -14,7 +14,7 @@ import { Div, Image, Section, Span, Tooltip } from '../../reusables';
 import { CopyIcon } from '../../../icons/PushIcons';
 
 // Interfaces & Types
-import { IChatTheme } from '../theme';
+import { IChatTheme, getCustomTheme } from '../theme';
 type ProfileProps = {
   theme: IChatTheme;
   member: {
@@ -60,6 +60,7 @@ export const ProfileContainer = ({ theme, member, copy, customStyle, loading }: 
     }
   }, [member?.recipient, member?.icon]);
 
+
   return (
     <Section justifyContent="flex-start">
       <Section
@@ -69,6 +70,7 @@ export const ProfileContainer = ({ theme, member, copy, customStyle, loading }: 
         overflow="hidden"
         margin="0px 12px 0px 0px"
         position="relative"
+        animation={theme.skeletonBG}
         className={loading ? 'skeleton' : ''}
       >
         {member?.icon && (
@@ -127,6 +129,7 @@ export const ProfileContainer = ({ theme, member, copy, customStyle, loading }: 
                 copyToClipboard(pCAIP10ToWallet(member?.recipient || ''));
                 setCopyText('Copied');
               }}
+              animation={theme.skeletonBG}
               className={loading ? 'skeleton' : ''}
             >
               <Span
