@@ -20,7 +20,7 @@ import OpenLink from '../../../icons/OpenLink';
 import { SendCompIcon } from '../../../icons/SendCompIcon';
 import { Div, Section, Span, Spinner } from '../../reusables';
 import { ConditionsInformation } from '../ChatProfile/ChatProfileInfoModal';
-import { ConnectButtonComp } from '../ConnectButton';
+import { ConnectButton } from '../ConnectButton';
 import { Modal, ModalHeader } from '../reusables/Modal';
 import { ThemeContext } from '../theme/ThemeProvider';
 
@@ -60,7 +60,7 @@ const ConnectButtonSection = ({ autoConnect }: { autoConnect: boolean }) => {
           You need to connect your wallet to get started
         </Span>
       )}
-      <ConnectButtonComp autoConnect={autoConnect} />
+      <ConnectButton autoConnect={autoConnect} />
     </Section>
   );
 };

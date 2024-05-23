@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Div, Section, Span } from '../reusables/sharedStyling';
@@ -7,6 +7,7 @@ import { useChatData } from '../../hooks';
 import { SponserPushIcon } from '../../icons/SponserPush';
 import { ThemeContext } from '../chat/theme/ThemeProvider';
 import { MinimizeIcon } from '../../icons/Minimize';
+import { deriveChatId } from '../../helpers';
 
 /**
  * @interface IThemeProps
@@ -26,6 +27,26 @@ type ModalProps = {
 export const Modal: React.FC<ModalProps> = ({ chatId, isModalOpen, setIsModalOpen, modalTitle, welcomeComponent }) => {
   const { user } = useChatData();
   const theme = useContext(ThemeContext);
+  // set loading state
+  const [initialized, setInitialized] = useState({
+    loading: true,
+    derivedChatId: '',
+  });
+
+  useEffect(() => {
+    const fetchDerivedChatId = async () => {
+      setInitialized((currentState) => ({ ...currentState, loading: true }));
+
+      if (chatId) {
+        const id = await deriveChatId(chatId, user);
+        setInitialized({ loading: false, derivedChatId: id });
+      } else {
+        setInitialized({ loading: false, derivedChatId: '' });
+      }
+    };
+
+    fetchDerivedChatId();
+  }, [chatId, user]); // Re-run this effect if chatId or env changes
   return (
     <Container theme={theme}>
       {/* check other inputs for the components */}
@@ -49,31 +70,39 @@ export const Modal: React.FC<ModalProps> = ({ chatId, isModalOpen, setIsModalOpe
           <MinimizeIcon />
         </Section>
       </HeaderSection>
-      <Section
-        flexDirection="column"
-        height="82%"
-      >
-        <ChatProfile chatId={chatId} />
+      {!initialized.loading && chatId ? (
         <Section
-          flex="1 1 auto"
-          overflow="hidden"
-          padding="0 2px"
           flexDirection="column"
-          justifyContent="start"
+          height="82%"
         >
-          {!user || (user && user?.readmode()) ? <>{welcomeComponent}</> : <ChatViewList chatId={chatId} />}
-        </Section>
+          <Section flex="0 1 auto">
+            <ChatProfile chatId={initialized.derivedChatId} />
+          </Section>
+          <Section
+            flex="1 1 auto"
+            overflow="hidden"
+            padding="0 2px"
+            flexDirection="column"
+            justifyContent="start"
+          >
+            {!user || (user && user?.readmode()) ? (
+              <>{welcomeComponent}</>
+            ) : (
+              <ChatViewList chatId={initialized.derivedChatId} />
+            )}
+          </Section>
 
-        <Section
-          flex="0 1 auto"
-          position="static"
-        >
-          <MessageInput
-            chatId={chatId}
-            autoConnect={false}
-          />
+          <Section
+            flex="0 1 auto"
+            position="static"
+          >
+            <MessageInput
+              chatId={initialized.derivedChatId}
+              autoConnect={false}
+            />
+          </Section>
         </Section>
-      </Section>
+      ) : null}
       <Div
         width="100%"
         textAlign="center"

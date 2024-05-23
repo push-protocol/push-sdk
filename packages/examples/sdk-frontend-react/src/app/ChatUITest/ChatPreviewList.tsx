@@ -191,9 +191,6 @@ const ChatPreviewListTest = () => {
           onPreload={(chats) => {
             console.log('preload chats are: ', chats);
           }}
-          //     prefillChatPreviewList={prefill}
-          // listType='SEARCH'
-          // searchParamter='c2d544ad9d1efd5c5a593b143bf8232875c926cf28015564e70ad078b95f807e'
         />
       </div>
     </>
