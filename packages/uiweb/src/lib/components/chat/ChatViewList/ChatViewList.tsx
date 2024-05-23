@@ -415,5 +415,5 @@ const ChatViewListCard = styled(Section)<IThemeProps>`
 `;
 
 const ChatViewListCardInner = styled(Section)<IThemeProps>`
-  filter: ${(props) => (props.blur ? 'blur(12px)' : 'none')};
+  filter: ${(props) => (props.blur ? 'blur(6px)' : 'none')};
 `;
