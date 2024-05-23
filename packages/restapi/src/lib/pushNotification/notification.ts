@@ -14,6 +14,7 @@ import {
   getCAIPWithChainId,
   validateCAIP,
   getFallbackETHCAIPAddress,
+  pCAIP10ToWallet,
 } from '../helpers';
 
 import { PushNotificationBaseClass } from './pushNotificationBase';
@@ -50,11 +51,16 @@ export class Notification extends PushNotificationBaseClass {
       raw = false,
     } = options || {};
     try {
-      const account = options?.account
-        ? options.account
-        : this.account
-        ? getFallbackETHCAIPAddress(this.env!, this.account!)
-        : null;
+      let account: string | null;
+      if (options?.account) {
+        if (this.isValidPCaip(options.account)) {
+          account = pCAIP10ToWallet(options.account);
+        } else {
+          account = options.account;
+        }
+      } else if (this.account) {
+        account = getFallbackETHCAIPAddress(this.env!, this.account!);
+      }
       // guest mode and valid address check
       this.checkUserAddressExists(account!);
       const nonCaipAccount = this.getAddressFromCaip(account!);
@@ -97,19 +103,24 @@ export class Notification extends PushNotificationBaseClass {
         page = Constants.PAGINATION.INITIAL_PAGE,
         limit = Constants.PAGINATION.LIMIT,
         channel = null,
-        raw
+        raw,
       } = options || {};
-      const account = options?.account
-        ? options.account
-        : this.account
-        ? getFallbackETHCAIPAddress(this.env!, this.account!)
-        : null;
+      let account: string | null;
+      if (options?.account) {
+        if (this.isValidPCaip(options.account)) {
+          account = pCAIP10ToWallet(options.account);
+        } else {
+          account = options.account;
+        }
+      } else if (this.account) {
+        account = getFallbackETHCAIPAddress(this.env!, this.account!);
+      }
       this.checkUserAddressExists(account!);
       return await PUSH_USER.getSubscriptions({
         user: account!,
         env: this.env,
         channel: channel,
-        raw
+        raw,
       });
     } catch (error) {
       throw new Error(
@@ -139,9 +150,13 @@ export class Notification extends PushNotificationBaseClass {
       if (!channel && channel != '') {
         throw new Error(ERROR_CHANNEL_NEEDED);
       }
+      // convert normal partial caip to wallet
+      if (this.isValidPCaip(channel)) {
+        channel = pCAIP10ToWallet(channel);
+      }
       // validates if caip is correct
       if (!validateCAIP(channel)) {
-        throw new Error(ERROR_INVALID_CAIP);
+        channel = getFallbackETHCAIPAddress(this.env!, channel);
       }
       // get channel caip
       const caipDetail = getCAIPDetails(channel);
@@ -190,9 +205,13 @@ export class Notification extends PushNotificationBaseClass {
       if (!channel && channel != '') {
         return new Error(ERROR_CHANNEL_NEEDED);
       }
+      // covert partial caip to normal wallet
+      if (this.isValidPCaip(channel)) {
+        channel = pCAIP10ToWallet(channel);
+      }
       // validates if caip is correct
       if (!validateCAIP(channel)) {
-        return new Error(ERROR_INVALID_CAIP);
+        channel = getFallbackETHCAIPAddress(this.env!, channel);
       }
       const caipDetail = getCAIPDetails(channel);
       const userAddressInCaip = getCAIPWithChainId(

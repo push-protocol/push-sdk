@@ -1,6 +1,6 @@
 {
   "name": "@pushprotocol/restapi",
-  "version": "0.0.1-alpha.67",
+  "version": "0.0.1-alpha.89",
   "type": "commonjs",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
@@ -8,8 +8,12 @@
   "peerDependencies": {
     "ethers": "^5.0.0 || ^6.0.0"
   },
+  "peerDependenciesMeta": {
+    "ethers": {
+      "optional": true
+    }
+  },
   "dependencies": {
-    "@ambire/signature-validator": "^1.3.1",
     "@metamask/eth-sig-util": "^5.0.2",
     "buffer": "^6.0.3",
     "crypto-js": "^4.1.1",
@@ -24,7 +28,7 @@
     "viem": "^1.20.3"
   },
   "scripts": {
-    "test": "TS_NODE_PROJECT='./tsconfig.mocha.json' NODE_OPTIONS='--loader ts-node/esm' mocha -r ts-node/register 'tests/**/*.test.ts' --timeout 1200000 --require tests/root.ts --serial"
+    "test": "TS_NODE_PROJECT='./tsconfig.mocha.json' NODE_OPTIONS='--loader ts-node/esm' DOTENV_CONFIG_PATH='./tests/.env' mocha -r ts-node/register -r dotenv/config 'tests/**/*.test.ts' --timeout 1200000 --require tests/root.ts --serial"
   },
   "devDependencies": {
     "@types/chai": "^4.3.4",
@@ -33,6 +37,7 @@
     "@types/mocha": "^10.0.1",
     "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",
+    "envfile": "^7.1.0",
     "mocha": "^10.2.0",
     "mocha-typescript": "^1.1.17",
     "ts-node": "^10.9.1",

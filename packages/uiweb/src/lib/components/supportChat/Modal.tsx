@@ -6,7 +6,10 @@ import { AddressInfo } from './AddressInfo';
 import PoweredByPushLogo from '../../icons/sponsorPush.svg';
 import { SponserPushIcon } from '../../icons/SponserPush';
 import { HandWaveSvg } from '../../icons/HandWaveSvg';
-import { SupportChatMainStateContext, SupportChatPropsContext } from '../../context';
+import {
+  SupportChatMainStateContext,
+  SupportChatPropsContext,
+} from '../../context';
 import { Chats } from './Chats';
 import {
   createUserIfNecessary,
@@ -26,7 +29,7 @@ export const Modal: React.FC = () => {
   const [lastThreadHashFetched, setLastThreadHashFetched] = useState<
     string | null
   >(null);
-  const [wasLastListPresent, setWasLastListPresent] = useState<boolean>(false);
+  const [wasLastListPresent, setWasLastListPresent] = useState<boolean>(true);
   const { supportAddress, user, env, account, signer, greetingMsg, theme } =
     useContext<any>(SupportChatPropsContext);
   const {
@@ -38,7 +41,7 @@ export const Modal: React.FC = () => {
     toastType,
     setToastMessage,
     setToastType,
-    socketData
+    socketData,
   } = useContext<any>(SupportChatMainStateContext);
   const listInnerRef = useChatScroll(0);
 
@@ -55,9 +58,10 @@ export const Modal: React.FC = () => {
     sigType: '',
     link: null,
     timestamp: undefined,
-    icon: <HandWaveSvg fill={theme.btnColorPrimary}/>,
+    icon: <HandWaveSvg fill={theme.btnColorPrimary} />,
   };
-  const onScroll = () => {
+  const onScroll = async () => {
+    if (!wasLastListPresent) return;
     if (listInnerRef.current) {
       const { scrollTop } = listInnerRef.current;
       if (scrollTop === 0) {
@@ -65,31 +69,28 @@ export const Modal: React.FC = () => {
         const curScrollPos = content.scrollTop;
         const oldScroll = content.scrollHeight - content.clientHeight;
 
-        getChatCall();
+        await getChatCall();
 
         const newScroll = content.scrollHeight - content.clientHeight;
-        content.scrollTop = curScrollPos + (newScroll - oldScroll);
+        content.scrollTop = newScroll - oldScroll + 20;
       }
     }
   };
   const scrollToBottom = () => {
-    setTimeout(()=>{
+    setTimeout(() => {
       if (listInnerRef.current) {
-        listInnerRef.current.scrollTop = listInnerRef.current.scrollHeight +100;
-
+        listInnerRef.current.scrollTop = listInnerRef.current.scrollHeight;
       }
-    },0)
-  
+    }, 0);
   };
 
   const getChatCall = async () => {
     if (!connectedUser) return;
-    if (wasLastListPresent && !lastThreadHashFetched) return;
+    if (!wasLastListPresent && !lastThreadHashFetched) return;
     setLoading(true);
     const { chatsResponse, lastThreadHash, lastListPresent } = await getChats({
       account,
       user,
-      // pgpPrivateKey: connectedUser.privateKey,
       supportAddress,
       threadHash: lastThreadHashFetched!,
       limit: chatsFetchedLimit,
@@ -107,35 +108,53 @@ export const Modal: React.FC = () => {
       if (!socketData.epnsSDKSocket?.connected) {
         socketData.epnsSDKSocket?.connect();
       }
-      const createdUser = await createUserIfNecessary({ account, signer, env, user });
+      const createdUser = await createUserIfNecessary({
+        account,
+        signer,
+        env,
+        user,
+      });
       setConnectedUser(createdUser);
       setLoading(false);
-    } catch (err:any) {
+    } catch (err: any) {
       setLoading(false);
       setToastMessage(err?.message);
       setToastType('error');
     }
   };
 
-  
   useEffect(() => {
-
-    if(socketData.messagesSinceLastConnection){
-      const message: IMessageIPFS = socketData.messagesSinceLastConnection
-      if (message ) {
+    if (socketData.messagesSinceLastConnection) {
+      const message: IMessageIPFS = socketData.messagesSinceLastConnection;
+      const shouldScrollToBottom = isScrolledToBottom();
+      if (message) {
         setChatsSorted([...chats, message]);
-    }}
+        if (shouldScrollToBottom) {
+          scrollToBottom();
+        }
+      }
+    }
   }, [socketData.messagesSinceLastConnection]);
 
   useEffect(() => {
-    
-    getChatCall();
-  }, [connectedUser, env, account,signer, supportAddress, user]);
+    const fetchChatsAndScroll = async () => {
+      await getChatCall(); // Wait for chats to be fetched
+      scrollToBottom(); // Then scroll to the bottom
+    };
+
+    fetchChatsAndScroll();
+  }, [connectedUser, env, account, signer, supportAddress, user]);
+
+  const isScrolledToBottom = () => {
+    if (!listInnerRef.current) return false;
+
+    const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
+    return scrollTop + clientHeight >= scrollHeight;
+  };
 
   useEffect(() => {
     scrollToBottom();
-  }, [connectedUser, env, account, socketData]);
-
+  }, [connectedUser, env, account]);
 
   return (
     <Container theme={theme}>
@@ -173,17 +192,13 @@ export const Modal: React.FC = () => {
           <Span>Connect your wallet to continue</Span>
         </ConnectSection>
       )}
-      {toastMessage && <Toaster message={toastMessage} type={toastType}/>}
+      {toastMessage && <Toaster message={toastMessage} type={toastType} />}
 
       <InputSection>
         {connectedUser && <ChatInput />}
-        <Div
-         height="18px"
-         width="145px"
-      >
-        <SponserPushIcon />
-      </Div>
-        
+        <Div height="18px" width="145px">
+          <SponserPushIcon />
+        </Div>
       </InputSection>
     </Container>
   );
@@ -227,6 +242,8 @@ const ChatSection = styled.div`
     background: ${(props: any): string => props.theme.bgColorSecondary};
     border-radius: 20px;
   }
+
+  scroll-behavior: smooth;
 `;
 const ConnectSection = styled.div`
   display: flex;

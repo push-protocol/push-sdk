@@ -1,39 +1,33 @@
+// React + Web3 Essentials
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
-import {
-  GroupDTO,
-  IFeeds,
-  IMessageIPFS,
-  IMessageIPFSWithCID,
-} from '@pushprotocol/restapi';
+// External Packages
+import { IMessageIPFS, IMessageIPFSWithCID, IUser } from '@pushprotocol/restapi';
 import moment from 'moment';
+import { MdError } from 'react-icons/md';
 import styled from 'styled-components';
 
+// Internal Compoonents
 import { chatLimit } from '../../../config';
-import {
-  appendUniqueMessages,
-  checkIfIntent,
-  checkIfSameChat,
-  dateToFromNowDaily,
-  getDefaultFeedObject,
-  getNewChatUser,
-  pCAIP10ToWallet,
-  walletToPCAIP10,
-} from '../../../helpers';
-import { useChatData, usePushChatSocket } from '../../../hooks';
+import { appendUniqueMessages, dateToFromNowDaily, pCAIP10ToWallet, walletToPCAIP10 } from '../../../helpers';
+import { useChatData, usePushChatStream } from '../../../hooks';
+import useFetchChat from '../../../hooks/chat/useFetchChat';
 import useFetchMessageUtilities from '../../../hooks/chat/useFetchMessageUtilities';
 import { Section, Span, Spinner } from '../../reusables';
 import { ChatViewBubble } from '../ChatViewBubble';
-import { IChatViewListProps } from '../exportedTypes';
-import { IGroup, Messagetype } from '../../../types';
-import { IChatTheme } from '../theme';
+import { checkIfNewRequest, transformStreamToIMessageIPFSWithCID } from '../helpers';
+import { ActionRequestBubble } from './ActionRequestBubble';
+import { ENCRYPTION_KEYS, EncryptionMessage } from './MessageEncryption';
+
+// Internal Configs
 import { ThemeContext } from '../theme/ThemeProvider';
 
-import useFetchChat from '../../../hooks/chat/useFetchChat';
-import useGetGroup from '../../../hooks/chat/useGetGroup';
-import useGetChatProfile from '../../../hooks/useGetChatProfile';
-import { ApproveRequestBubble } from './ApproveRequestBubble';
-import { ENCRYPTION_KEYS, EncryptionMessage } from './MessageEncryption';
+// Assets
+
+// Interfaces & Types
+import { Group, IChatViewListProps } from '../exportedTypes';
+import { IChatTheme } from '../theme';
+import { IChatInfoResponse } from '../types';
 
 /**
  * @interface IThemeProps
@@ -43,188 +37,184 @@ interface IThemeProps {
   theme?: IChatTheme;
   blur: boolean;
 }
-const ChatStatus = {
+
+interface IChatViewListInitialized {
+  loading: boolean;
+  chatInfo: IChatInfoResponse | null;
+  isHidden: boolean;
+  invalidChat: boolean;
+}
+
+// Constants
+const CHAT_STATUS = {
   FIRST_CHAT: `This is your first conversation with recipient.\n Start the conversation by sending a message.`,
   INVALID_CHAT: 'Invalid chatId',
 };
 
-export const ChatViewList: React.FC<IChatViewListProps> = (
-  options: IChatViewListProps
-) => {
-  const { chatId, limit = chatLimit, chatFilterList = [] } = options || {};
-  const { pgpPrivateKey, account, connectedProfile, setConnectedProfile } =
-    useChatData();
-  const [chatFeed, setChatFeed] = useState<IFeeds>({} as IFeeds);
-  const [chatStatusText, setChatStatusText] = useState<string>('');
-  const [messages, setMessages] = useState<Messagetype>();
-  const [loading, setLoading] = useState<boolean>(true);
-  const [conversationHash, setConversationHash] = useState<string>();
-  const { historyMessages, historyLoading: messageLoading } =
-  useFetchMessageUtilities();
-  const listInnerRef = useRef<HTMLDivElement>(null);
-  const [isMember, setIsMember] = useState<boolean>(false);
-  const { fetchChat } = useFetchChat();
-  const { fetchChatProfile } = useGetChatProfile();
-  const { getGroup } = useGetGroup();
+// Exported Interfaces & Types
 
-  const { messagesSinceLastConnection, groupInformationSinceLastConnection } =
-    usePushChatSocket();
+// Exported Functions
+export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewListProps) => {
+  // setup loading state
+  const [initialized, setInitialized] = useState<IChatViewListInitialized>({
+    loading: true,
+    chatInfo: null,
+    isHidden: false,
+    invalidChat: false,
+  });
+
+  const { chatId, limit = chatLimit, chatFilterList = [] } = options || {};
+  const { user, toast } = useChatData();
+
+  // const [chatStatusText, setChatStatusText] = useState<string>('');
+  const [messages, setMessages] = useState<IMessageIPFSWithCID[]>([]);
+  const { historyMessages, historyLoading: messageLoading } = useFetchMessageUtilities();
+  const listInnerRef = useRef<HTMLDivElement>(null);
+  const [stopPagination, setStopPagination] = useState<boolean>(false);
+  const { fetchChat } = useFetchChat();
+
+  // for stream
+  const {
+    chatStream,
+    chatAcceptStream,
+    chatRequestStream,
+    participantJoinStream,
+    participantLeaveStream,
+    participantRemoveStream,
+  } = useChatData();
+
   const theme = useContext(ThemeContext);
   const dates = new Set();
-  const { env } = useChatData();
 
-  useEffect(() => {
-    setChatStatusText('');
-  }, [chatId, account, env]);
-
+  // Primary Hook that fetches and sets ChatInfo which then fetches and sets UserInfo
+  // Which then calls await getMessagesCall(); to fetch messages
   useEffect(() => {
     (async () => {
-      if (!connectedProfile && account) {
-        const user = await fetchChatProfile({ profileId: account!, env });
-        if (user) setConnectedProfile(user);
-      }
-    })();
-  }, [account]);
-  useEffect(() => {
-    setConversationHash(undefined);
-    setChatFeed({} as IFeeds);
-    setMessages(undefined);
- 
-   
-  }, [chatId, account, pgpPrivateKey, env]);
+      if (!user) return;
+      if (chatId) {
+        const info = await user.chat.info(chatId);
+        console.debug('UIWeb::components::ChatViewList::useEffect::fetchChat', info);
+        // if readmode, then only public true is considered
+        let hidden = false;
+        if (user && user.readmode()) {
+          //check if encrypted is false, only true for public groups
+          hidden = !info?.meta?.groupInfo?.public ?? true;
+        } else if (user && info?.meta) {
+          // visibility is automatically defined
+          hidden = !info?.meta?.visibility;
+        } else if (!info?.meta) {
+          // TODO: Hack because chat.info doesn't return meta for UNINITIALIZED chats
+          // Assuming this only happens for UNINITIALIZED chats which is a dm
+          // Just return false for this for now
+          hidden = false;
+        } else {
+          // for everything else, set hidden to true
+          hidden = true;
+        }
 
-  //need to make a common method for fetching chatFeed to ruse in messageInput
-  useEffect(() => {
-    (async () => {
-      if (!account && !env) return;
-      const chat = await fetchChat({ chatId:chatId });
-      if (Object.keys(chat || {}).length) {
-        setConversationHash(chat?.threadhash as string);
-        setChatFeed(chat as IFeeds);
-      }
-      else {
-        let newChatFeed;
-        let group;
-        const result = await getNewChatUser({
-          searchText: chatId,
-          fetchChatProfile,
-          env,
+        // Finally initialize the component
+        setInitialized({
+          loading: false,
+          chatInfo: Object.keys(info || {}).length ? (info as IChatInfoResponse) : null,
+          isHidden: hidden,
+          invalidChat: info === undefined ? true : false,
         });
-        if (result) {
-          newChatFeed = getDefaultFeedObject({ user: result });
-        } else {
-          group = await getGroup({ searchText: chatId });
-          if (group) {
-            newChatFeed = getDefaultFeedObject({ groupInformation: group });
-          }
-        }
-        if (newChatFeed) {
-          if (!newChatFeed?.groupInformation) {
-            setChatStatusText(ChatStatus.FIRST_CHAT);
-          }
-          setConversationHash(newChatFeed.threadhash as string);
-          setChatFeed(newChatFeed);
-        } else {
-          setChatStatusText(ChatStatus.INVALID_CHAT);
-        }
       }
-      setLoading(false);
     })();
 
-  }, [chatId, pgpPrivateKey, account, env]);
+    // cleanup
+    return () => {
+      setInitialized({
+        loading: true,
+        chatInfo: null,
+        isHidden: false,
+        invalidChat: false,
+      });
+    };
+  }, [chatId, user]);
 
-  //moniters socket changes
+  // When loading is done
   useEffect(() => {
-    if (checkIfSameChat(messagesSinceLastConnection, account!, chatId)) {
-      const updatedChatFeed = chatFeed;
-      updatedChatFeed.msg = messagesSinceLastConnection;
-      if (!Object.keys(messages || {}).length) {
+    if (initialized.loading) return;
 
-        setFilteredMessages([
-          messagesSinceLastConnection,
-        ] as IMessageIPFSWithCID[]);
-        setConversationHash(messagesSinceLastConnection.cid);
-      } else {
-        const newChatViewList = appendUniqueMessages(
-          messages as Messagetype,
-          [messagesSinceLastConnection],
-          false
-        );
-        setFilteredMessages(newChatViewList as IMessageIPFSWithCID[]);
-      }
-      setChatStatusText('');
-      setChatFeed(updatedChatFeed);
+    (async function () {
+      await getMessagesCall();
+    })();
+  }, [initialized.loading]);
+
+  // Change listtype to 'CHATS' and hidden to false when chatAcceptStream is received
+  useEffect(() => {
+    if (Object.keys(chatAcceptStream || {}).length > 0 && chatAcceptStream.constructor === Object) {
+      // Always change hidden to false and list will be CHATS
+      const updatedChatInfo = { ...(initialized.chatInfo as IChatInfoResponse) };
+      if (updatedChatInfo) updatedChatInfo.list = 'CHATS';
+
+      // set initialized after chat accept animation is done
+      const timer = setTimeout(() => {
+        setInitialized({ ...initialized, chatInfo: updatedChatInfo, isHidden: false });
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [chatAcceptStream, participantJoinStream]);
+
+  // Change listtype to 'UINITIALIZED' and hidden to true when participantRemoveStream or participantLeaveStream is received
+  useEffect(() => {
+    if (Object.keys(participantRemoveStream || {}).length > 0 && participantRemoveStream.constructor === Object) {
+      // If not encrypted, then set hidden to false
+      const updatedChatInfo = { ...(initialized.chatInfo as IChatInfoResponse) };
+      if (updatedChatInfo) updatedChatInfo.list = 'UNINITIALIZED';
+
+      setInitialized({ ...initialized, chatInfo: updatedChatInfo, isHidden: true });
+    }
+  }, [participantRemoveStream, participantLeaveStream]);
+
+  useEffect(() => {
+    if (Object.keys(chatStream || {}).length > 0 && chatStream.constructor === Object) {
+      transformSteamMessage(chatStream);
+      // setChatStatusText('');
       scrollToBottom();
     }
-  }, [messagesSinceLastConnection]);
+  }, [chatStream]);
 
-  // remove  fetching group once stream comes 
   useEffect(() => {
-    if (Object.keys(groupInformationSinceLastConnection || {}).length) {
-      if (
-        chatFeed?.groupInformation?.chatId.toLowerCase() ===
-        groupInformationSinceLastConnection.chatId.toLowerCase()
-      ) {
-        (async()=>{
-          const updateChatFeed = chatFeed;
-          const group:IGroup | undefined =  await getGroup({ searchText: chatId });
-          if (group || !!Object.keys(group || {}).length){
-            updateChatFeed.groupInformation = group! as GroupDTO ;
-          
-            setChatFeed(updateChatFeed);
-          }
-         
-        })();
-       
+    if (Object.keys(chatRequestStream || {}).length > 0 && chatRequestStream.constructor === Object) {
+      transformSteamMessage(chatRequestStream);
+      // setChatStatusText('');
+      scrollToBottom();
+    }
+  }, [chatRequestStream]);
+
+  const transformSteamMessage = (item: any) => {
+    if (!user) {
+      return;
+    }
+
+    if (initialized.chatInfo && (item?.chatId === initialized.chatInfo?.chatId || checkIfNewRequest(item, chatId))) {
+      const transformedMessage = transformStreamToIMessageIPFSWithCID(item);
+      if (messages && messages.length) {
+        const newChatViewList = appendUniqueMessages(messages, [transformedMessage], false);
+        setFilteredMessages(newChatViewList);
+      } else {
+        setFilteredMessages([transformedMessage]);
       }
     }
-  }, [groupInformationSinceLastConnection]);
+  };
 
   useEffect(() => {
-    if (conversationHash) {
-      (async function () {
-        await getMessagesCall();
-      })();
-    }
-  }, [conversationHash, pgpPrivateKey, account, env,chatFeed, chatId]);
-
-
-
-  useEffect(() => {
-    if (
-      conversationHash &&
-      Object.keys(messages || {}).length &&
-      messages?.messages.length &&
-      messages?.messages.length <= limit
-    ) {
-      setChatStatusText('');
+    if (messages && messages?.length && messages?.length <= limit) {
+      // setChatStatusText('');
       scrollToBottom();
     }
   }, [messages]);
 
-  useEffect(()=>{
-
-    if(chatFeed &&  !chatFeed?.groupInformation?.isPublic && account)
-    {
-      chatFeed?.groupInformation?.members.forEach((acc) => {
-        if (
-          acc.wallet.toLowerCase() === walletToPCAIP10(account!).toLowerCase()
-        ) {
-          setIsMember(true);
-        }
-      });
-    }
-  },[account,chatFeed])
-
   //methods
   const scrollToBottom = () => {
-    setTimeout(()=>{
+    requestAnimationFrame(() => {
       if (listInnerRef.current) {
-        listInnerRef.current.scrollTop = listInnerRef.current.scrollHeight +100;
-
+        listInnerRef.current.scrollTop = listInnerRef.current.scrollHeight;
       }
-    },0)
-  
+    });
   };
 
   const onScroll = async () => {
@@ -244,60 +234,42 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
   };
 
   const getMessagesCall = async () => {
-    let threadHash = null;
-    if (!messages) {
-      threadHash = conversationHash;
-    } else {
-      threadHash = messages?.lastThreadHash;
+    let reference = null;
+    let stopFetchingChats = false;
+    if (messages && messages?.length) {
+      reference = messages[0].link;
+      if (!reference) {
+        stopFetchingChats = true;
+        setStopPagination(stopFetchingChats);
+      }
     }
-    if (
-      threadHash &&
-      ((account && pgpPrivateKey&& chatFeed && !chatFeed?.groupInformation) ||
-        (chatFeed && chatFeed?.groupInformation))
-    ) {
-      
+
+    if (user && !stopFetchingChats) {
       const chatHistory = await historyMessages({
         limit: limit,
-        threadHash,
+        chatId: chatId,
+        reference,
       });
+
       if (chatHistory?.length) {
-        if (Object.keys(messages || {}) && messages?.messages.length) {
-          const newChatViewList = appendUniqueMessages(
-            messages,
-            chatHistory,
-            true
-          );
+        const reversedChatHistory = chatHistory?.reverse();
+        if (messages && messages?.length) {
+          const newChatViewList = appendUniqueMessages(messages, reversedChatHistory, true);
           setFilteredMessages(newChatViewList as IMessageIPFSWithCID[]);
         } else {
-
-          setFilteredMessages(chatHistory as IMessageIPFSWithCID[]);
+          setFilteredMessages(reversedChatHistory as IMessageIPFSWithCID[]);
         }
       }
     }
   };
 
   const setFilteredMessages = (messageList: Array<IMessageIPFSWithCID>) => {
-    const updatedMessageList = messageList.filter(
-      (msg) => !chatFilterList.includes(msg.cid)
-    );
+    const updatedMessageList = messageList.filter((msg) => !chatFilterList.includes(msg.cid));
 
     if (updatedMessageList && updatedMessageList.length) {
-      setMessages({
-        messages: updatedMessageList,
-        lastThreadHash: updatedMessageList[0].link,
-      });
+      setMessages([...updatedMessageList]);
     }
   };
-
-  const ifBlurChat = () =>{
-  
-    return !!(
-      chatFeed &&
-      chatFeed?.groupInformation &&
-      !chatFeed?.groupInformation?.isPublic &&
-      ((!isMember && pgpPrivateKey) || (!pgpPrivateKey))
-    );
-  }
 
   type RenderDataType = {
     chat: IMessageIPFS;
@@ -318,99 +290,107 @@ export const ChatViewList: React.FC<IChatViewListProps> = (
       </Span>
     );
   };
+
   return (
     <ChatViewListCard
+      blur={false}
       overflow="hidden scroll"
       flexDirection="column"
       ref={listInnerRef}
       width="100%"
+      height="100%"
       justifyContent="start"
       padding="0 2px"
       theme={theme}
-      blur={
-        ifBlurChat()
-      }
       onScroll={(e) => {
         e.stopPropagation();
-        onScroll();
+        if (!stopPagination) onScroll();
       }}
     >
-      {loading ? <Spinner color={theme.spinnerColor} /> : ''}
-      {!loading && (
-        <>
-          {chatFeed &&
-          (chatFeed.publicKey ||
-            (chatFeed?.groupInformation &&
-              !chatFeed?.groupInformation?.isPublic)) ? (
+      <Section
+        margin="5px 0 10px 0"
+        minWidth="150px"
+        minHeight="20px"
+      >
+        {initialized.loading && (
+          <EncryptionMessage
+            id={ENCRYPTION_KEYS.LOADING}
+            className="skeleton"
+          />
+        )}
+
+        {!initialized.loading &&
+          (initialized.chatInfo?.meta?.encrypted ? (
             <EncryptionMessage id={ENCRYPTION_KEYS.ENCRYPTED} />
+          ) : user && user.readmode() ? (
+            <EncryptionMessage id={ENCRYPTION_KEYS.PREVIEW} />
           ) : (
             <EncryptionMessage
-              id={
-                chatFeed?.groupInformation
-                  ? ENCRYPTION_KEYS.NO_ENCRYPTED_GROUP
-                  : ENCRYPTION_KEYS.NO_ENCRYPTED
-              }
+              id={initialized.chatInfo?.meta?.group ? ENCRYPTION_KEYS.NO_ENCRYPTED_GROUP : ENCRYPTION_KEYS.NO_ENCRYPTED}
             />
-          )}
+          ))}
+      </Section>
 
-          {chatStatusText && (
-            <Section margin="20px 0 0 0">
+      {initialized.loading ? <Spinner color={theme.spinnerColor} /> : ''}
+      {!initialized.loading && (
+        <>
+          {/* Loading section and information about the chat */}
+          <Section
+            margin="10px 0 0 0"
+            flexDirection="column"
+          >
+            {initialized.invalidChat && (
               <Span
                 fontSize="13px"
                 color={theme.textColor?.encryptionMessageText}
                 fontWeight="400"
               >
-                {chatStatusText}
+                {CHAT_STATUS.INVALID_CHAT}
               </Span>
-            </Section>
-          )}
-          {messageLoading ? <Spinner color={theme.spinnerColor} /> : ''}
+            )}
+
+            {messageLoading ? <Spinner color={theme.spinnerColor} /> : ''}
+          </Section>
 
           {
-            <>
-              <Section
-                flexDirection="column"
-                justifyContent="start"
-                width="100%"
-              >
-                {messages?.messages &&
-                  messages?.messages?.map(
-                    (chat: IMessageIPFS, index: number) => {
-                      const dateNum = moment(chat.timestamp).format('L');
-                      const position =
-                        pCAIP10ToWallet(chat.fromDID).toLowerCase() !==
-                        account?.toLowerCase()
-                          ? 0
-                          : 1;
-                      return (
-                        <>
-                          {dates.has(dateNum)
-                            ? null
-                            : renderDate({ chat, dateNum })}
-                          <Section
-                            justifyContent={position ? 'end' : 'start'}
-                            margin="7px"
-                          >
-                            <ChatViewBubble decryptedMessagePayload={chat} key={index} />
-                          </Section>
-                        </>
-                      );
-                    }
-                  )}
-              </Section>
-              {!!Object.keys(chatFeed || {}).length &&
-                account &&
-                checkIfIntent({
-                  chat: chatFeed as IFeeds,
-                  account: account!,
-                }) && (
-                  <ApproveRequestBubble
-                    chatFeed={chatFeed}
-                    chatId={chatId}
-                    setChatFeed={setChatFeed}
-                  />
-                )}
-            </>
+            <ChatViewListCardInner
+              flexDirection="column"
+              justifyContent="start"
+              width="100%"
+              blur={initialized.isHidden}
+            >
+              {messages &&
+                messages?.map((chat: IMessageIPFS, index: number) => {
+                  const dateNum = moment(chat.timestamp).format('L');
+                  // TODO: This is a hack as chat.fromDID is converted with eip to match with user.account creating a bug for omnichain
+                  const position =
+                    pCAIP10ToWallet(chat.fromDID)?.toLowerCase() !== pCAIP10ToWallet(user?.account ?? '')?.toLowerCase()
+                      ? 0
+                      : 1;
+                  return (
+                    <>
+                      {dates.has(dateNum) ? null : renderDate({ chat, dateNum })}
+                      <Section
+                        justifyContent={position ? 'end' : 'start'}
+                        margin={
+                          position ? theme.margin?.chatBubbleSenderMargin : theme.margin?.chatBubbleReceiverMargin
+                        }
+                        key={index}
+                      >
+                        <ChatViewBubble
+                          decryptedMessagePayload={chat}
+                          key={index}
+                          isGroup={initialized.chatInfo?.meta?.group ?? false}
+                        />
+                      </Section>
+                    </>
+                  );
+                })}
+
+              {initialized.chatInfo && initialized.chatInfo?.list === 'REQUESTS' && (
+                <ActionRequestBubble chatInfo={initialized.chatInfo} />
+              )}
+            </ChatViewListCardInner>
           }
         </>
       )}
@@ -428,12 +408,11 @@ const ChatViewListCard = styled(Section)<IThemeProps>`
   &::-webkit-scrollbar {
     width: 5px;
   }
-  ${({ blur }) =>
-    blur &&
-    `
-  filter: blur(12px);
-  `}
+
   overscroll-behavior: contain;
   scroll-behavior: smooth;
 `;
 
+const ChatViewListCardInner = styled(Section)<IThemeProps>`
+  filter: ${(props) => (props.blur ? 'blur(6px)' : 'none')};
+`;

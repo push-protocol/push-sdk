@@ -1,4 +1,4 @@
-import { getAPIBaseUrls } from '../helpers';
+import { convertToValidDID, getAPIBaseUrls } from '../helpers';
 import Constants from '../constants';
 import {
   ChatStatus,
@@ -15,7 +15,6 @@ import {
   PGPHelper,
   getConnectedUserV2Core,
   getAccountAddress,
-  getUserDID,
   updateGroupRequestValidator,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
@@ -23,6 +22,7 @@ import { axiosPut } from '../utils/axiosUtil';
 import { getGroup } from './getGroup';
 import * as AES from '../chat/helpers/aes';
 import { getGroupMemberStatus } from './getGroupMemberStatus';
+import { handleError } from '../errors/validationError';
 
 export interface ChatUpdateGroupType extends EnvOptionsType {
   account?: string | null;
@@ -96,10 +96,10 @@ export const updateGroupCore = async (
       pgpHelper
     );
     const convertedMembersPromise = members.map(async (each) => {
-      return getUserDID(each, env);
+      return convertToValidDID(each, env);
     });
     const convertedAdminsPromise = admins.map(async (each) => {
-      return getUserDID(each, env);
+      return convertToValidDID(each, env);
     });
     const convertedMembers = await Promise.all(convertedMembersPromise);
     const convertedAdmins = await Promise.all(convertedAdminsPromise);
@@ -185,12 +185,6 @@ export const updateGroupCore = async (
     const response = await axiosPut<GroupDTO>(apiEndpoint, body);
     return response.data;
   } catch (err) {
-    console.error(
-      `[Push SDK] - API  - Error - API ${updateGroup.name} -:  `,
-      err
-    );
-    throw Error(
-      `[Push SDK] - API  - Error - API ${updateGroup.name} -: ${err}`
-    );
+    throw handleError(err, updateGroup.name);
   }
 };

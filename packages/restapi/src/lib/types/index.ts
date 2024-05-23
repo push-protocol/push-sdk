@@ -1,7 +1,6 @@
 // for namespace TYPES
 /* eslint-disable @typescript-eslint/no-namespace */
-
-import { TypedDataDomain, TypedDataField } from 'ethers';
+import { ResolvedConfig } from 'viem';
 import {
   ADDITIONAL_META_TYPE,
   IDENTITY_TYPE,
@@ -15,7 +14,10 @@ import {
 import { ENV, MessageType } from '../constants';
 import { EthEncryptedData } from '@metamask/eth-sig-util';
 import { Message, MessageObj } from './messageTypes';
-import { VideoEvent } from '../pushstream/pushStreamTypes';
+import {
+  SpaceMemberEventBase,
+  VideoEvent,
+} from '../pushstream/pushStreamTypes';
 export * from './messageTypes';
 export * from './videoTypes';
 
@@ -89,9 +91,9 @@ export type ParsedResponseType = {
 };
 
 export type ApiSubscriptionType = {
-  channel: string,
-  user_settings: string | null
-}
+  channel: string;
+  user_settings: string | null;
+};
 
 export type NotificationSettingType = {
   type: number;
@@ -103,17 +105,18 @@ export type NotificationSettingType = {
     ticker?: number;
   };
   userPreferance?: {
-    value: number | { upper: number; lower: number },
-    enabled: boolean
-  }
+    value: number | { upper: number; lower: number };
+    enabled: boolean;
+  };
 };
 
 export type ApiSubscribersType = {
-  itemcount: number,
+  itemcount: number;
   subscribers: {
-    subscriber: string, settings: string | null
-  }[]
-}
+    subscriber: string;
+    settings: string | null;
+  }[];
+};
 export interface VideoNotificationRules {
   access: {
     type: VIDEO_NOTIFICATION_ACCESS_TYPE;
@@ -184,6 +187,7 @@ export interface ISendNotificationInputOptions {
   chatId?: string;
   rules?: SendNotificationRules;
   pgpPrivateKey?: string;
+  channelFound?: boolean;
 }
 
 export interface INotificationPayload {
@@ -717,6 +721,19 @@ export interface UserInfo {
   isAdmin: boolean;
 }
 
+export type TypedDataField = {
+  name: string;
+  type: string;
+};
+
+export type TypedDataDomain = {
+  chainId?: number | undefined;
+  name?: string | undefined;
+  salt?: ResolvedConfig['BytesType']['outputs'] | undefined;
+  verifyingContract?: string | undefined;
+  version?: string | undefined;
+};
+
 export type ethersV5SignerType = {
   _signTypedData: (
     domain: TypedDataDomain,
@@ -941,4 +958,14 @@ export namespace TYPES {
     export type DATA = VideoCallData;
     export type EVENT = VideoEvent;
   }
+  export namespace SPACE {
+    export type DATA = SpaceData;
+    export type EVENT = SpaceMemberEventBase;
+  }
+}
+
+export enum NotifictaionType {
+  BROADCAT = 1,
+  TARGETTED = 3,
+  SUBSET = 4,
 }

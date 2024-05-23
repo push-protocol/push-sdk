@@ -14,8 +14,9 @@ import {
   NOTIFICATION_TYPE,
   CHAIN_ID_TO_SOURCE,
   SOURCE_TYPES,
+  SUPPORTED_CHAINS,
 } from './constants';
-import { getConnectedUser, sign } from '../chat/helpers';
+import { sign } from '../chat/helpers';
 
 export function getUUID() {
   return uuidv4();
@@ -195,7 +196,7 @@ export async function getVerificationProof({
   wallet,
   pgpPrivateKey,
   env,
-  rules
+  rules,
 }: {
   senderType: 0 | 1;
   signer: any;
@@ -212,7 +213,7 @@ export async function getVerificationProof({
   wallet?: walletType;
   pgpPrivateKey?: string;
   env?: ENV;
-  rules?:VideoNotificationRules;
+  rules?: VideoNotificationRules;
 }) {
   let message = null;
   let verificationProof = null;
@@ -327,9 +328,7 @@ export function getSource(
 
 export function getCAIPFormat(chainId: number, address: string) {
   // EVM based chains
-  if (
-    [1, 11155111, 42, 137, 80001, 56, 97, 10, 420, 1442, 1101, 421613, 42161, 122, 123].includes(chainId)
-  ) {
+  if (SUPPORTED_CHAINS.includes(chainId)) {
     return `eip155:${chainId}:${address}`;
   }
 

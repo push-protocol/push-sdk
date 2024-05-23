@@ -145,23 +145,6 @@ export const verifyProfileSignature = async (
       } else return false;
     } catch (err) {
       return false;
-      // TODO - Add support for SCW Wallet
-
-      /**
-       * @todo - Add support for SCW Wallet
-       * @notice - verifyMessage does not work with EthersV6
-       */
-      // try {
-      //   const verificationResult: boolean = await verifyMessage({
-      //     signer: address.toLowerCase(),
-      //     message: signedData,
-      //     signature: signature,
-      //     provider: ethers.getDefaultProvider(1),
-      //   });
-      //   return verificationResult;
-      // } catch (err) {
-      //   return false;
-      // }
     }
   }
 };

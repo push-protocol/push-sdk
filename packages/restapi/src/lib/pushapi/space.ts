@@ -39,7 +39,7 @@ import {
   groupInfoDtoToSpaceInfoDto,
   mapSpaceListTypeToChatListType,
 } from '../chat';
-import { isValidETHAddress } from '../helpers';
+import { isValidPushCAIP } from '../helpers';
 import { Chat } from './chat';
 import { Signer as PushSigner } from '../helpers';
 
@@ -81,7 +81,7 @@ export class Space {
       listeners: options.participants.listeners,
       speakers: options.participants.speakers,
       spaceImage: options.image || null,
-      isPublic: !options.private,
+      isPublic: typeof options.private === 'boolean' ? !options.private : true,
       rules: options.rules || {},
       config: {
         scheduleAt: options.schedule.start,
@@ -237,7 +237,7 @@ export class Space {
     }
 
     accounts.forEach((account) => {
-      if (!isValidETHAddress(account)) {
+      if (!isValidPushCAIP(account)) {
         throw new Error(`Invalid account address: ${account}`);
       }
     });
@@ -282,7 +282,7 @@ export class Space {
     }
 
     accounts.forEach((account) => {
-      if (!isValidETHAddress(account)) {
+      if (!isValidPushCAIP(account)) {
         throw new Error(`Invalid account address: ${account}`);
       }
     });
@@ -347,7 +347,7 @@ export class Space {
     }
 
     accounts.forEach((account) => {
-      if (!isValidETHAddress(account)) {
+      if (!isValidPushCAIP(account)) {
         throw new Error(`Invalid account address: ${account}`);
       }
     });

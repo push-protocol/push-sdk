@@ -11,8 +11,13 @@ import {
 } from 'unique-names-generator';
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI'; // Ensure correct import path
 import { GroupDTO, GroupInfoDTO, MessageWithCID } from '../../../src/lib/types';
+import { cache } from '../../../src/lib/helpers/cache';
 
-const _env = Constants.ENV.DEV;
+// accessing env dynamically using process.env
+type EnvStrings = keyof typeof Constants.ENV;
+const envMode = process.env.ENV as EnvStrings;
+const _env = Constants.ENV[envMode];
+
 let groupName: string;
 let groupDescription: string;
 const groupImage =
@@ -455,14 +460,14 @@ describe('Private Groups', () => {
       });
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
-      expectMsg(msg, Content, account1, group.chatId, 'pgpv1:group', true);
+      const msg1 = ((await userJohn.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg1, Content, account1, group.chatId, 'pgpv1:group', false);
 
-      const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      const msg2 = ((await userAlice.chat.latest(group.chatId)) as any)[0];
       expectMsg(msg2, Content, account1, group.chatId, 'pgpv1:group', true);
 
-      const msg3 = ((await userJohn.chat.latest(group.chatId)) as any)[0];
-      expectMsg(msg3, Content, account1, group.chatId, 'pgpv1:group', false);
+      const msg3 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg3, Content, account1, group.chatId, 'pgpv1:group', true);
     });
     it('Pending Menbers should not be able to decrypt message', async () => {
       // Added Pending Member
@@ -477,11 +482,11 @@ describe('Private Groups', () => {
       });
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
-      expectMsg(msg, Content, account1, group.chatId, 'pgp', true);
+      const msg1 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg1, Content, account1, group.chatId, 'pgp', false);
 
-      const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
-      expectMsg(msg2, Content, account1, group.chatId, 'pgp', false);
+      const msg2 = ((await userAlice.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg2, Content, account1, group.chatId, 'pgp', true);
     });
     it('Pending Admins should not be able to decrypt message', async () => {
       // Added Pending Member
@@ -496,11 +501,11 @@ describe('Private Groups', () => {
       });
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
-      expectMsg(msg, Content, account1, group.chatId, 'pgp', true);
+      const msg1 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg1, Content, account1, group.chatId, 'pgp', false);
 
-      const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
-      expectMsg(msg2, Content, account1, group.chatId, 'pgp', false);
+      const msg2 = ((await userAlice.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg2, Content, account1, group.chatId, 'pgp', true);
     });
     it('Pending Menbers who left should not be able to decrypt message', async () => {
       // Added Pending Member
@@ -518,11 +523,11 @@ describe('Private Groups', () => {
       });
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
-      expectMsg(msg, Content, account1, group.chatId, 'pgp', true);
+      const msg1 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg1, Content, account1, group.chatId, 'pgp', false);
 
-      const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
-      expectMsg(msg2, Content, account1, group.chatId, 'pgp', false);
+      const msg2 = ((await userAlice.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg2, Content, account1, group.chatId, 'pgp', true);
     });
     it('Pending Admins who left should not be able to decrypt message', async () => {
       // Added Pending Member
@@ -541,11 +546,11 @@ describe('Private Groups', () => {
       });
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
-      expectMsg(msg, Content, account1, group.chatId, 'pgp', true);
+      const msg1 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg1, Content, account1, group.chatId, 'pgp', false);
 
-      const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
-      expectMsg(msg2, Content, account1, group.chatId, 'pgp', false);
+      const msg2 = ((await userAlice.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg2, Content, account1, group.chatId, 'pgp', true);
     });
     it('Pending Menbers who were removed should not be able to decrypt message', async () => {
       // Added Pending Member
@@ -564,11 +569,11 @@ describe('Private Groups', () => {
       });
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
-      expectMsg(msg, Content, account1, group.chatId, 'pgp', true);
+      const msg1 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg1, Content, account1, group.chatId, 'pgp', false);
 
-      const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
-      expectMsg(msg2, Content, account1, group.chatId, 'pgp', false);
+      const msg2 = ((await userAlice.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg2, Content, account1, group.chatId, 'pgp', true);
     });
     it('Pending Admins who were removed should not be able to decrypt message', async () => {
       // Added Pending Member
@@ -587,11 +592,11 @@ describe('Private Groups', () => {
       });
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
-      expectMsg(msg, Content, account1, group.chatId, 'pgp', true);
+      const msg1 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg1, Content, account1, group.chatId, 'pgp', false);
 
-      const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
-      expectMsg(msg2, Content, account1, group.chatId, 'pgp', false);
+      const msg2 = ((await userAlice.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg2, Content, account1, group.chatId, 'pgp', true);
     });
     it('Non-Pending Menbers should be able to decrypt message', async () => {
       // Added Pending Member
@@ -609,14 +614,14 @@ describe('Private Groups', () => {
       });
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
-      expectMsg(msg, Content, account1, group.chatId, 'pgpv1:group', true);
+      const msg1 = ((await userJohn.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg1, Content, account1, group.chatId, 'pgpv1:group', false);
 
-      const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      const msg2 = ((await userAlice.chat.latest(group.chatId)) as any)[0];
       expectMsg(msg2, Content, account1, group.chatId, 'pgpv1:group', true);
 
-      const msg3 = ((await userJohn.chat.latest(group.chatId)) as any)[0];
-      expectMsg(msg3, Content, account1, group.chatId, 'pgpv1:group', false);
+      const msg3 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg3, Content, account1, group.chatId, 'pgpv1:group', true);
     });
     it('Non-Pending Admins should be able to decrypt message', async () => {
       // Added Pending Member
@@ -634,14 +639,14 @@ describe('Private Groups', () => {
       });
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
-      expectMsg(msg, Content, account1, group.chatId, 'pgpv1:group', true);
+      const msg1 = ((await userJohn.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg1, Content, account1, group.chatId, 'pgpv1:group', false);
 
-      const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      const msg2 = ((await userAlice.chat.latest(group.chatId)) as any)[0];
       expectMsg(msg2, Content, account1, group.chatId, 'pgpv1:group', true);
 
-      const msg3 = ((await userJohn.chat.latest(group.chatId)) as any)[0];
-      expectMsg(msg3, Content, account1, group.chatId, 'pgpv1:group', false);
+      const msg3 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg3, Content, account1, group.chatId, 'pgpv1:group', true);
     });
     it('Non-Pending Menbers who left should not be able to decrypt message', async () => {
       // Added Pending Member
@@ -661,11 +666,11 @@ describe('Private Groups', () => {
       });
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
-      expectMsg(msg, Content, account1, group.chatId, 'pgpv1:group', true);
+      const msg1 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg1, Content, account1, group.chatId, 'pgpv1:group', false);
 
-      const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
-      expectMsg(msg2, Content, account1, group.chatId, 'pgpv1:group', false);
+      const msg2 = ((await userAlice.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg2, Content, account1, group.chatId, 'pgpv1:group', true);
     });
     it('Non-Pending Admins who left should not be able to decrypt message', async () => {
       // Added Pending Member
@@ -685,11 +690,11 @@ describe('Private Groups', () => {
       });
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
-      expectMsg(msg, Content, account1, group.chatId, 'pgpv1:group', true);
+      const msg1 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg1, Content, account1, group.chatId, 'pgpv1:group', false);
 
-      const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
-      expectMsg(msg2, Content, account1, group.chatId, 'pgpv1:group', false);
+      const msg2 = ((await userAlice.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg2, Content, account1, group.chatId, 'pgpv1:group', true);
     });
     it('Non-Pending Menbers who were removed should not be able to decrypt message', async () => {
       // Added Pending Member
@@ -711,11 +716,11 @@ describe('Private Groups', () => {
       });
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
-      expectMsg(msg, Content, account1, group.chatId, 'pgpv1:group', true);
+      const msg1 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg1, Content, account1, group.chatId, 'pgpv1:group', false);
 
-      const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
-      expectMsg(msg2, Content, account1, group.chatId, 'pgpv1:group', false);
+      const msg2 = ((await userAlice.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg2, Content, account1, group.chatId, 'pgpv1:group', true);
     });
     it('Non-Pending Admins who were removed should not be able to decrypt message', async () => {
       // Added Pending Member
@@ -736,11 +741,11 @@ describe('Private Groups', () => {
       });
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
-      expectMsg(msg, Content, account1, group.chatId, 'pgpv1:group', true);
+      const msg1 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg1, Content, account1, group.chatId, 'pgpv1:group', false);
 
-      const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
-      expectMsg(msg2, Content, account1, group.chatId, 'pgpv1:group', false);
+      const msg2 = ((await userAlice.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg2, Content, account1, group.chatId, 'pgpv1:group', true);
     });
     it('Autojoin Members should be able to decrypt message', async () => {
       // Autojoin
@@ -770,11 +775,11 @@ describe('Private Groups', () => {
       });
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
-      expectMsg(msg, Content, account1, group.chatId, 'pgpv1:group', true);
+      const msg1 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg1, Content, account1, group.chatId, 'pgpv1:group', false);
 
-      const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
-      expectMsg(msg2, Content, account1, group.chatId, 'pgpv1:group', false);
+      const msg2 = ((await userAlice.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg2, Content, account1, group.chatId, 'pgpv1:group', true);
     });
     it('Autojoin Members who were removed should not be able to decrypt message', async () => {
       // Autojoin
@@ -789,11 +794,45 @@ describe('Private Groups', () => {
       });
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      const msg = ((await userAlice.chat.latest(group.chatId)) as any)[0];
-      expectMsg(msg, Content, account1, group.chatId, 'pgpv1:group', true);
+      const msg1 = ((await userBob.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg1, Content, account1, group.chatId, 'pgpv1:group', false);
 
-      const msg2 = ((await userBob.chat.latest(group.chatId)) as any)[0];
-      expectMsg(msg2, Content, account1, group.chatId, 'pgpv1:group', false);
+      const msg2 = ((await userAlice.chat.latest(group.chatId)) as any)[0];
+      expectMsg(msg2, Content, account1, group.chatId, 'pgpv1:group', true);
+    });
+
+    it('Caching should be enabled while message decryption', async () => {
+      // Autojoin
+      await userBob.chat.group.join(group.chatId);
+
+      await userAlice.chat.send(group.chatId, {
+        content: 'Sending Message 1 to Private Group',
+        type: 'Text',
+      });
+      await userAlice.chat.send(group.chatId, {
+        content: 'Sending Message 2 to Private Group',
+        type: 'Text',
+      });
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      const msgs = await userAlice.chat.history(group.chatId);
+      expect(cache.has(`sessionKey-${msgs[0].sessionKey}`)).to.be.true;
+      expectMsg(
+        msgs[0],
+        'Sending Message 2 to Private Group',
+        account1,
+        group.chatId,
+        'pgpv1:group',
+        true
+      );
+      expectMsg(
+        msgs[1],
+        'Sending Message 1 to Private Group',
+        account1,
+        group.chatId,
+        'pgpv1:group',
+        true
+      );
     });
   });
 });

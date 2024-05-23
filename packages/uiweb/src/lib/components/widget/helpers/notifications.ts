@@ -2,13 +2,10 @@ import { NotificationSettingType, UserSetting } from '@pushprotocol/restapi';
 
 const isSettingType1 = (setting: NotificationSettingType) => setting.type === 1;
 
-export const notifUserSettingFormatString = ({
-  settings,
-}: {
-  settings: NotificationSettingType[];
-}) => {
+export const notifUserSettingFormatString = ({ settings }: { settings: NotificationSettingType[] }) => {
   const _notifSettings: UserSetting[] = [];
   settings &&
+    settings.length &&
     settings.forEach((setting) =>
       isSettingType1(setting)
         ? _notifSettings.push({
@@ -21,14 +18,32 @@ export const notifUserSettingFormatString = ({
     );
   return _notifSettings;
 };
+export const notifStrictUserSettingFromat = ({ settings }: { settings: NotificationSettingType[] }) => {
+  const _notifSettings: NotificationSettingType[] = [];
 
-export const notifUserSettingFromChannelSetting = ({
-  settings
-}: {
-  settings: any[];
-}) => {
+  settings &&
+    settings.length &&
+    settings.forEach((setting) =>
+      isSettingType1(setting)
+        ? _notifSettings.push({
+            ...setting,
+            userPreferance: setting?.userPreferance ?? { value: 0, enabled: false },
+          })
+        : _notifSettings.push({
+            ...setting,
+            userPreferance: setting?.userPreferance ?? {
+              value: setting.default || 0,
+              enabled: false,
+            },
+          })
+    );
+  return _notifSettings;
+};
+
+export const notifUserSettingFromChannelSetting = ({ settings }: { settings: any[] }) => {
   const _userSettings: NotificationSettingType[] = [];
   settings &&
+    settings.length &&
     settings.forEach((setting) =>
       isSettingType1(setting)
         ? _userSettings.push({

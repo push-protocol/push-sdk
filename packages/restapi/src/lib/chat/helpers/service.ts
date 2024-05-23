@@ -3,7 +3,7 @@ import {
   generateHash,
   getAPIBaseUrls,
   getQueryParams,
-  isValidCAIP10NFTAddress,
+  isValidNFTCAIP,
   verifyProfileKeys,
   walletToPCAIP10,
 } from '../../helpers';
@@ -22,7 +22,7 @@ type CreateUserOptionsType = {
   publicKey?: string;
   encryptedPrivateKey?: string;
   env?: ENV;
-  origin? : string | null;
+  origin?: string | null;
 };
 
 export const createUserService = async (options: CreateUserOptionsType) => {
@@ -39,7 +39,7 @@ export const createUserService = async (options: CreateUserOptionsType) => {
 
   const requestUrl = `${API_BASE_URL}/v2/users/`;
 
-  if (isValidCAIP10NFTAddress(user)) {
+  if (isValidNFTCAIP(user)) {
     const epoch = Math.floor(Date.now() / 1000);
     if (user.split(':').length !== 6) {
       user = `${user}:${epoch}`;
@@ -49,7 +49,7 @@ export const createUserService = async (options: CreateUserOptionsType) => {
     caip10: walletToPCAIP10(user),
     did: walletToPCAIP10(user),
     publicKey,
-    encryptedPrivateKey
+    encryptedPrivateKey,
   };
 
   const hash = generateHash(data);
@@ -125,7 +125,7 @@ export const authUpdateUserService = async (options: CreateUserOptionsType) => {
 
 export const getConversationHashService = async (
   options: ConversationHashOptionsType
-): Promise<{ threadHash: string, intent: boolean }> => {
+): Promise<{ threadHash: string; intent: boolean }> => {
   const { conversationId, account, env = Constants.ENV.PROD } = options || {};
 
   const API_BASE_URL = getAPIBaseUrls(env);

@@ -1,10 +1,9 @@
-import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
+import { convertToValidDID, getAPIBaseUrls, isValidPushCAIP } from '../helpers';
 import Constants, { PACKAGE_BUILD } from '../constants';
 import { EnvOptionsType, SignerType } from '../types';
 import {
   getAccountAddress,
   getWallet,
-  getUserDID,
   getConnectedUserV2Core,
   PGPHelper,
   IPGPHelper,
@@ -15,6 +14,7 @@ import * as AES from '../chat/helpers/aes';
 import { getGroupInfo } from './getGroupInfo';
 import { getAllGroupMembersPublicKeys } from './getAllGroupMembersPublicKeys';
 import { ALPHA_FEATURE_CONFIG } from '../config';
+import { handleError } from '../errors/validationError';
 
 export interface ApproveRequestOptionsType extends EnvOptionsType {
   /**
@@ -69,7 +69,8 @@ export const approveCore = async (
    */
   const wallet = getWallet({ account, signer });
   const address = await getAccountAddress(wallet);
-  const isGroup = !isValidETHAddress(senderAddress);
+
+  const isGroup = !isValidPushCAIP(senderAddress);
 
   const connectedUser = await getConnectedUserV2Core(
     wallet,
@@ -78,12 +79,12 @@ export const approveCore = async (
     pgpHelper
   );
   const fromDID: string = isGroup
-    ? await getUserDID(address, env)
-    : await getUserDID(senderAddress, env);
+    ? await convertToValidDID(address, env)
+    : await convertToValidDID(senderAddress, env);
 
   const toDID: string = isGroup
-    ? await getUserDID(senderAddress, env)
-    : await getUserDID(address, env);
+    ? await convertToValidDID(senderAddress, env)
+    : await convertToValidDID(address, env);
 
   let encryptedSecret: string | null = null;
   /**
@@ -172,7 +173,6 @@ export const approveCore = async (
       return response.data;
     })
     .catch((err) => {
-      console.error(`[Push SDK] - API ${approve.name}: `, err);
-      throw Error(`[Push SDK] - API ${approve.name}: ${err}`);
+      throw handleError(err, approve.name);
     });
 };

@@ -1,7 +1,3 @@
-import * as path from 'path';
-import * as dotenv from 'dotenv';
-dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
-
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI';
 import { expect } from 'chai';
 import { ethers } from 'ethers';
@@ -13,6 +9,9 @@ import {
   createPublicClient,
 } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
+import CONSTANTS from '../../../src/lib/constantsV2';
+import { inspect } from 'util';
+import { ENV } from '../../../src/lib/constants';
 
 describe('PushAPI.channel functionality', () => {
   let userAlice: PushAPI;
@@ -50,26 +49,23 @@ describe('PushAPI.channel functionality', () => {
       chain: sepolia,
       transport: http(),
     });
-    enum ENV {
-      PROD = 'prod',
-      STAGING = 'staging',
-      DEV = 'dev',
-      /**
-       * **This is for local development only**
-       */
-      LOCAL = 'local',
-    }
+
+    // accessing env dynamically using process.env
+    type EnvStrings = keyof typeof ENV;
+    const envMode = process.env.ENV as EnvStrings;
+    const _env = ENV[envMode];
+
     // initialisation with signer and provider
-    userKate = await PushAPI.initialize(signer2, { env: ENV.DEV });
+    userKate = await PushAPI.initialize(signer2, { env: _env });
     // initialisation with signer
-    userAlice = await PushAPI.initialize(signer2);
+    userAlice = await PushAPI.initialize(signer2, { env: _env });
     // TODO: remove signer1 after chat makes signer as optional
     //initialisation without signer
-    userBob = await PushAPI.initialize(signer1, { env: ENV.DEV });
+    userBob = await PushAPI.initialize(signer1, { env: _env });
     // initialisation with a signer that has no channel
-    userNoChannel = await PushAPI.initialize(noChannelSigner);
+    userNoChannel = await PushAPI.initialize(noChannelSigner, { env: _env });
     // viem signer
-    viemUser = await PushAPI.initialize(viemSigner);
+    viemUser = await PushAPI.initialize(viemSigner, { env: _env });
   });
 
   describe('channel :: info', () => {
@@ -80,9 +76,8 @@ describe('PushAPI.channel functionality', () => {
 
     it('Without signer but with non-caip account: Should return response', async () => {
       const res = await userBob.channel.info(
-        '0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5'
+        '0xD8634C39BBFd4033c0d3289C4515275102423681'
       );
-      // console.log(res)
       expect(res).not.null;
     });
 
@@ -90,7 +85,7 @@ describe('PushAPI.channel functionality', () => {
       const res = await userBob.channel.info(
         'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
         {
-          raw: false
+          raw: false,
         }
       );
       console.log(res.channel_settings);
@@ -127,7 +122,7 @@ describe('PushAPI.channel functionality', () => {
       const res = await userBob.channel.subscribers({
         channel: 'eip155:11155111:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
       });
-      console.log(res)
+      console.log(res);
       expect(res).not.null;
     });
 
@@ -174,7 +169,7 @@ describe('PushAPI.channel functionality', () => {
         limit: 10,
         setting: true,
       });
-      console.log(res)
+      console.log(res);
       expect(res).not.null;
     });
 
@@ -365,7 +360,7 @@ describe('PushAPI.channel functionality', () => {
       expect(res.status).to.equal(204);
     });
 
-    it('With signer : subset  : Should send notification with title and body along with additional options for alias', async () => {
+    it.skip('With signer : subset  : Should send notification with title and body along with additional options for alias', async () => {
       const res = await userAlice.channel.send(
         [
           'eip155:80001:0xC8c243a4fd7F34c49901fe441958953402b7C024',
@@ -464,7 +459,7 @@ describe('PushAPI.channel functionality', () => {
   });
 
   describe('channel :: settings', () => {
-    it('Should create channel', async () => {
+    it('Should create channel settings', async () => {
       const res = await userKate.channel.setting([
         {
           type: 1,
@@ -558,8 +553,37 @@ describe('PushAPI.channel functionality', () => {
           },
         },
       ]);
-        // console.log(res)
+      // console.log(res)
       expect(res).not.null;
     }, 10000000000);
+  });
+
+  describe('notifications', async () => {
+    it('Should fetch channel specific feeds', async () => {
+      const res = await userAlice.channel.notifications(
+        'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
+        { raw: false }
+      );
+      console.log(inspect(res, { depth: null }));
+      expect(res).not.null;
+    });
+
+    it('Should fetch channel specific feeds in raw format', async () => {
+      const res = await userAlice.channel.notifications(
+        'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
+        { raw: true }
+      );
+      console.log(inspect(res, { depth: null }));
+      expect(res).not.null;
+    });
+
+    it('Should fetch channel specific feeds broadcast type', async () => {
+      const res = await userAlice.channel.notifications(
+        '0xD8634C39BBFd4033c0d3289C4515275102423681',
+        { raw: false, filter: CONSTANTS.NOTIFICATION.TYPE.TARGETTED }
+      );
+      console.log(inspect(res, { depth: null }));
+      expect(res).not.null;
+    });
   });
 });

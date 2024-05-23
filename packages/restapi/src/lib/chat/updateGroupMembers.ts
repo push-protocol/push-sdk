@@ -1,11 +1,10 @@
 import axios from 'axios';
-import { getAPIBaseUrls } from '../helpers';
+import { convertToValidDID, getAPIBaseUrls } from '../helpers';
 import Constants, { PACKAGE_BUILD } from '../constants';
 import {
   getWallet,
   PGPHelper,
   getConnectedUserV2Core,
-  getUserDID,
   validateGroupMemberUpdateOptions,
   pgpEncrypt,
 } from './helpers';
@@ -16,6 +15,8 @@ import { getGroupMemberStatus } from './getGroupMemberStatus';
 import * as AES from '../chat/helpers/aes';
 import { getAllGroupMembersPublicKeys } from './getAllGroupMembersPublicKeys';
 import { ALPHA_FEATURE_CONFIG } from '../config';
+import { axiosPut } from '../utils/axiosUtil';
+import { handleError } from '../errors/validationError';
 
 export interface GroupMemberUpdateOptions extends EnvOptionsType {
   chatId: string;
@@ -58,7 +59,7 @@ export const updateGroupMembers = async (
     const convertedUpsertPromise = Object.entries(upsert).map(
       async ([role, userDIDs]) => {
         const userIDs = await Promise.all(
-          userDIDs.map((userDID) => getUserDID(userDID, env))
+          userDIDs.map((userDID) => convertToValidDID(userDID, env))
         );
         return [role, userIDs];
       }
@@ -67,7 +68,7 @@ export const updateGroupMembers = async (
       await Promise.all(convertedUpsertPromise)
     );
     const convertedRemove = await Promise.all(
-      remove.map((userDID) => getUserDID(userDID, env))
+      remove.map((userDID) => convertToValidDID(userDID, env))
     );
 
     let encryptedSecret: string | null = null;
@@ -148,23 +149,9 @@ export const updateGroupMembers = async (
       encryptedSecret,
       deltaVerificationProof,
     };
-    return axios
-      .put(apiEndpoint, body)
-      .then((response) => {
-        return response.data;
-      })
-      .catch((err) => {
-        if (err?.response?.data)
-          throw new Error(JSON.stringify(err.response.data));
-        throw new Error(err);
-      });
-  } catch (err) {
-    console.error(
-      `[Push SDK] - API  - Error - API ${updateGroupMembers.name} -:  `,
-      err
-    );
-    throw Error(
-      `[Push SDK] - API  - Error - API ${updateGroupMembers.name} -: ${err}`
-    );
+    const response = await axiosPut(apiEndpoint, body);
+    return response.data;
+  } catch (error) {
+    throw handleError(error, updateGroupMembers.name);
   }
 };

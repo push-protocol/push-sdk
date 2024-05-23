@@ -1,16 +1,13 @@
-import { useState, ReactNode, useEffect } from 'react';
-import { Constants, ENV } from '../config';
-import {
-  WidgetDataContext,
-  IWidgetDataContextValues,
-} from '../context/widgetContext';
 import { PushAPI, SignerType } from '@pushprotocol/restapi';
-import { getAddressFromSigner, pCAIP10ToWallet } from '../helpers';
-import { GUEST_MODE_ACCOUNT } from '../config/constants';
+import { ReactNode, useEffect, useState } from 'react';
 import { IWidgetTheme, lightWidgetTheme } from '../components/widget/theme';
 import { ThemeContext } from '../components/widget/theme/ThemeProvider';
-import useUserProfile from '../hooks/useUserProfile';
-import useInitializeUser from '../hooks/useInitializeUser';
+import { Constants, ENV } from '../config';
+import { GUEST_MODE_ACCOUNT } from '../config/constants';
+import { IWidgetDataContextValues, WidgetDataContext } from '../context/widgetContext';
+import { getAddressFromSigner, pCAIP10ToWallet } from '../helpers';
+import usePushUser from '../hooks/usePushUser';
+import { Web3OnboardDataProvider } from './Web3OnboardDataProvider';
 
 export interface IWidgetUIProviderProps {
   children: ReactNode;
@@ -29,33 +26,32 @@ export const WidgetUIProvider = ({
   signer = undefined,
   env = Constants.ENV.PROD,
 }: IWidgetUIProviderProps) => {
-  const [accountVal, setAccountVal] = useState<string | null>(
-    pCAIP10ToWallet(account!)
-  );
+  const [accountVal, setAccountVal] = useState<string | null>(pCAIP10ToWallet(account!));
   const [signerVal, setSignerVal] = useState<SignerType | undefined>(signer);
   const [userVal, setUserVal] = useState<PushAPI | undefined>(user);
   const [envVal, setEnvVal] = useState<ENV>(env);
-  const { initializeUser } = useInitializeUser();
-  const { fetchUserProfile } = useUserProfile();
+  const { initializeUser, fetchUserProfile } = usePushUser();
 
   useEffect(() => {
     (async () => {
       //   resetStates();
+
       setEnvVal(env);
+      let address = null;
       if (Object.keys(signer || {}).length && !user) {
-        const address = await getAddressFromSigner(signer!);
-        setAccountVal(address);
+        address = await getAddressFromSigner(signer!);
       } else if (!signer && user) {
         const profile = await fetchUserProfile({ user });
-
-        setAccountVal(pCAIP10ToWallet(profile?.wallets));
-      } else {
-        setAccountVal(GUEST_MODE_ACCOUNT);
+        if (profile) address = pCAIP10ToWallet(profile?.wallets);
       }
+      console.debug(account);
+      setAccountVal(address || GUEST_MODE_ACCOUNT);
       setSignerVal(signer);
+
       setUserVal(user);
     })();
   }, [env, account, signer, user]);
+  console.debug(accountVal, envVal, signerVal);
 
   useEffect(() => {
     (async () => {
@@ -77,7 +73,6 @@ export const WidgetUIProvider = ({
   //     setIsPushChatStreamConnected(false);
   //   };
 
-
   const value: IWidgetDataContextValues = {
     account: accountVal,
     signer: signerVal,
@@ -92,11 +87,9 @@ export const WidgetUIProvider = ({
   const PROVIDER_THEME = Object.assign({}, lightWidgetTheme, theme);
   return (
     <ThemeContext.Provider value={PROVIDER_THEME}>
-      <WidgetDataContext.Provider value={value}>
-        {children}
-      </WidgetDataContext.Provider>
+      <Web3OnboardDataProvider>
+        <WidgetDataContext.Provider value={value}>{children}</WidgetDataContext.Provider>
+      </Web3OnboardDataProvider>
     </ThemeContext.Provider>
   );
 };
-
-

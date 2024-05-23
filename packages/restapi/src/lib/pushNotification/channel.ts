@@ -1,31 +1,36 @@
 import Constants, { ENV } from '../constants';
-import {
-  SignerType,
-  ProgressHookType,
-  ProgressHookTypeFunction,
-} from '../types';
-import {
-  ChannelInfoOptions,
-  ChannelSearchOptions,
-  NotificationOptions,
-  CreateChannelOptions,
-  NotificationSettings,
-  ChannelOptions
-} from './PushNotificationTypes';
-import * as config from '../config';
-import * as PUSH_PAYLOAD from '../payloads';
+
+import * as viem from 'viem';
 import * as PUSH_CHANNEL from '../channels';
+import * as config from '../config';
 import {
   getCAIPDetails,
-  validateCAIP,
   getFallbackETHCAIPAddress,
+  validateCAIP,
 } from '../helpers';
+import * as PUSH_PAYLOAD from '../payloads';
 import PROGRESSHOOK from '../progressHook';
-import * as viem from 'viem';
+import {
+  ProgressHookType,
+  ProgressHookTypeFunction,
+  SignerType,
+} from '../types';
+import {
+  ChannelFeedsOptions,
+  ChannelInfoOptions,
+  ChannelListOptions,
+  ChannelListOrderType,
+  ChannelListSortType,
+  ChannelOptions,
+  ChannelSearchOptions,
+  CreateChannelOptions,
+  NotificationOptions,
+  NotificationSettings,
+} from './PushNotificationTypes';
 
-import { PushNotificationBaseClass } from './pushNotificationBase';
-import { Delegate } from './delegate';
 import { Alias } from './alias';
+import { Delegate } from './delegate';
+import { PushNotificationBaseClass } from './pushNotificationBase';
 
 export class Channel extends PushNotificationBaseClass {
   public delegate!: Delegate;
@@ -33,7 +38,7 @@ export class Channel extends PushNotificationBaseClass {
   constructor(signer?: SignerType, env?: ENV, account?: string) {
     super(signer, env, account);
     this.delegate = new Delegate(signer, env, account);
-    this.alias = new Alias(env!);
+    this.alias = new Alias(signer, env, account);
   }
 
   /**
@@ -41,15 +46,15 @@ export class Channel extends PushNotificationBaseClass {
    * @param {string} [options.channel] - channel address in caip, defaults to eth caip address
    * @returns information about the channel if it exists
    */
-  info = async (channel?: string, options?:ChannelOptions ) => {
+  info = async (channel?: string, options?: ChannelOptions) => {
     try {
-      const {raw = true} = options || {};
+      const { raw = true } = options || {};
       this.checkUserAddressExists(channel);
       channel = channel ?? getFallbackETHCAIPAddress(this.env!, this.account!);
       return await PUSH_CHANNEL.getChannel({
         channel: channel as string,
         env: this.env,
-        raw: raw
+        raw: raw,
       });
     } catch (error) {
       throw new Error(`Push SDK Error: API : channel::info : ${error}`);
@@ -103,7 +108,7 @@ export class Channel extends PushNotificationBaseClass {
           limit: options.limit ?? 10,
           setting: options.setting ?? false,
           category: options.category,
-          raw: options.raw
+          raw: options.raw,
         });
       } else {
         /** @dev - Fallback to deprecated method when page is not provided ( to ensure backward compatibility ) */
@@ -126,20 +131,17 @@ export class Channel extends PushNotificationBaseClass {
   send = async (recipients: string[], options: NotificationOptions) => {
     try {
       this.checkSignerObjectExists();
-      const info = await this.getChannelOrAliasInfo(
+      const channelInfo = await this.getChannelOrAliasInfo(
         options.channel! ?? this.account
       );
-      let settings = null;
-      if (info && info.channel_settings) {
-        settings = JSON.parse(info.channel_settings);
-      }
+
       const lowLevelPayload = this.generateNotificationLowLevelPayload({
         signer: this.signer!,
         env: this.env!,
         recipients: recipients,
         options: options,
         channel: options.channel ?? this.account,
-        settings: settings,
+        channelInfo: channelInfo,
       });
       return await PUSH_PAYLOAD.sendNotification(lowLevelPayload);
     } catch (error) {
@@ -378,7 +380,13 @@ export class Channel extends PushNotificationBaseClass {
         config.MIN_TOKEN_BALANCE[this.env!].toString(),
         18
       );
-      if (fees > balance) {
+      // get counter
+      const counter = await this.fetchUpdateCounter(
+        this.coreContract,
+        this.account!
+      );
+      const totalFees = fees * counter;
+      if (totalFees > balance) {
         throw new Error('Insufficient PUSH balance');
       }
       const allowanceAmount = await this.fetchAllownace(
@@ -387,11 +395,11 @@ export class Channel extends PushNotificationBaseClass {
         config.CORE_CONFIG[this.env!].EPNS_CORE_CONTRACT
       );
       // if allowance is not greater than the fees, dont call approval again
-      if (!(allowanceAmount >= fees)) {
+      if (!(allowanceAmount >= totalFees)) {
         const approveRes = await this.approveToken(
           pushTokenContract,
           config.CORE_CONFIG[this.env!].EPNS_CORE_CONTRACT,
-          fees
+          totalFees
         );
         if (!approveRes) {
           throw new Error('Something went wrong while approving your token');
@@ -408,6 +416,45 @@ export class Channel extends PushNotificationBaseClass {
       return { transactionHash: createSettingsRes };
     } catch (error) {
       throw new Error(`Push SDK Error: Contract : channel::setting : ${error}`);
+    }
+  };
+
+  notifications = async (account: string, options?: ChannelFeedsOptions) => {
+    try {
+      const { page, limit, filter = null, raw = true } = options || {};
+      return await PUSH_CHANNEL.getChannelNotifications({
+        channel: account as string,
+        env: this.env,
+        filter,
+        raw,
+        page,
+        limit,
+      });
+    } catch (error) {
+      throw new Error(
+        `Push SDK Error: Contract : channel::notifications : ${error}`
+      );
+    }
+  };
+
+  list = async (options?: ChannelListOptions) => {
+    try {
+      const {
+        page,
+        limit,
+        sort = ChannelListSortType.SUBSCRIBER,
+        order = ChannelListOrderType.DESCENDING,
+      } = options || {};
+
+      return await PUSH_CHANNEL.getChannels({
+        env: this.env,
+        page,
+        limit,
+        sort,
+        order,
+      });
+    } catch (error) {
+      throw new Error(`Push SDK Error: Contract : channel::list : ${error}`);
     }
   };
 }

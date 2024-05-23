@@ -1,4 +1,4 @@
-import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
+import { convertToValidDID, getAPIBaseUrls, isValidPushCAIP } from '../helpers';
 import Constants from '../constants';
 import { EnvOptionsType, SignerType } from '../types';
 import {
@@ -6,12 +6,12 @@ import {
   getConnectedUserV2,
   getAccountAddress,
   getWallet,
-  getUserDID,
   IRejectRequestPayload,
   rejectRequestPayload,
 } from './helpers';
 import * as CryptoJS from 'crypto-js';
 import { axiosPut } from '../utils/axiosUtil';
+import { handleError } from '../errors/validationError';
 
 interface RejectRequestOptionsType extends EnvOptionsType {
   /**
@@ -49,17 +49,17 @@ export const reject = async (
   const apiEndpoint = `${API_BASE_URL}/v1/chat/request/reject`;
 
   let isGroup = true;
-  if (isValidETHAddress(senderAddress)) {
+  if (isValidPushCAIP(senderAddress)) {
     isGroup = false;
   }
 
   const connectedUser = await getConnectedUserV2(wallet, pgpPrivateKey, env);
 
-  let fromDID = await getUserDID(senderAddress, env);
-  let toDID = await getUserDID(address, env);
+  let fromDID = await convertToValidDID(senderAddress, env);
+  let toDID = await convertToValidDID(address, env);
   if (isGroup) {
-    fromDID = await getUserDID(address, env);
-    toDID = await getUserDID(senderAddress, env);
+    fromDID = await convertToValidDID(address, env);
+    toDID = await convertToValidDID(senderAddress, env);
   }
 
   const bodyToBeHashed = {
@@ -85,7 +85,6 @@ export const reject = async (
       return response.data;
     })
     .catch((err) => {
-      console.error(`[Push SDK] - API ${reject.name}: `, err);
-      throw Error(`[Push SDK] - API ${reject.name}: ${err}`);
+      throw handleError(err, reject.name);
     });
 };

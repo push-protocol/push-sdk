@@ -1,9 +1,9 @@
 import { useWeb3React } from '@web3-react/core';
 import {
-  Web3Context,
+  AccountContext,
   EnvContext,
   SocketContext,
-  AccountContext,
+  Web3Context,
 } from './context';
 
 import { Buffer } from 'buffer';
@@ -33,8 +33,10 @@ import RemoveMembersFromGroupTest from './ChatTest/RemoveMembersFromGroupTest';
 import SendMessageTest from './ChatTest/SendMessageTest';
 import UpdateGroupTest from './ChatTest/UpdateGroupTest';
 import UpdateUserProfile from './ChatTest/UpdateUserProfile';
+import { ChatWidgetTest } from './ChatWidgetTest';
 import DelegationTest from './DelegationTest';
 import EmbedTest from './EmbedTest';
+import ListChannelsTest from './ListChannelsTest';
 import NotificationsTest from './NotificationsTest';
 import PayloadsTest from './PayloadsTest';
 import SecretNotificationsTest from './SecretNotificationsTest';
@@ -55,18 +57,17 @@ import SpaceTest from './SpaceTest/SpaceTest';
 import StartSpaceTest from './SpaceTest/StartSpaceTest';
 import StopSpaceTest from './SpaceTest/StopSpaceTest';
 import UpdateSpaceTest from './SpaceTest/UpdateSpaceTest';
+import {
+  CreateSpaceComponent,
+  SpaceBanner,
+  SpaceFeed,
+  SpaceInvitesComponent,
+  SpaceWidget,
+} from './SpaceUITest';
+import { useSpaceComponents } from './SpaceUITest/useSpaceComponents';
 import { Checkbox } from './components/Checkbox';
 import ConnectButtonComp from './components/Connect';
 import Dropdown from './components/Dropdown';
-import {
-  SpaceWidget,
-  SpaceBanner,
-  SpaceFeed,
-  CreateSpaceComponent,
-  SpaceInvitesComponent,
-} from './SpaceUITest';
-import { useSpaceComponents } from './SpaceUITest/useSpaceComponents';
-import { ChatWidgetTest } from './ChatWidgetTest';
 import { ENV } from './helpers';
 import { useSDKSocket } from './hooks';
 
@@ -80,8 +81,8 @@ import {
   WidgetUIProvider,
   darkChatTheme,
   darkWidgetTheme,
-  lightWidgetTheme,
   lightChatTheme,
+  lightWidgetTheme,
 } from '@pushprotocol/uiweb';
 import { ChatSupportTest } from './ChatSupportTest';
 import GetGroupMemberStatusTest from './ChatTest/GetGroupMemberStatusTest';
@@ -96,15 +97,16 @@ import ChatViewComponentTest from './ChatUITest/ChatViewComponent';
 import ChatViewListTest from './ChatUITest/ChatViewListTest';
 import SearchSpaceTest from './SpaceTest/SearchSpaceTest';
 
-import SpaceUITest from './SpaceUITest/SpaceUITest';
-import GetGroupMemberCountTest from './ChatTest/GetGroupMemberCountTest';
 import GetGroupInfoTest from './ChatTest/GetGroupInfoTest';
+import GetGroupMemberCountTest from './ChatTest/GetGroupMemberCountTest';
 import GetGroupMembersTest from './ChatTest/GetGroupMembersTest';
+import SpaceUITest from './SpaceUITest/SpaceUITest';
 import VideoV2 from './Video';
-import Widget from './widget/Widget';
 import { SubscriptionManagerTest } from './widget/SubscriptionManagerTest';
+import Widget from './widget/Widget';
 // import { SubscriptionManagerTest } from './widget/SubscriptionManagerTest';
 import { UserProfileTest } from './ChatUITest/UserProfileTest';
+import ChatPreviewSearchListTest from './ChatUITest/ChatPreviewSearchList';
 
 window.Buffer = window.Buffer || Buffer;
 
@@ -267,7 +269,7 @@ export function App() {
       const user = await PushApi.user.get({ account: account, env });
       let pgpPrivateKey;
       const librarySigner = await library.getSigner(account);
-      const pushUser = await PushAPI.initialize(librarySigner!, {
+      const pushUser = await PushAPI.initialize({
         env: env,
         account: account,
         alpha: { feature: ['SCALABILITY_V2'] },
@@ -338,16 +340,8 @@ export function App() {
           <Web3Context.Provider value={{ account, active, library, chainId }}>
             <SocketContext.Provider value={socketData}>
               <AccountContext.Provider value={{ pgpPrivateKey, setSpaceId }}>
-                <WidgetUIProvider
-                  env={env}
-                  theme={lightWidgetTheme}
-                  user={pushUser}
-                >
-                  <ChatUIProvider
-                    env={env}
-                    theme={darkChatTheme}
-                    signer={signer}
-                  >
+                <WidgetUIProvider>
+                  <ChatUIProvider env={env} theme={darkChatTheme} debug={true}>
                     <SpacesUIProvider spaceUI={spaceUI} theme={customDarkTheme}>
                       <Routes>
                         <Route
@@ -362,6 +356,9 @@ export function App() {
                               </Link>
                               <Link to="/channels" className="nav-button">
                                 CHANNELS
+                              </Link>
+                              <Link to="/listchannels" className="nav-button">
+                                LIST CHANNELS
                               </Link>
                               <Link to="/alias" className="nav-button">
                                 ALIAS
@@ -408,6 +405,10 @@ export function App() {
                           element={<SecretNotificationsTest />}
                         />
                         <Route path="/channels" element={<ChannelsTest />} />
+                        <Route
+                          path="/listchannels"
+                          element={<ListChannelsTest />}
+                        />
                         <Route path="/alias" element={<AliasTest />} />
                         <Route
                           path="/delegations"
@@ -649,6 +650,10 @@ export function App() {
                         <Route
                           path="ChatPreview"
                           element={<ChatPreviewTest />}
+                        />
+                        <Route
+                          path="ChatPreviewSearchList"
+                          element={<ChatPreviewSearchListTest />}
                         />
                         <Route
                           path="ChatPreviewList"

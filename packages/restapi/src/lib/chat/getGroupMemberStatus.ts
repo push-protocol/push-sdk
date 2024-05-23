@@ -1,8 +1,8 @@
-import { getAPIBaseUrls } from '../helpers';
+import { convertToValidDID, getAPIBaseUrls } from '../helpers';
 import Constants, { ENV } from '../constants';
-import {  GroupMemberStatus } from '../types';
-import { getUserDID } from './helpers';
+import { GroupMemberStatus } from '../types';
 import { axiosGet } from '../utils/axiosUtil';
+import { handleError } from '../errors/validationError';
 
 /**
  * GET /v1/chat/groups/:chatId/access/:did
@@ -28,7 +28,7 @@ export const getGroupMemberStatus = async (
       throw new Error(`did cannot be null or empty`);
     }
 
-    const user = await getUserDID(did, env);
+    const user = await convertToValidDID(did, env);
 
     const API_BASE_URL = getAPIBaseUrls(env);
     const requestUrl = `${API_BASE_URL}/v1/chat/groups/${chatId}/members/${user}/status`;
@@ -36,12 +36,6 @@ export const getGroupMemberStatus = async (
     const response = await axiosGet<GroupMemberStatus>(requestUrl);
     return response.data;
   } catch (err) {
-    console.error(
-      `[Push SDK] - API - Error - API ${getGroupMemberStatus.name} -:  `,
-      err
-    );
-    throw Error(
-      `[Push SDK] - API - Error - API ${getGroupMemberStatus.name} -: ${err}`
-    );
+    throw handleError(err, getGroupMemberStatus.name);
   }
 };

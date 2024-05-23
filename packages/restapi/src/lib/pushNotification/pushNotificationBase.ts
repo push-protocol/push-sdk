@@ -5,10 +5,13 @@ import {
   CreateChannelOptions,
   NotificationSettings,
   UserSetting,
+  AliasInfoOptions,
 } from './PushNotificationTypes';
 import * as config from '../config';
 import { getAccountAddress } from '../chat/helpers';
 import { IDENTITY_TYPE, NOTIFICATION_TYPE } from '../payloads/constants';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { ethers, Signer as EthersSigner } from 'ethers';
 import {
   createPublicClient,
@@ -20,13 +23,18 @@ import {
 } from 'viem';
 import * as PUSH_CHANNEL from '../channels';
 import {
+  CAIPDetailsType,
   Signer,
   getAPIBaseUrls,
+  getCAIPDetails,
   getFallbackETHCAIPAddress,
   validateCAIP,
 } from '../helpers';
 import { axiosGet, axiosPost } from '../utils/axiosUtil';
 import { PushAPI } from '../pushapi/PushAPI';
+import { channel } from 'diagnostics_channel';
+import * as viem from 'viem';
+
 
 // ERROR CONSTANTS
 const ERROR_ACCOUNT_NEEDED = 'Account is required';
@@ -138,14 +146,14 @@ export class PushNotificationBaseClass {
     recipients,
     options,
     channel,
-    settings,
+    channelInfo,
   }: {
     signer: SignerType;
     env: ENV;
     recipients: string[];
     options: NotificationOptions;
     channel?: string;
-    settings: any | null;
+    channelInfo: any | null;
   }): ISendNotificationInputOptions {
     if (!channel) {
       channel = `${this.account}`;
@@ -154,6 +162,14 @@ export class PushNotificationBaseClass {
     const identityType = IDENTITY_TYPE.DIRECT_PAYLOAD;
     // fetch the minimal version based on conifg that was passed
     let index = '';
+
+    const settings =
+      channelInfo && channelInfo.channel_settings
+        ? JSON.parse(channelInfo.channel_settings)
+        : null;
+
+    const channelFound = channelInfo ? true : false;
+
     if (options.payload?.category && settings) {
       if (settings[options.payload.category - 1].type == SLIDER_TYPE) {
         index =
@@ -198,6 +214,7 @@ export class PushNotificationBaseClass {
       env: env,
       chatId: options.advanced?.chatid,
       pgpPrivateKey: options.advanced?.pgpPrivateKey,
+      channelFound: channelFound,
     };
 
     return notificationPayload;
@@ -457,7 +474,12 @@ export class PushNotificationBaseClass {
           throw new Error('viem signer is not provided');
         }
         const createChannelPromise = contract.write.createChannelWithPUSH({
-          args: [channelType, toHex(new Uint8Array(identityBytes)), fees, this.getTimeBound()],
+          args: [
+            channelType,
+            toHex(new Uint8Array(identityBytes)),
+            fees,
+            this.getTimeBound(),
+          ],
         });
         createChannelRes = await createChannelPromise;
       }
@@ -785,31 +807,120 @@ export class PushNotificationBaseClass {
     return numberOfSettings + SETTING_SEPARATOR + userSetting;
   }
 
+  /**
+   * @param address Address of the channel or alias
+   * @returns Channel info for the address
+   */
   protected async getChannelOrAliasInfo(address: string) {
     try {
-      address = validateCAIP(address)
+      const channelOrAliasCaip = validateCAIP(address)
         ? address
         : getFallbackETHCAIPAddress(this.env!, this.account!);
+
+      const { networkId } = getCAIPDetails(
+        channelOrAliasCaip
+      ) as CAIPDetailsType;
+
+      let channelInCaip = channelOrAliasCaip;
+      if (networkId !== '1' && networkId !== '11155111') {
+        // Alias
+        const aliasInfo = await this.getAliasInfo(address);
+        channelInCaip = aliasInfo?.channel || channelInCaip;
+      }
+
       const channelInfo = await PUSH_CHANNEL.getChannel({
-        channel: address as string,
+        channel: channelInCaip,
         env: this.env,
       });
-      if (channelInfo) return channelInfo;
-      // // TODO: Temp fix, do a more concrete fix later
-      const API_BASE_URL = getAPIBaseUrls(this.env!);
-      const apiEndpoint = `${API_BASE_URL}/v1/alias`;
-      const requestUrl = `${apiEndpoint}/${address}/channel`;
-      const aliasInfo = await axiosGet(requestUrl)
-        .then((response) => response.data)
-        .catch((err) => {
-          console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
-        });
-      const aliasInfoFromChannel = await PUSH_CHANNEL.getChannel({
-        channel: aliasInfo.channel as string,
-        env: this.env,
-      });
-      if (aliasInfoFromChannel) return aliasInfoFromChannel;
+
+      return channelInfo || null;
+    } catch (error) {
       return null;
+    }
+  }
+
+  protected async initiateAddAlias(contract: any, alias: string) {
+    try {
+      if (!this.signer) {
+        throw new Error('Signer is not provided');
+      }
+      const pushSigner = new Signer(this.signer);
+      let addAliasRes;
+      if (!pushSigner.isViemSigner(this.signer)) {
+        if (!this.signer.provider) {
+          throw new Error('ethers provider is not provided');
+        }
+
+        const addAliasTrxPromise = contract!['verifyChannelAlias'](alias);
+        const addAliasTrx = await addAliasTrxPromise;
+        await this.signer?.provider?.waitForTransaction(addAliasTrx.hash);
+        addAliasRes = addAliasTrx.hash;
+      } else {
+        if (!contract.write) {
+          throw new Error('viem signer is not provided');
+        }
+
+        const addAliasTrxPromise = contract.write.verifyChannelAlias({
+          args: [alias],
+        });
+        addAliasRes = await addAliasTrxPromise;
+      }
+      return addAliasRes;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  protected async verifyAlias(contract: any, channelAddress: string) {
+    try {
+      if (!this.signer) {
+        throw new Error('Signer is not provided');
+      }
+      const pushSigner = new Signer(this.signer);
+      let verifyAliasRes;
+      if (!pushSigner.isViemSigner(this.signer)) {
+        if (!this.signer.provider) {
+          throw new Error('ethers provider is not provided');
+        }
+        const addAliasTrxPromise =
+          contract!['verifyChannelAlias'](channelAddress);
+        const addAliasTrx = await addAliasTrxPromise;
+        await this.signer?.provider?.waitForTransaction(addAliasTrx.hash);
+        verifyAliasRes = addAliasTrx.hash;
+      } else {
+        if (!contract.write) {
+          throw new Error('viem signer is not provided');
+        }
+        const addAliasTrxPromise = contract.write.verifyChannelAlias({
+          args: [channelAddress],
+        });
+        verifyAliasRes = await addAliasTrxPromise;
+      }
+
+      const networkDetails = await pushSigner.getChainId();
+      const aliasAddress = await pushSigner.getAddress();
+
+      const aliasIncaip = `eip155:${networkDetails}:${aliasAddress}`;
+      const channelInfo = await this.getChannelOrAliasInfo(aliasIncaip);
+
+      return { verifyAliasRes, channelInfo };
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  /**
+   * @param aliasInCaip Alias address in CAIP format
+   * @returns Channel info for the alias
+   */
+  private async getAliasInfo(aliasInCaip: string) {
+    const API_BASE_URL = getAPIBaseUrls(this.env!);
+    const apiEndpoint = `${API_BASE_URL}/v1/alias`;
+    const requestUrl = `${apiEndpoint}/${aliasInCaip}/channel`;
+
+    try {
+      const response = await axiosGet(requestUrl);
+      return response.data;
     } catch (error) {
       return null;
     }
@@ -817,5 +928,14 @@ export class PushNotificationBaseClass {
 
   protected getAddressFromCaip(caipAddress: string): string {
     return caipAddress?.split(':')[caipAddress?.split(':').length - 1];
+  }
+
+  protected isValidPCaip(address: string): boolean {
+    const addressComponents = address.split(':');
+    return (
+      addressComponents.length == 2 &&
+      addressComponents[0] == 'eip155' &&
+      viem.isAddress(addressComponents[1])
+    );
   }
 }

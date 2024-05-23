@@ -1,22 +1,25 @@
 import Constants from '../constants';
-import { isValidETHAddress } from '../helpers';
+import { handleError } from '../errors/validationError';
+import { convertToValidDID, isValidPushCAIP } from '../helpers';
 import { ConversationHashOptionsType } from '../types';
-import { getConversationHashService, getUserDID } from './helpers';
+import { getConversationHashService } from './helpers';
 
 /**
  * All chat messages are stored on IPFS. This function will return the latest message's CID (Content Identifier on IPFS).
  * Whenever a new message is sent or received, this CID will change.
  */
 
-export const conversationHash = async(options: ConversationHashOptionsType) => {
+export const conversationHash = async (
+  options: ConversationHashOptionsType
+) => {
   const { conversationId, account, env = Constants.ENV.PROD } = options || {};
   try {
-    if (!isValidETHAddress(account)) {
+    if (!isValidPushCAIP(account)) {
       throw new Error(`Invalid address!`);
     }
 
-    const updatedConversationId = await getUserDID(conversationId, env);
-    const accountDID = await getUserDID(account, env);
+    const updatedConversationId = await convertToValidDID(conversationId, env);
+    const accountDID = await convertToValidDID(account, env);
     const response = await getConversationHashService({
       conversationId: updatedConversationId,
       account: accountDID,
@@ -24,7 +27,6 @@ export const conversationHash = async(options: ConversationHashOptionsType) => {
     });
     return response;
   } catch (err) {
-    console.error(`[Push SDK] - Error - API ${conversationHash.name} - `, err);
-    throw Error(`[Push SDK] - Error - API ${conversationHash.name} - `);
+    throw handleError(err, conversationHash.name);
   }
 };

@@ -1,13 +1,14 @@
-import * as path from 'path';
-import * as dotenv from 'dotenv';
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 import { chat } from '../../../src/lib/chat/chat';
 import { ethers } from 'ethers';
 import { expect } from 'chai';
 import Constants from '../../../src/lib/constants';
 
 const WALLET_PRIVATE_KEY = process.env['WALLET_PRIVATE_KEY'];
-const _env = Constants.ENV.DEV;
+
+// accessing env dynamically using process.env
+type EnvStrings = keyof typeof Constants.ENV;
+const envMode = process.env.ENV as EnvStrings;
+const _env = Constants.ENV[envMode];
 
 describe('Get chat', () => {
   it('Should return {} when not chat between users', async () => {

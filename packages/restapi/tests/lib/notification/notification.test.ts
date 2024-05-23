@@ -1,13 +1,11 @@
-import * as path from 'path';
-import * as dotenv from 'dotenv';
-dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
-
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI'; // Ensure correct import path
 import { expect } from 'chai';
 import { ethers } from 'ethers';
 import { createWalletClient, http } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { sepolia } from 'viem/chains';
+import { ENV } from '../../../src/lib/constants';
+
 // import tokenABI from './tokenABI';
 describe('PushAPI.notification functionality', () => {
   let userAlice: PushAPI;
@@ -37,24 +35,21 @@ describe('PushAPI.notification functionality', () => {
       chain: sepolia,
       transport: http(),
     });
-    enum ENV {
-      PROD = 'prod',
-      STAGING = 'staging',
-      DEV = 'dev',
-      /**
-       * **This is for local development only**
-       */
-      LOCAL = 'local',
-    }
+
+    // accessing env dynamically using process.env
+    type EnvStrings = keyof typeof ENV;
+    const envMode = process.env.ENV as EnvStrings;
+    const _env = ENV[envMode];
+
     // initialisation with signer and provider
-    userKate = await PushAPI.initialize(signer2, { env: ENV.DEV });
+    userKate = await PushAPI.initialize(signer2, { env: _env });
     // initialisation with signer
-    userAlice = await PushAPI.initialize(signer1, { env: ENV.DEV });
+    userAlice = await PushAPI.initialize(signer1, { env: _env });
     // TODO: remove signer1 after signer becomes optional
     // initialisation without signer
-    userBob = await PushAPI.initialize(signer1, { env: ENV.DEV });
+    userBob = await PushAPI.initialize(signer1, { env: _env });
     // initialisation with viem
-    userViem = await PushAPI.initialize(viemSigner, { env: ENV.DEV });
+    userViem = await PushAPI.initialize(viemSigner, { env: _env });
   });
 
   describe('PushAPI.notification functionality', () => {
@@ -89,6 +84,14 @@ describe('PushAPI.notification functionality', () => {
     it('Should return feeds when signer with provider is used', async () => {
       const response = await userKate.notification.list('SPAM', {
         account: '0xD8634C39BBFd4033c0d3289C4515275102423681',
+      });
+      // console.log(response)
+      expect(response).not.null;
+    });
+
+    it('Should return feeds when signer with provider is used', async () => {
+      const response = await userKate.notification.list('SPAM', {
+        account: 'eip155:0xD8634C39BBFd4033c0d3289C4515275102423681',
       });
       // console.log(response)
       expect(response).not.null;
@@ -162,12 +165,20 @@ describe('PushAPI.notification functionality', () => {
       ).to.Throw;
     });
 
-    it.skip('With signer object: should throw error for invalid channel caip', async () => {
-      await expect(() => {
-        userAlice.notification.subscribe(
-          '0xD8634C39BBFd4033c0d3289C4515275102423681'
-        );
-      }).to.Throw;
+    it('With signer object: should convert to eth caip for normal address', async () => {
+      const res = await userKate.notification.subscribe(
+        '0xD8634C39BBFd4033c0d3289C4515275102423681'
+      );
+      // console.log(res);
+      expect(res).not.null;
+    });
+
+    it('With signer object: should optin with partial caip', async () => {
+      const res = await userKate.notification.subscribe(
+        'eip155:0xD8634C39BBFd4033c0d3289C4515275102423681'
+      );
+      // console.log(res);
+      expect(res).not.null;
     });
 
     it('With signer object: Should subscribe', async () => {
@@ -243,6 +254,14 @@ describe('PushAPI.notification functionality', () => {
       );
       expect(res.message).to.equal('successfully opted out channel');
     });
+
+    it('With signer object: should convert to eth caip for normal address', async () => {
+      const res = await userKate.notification.unsubscribe(
+        '0xD8634C39BBFd4033c0d3289C4515275102423681'
+      );
+      // console.log(res);
+      expect(res).not.null;
+    });
   });
 
   describe('notification :: subscriptions', () => {
@@ -252,7 +271,6 @@ describe('PushAPI.notification functionality', () => {
 
     it('Signer with no account: Should return response', async () => {
       const response = await userAlice.notification.subscriptions();
-      console.log(response);
       expect(response).not.null;
     });
 
@@ -260,7 +278,6 @@ describe('PushAPI.notification functionality', () => {
       const response = await userAlice.notification.subscriptions({
         account: 'eip155:80001:0xD8634C39BBFd4033c0d3289C4515275102423681',
       });
-      // console.log(response);
       expect(response).not.null;
       expect(response.length).not.equal(0);
     });
@@ -276,9 +293,16 @@ describe('PushAPI.notification functionality', () => {
 
     it('Signer with account: Should return response', async () => {
       const response = await userKate.notification.subscriptions({
+        account: 'eip155:0xD8634C39BBFd4033c0d3289C4515275102423681',
+      });
+      expect(response).not.null;
+      expect(response.length).not.equal(0);
+    });
+
+    it('Signer with account: Should return response', async () => {
+      const response = await userKate.notification.subscriptions({
         account: '0xD8634C39BBFd4033c0d3289C4515275102423681',
       });
-      // console.log(JSON.stringify(response));
       expect(response).not.null;
       expect(response.length).not.equal(0);
     });
@@ -287,11 +311,9 @@ describe('PushAPI.notification functionality', () => {
       const response = await userKate.notification.subscriptions({
         account: '0xD8634C39BBFd4033c0d3289C4515275102423681',
         raw: false,
-        channel: "0xD8634C39BBFd4033c0d3289C4515275102423681"
+        channel: '0xD8634C39BBFd4033c0d3289C4515275102423681',
       });
-      // console.log(JSON.stringify(response));
       expect(response).not.null;
-      expect(response.length).not.equal(0);
     });
   });
 

@@ -3,29 +3,24 @@ import { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { MdError } from 'react-icons/md';
 
-import {
-  Button,
-  DropDownInput,
-  DropdownValueType,
-  InfoContainer,
-  ModalHeader,
-  TextInput,
-} from '../reusables';
+import { Button, DropDownInput, DropdownValueType, InfoContainer, ModalHeader, TextInput } from '../reusables';
 import { Section, Span, Spinner } from '../../reusables';
 import useMediaQuery from '../../../hooks/useMediaQuery';
-import {  ModalHeaderProps } from './CreateGroupModal';
+import { ModalHeaderProps } from './CreateGroupModal';
 import { useChatData } from '../../../hooks';
 import { QuantityInput } from '../reusables/QuantityInput';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { Checkbox } from '../reusables/Checkbox';
 import OptionButtons from '../reusables/OptionButtons';
-
+import BerachainSvg from '../../../icons/berachain.svg';
 import EthereumSvg from '../../../icons/ethereum.svg';
 import PolygonSvg from '../../../icons/polygon.svg';
 import ArbitrumSvg from '../../../icons/arbitrum.svg';
 import BSCSvg from '../../../icons/bsc.svg';
+import FuseSvg from '../../../icons/fuse.svg';
+
 import OptimismSvg from '../../../icons/optimisim.svg';
-import { BLOCKCHAIN_NETWORK, device } from '../../../config';
+import { BLOCKCHAIN_NETWORK, ENV, device } from '../../../config';
 import { GUILD_COMPARISON_OPTIONS, INVITE_CHECKBOX_LABEL } from '../constants';
 import {
   CATEGORY,
@@ -37,13 +32,7 @@ import {
   TypeKeys,
   ReadonlyInputType,
 } from '../types';
-import useToast from '../reusables/NewToast';
-import {
-  CriteriaValidationErrorType,
-  GuildData,
-  PushData,
-  Rule,
-} from '../types/tokenGatedGroupCreationType';
+import { CriteriaValidationErrorType, GuildData, PushData, Rule } from '../types/tokenGatedGroupCreationType';
 import {
   checkIfCustomEndpoint,
   checkIfGuild,
@@ -56,18 +45,13 @@ import {
   validationCriteria,
 } from '../helpers';
 import { IChatTheme } from '../exportedTypes';
+import { CONSTANTS } from '@pushprotocol/restapi';
 
-const AddCriteria = ({ 
-  handlePrevious,
-  onClose,
-  criteriaStateManager,
-}: ModalHeaderProps) => {
+const AddCriteria = ({ handlePrevious, onClose, criteriaStateManager }: ModalHeaderProps) => {
   const [selectedTypeValue, setSelectedTypeValue] = useState<number>(0);
-  const [validationErrors, setValidationErrors] =
-    useState<CriteriaValidationErrorType>({});
+  const [validationErrors, setValidationErrors] = useState<CriteriaValidationErrorType>({});
   const [selectedCategoryValue, setSelectedCategoryValue] = useState<number>(0);
-  const [selectedSubCategoryValue, setSelectedSubCategoryValue] =
-    useState<number>(0);
+  const [selectedSubCategoryValue, setSelectedSubCategoryValue] = useState<number>(0);
   const [validationLoading, setValidationLoading] = useState<boolean>(false);
   const [guildComparison, setGuildComparison] = useState('');
   const [selectedChainValue, setSelectedChainValue] = useState<number>(0);
@@ -86,9 +70,9 @@ const AddCriteria = ({
     value: 0,
     range: 0,
   });
-  const { env } = useChatData();
+  const { user, toast } = useChatData();
+  const env = user ? user.env : CONSTANTS.ENV.PROD;
   const theme = useContext(ThemeContext);
-  const groupInfoToast = useToast();
 
   const isMobile = useMediaQuery(device.mobileL);
 
@@ -240,22 +224,34 @@ const AddCriteria = ({
       icon: ArbitrumSvg,
       function: () => setSelectedChainValue(4),
     },
+    {
+      id: 5,
+      value: BLOCKCHAIN_NETWORK[env].FUSE,
+      title: 'Fuse',
+      icon: FuseSvg,
+      function: () => setSelectedChainValue(5),
+    },
   ];
-
+  if (env !== ENV.PROD) {
+    dropdownChainsValues.push({
+      id: 6,
+      value: BLOCKCHAIN_NETWORK[env].BERACHAIN,
+      title: 'Berachain',
+      icon: BerachainSvg,
+      function: () => setSelectedChainValue(6),
+    } as DropdownValueType);
+  }
+  console.debug(dropdownChainsValues);
   const onQuantityChange = (e: any) => {
     setQuantity({ ...quantity, value: e.target.value });
   };
 
   const verifyAndDoNext = async () => {
     setValidationLoading(true);
-    const _type = dropdownTypeValues[selectedTypeValue].value as
-      | 'PUSH'
-      | 'GUILD';
+    const _type = dropdownTypeValues[selectedTypeValue].value as 'PUSH' | 'GUILD';
     const category: string =
       _type === 'PUSH'
-        ? (dropdownCategoryValues[_type] as DropdownValueType[])[
-            selectedCategoryValue
-          ].value || CATEGORY.ERC20
+        ? (dropdownCategoryValues[_type] as DropdownValueType[])[selectedCategoryValue].value || CATEGORY.ERC20
         : 'ROLES';
 
     let subCategory = 'DEFAULT';
@@ -267,6 +263,7 @@ const AddCriteria = ({
       }
     }
 
+    console.debug(selectedChainValue);
     const rule: Rule = {
       type: _type,
       category: category,
@@ -312,24 +309,18 @@ const AddCriteria = ({
   useEffect(() => {
     if (criteriaState.isUpdateCriteriaEnabled()) {
       //Load the states
-      const oldValue =
-        criteriaState.selectedRules[criteriaState.updateCriteriaIdx];
+      const oldValue = criteriaState.selectedRules[criteriaState.updateCriteriaIdx];
 
       if (oldValue.type === 'PUSH') {
         // category
         setSelectedCategoryValue(
-          (dropdownCategoryValues.PUSH as DropdownValueType[]).findIndex(
-            (obj) => obj.value === oldValue.category
-          )
+          (dropdownCategoryValues.PUSH as DropdownValueType[]).findIndex((obj) => obj.value === oldValue.category)
         );
 
         const pushData = oldValue.data as PushData;
 
         // sub category
-        if (
-          oldValue.category === CATEGORY.ERC20 ||
-          oldValue.category === CATEGORY.ERC721
-        ) {
+        if (oldValue.category === CATEGORY.ERC20 || oldValue.category === CATEGORY.ERC721) {
           if (pushData.token) {
             setUnit(pushData.token);
           }
@@ -339,21 +330,14 @@ const AddCriteria = ({
           }
 
           // TODO: make helper function for this
-          const contractAndChain: string[] = (
-            pushData.contract || 'eip155:1:0x'
-          ).split(':');
+          const contractAndChain: string[] = (pushData.contract || 'eip155:1:0x').split(':');
           setSelectedChainValue(
-            dropdownChainsValues.findIndex(
-              (obj) =>
-                obj.value === contractAndChain[0] + ':' + contractAndChain[1]
-            )
+            dropdownChainsValues.findIndex((obj) => obj.value === contractAndChain[0] + ':' + contractAndChain[1])
           );
           setContract(contractAndChain.length === 3 ? contractAndChain[2] : '');
           setQuantity({
             value: pushData.amount || 0,
-            range: dropdownQuantityRangeValues.findIndex(
-              (obj) => obj.value === pushData.comparison
-            ),
+            range: dropdownQuantityRangeValues.findIndex((obj) => obj.value === pushData.comparison),
           });
         } else if (oldValue.category === CATEGORY.INVITE) {
           setInviteCheckboxes({
@@ -368,15 +352,10 @@ const AddCriteria = ({
         // guild condition
         setGuildId((oldValue.data as GuildData).id);
         setSpecificRoleId((oldValue.data as GuildData).role);
-        setGuildComparison(
-          (oldValue.data as GuildData).comparison ||
-            GUILD_COMPARISON_OPTIONS[2].value
-        );
+        setGuildComparison((oldValue.data as GuildData).comparison || GUILD_COMPARISON_OPTIONS[2].value);
       }
 
-      setSelectedTypeValue(
-        dropdownTypeValues.findIndex((obj) => obj.value === oldValue.type)
-      );
+      setSelectedTypeValue(dropdownTypeValues.findIndex((obj) => obj.value === oldValue.type));
     }
   }, []);
 
@@ -401,11 +380,16 @@ const AddCriteria = ({
   }, [contract, selectedCategoryValue, selectedChainValue]);
 
   const showError = (errorMessage: string) => {
-    groupInfoToast.showMessageToast({
+    toast.showMessageToast({
       toastTitle: 'Error',
       toastMessage: errorMessage,
       toastType: 'ERROR',
-      getToastIcon: (size) => <MdError size={size} color="red" />,
+      getToastIcon: (size: number) => (
+        <MdError
+          size={size}
+          color="red"
+        />
+      ),
     });
   };
 
@@ -416,18 +400,14 @@ const AddCriteria = ({
       gap="12px"
       overflow="hidden scroll"
       justifyContent="start"
-      padding='0 2px 0 10px'
+      padding="0 2px 0 10px"
       width={isMobile ? '300px' : '400px'}
     >
       <Section margin="0 0 5px 0">
         <ModalHeader
           handleClose={onClose}
           handlePrevious={handlePrevious}
-          title={
-            criteriaState.isUpdateCriteriaEnabled()
-              ? 'Update Criteria'
-              : 'Add Criteria'
-          }
+          title={criteriaState.isUpdateCriteriaEnabled() ? 'Update Criteria' : 'Add Criteria'}
         />
       </Section>
       <DropDownInput
@@ -440,7 +420,10 @@ const AddCriteria = ({
         justifyContent="space-between"
         alignItems="center"
       >
-        <Section width="48%" zIndex='unset'>
+        <Section
+          width="48%"
+          zIndex="unset"
+        >
           {Array.isArray(
             getCategoryDropdownValues({
               dropdownCategoryValues,
@@ -539,7 +522,11 @@ const AddCriteria = ({
             selectedValue={selectedChainValue}
             dropdownValues={dropdownChainsValues}
           />
-          <Section gap="10px" flexDirection="column" alignItems="start">
+          <Section
+            gap="10px"
+            flexDirection="column"
+            alignItems="start"
+          >
             <TextInput
               labelName="Contract"
               inputValue={contract}
@@ -547,11 +534,13 @@ const AddCriteria = ({
               placeholder="e.g. 0x123..."
               error={!!validationErrors?.tokenError}
             />
-            {!!validationErrors?.tokenError && (
-              <ErrorSpan>{validationErrors?.tokenError}</ErrorSpan>
-            )}
+            {!!validationErrors?.tokenError && <ErrorSpan>{validationErrors?.tokenError}</ErrorSpan>}
           </Section>
-          <Section gap="10px" flexDirection="column" alignItems="start">
+          <Section
+            gap="10px"
+            flexDirection="column"
+            alignItems="start"
+          >
             <QuantityInput
               dropDownValues={dropdownQuantityRangeValues}
               labelName="Quantity"
@@ -561,9 +550,7 @@ const AddCriteria = ({
               placeholder="e.g. 1.45678"
               unit={unit}
             />
-            {!!validationErrors?.tokenAmount && (
-              <ErrorSpan>{validationErrors?.tokenAmount}</ErrorSpan>
-            )}
+            {!!validationErrors?.tokenAmount && <ErrorSpan>{validationErrors?.tokenAmount}</ErrorSpan>}
           </Section>
         </>
       )}
@@ -574,7 +561,11 @@ const AddCriteria = ({
         selectedCategoryValue,
         selectedTypeValue,
       }) && (
-        <Section gap="10px" flexDirection="column" alignItems="start">
+        <Section
+          gap="10px"
+          flexDirection="column"
+          alignItems="start"
+        >
           <TextInput
             labelName="URL"
             inputValue={url}
@@ -582,9 +573,7 @@ const AddCriteria = ({
             placeholder="e.g. abc.com"
             error={!!validationErrors?.url}
           />
-          {!!validationErrors?.url && (
-            <ErrorSpan>{validationErrors?.url}</ErrorSpan>
-          )}
+          {!!validationErrors?.url && <ErrorSpan>{validationErrors?.url}</ErrorSpan>}
         </Section>
       )}
       {checkIfPushInvite({
@@ -593,21 +582,20 @@ const AddCriteria = ({
         selectedCategoryValue,
         selectedTypeValue,
       }) && (
-        <Section flexDirection="column" gap="10px">
+        <Section
+          flexDirection="column"
+          gap="10px"
+        >
           {Object.keys(INVITE_CHECKBOX_LABEL).map((key) => (
             <Checkbox
-              labelName={
-                INVITE_CHECKBOX_LABEL[key as keyof typeof INVITE_CHECKBOX_LABEL]
-              }
+              labelName={INVITE_CHECKBOX_LABEL[key as keyof typeof INVITE_CHECKBOX_LABEL]}
               onToggle={() =>
                 setInviteCheckboxes({
                   admin: true,
                   owner: true,
                 })
               }
-              checked={
-                inviteCheckboxes[key as keyof typeof INVITE_CHECKBOX_LABEL]
-              }
+              checked={inviteCheckboxes[key as keyof typeof INVITE_CHECKBOX_LABEL]}
             />
           ))}
         </Section>
@@ -615,7 +603,11 @@ const AddCriteria = ({
 
       {checkIfGuild(dropdownTypeValues, selectedTypeValue) && (
         <>
-          <Section gap="10px" flexDirection="column" alignItems="start">
+          <Section
+            gap="10px"
+            flexDirection="column"
+            alignItems="start"
+          >
             <TextInput
               labelName="ID"
               inputValue={guildId}
@@ -623,26 +615,30 @@ const AddCriteria = ({
               placeholder="e.g. 4687"
               error={!!validationErrors?.guildId}
             />
-            {!!validationErrors?.guildId && (
-              <ErrorSpan>{validationErrors?.guildId}</ErrorSpan>
-            )}
+            {!!validationErrors?.guildId && <ErrorSpan>{validationErrors?.guildId}</ErrorSpan>}
           </Section>
-          <Section gap="10px" flexDirection="column" alignItems="start">
+          <Section
+            gap="10px"
+            flexDirection="column"
+            alignItems="start"
+          >
             <OptionButtons
               options={GUILD_COMPARISON_OPTIONS}
-              totalWidth={isMobile?'400px':'410px'}
+              totalWidth={isMobile ? '400px' : '410px'}
               selectedValue={guildComparison}
               error={!!validationErrors?.guildComparison}
               handleClick={(newEl: string) => {
                 setGuildComparison(newEl);
               }}
             />
-            {!!validationErrors?.guildComparison && (
-              <ErrorSpan>{validationErrors?.guildComparison}</ErrorSpan>
-            )}
+            {!!validationErrors?.guildComparison && <ErrorSpan>{validationErrors?.guildComparison}</ErrorSpan>}
           </Section>
           {guildComparison === 'specific' && (
-            <Section gap="10px" flexDirection="column" alignItems="start">
+            <Section
+              gap="10px"
+              flexDirection="column"
+              alignItems="start"
+            >
               <TextInput
                 labelName="Specific Role"
                 inputValue={specificRoleId}
@@ -650,19 +646,27 @@ const AddCriteria = ({
                 placeholder="e.g. 4687"
                 error={!!validationErrors?.guildRole}
               />
-              {!!validationErrors?.guildRole && (
-                <ErrorSpan>{validationErrors?.guildRole}</ErrorSpan>
-              )}
+              {!!validationErrors?.guildRole && <ErrorSpan>{validationErrors?.guildRole}</ErrorSpan>}
             </Section>
           )}
         </>
       )}
-      <Button width="197px" onClick={verifyAndDoNext}>
-        {!validationLoading &&
-          (criteriaState.isUpdateCriteriaEnabled() ? 'Update' : 'Add')}
-        {validationLoading && <Spinner size="20" color="#fff" />}
+      <Button
+        width="197px"
+        onClick={verifyAndDoNext}
+      >
+        {!validationLoading && (criteriaState.isUpdateCriteriaEnabled() ? 'Update' : 'Add')}
+        {validationLoading && (
+          <Spinner
+            size="20"
+            color="#fff"
+          />
+        )}
       </Button>
-      <InfoContainer label={'Learn more about access gating rules'} cta='https://push.org/docs/chat/build/conditional-rules-for-group/' />
+      <InfoContainer
+        label={'Learn more about access gating rules'}
+        cta="https://push.org/docs/chat/build/conditional-rules-for-group/"
+      />
     </ScrollSection>
   );
 };

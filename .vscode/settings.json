@@ -1,3 +1,4 @@
 {
-  "workbench.activityBar.orientation": "vertical"
+  "workbench.activityBar.orientation": "vertical",
+  "editor.formatOnSave": true
 }

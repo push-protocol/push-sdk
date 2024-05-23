@@ -1,7 +1,7 @@
-import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
+import { convertToValidDID, getAPIBaseUrls, isValidPushCAIP } from '../helpers';
 import Constants, { ENV } from '../constants';
-import {  SpaceIFeeds } from '../types';
-import {  getSpaceInboxLists, getUserDID } from '../chat/helpers';
+import { SpaceIFeeds } from '../types';
+import { getSpaceInboxLists } from '../chat/helpers';
 import { axiosGet } from '../utils/axiosUtil';
 
 export type ChatsOptionsType = {
@@ -28,7 +28,9 @@ export type ChatsOptionsType = {
 /**
  * Return the latest message from all wallet addresses you have talked to. This can be used when building the inbox page.
  */
-export const spaces = async (options: ChatsOptionsType): Promise<SpaceIFeeds[]> => {
+export const spaces = async (
+  options: ChatsOptionsType
+): Promise<SpaceIFeeds[]> => {
   const {
     account,
     pgpPrivateKey,
@@ -36,10 +38,10 @@ export const spaces = async (options: ChatsOptionsType): Promise<SpaceIFeeds[]> 
     page = 1,
     limit = 10,
   } = options || {};
-  if (!isValidETHAddress(account)) {
+  if (!isValidPushCAIP(account)) {
     throw new Error(`Invalid address!`);
   }
-  const user = await getUserDID(account, env);
+  const user = await convertToValidDID(account, env);
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/spaces/users/${user}/spaces?page=${page}&limit=${limit}`;
   const requestUrl = `${apiEndpoint}`;

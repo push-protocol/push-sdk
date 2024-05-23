@@ -19,20 +19,13 @@ interface IThemeProps {
 
 interface ISettingsComponentProps {
   settings: PushAPI.NotificationSettingType[];
-  setSettings: React.Dispatch<
-    React.SetStateAction<PushAPI.NotificationSettingType[] | null>
-  >;
+  setSettings: React.Dispatch<React.SetStateAction<PushAPI.NotificationSettingType[]>>;
 }
-export const SettingsComponent: React.FC<ISettingsComponentProps> = (
-  options: ISettingsComponentProps
-) => {
+export const SettingsComponent: React.FC<ISettingsComponentProps> = (options: ISettingsComponentProps) => {
   const theme = useContext(ThemeContext);
 
   const { settings = [], setSettings } = options || {};
-  const handleSliderChange = (
-    index: number,
-    value: number | { lower: number; upper: number }
-  ) => {
+  const handleSliderChange = (index: number, value: number | { lower: number; upper: number }) => {
     const updatedSettings = [...settings];
 
     updatedSettings[index].userPreferance!.value = value;
@@ -41,9 +34,8 @@ export const SettingsComponent: React.FC<ISettingsComponentProps> = (
 
   const handleToggleChange = (index: number) => {
     const updatedSettings = [...settings];
-    updatedSettings[index].userPreferance!.enabled =
-      !updatedSettings[index].userPreferance!.enabled;
-
+    if (updatedSettings[index]?.userPreferance)
+      updatedSettings[index].userPreferance!.enabled = !updatedSettings[index].userPreferance!.enabled;
     setSettings(updatedSettings);
   };
   return (
@@ -53,10 +45,12 @@ export const SettingsComponent: React.FC<ISettingsComponentProps> = (
       gap="15px"
       width="100%"
       maxHeight="200px"
+      justifyContent="start"
       overflow="hidden scroll"
     >
-      {settings.map(
-        (setting: PushAPI.NotificationSettingType, index: number) => (
+      {settings &&
+        settings?.length &&
+        settings?.map((setting: PushAPI.NotificationSettingType, index: number) => (
           <SettingsSection
             theme={theme}
             flexDirection="column"
@@ -66,16 +60,13 @@ export const SettingsComponent: React.FC<ISettingsComponentProps> = (
             {(setting.type == 2 || setting.type == 1) && (
               <ToggleInput
                 id={`toggle${setting.type}${index}`}
-                labelHeading={`${
-                  setting.type == 1 ? 'Boolean' : 'Range'
-                } Setting`}
+                labelHeading={`${setting?.description || (setting.type == 1 ? 'Boolean Setting' : 'Range Setting')} `}
                 checked={setting?.userPreferance?.enabled || false}
                 onToggle={() => {
                   handleToggleChange(index);
                 }}
               />
             )}
-       
 
             {setting.type == 2 && setting?.userPreferance?.enabled && (
               <InputSlider
@@ -88,6 +79,8 @@ export const SettingsComponent: React.FC<ISettingsComponentProps> = (
                 onChange={({ x }) => handleSliderChange(index, x)}
               />
             )}
+            {/* uncomment this when we need this to be included in the settings feature
+          not needed as of now */}
             {/* {setting.type == 3 && setting?.userPreferance?.enabled && (
               <RangeSlider
                 startVal={(setting?.userPreferance?.value as {upper:number,lower:number})?.lower|| 0}
@@ -103,15 +96,13 @@ export const SettingsComponent: React.FC<ISettingsComponentProps> = (
               />
             )} */}
           </SettingsSection>
-        )
-      )}
+        ))}
     </ScrollSection>
   );
 };
 
 const SettingsSection = styled(Section)<IThemeProps & { divider: boolean }>`
-  border-bottom: ${(props) =>
-    props.divider ? props.theme.border?.divider : 'none'};
+  border-bottom: ${(props) => (props.divider ? props.theme.border?.divider : 'none')};
   padding-bottom: 15px;
 `;
 const ScrollSection = styled(Section)<{ theme: IWidgetTheme }>`

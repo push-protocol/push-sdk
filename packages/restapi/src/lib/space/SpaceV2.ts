@@ -18,10 +18,6 @@ export class SpaceV2 {
     this.spaceInfo = spaceInfo;
   }
 
-  async activateUserAudio() {
-    await this.spaceV1Instance.createAudioStream();
-  }
-
   async start() {
     await this.spaceV1Instance.start();
   }
@@ -91,11 +87,7 @@ export class SpaceV2 {
     });
   }
 
-  config({ video, audio }: { video?: boolean; audio?: boolean }) {
-    if (typeof video === 'boolean') {
-      this.spaceV1Instance.enableVideo({ state: video });
-    }
-
+  config({ audio }: { audio?: boolean }) {
     if (typeof audio === 'boolean') {
       this.spaceV1Instance.enableAudio({ state: audio });
     }

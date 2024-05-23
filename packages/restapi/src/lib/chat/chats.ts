@@ -1,8 +1,14 @@
-import { getAPIBaseUrls, isValidETHAddress } from '../helpers';
+import { convertToValidDID, getAPIBaseUrls, isValidPushCAIP } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { IFeeds } from '../types';
-import { getInboxLists, getUserDID, addDeprecatedInfo, IPGPHelper, PGPHelper } from './helpers';
+import {
+  getInboxLists,
+  addDeprecatedInfo,
+  IPGPHelper,
+  PGPHelper,
+} from './helpers';
 import { axiosGet } from '../utils/axiosUtil';
+import { handleError } from '../errors/validationError';
 
 export type ChatsOptionsType = {
   account: string;
@@ -30,10 +36,13 @@ export type ChatsOptionsType = {
  */
 
 export const chats = async (options: ChatsOptionsType): Promise<IFeeds[]> => {
-  return await chatsCore(options,PGPHelper)
-}
+  return await chatsCore(options, PGPHelper);
+};
 
-export const chatsCore = async (options: ChatsOptionsType, pgpHelper: IPGPHelper): Promise<IFeeds[]> => {
+export const chatsCore = async (
+  options: ChatsOptionsType,
+  pgpHelper: IPGPHelper
+): Promise<IFeeds[]> => {
   const {
     account,
     pgpPrivateKey,
@@ -42,10 +51,10 @@ export const chatsCore = async (options: ChatsOptionsType, pgpHelper: IPGPHelper
     page = 1,
     limit = 10,
   } = options || {};
-  if (!isValidETHAddress(account)) {
+  if (!isValidPushCAIP(account)) {
     throw new Error(`Invalid address!`);
   }
-  const user = await getUserDID(account, env);
+  const user = await convertToValidDID(account, env);
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/chat/users/${user}/chats?page=${page}&limit=${limit}`;
   const requestUrl = `${apiEndpoint}`;
@@ -53,16 +62,18 @@ export const chatsCore = async (options: ChatsOptionsType, pgpHelper: IPGPHelper
     const response = await axiosGet(requestUrl);
     const chats: IFeeds[] = response.data.chats;
     const updatedChats = addDeprecatedInfo(chats);
-    const feeds: IFeeds[] = await getInboxLists({
-      lists: updatedChats,
-      user: user,
-      toDecrypt,
-      pgpPrivateKey,
-      env,
-    },pgpHelper);
+    const feeds: IFeeds[] = await getInboxLists(
+      {
+        lists: updatedChats,
+        user: user,
+        toDecrypt,
+        pgpPrivateKey,
+        env,
+      },
+      pgpHelper
+    );
     return feeds;
   } catch (err) {
-    console.error(`[Push SDK] - API ${chats.name}: `, err);
-    throw Error(`[Push SDK] - API ${chats.name}: ${err}`);
+    throw handleError(err, chats.name);
   }
 };

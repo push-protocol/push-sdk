@@ -15,6 +15,7 @@ export type SubscribeOptionsV2Type = {
   settings?: string | null;
   verifyingContractAddress?: string;
   env?: ENV;
+  origin?: string;
   onSuccess?: () => void;
   onError?: (err: Error) => void;
 };
@@ -27,6 +28,7 @@ export const subscribeV2 = async (options: SubscribeOptionsV2Type) => {
     settings = undefined,
     verifyingContractAddress,
     env = Constants.ENV.PROD,
+    origin,
     onSuccess,
     onError,
   } = options || {};
@@ -85,6 +87,7 @@ export const subscribeV2 = async (options: SubscribeOptionsV2Type) => {
     const body = {
       verificationProof: `eip712v2:${verificationProof}`,
       message: messageInformation.data,
+      origin: origin
     };
 
     const res = await axiosPost(requestUrl, body);

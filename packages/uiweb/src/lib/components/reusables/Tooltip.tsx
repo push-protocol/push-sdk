@@ -5,7 +5,7 @@ import styled from 'styled-components';
 type TooltipPropType = {
   children: React.ReactNode;
   direction?: string;
-  content: string;
+  content?: string;
   delay?: number;
 };
 export const Tooltip: React.FC<TooltipPropType> = ({
@@ -33,10 +33,12 @@ export const Tooltip: React.FC<TooltipPropType> = ({
       // When to show the tooltip
       onMouseEnter={showTip}
       onMouseLeave={hideTip}
+      id='tooltip-span'
     >
       {/* Wrapping */}
       {children}
       {active && (
+       content && 
         <TooltipContent className={`${direction || 'top'}`}>
           {/* Content */}
           {content}
@@ -53,7 +55,7 @@ export const Tooltip: React.FC<TooltipPropType> = ({
 const TooltipWrapper = styled.div`
 /* Custom properties */
 
-  display: inline-block;
+  display: flex;
   position: relative;
   z-index: 1;
 `;
@@ -61,30 +63,31 @@ const TooltipWrapper = styled.div`
 /* Absolute positioning */
 const TooltipContent = styled.div`
   position: absolute;
-  border-radius: 4px;
+  border-radius: 8px 8px 8px 4px;
   left: 50%;
   transform: translateX(-50%);
   padding: 7px;
   color: #fff;
   background: #000;
-  font-size: 13px;
+  font-size: 12px;
+  font-weigth:400;
   font-family: sans-serif;
   line-height: 1;
   z-index: 100;
   white-space: nowrap;
 
-  /* CSS border triangles */
-  &::before {
-    content: ' ';
-    left: 50%;
-    border: solid transparent;
-    height: 0;
-    width: 0;
-    position: absolute;
-    pointer-events: none;
-    border-width: 6px;
-    margin-left: calc(6px * -1);
-  }
+  // /* CSS border triangles */
+  // &::before {
+  //   content: ' ';
+  //   left: 50%;
+  //   border: solid transparent;
+  //   height: 0;
+  //   width: 0;
+  //   position: absolute;
+  //   pointer-events: none;
+  //   border-width: 6px;
+  //   margin-left: calc(6px * -1);
+  // }
 
   &.top {
     top: calc(30px * -1);

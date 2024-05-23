@@ -16,19 +16,32 @@ const useUserInfoUtilities = () => {
   const { user } = useChatData();
   const [updateProfileLoading, setUpdateProfileLoading] = useState<boolean>(false);
 
-  const fetchEncryptionInfo = useCallback(
-    async ({ user }: FetchEncryptionInfoParams): Promise<any> => {
+  const fetchProfileInfo = useCallback(
+    async ({ recipient }: { recipient: string }): Promise<any> => {
       try {
-        const encryptionResponse = await user?.encryption.info();
+        const profileResponse = await user?.profile.info({
+          overrideAccount: recipient,
+        });
 
-        return encryptionResponse;
+        return profileResponse;
       } catch (error) {
         console.log(error);
         return;
       }
     },
-    []
+    [user]
   );
+
+  const fetchEncryptionInfo = useCallback(async (): Promise<any> => {
+    try {
+      const encryptionResponse = await user?.encryption.info();
+
+      return encryptionResponse;
+    } catch (error) {
+      console.log(error);
+      return;
+    }
+  }, [user]);
   const updateUserProfile = useCallback(
     async ({ userProfileDetails }: UpdateUserProfileParams): Promise<any> => {
       try {
@@ -47,9 +60,9 @@ const useUserInfoUtilities = () => {
         return error.message;
       }
     },
-    []
+    [user]
   );
-  return { fetchEncryptionInfo,updateUserProfile,updateProfileLoading };
+  return { fetchEncryptionInfo, updateUserProfile, fetchProfileInfo, updateProfileLoading };
 };
 
 export default useUserInfoUtilities;

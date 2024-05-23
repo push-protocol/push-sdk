@@ -25,8 +25,12 @@ import {
 } from './pushAPITypes';
 import * as PUSH_USER from '../user';
 import * as PUSH_CHAT from '../chat';
-import { PGPHelper, getUserDID } from '../chat/helpers';
-import { isValidETHAddress } from '../helpers';
+import { PGPHelper } from '../chat/helpers';
+import {
+  convertToValidDID,
+  isValidPushCAIP,
+  walletToPCAIP10,
+} from '../helpers';
 import {
   ChatUpdateGroupProfileType,
   updateGroupProfile,
@@ -208,7 +212,7 @@ export class Chat {
     });
 
     for (const element of users) {
-      if (!isValidETHAddress(element)) {
+      if (!isValidPushCAIP(element)) {
         throw new Error('Invalid address in the users: ' + element);
       }
     }
@@ -249,7 +253,7 @@ export class Chat {
     });
 
     for (const element of users) {
-      if (!isValidETHAddress(element)) {
+      if (!isValidPushCAIP(element)) {
         throw new Error('Invalid address in the users: ' + element);
       }
     }
@@ -259,7 +263,7 @@ export class Chat {
     }
 
     const userDIDsPromises = users.map(async (user) => {
-      return (await getUserDID(user, this.env)).toLowerCase();
+      return (await convertToValidDID(user, this.env)).toLowerCase();
     });
     const userDIDs = await Promise.all(userDIDsPromises);
 
@@ -283,16 +287,44 @@ export class Chat {
     });
   }
 
-  async info(chatId: string, address: string): Promise<ChatInfoResponse> {
-    const options: PUSH_CHAT.GetChatInfoType = {
-      chatId: chatId,
-      address: address,
+  async info(
+    recipient: string,
+    options?: {
+      overrideAccount?: string;
+    }
+  ): Promise<ChatInfoResponse> {
+    const accountToUse = options?.overrideAccount || this.account;
+    const request: PUSH_CHAT.GetChatInfoType = {
+      recipient: recipient,
+      account: accountToUse,
       env: this.env,
     };
-
     try {
-      const chatInfo = await PUSH_CHAT.getChatInfo(options);
-      return chatInfo;
+      const chatInfo = await PUSH_CHAT.getChatInfo(request);
+      const isGroupChat = chatInfo.meta?.group ?? false;
+      let finalRecipient = recipient; // Default to recipient
+      if (isGroupChat) {
+        // If it's a group chat, use the chatId as the recipient
+        finalRecipient = chatInfo.chatId;
+      } else {
+        // If it's not a group chat, find the actual recipient among participants
+        const participants = chatInfo.participants ?? [];
+        // Find the participant that is not the account being used
+        const participant = participants.find(
+          (participant) => participant !== walletToPCAIP10(accountToUse)
+        );
+        if (participant) {
+          finalRecipient = participant;
+        }
+      }
+      const response: ChatInfoResponse = {
+        meta: chatInfo.meta,
+        list: chatInfo.list,
+        participants: chatInfo.participants,
+        chatId: chatInfo.chatId,
+        recipient: finalRecipient,
+      };
+      return response;
     } catch (error) {
       console.error(`Error in Chat.info: `, error);
       throw new Error(`Error fetching chat info: ${error}`);
@@ -379,8 +411,11 @@ export class Chat {
 
       status: async (
         chatId: string,
-        accountId: string
+        options?: {
+          overrideAccount?: string;
+        }
       ): Promise<ParticipantStatus> => {
+        const accountId = options?.overrideAccount || this.account;
         const status = await PUSH_CHAT.getGroupMemberStatus({
           chatId: chatId,
           did: accountId,
@@ -490,7 +525,7 @@ export class Chat {
       }
 
       accounts.forEach((account) => {
-        if (!isValidETHAddress(account)) {
+        if (!isValidPushCAIP(account)) {
           throw new Error(`Invalid account address: ${account}`);
         }
       });
@@ -543,7 +578,7 @@ export class Chat {
       }
 
       accounts.forEach((account) => {
-        if (!isValidETHAddress(account)) {
+        if (!isValidPushCAIP(account)) {
           throw new Error(`Invalid account address: ${account}`);
         }
       });
@@ -605,7 +640,7 @@ export class Chat {
       }
 
       accounts.forEach((account) => {
-        if (!isValidETHAddress(account)) {
+        if (!isValidPushCAIP(account)) {
           throw new Error(`Invalid account address: ${account}`);
         }
       });

@@ -149,7 +149,7 @@ where
 | cta      | string | Call To Action Link (given during notification creation)  |
 | image      | string | Any media link (given during notification creation) |
 | url      | string | Channel Link (given during channel setup)   |
-| chainName      | string | Can be anyone of the following blockchain networks on which the notification was sent - "ETH_MAINNET", "ETH_TEST_SEPOLIA", "POLYGON_MAINNET", "POLYGON_TEST_MUMBAI", "BSC_MAINNET, "BSC_TESTNET", "OPTIMISM_MAINNET", "OPTIMISM_TESTNET", "POLYGON_ZK_EVM_TESTNET", "POLYGON_ZK_EVM_MAINNET", "ARBITRUM_TESTNET", "ARBITRUMONE_MAINNET", "FUSE_TESTNET", "FUSE_MAINNET", "THE_GRAPH" |
+| chainName      | string | Can be anyone of the following blockchain networks on which the notification was sent - "ETH_MAINNET", "ETH_TEST_SEPOLIA", "POLYGON_MAINNET", "POLYGON_TEST_AMOY", "BSC_MAINNET, "BSC_TESTNET", "OPTIMISM_MAINNET", "OPTIMISM_TESTNET", "POLYGON_ZK_EVM_TESTNET", "POLYGON_ZK_EVM_MAINNET", "ARBITRUM_TESTNET", "ARBITRUMONE_MAINNET", "FUSE_TESTNET", "FUSE_MAINNET", "BERACHIAN_TESTNET", "CYBER_CONNECT_TESTNET , "CYBER_CONNECT_MAINNET" ,"THE_GRAPH" |
 | theme      | string | 'light' or 'dark' (customization to be given by the dApp)  |
 | customTheme      | INotificationItemTheme | custom theme object for the component  |
 | isSpam      | boolean | whether a spam notification or not   |
@@ -199,7 +199,7 @@ const customTheme: INotificationItemTheme = {...notificationLightTheme,...{
 <br/>
 
 #### List of all theme variables
-![Notification SDK Diagram](https://github.com/ethereum-push-notification-service/push-sdk/assets/42746736/bed4504a-0051-45f8-a57c-c083e4f2ae95)
+![Notification SDK Diagram](https://github.com/push-protocol/push-sdk/assets/42746736/bed4504a-0051-45f8-a57c-c083e4f2ae95)
 
 
 <br/>

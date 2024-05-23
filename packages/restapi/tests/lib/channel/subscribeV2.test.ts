@@ -1,6 +1,3 @@
-import * as path from 'path';
-import * as dotenv from 'dotenv';
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 import * as PUSH_CHANNEL from '../../../src/lib/channels/';
 import { expect } from 'chai';
 import { ethers } from 'ethers';
@@ -11,6 +8,11 @@ describe('PUSH_CHANNEL.subscribeV2 functionality', () => {
   let account1: string;
   let signer2: any;
   let account2: string;
+
+  // accessing env dynamically using process.env
+  type EnvStrings = keyof typeof CONSTANTS.ENV;
+  const envMode = process.env.ENV as EnvStrings;
+  const _env = CONSTANTS.ENV[envMode];
 
   beforeEach(async () => {
     const WALLET1 = ethers.Wallet.createRandom();
@@ -27,7 +29,8 @@ describe('PUSH_CHANNEL.subscribeV2 functionality', () => {
       signer: signer1,
       channelAddress: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
       userAddress: `eip155:11155111:${account1}`,
-      env: CONSTANTS.ENV.STAGING,
+      env: _env,
+      origin: 'test'
     });
     expect(res.status).to.be.equal(204);
   });
@@ -37,7 +40,7 @@ describe('PUSH_CHANNEL.subscribeV2 functionality', () => {
       signer: signer1,
       channelAddress: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
       userAddress: `eip155:11155111:${account1}`,
-      env: CONSTANTS.ENV.STAGING,
+      env: _env,
     });
     // console.log(res)
     expect(res.status).to.be.equal(204);

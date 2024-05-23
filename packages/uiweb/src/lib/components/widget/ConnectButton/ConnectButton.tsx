@@ -1,4 +1,4 @@
-import { useContext, useEffect,  } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import styled from 'styled-components';
 
@@ -6,8 +6,9 @@ import { useAccount, useWidgetData } from '../../../hooks';
 import { ThemeContext } from '../theme/ThemeProvider';
 
 import { IWidgetTheme } from '../theme';
-import { device } from '../../../config';
+import { GUEST_MODE_ACCOUNT, device } from '../../../config';
 import { SignerType } from '@pushprotocol/restapi';
+import { getAddressFromSigner } from '../../../helpers';
 
 /**
  * @interface IThemeProps
@@ -24,15 +25,15 @@ interface IConnectButtonSubProps {
   setSigner: React.Dispatch<React.SetStateAction<SignerType | undefined>>;
 }
 
-export const ConnectButtonSub: React.FC<IConnectButtonSubProps> = ({
+export const ConnectButton: React.FC<IConnectButtonSubProps> = ({
   autoconnect = false,
   setAccount,
   setSigner,
   signer,
 }) => {
   const { env } = useWidgetData();
-  const { wallet, connecting, connect, disconnect, provider, account } =
-    useAccount({ env });
+  const { wallet, connecting, connect, disconnect, provider, account } = useAccount({ env });
+  const [clickedConnect, setClickedConnect] = useState<boolean>(false);
 
   const theme = useContext(ThemeContext);
 
@@ -40,11 +41,13 @@ export const ConnectButtonSub: React.FC<IConnectButtonSubProps> = ({
     if (wallet) {
       (async () => {
         const librarySigner = provider?.getSigner(account);
+        const newAdd = await getAddressFromSigner(librarySigner);
+
+        setAccount(account || newAdd);
         setSigner(librarySigner);
-        setAccount(account!);
       })();
     } else if (!wallet) {
-      setAccount('');
+      setAccount(GUEST_MODE_ACCOUNT);
       setSigner(undefined);
     }
     changeModalStyle('zIndex', '2000');
@@ -65,6 +68,7 @@ export const ConnectButtonSub: React.FC<IConnectButtonSubProps> = ({
 
   const handleConnect = () => {
     changeModalStyle('zIndex', 'unset');
+    setClickedConnect(true);
     connect();
   };
 
@@ -84,8 +88,7 @@ const ConnectButtonDiv = styled.div<IThemeProps>`
   width: 100%;
 
   button {
-    background: ${(props) =>
-      `${props.theme.backgroundColor?.buttonBackground}!important`};
+    background: ${(props) => `${props.theme.backgroundColor?.buttonBackground}!important`};
     color: ${(props) => `${props.theme.textColor?.buttonText}!important`};
     text-align: center;
     font-size: 1em;
