@@ -19,6 +19,7 @@ import { getAddress } from './';
 
 // Exported Functions
 
+// Derive Chat Id
 export const deriveChatId = async (chatId: string, user: PushAPI | undefined): Promise<string> => {
   // check if chatid: is appened, if so remove it
   if (chatId?.startsWith('chatid:')) {
@@ -32,4 +33,10 @@ export const deriveChatId = async (chatId: string, user: PushAPI | undefined): P
   }
 
   return chatId;
+};
+
+export const isMessageEncrypted = (message: string) => {
+  if (!message) return false;
+
+  return message.startsWith('U2FsdGVkX1');
 };

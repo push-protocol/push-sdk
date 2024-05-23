@@ -15,7 +15,8 @@
       {
         "root": ["./src"],
         "alias": {
-          "components": "./src/lib/components"
+          "@components": "./src/lib/components",
+          "@icons": "./src/lib/icons"
           // Add more aliases as needed
         }
       }

@@ -2,15 +2,13 @@ import type { ChangeEvent } from 'react';
 import React, { useState, useContext, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { Div, Section } from '../../../../reusables/sharedStyling';
-import { EmojiIcon } from '../../../../../icons/Emoji';
+import { EmojiCircleIcon } from '../../../../../icons/PushIcons';
+import { ThemeContext } from '../../../../chat/theme/ThemeProvider';
 import { SendIcon } from '../../../../../icons/Send';
 import { GifIcon } from '../../../../../icons/Gif';
 import { AttachmentIcon } from '../../../../../icons/Attachment';
 import usePushSendMessage from '../../../../../hooks/chatAndNotification/chat/usePushSendMessage';
-import {
-  ChatAndNotificationMainContext,
-  ChatMainStateContext,
-} from '../../../../../context';
+import { ChatAndNotificationMainContext, ChatMainStateContext } from '../../../../../context';
 import useFetchRequests from '../../../../../hooks/chatAndNotification/chat/useFetchRequests';
 import { Spinner } from '../../../../reusables/Spinner';
 import type { EmojiClickData } from 'emoji-picker-react';
@@ -34,6 +32,9 @@ type TypebarPropType = {
 const requestLimit = 30;
 const page = 1;
 export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
+  // get theme
+  const theme = useContext(ThemeContext);
+
   const [typedMessage, setTypedMessage] = useState<string>('');
   const [showEmojis, setShowEmojis] = useState<boolean>(false);
   const [gifOpen, setGifOpen] = useState<boolean>(false);
@@ -41,10 +42,7 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
   const fileUploadInputRef = React.useRef<HTMLInputElement>(null);
   const { selectedChatId, chatsFeed, setSearchedChats, requestsFeed } =
     useContext<ChatMainStateContextType>(ChatMainStateContext);
-  const { newChat, setNewChat } =
-    useContext<ChatAndNotificationMainContextType>(
-      ChatAndNotificationMainContext
-    );
+  const { newChat, setNewChat } = useContext<ChatAndNotificationMainContextType>(ChatAndNotificationMainContext);
   const { sendMessage, loading } = usePushSendMessage();
   const [filesUploading, setFileUploading] = useState<boolean>(false);
   const { fetchRequests } = useFetchRequests();
@@ -66,14 +64,9 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
       });
       scrollToBottom();
 
-      if (
-        chatsFeed[selectedChatId as string] ||
-        requestsFeed[selectedChatId as string]
-      )
-        setSearchedChats(null);
+      if (chatsFeed[selectedChatId as string] || requestsFeed[selectedChatId as string]) setSearchedChats(null);
       if (newChat) setNewChat(false);
-      if (!chatsFeed[selectedChatId as string])
-        fetchRequests({ page, requestLimit });
+      if (!chatsFeed[selectedChatId as string]) fetchRequests({ page, requestLimit });
     } catch (error) {
       console.log(error);
       //handle error
@@ -102,20 +95,14 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
     }
   };
 
-  const uploadFile = async (
-    e: ChangeEvent<HTMLInputElement>
-  ): Promise<void> => {
+  const uploadFile = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {
     if (!(e.target instanceof HTMLInputElement)) {
       return;
     }
     if (!e.target.files) {
       return;
     }
-    if (
-      e.target &&
-      (e.target as HTMLInputElement).files &&
-      ((e.target as HTMLInputElement).files as FileList).length
-    ) {
+    if (e.target && (e.target as HTMLInputElement).files && ((e.target as HTMLInputElement).files as FileList).length) {
       const file: File = e.target.files[0];
       if (file) {
         try {
@@ -170,7 +157,10 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
         alignItems="center"
         justifyContent="space-between"
       >
-        <Section gap="8px" flex="1">
+        <Section
+          gap="8px"
+          flex="1"
+        >
           <Div
             width="20px"
             cursor="pointer"
@@ -178,7 +168,10 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
             alignSelf="end"
             onClick={() => setShowEmojis(!showEmojis)}
           >
-            <EmojiIcon />
+            <EmojiCircleIcon
+              color={theme.iconColor?.emoji}
+              size={22}
+            />
           </Div>
 
           {showEmojis && (
@@ -209,7 +202,7 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
             rows={1}
           />
         </Section>
-        <SendSection >
+        <SendSection>
           <Section
             width="34px"
             height="24px"
@@ -268,7 +261,10 @@ export const Typebar: React.FC<TypebarPropType> = ({ scrollToBottom }) => {
           )}
 
           {(loading || filesUploading) && (
-            <Section alignSelf="end" height="24px">
+            <Section
+              alignSelf="end"
+              height="24px"
+            >
               <Spinner size="22" />
             </Section>
           )}

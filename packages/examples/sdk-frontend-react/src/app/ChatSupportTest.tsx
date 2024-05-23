@@ -34,7 +34,7 @@ export const ChatSupportTest = () => {
     //works as Chat as well as Support Chat
     <ChatWidget
       key={'460336a9fa83112c95894af5471cd2b1091290a11298d87ec824ed74b7c14974'}
-      chatId="4ac5ab85c9c3d57adbdf2dba79357e56b2f9ef0256befe750d9f93af78d2ca68"
+      chatId="34c44214589cecc176a136ee1daf0f0231ecc6d6574b920b5ae39eb971fa3cb4"
       welcomeComponent={
         <div
           style={{
