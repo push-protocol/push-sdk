@@ -44,6 +44,7 @@ type SectionStyleProps = {
   whiteSpace?: string;
   visibility?: string;
   zIndex?: string;
+  fontSize?: string;
 };
 
 export const Section = styled.div<SectionStyleProps>`
@@ -79,6 +80,7 @@ export const Section = styled.div<SectionStyleProps>`
   z-index: ${(props) => props.zIndex || '0'};
   white-space: ${(props) => props.whiteSpace || 'normal'};
   border: ${(props) => props.border || 'initial'};
+  font-size: ${(props) => props.fontSize || 'initial'};
 
   &.skeleton {
     > * {
@@ -167,6 +169,7 @@ type SpanStyleProps = {
   cursor?: string;
   whiteSpace?: string;
   visibility?: string;
+  textWrap?: string;
 };
 
 export const Span = styled.span<SpanStyleProps>`
@@ -194,6 +197,7 @@ export const Span = styled.span<SpanStyleProps>`
   z-index: ${(props) => props.zIndex || 'auto'};
   max-width: ${(props) => props.maxWidth || 'initial'};
   white-space: ${(props) => props.whiteSpace || 'normal'};
+  text-wrap: ${(props) => props.textWrap || 'normal'};
 
   &.skeleton {
     > * {
@@ -332,8 +336,8 @@ type ButtonStyleProps = {
 };
 
 export const Button = styled.button<ButtonStyleProps>`
-  display: ${(props) => props.display || 'initial'};
-  line-height: ${(props) => props.lineHeight || '26px'};
+  display: ${(props) => props.display || 'flex'};
+  line-height: ${(props) => props.lineHeight || 'normal'};
   flex: ${(props) => props.flex || 'initial'};
   flex-direction: ${(props) => props.flexDirection || 'row'};
   align-self: ${(props) => props.alignSelf || 'auto'};
@@ -383,7 +387,7 @@ export const Button = styled.button<ButtonStyleProps>`
   }
 
   &:hover {
-    border: ${(props) => props.hoverBorder || 'inherit'};
+    border: ${(props) => props.hoverBorder || 'none'};
 
     & svg > path {
       stroke: ${(props) => props.hoverSVGPathStroke || 'auto'};
@@ -395,10 +399,11 @@ export const Button = styled.button<ButtonStyleProps>`
   }
 
   &:hover:after {
-    opacity: 0.08;
+    opacity: ${(props) => (props.hoverBackground ? 1 : 0.08)};
   }
+
   &:active:after {
-    opacity: 0.15;
+    opacity: ${(props) => (props.hoverBackground ? 1 : 0.15)};
   }
 
   & > div {

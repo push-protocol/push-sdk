@@ -14,13 +14,13 @@ import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities
 import usePushSendMessage from '../../../hooks/chat/usePushSendMessage';
 import useVerifyAccessControl from '../../../hooks/chat/useVerifyAccessControl';
 import { AttachmentIcon } from '../../../icons/Attachment';
-import { EmojiIcon } from '../../../icons/Emoji';
+import { EmojiCircleIcon } from '../../../icons/PushIcons';
 import { GifIcon } from '../../../icons/Gif';
 import OpenLink from '../../../icons/OpenLink';
 import { SendCompIcon } from '../../../icons/SendCompIcon';
 import { Div, Section, Span, Spinner } from '../../reusables';
 import { ConditionsInformation } from '../ChatProfile/ChatProfileInfoModal';
-import { ConnectButtonComp } from '../ConnectButton';
+import { ConnectButton } from '../ConnectButton';
 import { Modal, ModalHeader } from '../reusables/Modal';
 import { ThemeContext } from '../theme/ThemeProvider';
 
@@ -60,7 +60,7 @@ const ConnectButtonSection = ({ autoConnect }: { autoConnect: boolean }) => {
           You need to connect your wallet to get started
         </Span>
       )}
-      <ConnectButtonComp autoConnect={autoConnect} />
+      <ConnectButton autoConnect={autoConnect} />
     </Section>
   );
 };
@@ -436,7 +436,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     >
       <TypebarSection
         width="100%"
-        overflow="hidden"
         borderRadius={theme.borderRadius?.messageInput}
         position="static"
         border={theme.border?.messageInput}
@@ -550,126 +549,122 @@ export const MessageInput: React.FC<MessageInputProps> = ({
           </>
         ) : null}
         {user && !user?.readmode() && (((isRules ? verified : true) && isMember) || (chatInfo && !groupInfo)) && (
-          <>
-            <Section
-              gap="8px"
-              flex="1"
-              position="static"
-            >
-              {emoji && (
-                <Div
-                  width="25px"
-                  cursor="pointer"
-                  height="25px"
-                  alignSelf="end"
-                  onClick={() => setShowEmojis(!showEmojis)}
-                >
-                  <EmojiIcon color={theme.iconColor?.emoji} />
-                </Div>
-              )}
-              {showEmojis && (
-                <Section
-                  ref={modalRef}
-                  position="absolute"
-                  bottom="2.5rem"
-                  left="2.5rem"
-                  zIndex="700"
-                >
-                  <EmojiPicker
-                    width={isMobile ? 260 : 320}
-                    height={370}
-                    onEmojiClick={addEmoji}
-                  />
-                </Section>
-              )}
-              <MultiLineInput
-                disabled={loading ? true : false}
-                theme={theme}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter' && !event.shiftKey) {
-                    event.preventDefault();
-                    sendTextMsg();
-                  }
-                }}
-                placeholder="Type your message..."
-                onChange={(e) => onChangeTypedMessage(e.target.value)}
-                value={typedMessage}
-                ref={textAreaRef}
-                rows={1}
-              />
-            </Section>
-            <SendSection position="static">
-              {gif && (
-                <Section
-                  width="30px"
-                  height="24px"
-                  cursor="pointer"
-                  alignSelf="end"
-                  onClick={() => setGifOpen(!gifOpen)}
-                >
-                  <GifIcon />
-                </Section>
-              )}
-              {gifOpen && (
-                <Section
-                  position="absolute"
-                  bottom="2.5rem"
-                  zIndex="1"
-                  right={isMobile ? '7rem' : '8rem'}
-                  ref={modalRef}
-                >
-                  <GifPicker
-                    onGifClick={sendGIF}
-                    width={isMobile ? 260 : 320}
-                    height={370}
-                    tenorApiKey={String(PUBLIC_GOOGLE_TOKEN)}
-                  />
-                </Section>
-              )}
-              <Section onClick={handleUploadFile}>
-                {!fileUploading && file && (
-                  <>
-                    <Section
-                      width="18px"
-                      height="24px"
-                      cursor="pointer"
-                      alignSelf="end"
-                    >
-                      <AttachmentIcon color={theme.iconColor?.attachment} />
-                    </Section>
-                    <FileInput
-                      type="file"
-                      ref={fileUploadInputRef}
-                      onChange={(e) => uploadFile(e)}
-                    />
-                  </>
-                )}
+          <SendSection flex="1">
+            {emoji && (
+              <Div
+                width="25px"
+                cursor="pointer"
+                height="25px"
+                alignSelf="end"
+                onClick={() => setShowEmojis(!showEmojis)}
+              >
+                <EmojiCircleIcon
+                  color={theme.iconColor?.emoji}
+                  size={22}
+                />
+              </Div>
+            )}
+            {showEmojis && (
+              <Section
+                ref={modalRef}
+                position="absolute"
+                bottom="50px"
+                left="-12px"
+                zIndex="700"
+              >
+                <EmojiPicker
+                  width={isMobile ? 260 : 320}
+                  height={370}
+                  onEmojiClick={addEmoji}
+                />
               </Section>
-              {!(loading || fileUploading) && (
-                <Section
-                  cursor="pointer"
-                  alignSelf="end"
-                  height="20px"
-                  width="22px"
-                  onClick={() => sendTextMsg()}
-                >
-                  <SendCompIcon color={theme.iconColor?.sendButton} />
-                </Section>
-              )}
+            )}
 
-              {(loading || fileUploading) && (
-                <Section
-                  alignSelf="end"
-                  height="24px"
-                >
-                  <Spinner
-                    color={theme.spinnerColor}
-                    size="22"
+            <MultiLineInput
+              disabled={loading ? true : false}
+              theme={theme}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' && !event.shiftKey) {
+                  event.preventDefault();
+                  sendTextMsg();
+                }
+              }}
+              placeholder="Type your message..."
+              onChange={(e) => onChangeTypedMessage(e.target.value)}
+              value={typedMessage}
+              ref={textAreaRef}
+              rows={1}
+            />
+            {gif && (
+              <Section
+                width="30px"
+                height="24px"
+                cursor="pointer"
+                alignSelf="end"
+                onClick={() => setGifOpen(!gifOpen)}
+              >
+                <GifIcon />
+              </Section>
+            )}
+            {gifOpen && (
+              <Section
+                position="absolute"
+                bottom="50px"
+                right="-18px"
+                zIndex="1"
+                ref={modalRef}
+              >
+                <GifPicker
+                  onGifClick={sendGIF}
+                  width={isMobile ? 260 : 320}
+                  height={370}
+                  tenorApiKey={String(PUBLIC_GOOGLE_TOKEN)}
+                />
+              </Section>
+            )}
+            <Section onClick={handleUploadFile}>
+              {!fileUploading && file && (
+                <>
+                  <Section
+                    width="18px"
+                    height="24px"
+                    cursor="pointer"
+                    alignSelf="end"
+                  >
+                    <AttachmentIcon color={theme.iconColor?.attachment} />
+                  </Section>
+                  <FileInput
+                    type="file"
+                    ref={fileUploadInputRef}
+                    onChange={(e) => uploadFile(e)}
                   />
-                </Section>
+                </>
               )}
-            </SendSection>
-          </>
+            </Section>
+            {!(loading || fileUploading) && (
+              <Section
+                cursor="pointer"
+                alignSelf="end"
+                height="20px"
+                width="22px"
+                onClick={() => sendTextMsg()}
+              >
+                <SendCompIcon color={theme.iconColor?.sendButton} />
+              </Section>
+            )}
+
+            {(loading || fileUploading) && (
+              <Section
+                alignSelf="end"
+                height="24px"
+              >
+                <Spinner
+                  color={theme.spinnerColor}
+                  size="22"
+                />
+              </Section>
+            )}
+          </SendSection>
         )}
       </TypebarSection>
     </MessageInputContainer>
@@ -696,9 +691,9 @@ const MessageInputContainer = styled(Section)`
 `;
 
 const SendSection = styled(Section)`
-  gap: 11.5px;
+  gap: 12px;
   @media ${device.mobileL} {
-    gap: 7.5px;
+    gap: 8px;
   }
 `;
 const MultiLineInput = styled.textarea<IThemeProps>`
@@ -717,7 +712,8 @@ const MultiLineInput = styled.textarea<IThemeProps>`
   padding-right: 5px;
   align-self: end;
   @media ${device.mobileL} {
-    font-size: 14px;
+    font-size: 16px;
+    width: 100%;
   }
   &&::-webkit-scrollbar {
     width: 4px;

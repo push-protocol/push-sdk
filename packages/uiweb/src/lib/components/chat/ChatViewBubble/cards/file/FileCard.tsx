@@ -29,18 +29,32 @@ import { IMessagePayload } from '../../../exportedTypes';
 // Exported Interfaces & Types
 
 // Exported Functions
-export const FileCard = ({ chat, isGroup }: { chat: IMessagePayload; position: number; isGroup: boolean }) => {
-  const fileContent: FileMessageContent = JSON.parse(chat?.messageContent);
-  const name = fileContent.name;
 
-  const content = fileContent.content as string;
-  const size = fileContent.size;
+const getParsedMessage = (message: string): FileMessageContent => {
+  try {
+    return JSON.parse(message);
+  } catch (error) {
+    console.error('UIWeb::components::ChatViewBubble::FileCard::error while parsing image', error);
+    return {
+      name: 'Unable to load file',
+      content: '',
+      size: 0,
+      type: '',
+    };
+  }
+};
+
+export const FileCard = ({ chat }: { chat: IMessagePayload }) => {
+  // derive message
+  const message =
+    typeof chat.messageObj === 'object' ? (chat.messageObj?.content as string) ?? '' : (chat.messageObj as string);
+
+  const parsedMessage = getParsedMessage(message);
 
   return (
     <Section
       alignSelf="start"
-      maxWidth="100%"
-      margin="5px 0"
+      maxWidth="512px"
       background="#343536"
       borderRadius="8px"
       justifyContent="space-around"
@@ -49,7 +63,7 @@ export const FileCard = ({ chat, isGroup }: { chat: IMessagePayload; position: n
       width="fit-content"
     >
       <Image
-        src={FILE_ICON(name?.split('.').slice(-1)[0])}
+        src={FILE_ICON(parsedMessage.name?.split('.').slice(-1)[0])}
         alt="extension icon"
         width="20px"
         height="20px"
@@ -62,17 +76,17 @@ export const FileCard = ({ chat, isGroup }: { chat: IMessagePayload; position: n
           color="#fff"
           fontSize="15px"
         >
-          {shortenText(name, 11)}
+          {shortenText(parsedMessage.name, 11)}
         </Span>
         <Span
           color="#fff"
           fontSize="12px"
         >
-          {formatFileSize(size)}
+          {formatFileSize(parsedMessage.size)}
         </Span>
       </Section>
       <FileDownloadIconAnchor
-        href={content}
+        href={parsedMessage.content}
         target="_blank"
         rel="noopener noreferrer"
         download

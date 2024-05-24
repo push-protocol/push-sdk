@@ -106,6 +106,7 @@ import { SubscriptionManagerTest } from './widget/SubscriptionManagerTest';
 import Widget from './widget/Widget';
 // import { SubscriptionManagerTest } from './widget/SubscriptionManagerTest';
 import { UserProfileTest } from './ChatUITest/UserProfileTest';
+import ChatPreviewSearchListTest from './ChatUITest/ChatPreviewSearchList';
 
 window.Buffer = window.Buffer || Buffer;
 
@@ -340,13 +341,7 @@ export function App() {
             <SocketContext.Provider value={socketData}>
               <AccountContext.Provider value={{ pgpPrivateKey, setSpaceId }}>
                 <WidgetUIProvider>
-                  <ChatUIProvider
-                    env={env}
-                    theme={darkChatTheme}
-                    signer={signer}
-                    // user={pushUser}
-                    debug={true}
-                  >
+                  <ChatUIProvider env={env} theme={darkChatTheme} debug={true}>
                     <SpacesUIProvider spaceUI={spaceUI} theme={customDarkTheme}>
                       <Routes>
                         <Route
@@ -655,6 +650,10 @@ export function App() {
                         <Route
                           path="ChatPreview"
                           element={<ChatPreviewTest />}
+                        />
+                        <Route
+                          path="ChatPreviewSearchList"
+                          element={<ChatPreviewSearchListTest />}
                         />
                         <Route
                           path="ChatPreviewList"
