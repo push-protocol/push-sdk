@@ -3,16 +3,13 @@ import { ReactNode, useEffect, useRef, useState } from 'react';
 
 // External Packages
 import { CONSTANTS, PushAPI, SignerType } from '@pushprotocol/restapi';
-import { ThemeProvider } from 'styled-components';
 
 // Internal Compoonents
 import { ChatDataContext, IChatDataContextValues } from '../context/chatContext';
-import { getAddressFromSigner, pCAIP10ToWallet, traceStackCalls } from '../helpers';
-import useChatProfile from '../hooks/chat/useChatProfile';
+import { pCAIP10ToWallet } from '../helpers';
+
 import usePushUserInfoUtilities from '../hooks/chat/useUserInfoUtilities';
-import useCreateChatProfile from '../hooks/useCreateChatProfile';
-import useDecryptPGPKey from '../hooks/useDecryptPGPKey';
-import useGetChatProfile from '../hooks/useGetChatProfile';
+
 import usePushUser from '../hooks/usePushUser';
 import useToast from '../components/chat/reusables/NewToast'; // Re-write this later
 
@@ -27,6 +24,7 @@ import { Constants, ENV, GUEST_MODE_ACCOUNT } from '../config';
 import { IUser } from '@pushprotocol/restapi';
 import { IChatTheme } from '../components/chat/theme';
 import { GlobalStyle } from '../components/reusables';
+import { Web3OnboardDataProvider } from './Web3OnboardDataProvider';
 
 // Constants
 // Save original console methods
@@ -115,7 +113,7 @@ export const ChatUIProvider = ({
 
     console.debug(`UIWeb::ChatDataProvider::user changed - ${new Date().toISOString()}`, user);
 
-    if (!user.readmode()) {
+    if (!user?.readmode()) {
       await initStream(user);
     }
 
@@ -223,10 +221,10 @@ export const ChatUIProvider = ({
   // To setup debug parameters
   useEffect(() => {
     if (debug) {
-      console.debug('UIWeb::ChatDataProvider::Debug mode enabled');
+      console.debug('UIWeb::ChatDataProvider::Debug mode enabled, console logs are enabled');
       enableConsole();
     } else {
-      console.warn('UIWeb::ChatDataProvider::Debug mode disabled');
+      console.warn('UIWeb::ChatDataProvider::Debug mode is turned off, console logs are suppressed');
       disableConsole();
     }
   }, [debug]);
@@ -471,8 +469,10 @@ export const ChatUIProvider = ({
   const PROVIDER_THEME = Object.assign({}, lightChatTheme, theme);
   return (
     <ThemeContext.Provider value={PROVIDER_THEME}>
-      <GlobalStyle />
-      <ChatDataContext.Provider value={value}>{children}</ChatDataContext.Provider>
+      <Web3OnboardDataProvider>
+        <GlobalStyle />
+        <ChatDataContext.Provider value={value}>{children}</ChatDataContext.Provider>
+      </Web3OnboardDataProvider>
     </ThemeContext.Provider>
   );
 };

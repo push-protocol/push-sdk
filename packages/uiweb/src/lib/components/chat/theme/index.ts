@@ -25,6 +25,8 @@ interface IBorder {
   chatWidget?: string;
   chatSentBubble?: string;
   chatReceivedBubble?: string;
+  reactionsBorder?: string;
+  reactionsHoverBorder?: string;
 }
 interface IBorderRadius {
   chatViewComponent?: string;
@@ -36,6 +38,9 @@ interface IBorderRadius {
   chatPreview?: string;
   userProfile?: string;
   chatWidget?: string;
+  chatBubbleBorderRadius?: string;
+  reactionsPickerBorderRadius?: string;
+  reactionsBorderRadius?: string;
 }
 
 interface IPadding {
@@ -47,6 +52,8 @@ interface IPadding {
   messageInputPadding?: string;
   chatBubbleSenderPadding?: string;
   chatBubbleReceiverPadding?: string;
+  reactionsPickerPadding?: string;
+  reactionsPadding?: string;
 }
 
 interface IMargin {
@@ -230,6 +237,9 @@ export const lightChatTheme: IChatTheme = {
     chatPreview: '24px',
     userProfile: '0px',
     chatWidget: '24px',
+    chatBubbleBorderRadius: '12px',
+    reactionsPickerBorderRadius: '12px',
+    reactionsBorderRadius: '24px',
   },
 
   padding: {
@@ -241,6 +251,8 @@ export const lightChatTheme: IChatTheme = {
     messageInputPadding: '0px',
     chatBubbleSenderPadding: '0px',
     chatBubbleReceiverPadding: '0px',
+    reactionsPickerPadding: '4px',
+    reactionsPadding: '4px 8px',
   },
 
   margin: {
@@ -250,8 +262,8 @@ export const lightChatTheme: IChatTheme = {
     chatViewMargin: '0px',
     chatViewListMargin: '0px 0px 0px 10px',
     messageInputMargin: '2px 10px 10px 10px',
-    chatBubbleSenderMargin: '8px 8px 8px 0px',
-    chatBubbleReceiverMargin: '8px 0px 8px 8px',
+    chatBubbleSenderMargin: '16px 8px',
+    chatBubbleReceiverMargin: '16px 8px',
   },
 
   backgroundColor: {
@@ -341,6 +353,8 @@ export const lightChatTheme: IChatTheme = {
     chatWidget: '1px solid #E4E8EF',
     chatReceivedBubble: 'none',
     chatSentBubble: 'none',
+    reactionsBorder: '1px solid transparent',
+    reactionsHoverBorder: '1px solid #DFDFDF',
   },
 
   iconColor: {
@@ -400,6 +414,9 @@ export const darkChatTheme: IChatTheme = {
     chatPreview: '24px',
     userProfile: '0px',
     chatWidget: '24px',
+    chatBubbleBorderRadius: '12px',
+    reactionsPickerBorderRadius: '12px',
+    reactionsBorderRadius: '24px',
   },
 
   padding: {
@@ -411,6 +428,8 @@ export const darkChatTheme: IChatTheme = {
     messageInputPadding: '0px',
     chatBubbleSenderPadding: '0px',
     chatBubbleReceiverPadding: '0px',
+    reactionsPickerPadding: '4px',
+    reactionsPadding: '4px 8px',
   },
 
   margin: {
@@ -420,8 +439,8 @@ export const darkChatTheme: IChatTheme = {
     chatViewMargin: '0px',
     chatViewListMargin: '0px 0px 0px 10px',
     messageInputMargin: '2px 10px 10px 10px',
-    chatBubbleSenderMargin: '8px 8px 8px 0px',
-    chatBubbleReceiverMargin: '8px 0px 8px 8px',
+    chatBubbleSenderMargin: '16px 8px',
+    chatBubbleReceiverMargin: '16px 8px',
   },
 
   backgroundColor: {
@@ -510,6 +529,8 @@ export const darkChatTheme: IChatTheme = {
     userProfile: 'none',
     chatReceivedBubble: 'none',
     chatSentBubble: 'none',
+    reactionsBorder: '1px solid transparent',
+    reactionsHoverBorder: '1px solid #282A2E',
   },
 
   iconColor: {

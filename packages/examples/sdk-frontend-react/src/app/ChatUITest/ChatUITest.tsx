@@ -33,7 +33,7 @@ const ChatUITest = () => {
             CHAT BUBBLE
           </Link>
           <Link to="/ChatViewList" className="nav-button">
-           CHAT VIEW LIST
+            CHAT VIEW LIST
           </Link>
           <Link to="/ChatView" className="nav-button">
             CHAT VIEW
@@ -43,6 +43,9 @@ const ChatUITest = () => {
           </Link>
           <Link to="/ChatPreviewList" className="nav-button">
             CHAT PREVIEW LIST
+          </Link>
+          <Link to="/ChatPreviewSearchList" className="nav-button">
+            CHAT PREVIEW SEARCH LIST
           </Link>
           <Link to="/userProfile" className="nav-button">
             USER PROFILE COMPONENT

@@ -119,7 +119,8 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (options: IC
           )}
 
           {/* Load ChatViewList if in options */}
-          <Section
+          {/* TODO Create theme from styled and then extend theme to have tablet and mobile sizes */}
+          <ChatViewSection
             flex="1 1 auto"
             overflow="hidden"
             padding={theme.padding?.chatViewListPadding}
@@ -136,21 +137,12 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (options: IC
                 chatId={initialized.derivedChatId}
               />
             )}
-          </Section>
-
-          {/* Check if user is not in read mode */}
-          {/* This will probably be not needed anymore */}
-          {/* {!signer && !(!!account && !!pgpPrivateKey) && !isConnected && (
-            <Section flex="0 1 auto">
-              <Span></Span>
-            </Section>
-          )} */}
+          </ChatViewSection>
 
           {/* Load MessageInput if in options and user is present */}
           {messageInput && user && (
             <Section
               flex="0 1 auto"
-              position="static"
               zIndex="2"
               padding={theme.padding?.messageInputPadding}
               margin={theme.margin?.messageInputMargin}
@@ -181,4 +173,10 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (options: IC
 const Conatiner = styled(Section)<IThemeProps>`
   border: ${(props) => props.theme.border?.chatViewComponent};
   box-sizing: border-box;
+`;
+
+const ChatViewSection = styled(Section)<IThemeProps>`
+  @media (${device.mobileL}) {
+    margin: 0;
+  }
 `;

@@ -1,4 +1,4 @@
-import type { IFeeds, ParsedResponseType, PushAPI, Rules } from '@pushprotocol/restapi';
+import type { IFeeds, IMessageIPFSWithCID, ParsedResponseType, PushAPI, Rules } from '@pushprotocol/restapi';
 import { Bytes, TypedDataDomain, TypedDataField, providers } from 'ethers';
 import type { ReactElement } from 'react';
 import type { ENV } from '../config';
@@ -215,3 +215,26 @@ export interface IFrame {
   frameDetails?: FrameDetails;
   message?: string;
 }
+
+export interface IReactionsForChatMessages {
+  [key: string]: IMessageIPFSWithCID[]; // key is the message CID, value is an array of reactions
+}
+
+export type WalletType = {
+  name: string;
+  url: string;
+};
+
+export type AppMetaDataType = {
+  name: string;
+  logo: string;
+  icon: string;
+  description: string;
+  recommendedInjectedWallets: WalletType[];
+};
+export type ChainType = {
+  id: string; // Assuming all IDs are in hexadecimal string format
+  token: string;
+  label: string;
+  rpcUrl: string;
+};

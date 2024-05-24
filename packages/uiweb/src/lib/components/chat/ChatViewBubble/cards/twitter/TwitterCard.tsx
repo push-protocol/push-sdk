@@ -19,20 +19,9 @@ import { IMessagePayload } from '../../../exportedTypes';
 
 // Exported Functions
 
-export const TwitterCard = ({
-  chat,
-  tweetId,
-  isGroup,
-  position,
-}: {
-  chat: IMessagePayload;
-  tweetId: string;
-  isGroup: boolean;
-  position: number;
-}) => {
+export const TwitterCard = ({ chat, tweetId }: { chat: IMessagePayload; tweetId: string }) => {
   return (
     <Section
-      alignSelf={position ? 'end' : 'start'}
       maxWidth="100%"
       width="fit-content"
       margin="5px 0"

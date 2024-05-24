@@ -1,14 +1,9 @@
 import styled from 'styled-components';
 
-import {
-  ChatView,
-  CreateGroupModal,
-  MODAL_BACKGROUND_TYPE,
-  MODAL_POSITION_TYPE,
-  UserProfile,
-} from '@pushprotocol/uiweb';
+import { ChatView, MODAL_BACKGROUND_TYPE } from '@pushprotocol/uiweb';
 import { Section } from '../components/StyledComponents';
 import Img from '../../assets/epnsLogo.png';
+import { CHAT_ID } from '../constants';
 
 const ChatViewComponentTest = () => {
   const chatFilterList = [
@@ -20,16 +15,12 @@ const ChatViewComponentTest = () => {
     <div>
       <h2>Chat View Test page</h2>
 
-      {/* <CreateGroupModal
-        onClose={() => {
-          console.log('in close');
-        }}
-      /> */}
       <ChatViewComponentCard>
+        {/* uncomment the below code to test create group modal */}
         {/* <CreateGroupModal onClose={()=>{console.log('in close')}}  modalBackground={MODAL_BACKGROUND_TYPE.OVERLAY} modalPositionType={MODAL_POSITION_TYPE.RELATIVE}/> */}
         <ChatView
           onVerificationFail={() => console.log('Verification Failed')}
-          chatId="34c44214589cecc176a136ee1daf0f0231ecc6d6574b920b5ae39eb971fa3cb4"
+          chatId={CHAT_ID}
           chatProfileLeftHelperComponent={
             <img src={Img} onClick={() => console.debug('clicked')} />
           }
@@ -37,19 +28,6 @@ const ChatViewComponentTest = () => {
           limit={10}
           isConnected={true}
           groupInfoModalBackground={MODAL_BACKGROUND_TYPE.OVERLAY}
-          // groupInfoModalPositionType={MODAL_POSITION_TYPE.RELATIVE}
-          // verificationFailModalPosition={MODAL_POSITION_TYPE.RELATIVE}
-
-          // welcomeComponent={<div style={{display: "flex",flexDirection:'column',border:'1px solid black'}}>
-          //   <p>Welcome</p>
-          //   <p>new chat</p>
-          //   <p>Welcome</p>
-          //   <p>new chat</p>
-          //   <p>Welcome</p>
-          //   <p>new chat</p>
-          //   <p>Welcome</p>
-
-          // </div>}
         />
       </ChatViewComponentCard>
     </div>
@@ -62,5 +40,3 @@ const ChatViewComponentCard = styled(Section)`
   height: 80vh;
   position: relative;
 `;
-//c2d544ad9d1efd5c5a593b143bf8232875c926cf28015564e70ad078b95f807e
-//4ac5ab85c9c3d57adbdf2dba79357e56b2f9ef0256befe750d9f93af78d2ca68
