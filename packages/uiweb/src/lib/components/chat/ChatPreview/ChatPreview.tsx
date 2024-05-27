@@ -198,7 +198,7 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (options: IChatPreviewPr
               )}
             </Message>
             
-            {hasBadgeCount && !options?.selected  && isBot && <Badge theme={theme}>{options.badge?.count}</Badge>}
+            {((hasBadgeCount || isBot) && !options?.selected) && <Badge theme={theme}>{options.badge?.count}</Badge>}
           </Section>
         </Section>
       </Button>

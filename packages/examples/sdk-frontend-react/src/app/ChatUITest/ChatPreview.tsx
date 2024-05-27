@@ -56,7 +56,7 @@ const ChatPreviewTest = () => {
           },
         }}
         badge={{ count: 2 }}
-        selected={true}
+        selected={false}
         setSelected={console.log('Selected')}
       />
     </div>
