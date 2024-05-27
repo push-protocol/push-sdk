@@ -14,7 +14,7 @@ import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities
 import usePushSendMessage from '../../../hooks/chat/usePushSendMessage';
 import useVerifyAccessControl from '../../../hooks/chat/useVerifyAccessControl';
 import { AttachmentIcon } from '../../../icons/Attachment';
-import { EmojiIcon } from '../../../icons/Emoji';
+import { EmojiCircleIcon } from '../../../icons/PushIcons';
 import { GifIcon } from '../../../icons/Gif';
 import OpenLink from '../../../icons/OpenLink';
 import { SendCompIcon } from '../../../icons/SendCompIcon';
@@ -436,7 +436,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     >
       <TypebarSection
         width="100%"
-        overflow="hidden"
         borderRadius={theme.borderRadius?.messageInput}
         position="static"
         border={theme.border?.messageInput}
@@ -559,15 +558,18 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                 alignSelf="end"
                 onClick={() => setShowEmojis(!showEmojis)}
               >
-                <EmojiIcon color={theme.iconColor?.emoji} />
+                <EmojiCircleIcon
+                  color={theme.iconColor?.emoji}
+                  size={22}
+                />
               </Div>
             )}
             {showEmojis && (
               <Section
                 ref={modalRef}
                 position="absolute"
-                bottom="2.5rem"
-                left="2.5rem"
+                bottom="50px"
+                left="-12px"
                 zIndex="700"
               >
                 <EmojiPicker
@@ -607,9 +609,9 @@ export const MessageInput: React.FC<MessageInputProps> = ({
             {gifOpen && (
               <Section
                 position="absolute"
-                bottom="2.5rem"
+                bottom="50px"
+                right="-18px"
                 zIndex="1"
-                right={isMobile ? '7rem' : '8rem'}
                 ref={modalRef}
               >
                 <GifPicker

@@ -355,7 +355,6 @@ export const ChatProfile: React.FC<IChatProfile> = ({
 const Container = styled(Section)`
   width: auto;
   max-width: 100%;
-  overflow: hidden;
   background: ${(props) => props.theme.backgroundColor.chatProfileBackground};
   border: ${(props) => props.theme.border?.chatProfile};
   border-radius: ${(props) => props.theme.borderRadius?.chatProfile};

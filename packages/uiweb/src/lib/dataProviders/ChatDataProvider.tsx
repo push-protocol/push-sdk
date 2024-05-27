@@ -221,10 +221,10 @@ export const ChatUIProvider = ({
   // To setup debug parameters
   useEffect(() => {
     if (debug) {
-      console.debug('UIWeb::ChatDataProvider::Debug mode enabled');
+      console.debug('UIWeb::ChatDataProvider::Debug mode enabled, console logs are enabled');
       enableConsole();
     } else {
-      console.warn('UIWeb::ChatDataProvider::Debug mode disabled');
+      console.warn('UIWeb::ChatDataProvider::Debug mode is turned off, console logs are suppressed');
       disableConsole();
     }
   }, [debug]);

@@ -10,10 +10,7 @@ import { Button } from '../reusables';
 import { ModalHeaderProps } from './CreateGroupModal';
 import { GroupTypeState } from './CreateGroupModal';
 import { ThemeContext } from '../theme/ThemeProvider';
-import {
-  ConditionType,
-  CriteriaStateType,
-} from '../types/tokenGatedGroupCreationType';
+import { ConditionType, CriteriaStateType } from '../types/tokenGatedGroupCreationType';
 import ConditionsComponent from './ConditionsComponent';
 import { OperatorContainer } from './OperatorContainer';
 import { SelectedCriteria } from '../../../hooks/chat/useCriteriaState';
@@ -41,12 +38,7 @@ interface AddConditionProps {
   criteriaState: CriteriaStateType;
 }
 
-const AddConditionSection = ({
-  heading,
-  subHeading,
-  handleNext,
-  criteriaState,
-}: AddConditionProps) => {
+const AddConditionSection = ({ heading, subHeading, handleNext, criteriaState }: AddConditionProps) => {
   const theme = useContext(ThemeContext);
 
   const generateMapping = () => {
@@ -57,8 +49,17 @@ const AddConditionSection = ({
   };
 
   return (
-    <Section alignItems="start" flexDirection="column" gap="0px">
-      <Section flexDirection="column" alignItems="start" gap="5px" margin='0 0 5px 0'>
+    <Section
+      alignItems="start"
+      flexDirection="column"
+      gap="0px"
+    >
+      <Section
+        flexDirection="column"
+        alignItems="start"
+        gap="5px"
+        margin="0 0 5px 0"
+      >
         <Span
           color={theme.textColor?.modalHeadingText}
           fontSize="16px"
@@ -76,7 +77,7 @@ const AddConditionSection = ({
       </Section>
 
       {criteriaState.entryOptionsDataArray.length > 1 && (
-        <Section margin="10px" >
+        <Section margin="10px">
           <OperatorContainer
             operator={criteriaState.entryRootCondition}
             setOperator={(newEl: string) => {
@@ -87,10 +88,7 @@ const AddConditionSection = ({
       )}
 
       <ConditionsComponent
-        conditionData={[
-          [{ operator: criteriaState.entryRootCondition }],
-          ...generateMapping(),
-        ]}
+        conditionData={[[{ operator: criteriaState.entryRootCondition }], ...generateMapping()]}
         deleteFunction={(idx) => {
           criteriaState.deleteEntryOptionsDataArray(idx);
         }}
@@ -135,11 +133,13 @@ export const CreateGroupType = ({
   setGroupInputDetails,
   groupInputDetails,
 }: ModalHeaderProps & GroupTypeState) => {
-
   const theme = useContext(ThemeContext);
 
   return (
-    <Section flexDirection="column" gap="16px">
+    <Section
+      flexDirection="column"
+      gap="16px"
+    >
       <ModalHeader
         title="Create Group"
         handleClose={onClose}
@@ -152,7 +152,11 @@ export const CreateGroupType = ({
         theme={theme}
         padding="5px 4px 5px 0"
       >
-        <Section gap="20px" flexDirection="column" height="100%">
+        <Section
+          gap="20px"
+          flexDirection="column"
+          height="100%"
+        >
           <OptionButtons
             options={GROUP_TYPE_OPTIONS}
             selectedValue={groupInputDetails.groupEncryptionType}
@@ -161,7 +165,7 @@ export const CreateGroupType = ({
                 setGroupInputDetails((prevState) => ({
                   ...prevState,
                   groupEncryptionType: newEl,
-                }))
+                }));
               }
               console.debug(newEl);
             }}
@@ -169,20 +173,21 @@ export const CreateGroupType = ({
 
           <ToggleInput
             labelHeading="Gated Group"
-            labelSubHeading="Turn this on for Token/NFT gating options"
+            labelSubHeading="Enable gating including invite and access rules"
             checked={checked}
-            onToggle={() => setChecked ? setChecked(!checked) : null}
+            onToggle={() => (setChecked ? setChecked(!checked) : null)}
           />
 
           {checked && (
-            <Section flexDirection="column" gap="20px">
+            <Section
+              flexDirection="column"
+              gap="20px"
+            >
               <AddConditionSection
                 criteriaState={criteriaStateManager.entryCriteria}
                 handleNext={() => {
                   if (handleNext) {
-                    criteriaStateManager.setSelectedCriteria(
-                      SelectedCriteria.ENTRY
-                    );
+                    criteriaStateManager.setSelectedCriteria(SelectedCriteria.ENTRY);
                     handleNext();
                   }
                 }}
@@ -191,9 +196,7 @@ export const CreateGroupType = ({
               <AddConditionSection
                 handleNext={() => {
                   if (handleNext) {
-                    criteriaStateManager.setSelectedCriteria(
-                      SelectedCriteria.CHAT
-                    );
+                    criteriaStateManager.setSelectedCriteria(SelectedCriteria.CHAT);
                     handleNext();
                   }
                 }}
@@ -204,18 +207,27 @@ export const CreateGroupType = ({
           )}
         </Section>
       </ScrollSection>
-      <Section gap="16px" flexDirection="column">
-        <Button width="197px" onClick={handleAddWallets}>
+      <Section
+        gap="16px"
+        flexDirection="column"
+      >
+        <Button
+          width="197px"
+          onClick={handleAddWallets}
+        >
           Next
         </Button>
-        <InfoContainer label='Learn more about access gating rules' cta='https://push.org/docs/chat/build/conditional-rules-for-group/' />
+        <InfoContainer
+          label="Learn more about access gating rules"
+          cta="https://push.org/docs/chat/build/conditional-rules-for-group/"
+        />
       </Section>
     </Section>
   );
 };
 
 //styles
-const ScrollSection = styled(Section) <{ theme: IChatTheme }>`
+const ScrollSection = styled(Section)<{ theme: IChatTheme }>`
   &::-webkit-scrollbar-thumb {
     background: ${(props) => props.theme.scrollbarColor};
     border-radius: 10px;

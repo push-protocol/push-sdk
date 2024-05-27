@@ -12,7 +12,11 @@
     "noPropertyAccessFromIndexSignature": false,
     // "isolatedModules": true,
     "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "@components/*": ["src/lib/components/*"],
+      "@icons/*": ["src/lib/icons/*"]
+    }
   },
   "files": [],
   "include": [],
