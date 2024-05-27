@@ -174,6 +174,7 @@ interface IIconColor {
   primaryColor?: string;
   subtleColor?: string;
 }
+
 export interface IChatTheme {
   borderRadius?: IBorderRadius;
   padding?: IPadding;
@@ -192,8 +193,7 @@ export interface IChatTheme {
   textColor?: ITextColor;
   backdropFilter?: string;
   scrollbarColor?: string;
-  skeletonBG?: string;
-
+  skeletonBG?: any;
   spinnerColor?: string;
 }
 
@@ -215,12 +215,12 @@ const darkSkeletonLoading = keyframes`
   }
 `;
 
-const animation = props =>
+const animation = () =>
   css`
     ${lightSkeletonLoading} 1s linear infinite alternate;
 `;
 
-const darkAnimation = props =>
+const darkAnimation = () =>
   css`
     ${darkSkeletonLoading} 1s linear infinite alternate;
 `;
@@ -398,8 +398,6 @@ export const lightChatTheme: IChatTheme = {
   backdropFilter: 'none',
   spinnerColor: 'rgb(202, 89, 155)',
   scrollbarColor: 'rgb(202, 89, 155)',
-  skeletonFirstBg: 'hsl(200, 20%, 80%)',
-  skeletonSecondBg: 'hsl(200, 20%, 95%)',
   skeletonBG: animation
 };
 
@@ -574,7 +572,5 @@ export const darkChatTheme: IChatTheme = {
   backdropFilter: 'none',
   spinnerColor: 'rgb(202, 89, 155)',
   scrollbarColor: 'rgb(202, 89, 155)',
-  skeletonFirstBg: '#575D73',
-  skeletonSecondBg: '#6E748B',
   skeletonBG: darkAnimation
 };
