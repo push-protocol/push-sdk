@@ -51,7 +51,6 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (options: IChatPreviewPr
     })();
   }, []);
 
-  console.log(options?.chatPreviewPayload?.chatId, 'log log')
 
   // For blockie if icon is missing
   const blockieContainerRef = useRef<HTMLDivElement>(null);
