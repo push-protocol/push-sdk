@@ -49,12 +49,12 @@ export const pCAIP10ToWallet = (wallet: string): string => {
 export const resolveWeb3Name = async (address: string, user: PushAPI | undefined) => {
   const walletLowercase = pCAIP10ToWallet(address).toLowerCase();
   const checksumWallet = ethers.utils.getAddress(walletLowercase);
-  const web3Name = createWeb3Name();
+  const web3NameClient = createWeb3Name();
 
   let result: string | null = null;
 
   try {
-    result = await web3Name.getDomainName({
+    result = await web3NameClient.getDomainName({
       address: checksumWallet,
       queryChainIdList: allowedNetworks[user?.env || CONSTANTS.ENV.PROD],
     });

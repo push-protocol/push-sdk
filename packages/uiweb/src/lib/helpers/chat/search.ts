@@ -59,11 +59,11 @@ export const getNewChatUser = async ({
 
 export const getAddress = async (searchText: string, env: Env) => {
   const udResolver = getUdResolver(env);
-  const web3name = createWeb3Name();
+  const web3NameClient = createWeb3Name();
   let address: string | null = null;
   if (searchText.includes('.')) {
     try {
-      address = await web3name.getAddress(searchText);
+      address = await web3NameClient.getAddress(searchText);
       if (!address) {
         if (!udResolver) throw new Error('No udResolver available for the network');
         address = await udResolver?.owner(searchText);
