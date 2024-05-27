@@ -1,6 +1,6 @@
 import { CONSTANTS, PushAPI, SignerType } from '@pushprotocol/restapi';
 import { ethers } from 'ethers';
-import { allowedNetworks } from '../config';
+import { ENV, allowedNetworks } from '../config';
 import { getUdResolver } from './udResolver';
 import { createWeb3Name } from '@web3-name-sdk/core';
 
@@ -46,7 +46,7 @@ export const pCAIP10ToWallet = (wallet: string): string => {
   return wallet;
 };
 
-export const resolveWeb3Name = async (address: string, user: PushAPI | undefined) => {
+export const resolveWeb3Name = async (address: string, env: ENV) => {
   const walletLowercase = pCAIP10ToWallet(address).toLowerCase();
   const checksumWallet = ethers.utils.getAddress(walletLowercase);
   const web3NameClient = createWeb3Name();
@@ -56,10 +56,10 @@ export const resolveWeb3Name = async (address: string, user: PushAPI | undefined
   try {
     result = await web3NameClient.getDomainName({
       address: checksumWallet,
-      queryChainIdList: allowedNetworks[(user?.env || CONSTANTS.ENV.PROD) as keyof typeof allowedNetworks],
+      queryChainIdList: allowedNetworks[env],
     });
     if (!result) {
-      const udResolver = getUdResolver(user ? user.env : CONSTANTS.ENV.PROD);
+      const udResolver = getUdResolver(env);
       if (!udResolver) {
         throw new Error('UIWeb::helpers::address::resolveWeb3Name::Error in UD resolver');
       }

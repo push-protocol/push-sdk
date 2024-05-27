@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { IUser } from '@pushprotocol/restapi';
+import { IUser, CONSTANTS } from '@pushprotocol/restapi';
 import { ethers } from 'ethers';
 import styled from 'styled-components';
 
@@ -15,7 +15,7 @@ import { ProfileContainer } from '../reusables';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { UpdateUserProfileModal } from './UpdateUserProfileModal';
 
-import { CoreContractChainId, InfuraAPIKey, ProfilePicture, device } from '../../../config';
+import { Constants, CoreContractChainId, InfuraAPIKey, ProfilePicture, device } from '../../../config';
 import VerticalEllipsisIcon from '../../../icons/VerticalEllipsis.svg';
 import UserProfileIcon from '../../../icons/userCircleGear.svg';
 import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../../../types';
@@ -50,7 +50,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({
     (async () => {
       const fetchedUser = await fetchChatProfile({ user });
       if (fetchedUser) {
-        const result = await resolveWeb3Name(fetchedUser?.wallets, user);
+        const result = await resolveWeb3Name(fetchedUser?.wallets, user?.env || CONSTANTS.ENV.PROD);
         setWeb3Name(result);
         setUserProfile(fetchedUser);
       }
