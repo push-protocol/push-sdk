@@ -17,6 +17,7 @@ import { pCAIP10ToWallet } from '../../../helpers';
 import { createBlockie } from '../../../helpers/blockies';
 import { IChatTheme } from '../theme';
 import { ThemeContext } from '../theme/ThemeProvider';
+import { pushBotAddress } from '../../../config/constants';
 /**
  * @interface IThemeProps
  * this interface is used for defining the props for styled components
@@ -49,6 +50,8 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (options: IChatPreviewPr
       }
     })();
   }, []);
+
+  console.log(options?.chatPreviewPayload?.chatId, 'log log')
 
   // For blockie if icon is missing
   const blockieContainerRef = useRef<HTMLDivElement>(null);
@@ -193,7 +196,7 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (options: IChatPreviewPr
                 options?.chatPreviewPayload?.chatMsg?.messageContent
               )}
             </Message>
-            {!!options?.badge?.count && !options?.selected && <Badge theme={theme}>{options.badge.count}</Badge>}
+            {!!options?.badge?.count && !options?.selected && options?.chatPreviewPayload?.chatId === pushBotAddress && <Badge theme={theme}>{options.badge.count}</Badge>}
           </Section>
         </Section>
       </Button>
