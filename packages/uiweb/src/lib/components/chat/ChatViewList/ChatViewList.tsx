@@ -158,7 +158,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
         scrollRef &&
         scrollRef?.current &&
         scrollRef?.current?.parentElement &&
-        !messageLoading &&
+        !messageLoading && 
         !stopPagination
       ) {
         console.debug(
@@ -197,45 +197,47 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
   // Scroll to bottom if user hasn't scrolled or if scroll is at bottom
   // Else leave the scroll as it is
   // to get scroll lock
+  // updated to make scroll stick to current position after fetching new messages
   const onScroll = async () => {
     if (scrollRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
-
+  
       let scrollLocked = scrollRef.current.getAttribute('data-scroll-locked') === 'true' ? true : false;
       const programmableScroll = scrollRef.current.getAttribute('data-programmable-scroll') === 'true' ? true : false;
-      const programmableScrollTop = scrollRef.current.getAttribute('data-programmable-scroll-top') || 0;
-
-      // user has scrolled away so scroll should not be locked
-      if (programmableScroll === false) {
+  
+      // User has scrolled away so scroll should not be locked
+      if (!programmableScroll) {
         scrollLocked = false;
       }
-
-      // lock scroll if user is at bottom
+  
+      // Lock scroll if user is at bottom
       if (scrollTop + clientHeight >= scrollHeight - 10) {
-        // add 10 for variability
         scrollLocked = true;
       }
-
-      console.debug(
-        `UIWeb::ChatViewList::onScroll::scrollLocked ${new Date().toISOString()}`,
-        scrollRef.current.scrollTop,
-        scrollRef.current.clientHeight,
-        scrollRef.current.scrollHeight,
-        scrollLocked
-      );
-
-      // update scroll-locked attribute
+  
+      // Update scroll-locked attribute
       scrollRef.current.setAttribute('data-scroll-locked', scrollLocked.toString());
-
+  
       if (scrollTop === 0) {
         const content = scrollRef.current;
         const oldScrollHeight = content.scrollHeight; // Capture the old scroll height before new messages are added
         scrollRef.current.setAttribute('data-old-scroll-height', oldScrollHeight.toString());
-
-        await fetchChatMessages();
+  
+        await fetchChatMessages(); // Fetch new messages
+  
+        // Calculate the new scroll height after new messages have been added
+        const newScrollHeight = content.scrollHeight;
+        const oldScrollHeightAttr = parseInt(content.getAttribute('data-old-scroll-height') || '0', 10);
+  
+        // Adjust the scroll position to keep the top of the previously loaded messages visible
+        content.scrollTop = newScrollHeight - oldScrollHeightAttr;
+  
+        // Remove the old-scroll-height attribute as it is no longer needed
+        content.removeAttribute('data-old-scroll-height');
       }
     }
   };
+  
 
   // To enable smart scrolling when content height gets adjsuted
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -293,7 +295,9 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
       return () => clearTimeout(timer);
     }
 
-    return () => {};
+    return () => {
+      // add comment
+    };
   }, [chatAcceptStream, participantJoinStream]);
 
   // Change listtype to 'UINITIALIZED' and hidden to true when participantRemoveStream or participantLeaveStream is received
