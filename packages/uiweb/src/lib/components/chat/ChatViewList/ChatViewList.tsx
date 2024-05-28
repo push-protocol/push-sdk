@@ -293,7 +293,9 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
       return () => clearTimeout(timer);
     }
 
-    return () => {};
+    return () => {
+      //Empty return
+    };
   }, [chatAcceptStream, participantJoinStream]);
 
   // Change listtype to 'UINITIALIZED' and hidden to true when participantRemoveStream or participantLeaveStream is received
@@ -571,7 +573,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
 };
 
 //styles
-const ChatViewListCard = styled(Section)<IThemeProps>`
+const ChatViewListCard = styled(Section) <IThemeProps>`
   &::-webkit-scrollbar-thumb {
     background: ${(props) => props.theme.scrollbarColor};
     border-radius: 10px;
@@ -584,6 +586,6 @@ const ChatViewListCard = styled(Section)<IThemeProps>`
   overscroll-behavior: contain;
 `;
 
-const ChatViewListCardInner = styled(Section)<IThemeProps>`
+const ChatViewListCardInner = styled(Section) <IThemeProps>`
   filter: ${(props) => (props.blur ? 'blur(6px)' : 'none')};
 `;
