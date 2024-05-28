@@ -50,7 +50,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({
     (async () => {
       const fetchedUser = await fetchChatProfile({ user });
       if (fetchedUser) {
-        const result = await resolveWeb3Name(fetchedUser?.wallets, user?.env || CONSTANTS.ENV.PROD);
+        const result = await resolveWeb3Name(fetchedUser?.wallets, user?.env);
         setWeb3Name(result);
         setUserProfile(fetchedUser);
       }

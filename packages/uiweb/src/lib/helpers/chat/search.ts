@@ -2,7 +2,7 @@ import type { Env, IFeeds, IUser, PushAPI } from '@pushprotocol/restapi';
 import { ethers } from 'ethers';
 import type { ChatFeedsType, NotificationFeedsType, ParsedNotificationType, Web3NameListType } from '../../types';
 import { pCAIP10ToWallet, walletToPCAIP10 } from '../address';
-import { getUdResolver } from '../udResolver';
+import { getUdResolverClient } from '../udResolver';
 import { displayDefaultUser } from './user';
 import { createWeb3Name } from '@web3-name-sdk/core';
 
@@ -58,15 +58,15 @@ export const getNewChatUser = async ({
 };
 
 export const getAddress = async (searchText: string, env: Env) => {
-  const udResolver = getUdResolver(env);
+  const udResolverClient = getUdResolverClient(env);
   const web3NameClient = createWeb3Name();
   let address: string | null = null;
   if (searchText.includes('.')) {
     try {
       address = await web3NameClient.getAddress(searchText);
       if (!address) {
-        if (!udResolver) throw new Error('No udResolver available for the network');
-        address = await udResolver?.owner(searchText);
+        if (!udResolverClient) throw new Error('No udResolverClient available for the network');
+        address = await udResolverClient?.owner(searchText);
       }
     } catch (err) {
       console.debug(err);

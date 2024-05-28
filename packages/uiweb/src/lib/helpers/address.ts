@@ -1,8 +1,8 @@
-import { CONSTANTS, PushAPI, SignerType } from '@pushprotocol/restapi';
+import { SignerType, CONSTANTS } from '@pushprotocol/restapi';
 import { ethers } from 'ethers';
 import { ENV, allowedNetworks } from '../config';
-import { getUdResolver } from './udResolver';
 import { createWeb3Name } from '@web3-name-sdk/core';
+import { getUdResolverClient } from './udResolver';
 
 /**
  *
@@ -47,6 +47,7 @@ export const pCAIP10ToWallet = (wallet: string): string => {
 };
 
 export const resolveWeb3Name = async (address: string, env: ENV) => {
+  env = env || CONSTANTS.ENV.PROD;
   const walletLowercase = pCAIP10ToWallet(address).toLowerCase();
   const checksumWallet = ethers.utils.getAddress(walletLowercase);
   const web3NameClient = createWeb3Name();
@@ -59,15 +60,15 @@ export const resolveWeb3Name = async (address: string, env: ENV) => {
       queryChainIdList: allowedNetworks[env],
     });
     if (!result) {
-      const udResolver = getUdResolver(env);
-      if (!udResolver) {
+      const udResolverClient = getUdResolverClient(env);
+      if (!udResolverClient) {
         throw new Error('UIWeb::helpers::address::resolveWeb3Name::Error in UD resolver');
       }
       // attempt reverse resolution on provided address
-      const udName = await udResolver.reverse(checksumWallet);
+      const udDomainName = await udResolverClient.reverse(checksumWallet);
 
-      if (udName) {
-        result = udName;
+      if (udDomainName) {
+        result = udDomainName;
       }
     }
   } catch (err) {

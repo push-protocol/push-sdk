@@ -93,7 +93,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
   // To setup web3 name, asynchrounously
   const setupWeb3Name = async (address: string) => {
     console.debug('UIWeb::ChatProfile::setupWeb3Name sending address for resolution', address);
-    const result = await resolveWeb3Name(address, user?.env || CONSTANTS.ENV.PROD);
+    const result = await resolveWeb3Name(address, user?.env);
     console.debug('UIWeb::ChatProfile::setupWeb3Name got result as ', address, result);
 
     setInitialized((prevState) => ({

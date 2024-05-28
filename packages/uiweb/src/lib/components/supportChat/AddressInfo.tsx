@@ -25,7 +25,7 @@ export const AddressInfo: React.FC = () => {
     const getUser = async () => {
       if (user) {
         const fetchedUser = await user.info();
-        const ensNameResult = await resolveWeb3Name(supportAddress!, user?.env || Constants.ENV.PROD);
+        const ensNameResult = await resolveWeb3Name(supportAddress!, user?.env);
         setEnsName(ensNameResult!);
         setPushUser(fetchedUser);
       }

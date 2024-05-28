@@ -1,7 +1,5 @@
-import type { Env, IUser } from '@pushprotocol/restapi';
+import type { IUser } from '@pushprotocol/restapi';
 import { ProfilePicture } from '../../config';
-import { ethers } from 'ethers';
-import { getUdResolver } from '../udResolver';
 
 export const displayDefaultUser = ({ caip10 }: { caip10: string }): IUser => {
   const userCreated: IUser = {
