@@ -280,10 +280,16 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
 
   // Change listtype to 'CHATS' and hidden to false when chatAcceptStream is received
   useEffect(() => {
-    if (Object.keys(chatAcceptStream || {}).length > 0 && chatAcceptStream.constructor === Object) {
+    if (
+      (Object.keys(chatAcceptStream || {}).length > 0 && chatAcceptStream.constructor === Object) ||
+      (Object.keys(participantJoinStream || {}).length > 0 && participantJoinStream.constructor === Object)
+    ) {
       // Always change hidden to false and list will be CHATS
       const updatedChatInfo = { ...(initialized.chatInfo as IChatInfoResponse) };
-      if (updatedChatInfo) updatedChatInfo.list = 'CHATS';
+      if (updatedChatInfo) {
+        updatedChatInfo.list = 'CHATS';
+        if (updatedChatInfo?.meta) updatedChatInfo.meta.visibility = true;
+      }
 
       // set initialized after chat accept animation is done
       const timer = setTimeout(() => {
@@ -300,10 +306,16 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
 
   // Change listtype to 'UINITIALIZED' and hidden to true when participantRemoveStream or participantLeaveStream is received
   useEffect(() => {
-    if (Object.keys(participantRemoveStream || {}).length > 0 && participantRemoveStream.constructor === Object) {
+    if (
+      (Object.keys(participantRemoveStream || {}).length > 0 && participantRemoveStream.constructor === Object) ||
+      (Object.keys(participantLeaveStream || {}).length > 0 && participantLeaveStream.constructor === Object)
+    ) {
       // If not encrypted, then set hidden to false
       const updatedChatInfo = { ...(initialized.chatInfo as IChatInfoResponse) };
-      if (updatedChatInfo) updatedChatInfo.list = 'UNINITIALIZED';
+      if (updatedChatInfo) {
+        updatedChatInfo.list = 'UNINITIALIZED';
+        if (updatedChatInfo?.meta) updatedChatInfo.meta.visibility = false;
+      }
 
       setInitialized({ ...initialized, chatInfo: updatedChatInfo, isHidden: true });
     }
@@ -515,8 +527,9 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
               flexDirection="column"
               justifyContent="start"
               width="100%"
-              ref={chatContainerRef}
-              blur={initialized.isHidden}
+               ref={chatContainerRef}
+               blur={initialized.isHidden && initialized?.chatInfo?.list !== 'REQUESTS'}
+
             >
               {messages &&
                 messages?.map((chat: IMessageIPFS, index: number) => {
