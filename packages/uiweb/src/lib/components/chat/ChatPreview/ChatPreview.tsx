@@ -42,7 +42,7 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (options: IChatPreviewPr
       setFormattedAddress(address);
       if (!options.chatPreviewPayload?.chatGroup) {
         try {
-          const result = await resolveWeb3Name(address, user);
+          const result = await resolveWeb3Name(address, user?.env);
           if (result) setWeb3Name(result);
         } catch (e) {
           // console.debug(e);

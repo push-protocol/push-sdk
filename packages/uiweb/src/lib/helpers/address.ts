@@ -1,8 +1,8 @@
-import type { InfuraProvider, Web3Provider } from '@ethersproject/providers';
-import { CONSTANTS, Env, PushAPI, SignerType } from '@pushprotocol/restapi';
+import { SignerType, CONSTANTS } from '@pushprotocol/restapi';
 import { ethers } from 'ethers';
-import { CoreContractChainId, InfuraAPIKey } from '../config';
-import { getUdResolver } from './udResolver';
+import { ENV, allowedNetworks } from '../config';
+import { createWeb3Name } from '@web3-name-sdk/core';
+import { getUdResolverClient } from './udResolver';
 
 /**
  *
@@ -46,69 +46,29 @@ export const pCAIP10ToWallet = (wallet: string): string => {
   return wallet;
 };
 
-export const resolveEns = (address: string, provider: Web3Provider) => {
+export const resolveWeb3Name = async (address: string, env: ENV) => {
+  env = env || CONSTANTS.ENV.PROD;
   const walletLowercase = pCAIP10ToWallet(address).toLowerCase();
   const checksumWallet = ethers.utils.getAddress(walletLowercase);
-  // let provider = ethers.getDefaultProvider('mainnet');
-  // if (
-  //   window.location.hostname == 'app.push.org' ||
-  //   window.location.hostname == 'staging.push.org' ||
-  //   window.location.hostname == 'dev.push.org' ||
-  //   window.location.hostname == 'alpha.push.org' ||
-  //   window.location.hostname == 'w2w.push.org'
-  // ) {
-  //   provider = new ethers.providers.InfuraProvider(
-  //     'mainnet',
-  //     appConfig.infuraAPIKey
-  //   );
-  // }
-
-  provider.lookupAddress(checksumWallet).then((ens) => {
-    if (ens) {
-      return ens;
-    } else {
-      return null;
-    }
-  });
-};
-
-export const getProvider = (user: PushAPI | undefined): any => {
-  const envKey = user ? user.env : CONSTANTS.ENV.PROD; // Default to 'PROD' if user.env is not in Constants.ENV
-  const chainId = CoreContractChainId[envKey as keyof typeof CoreContractChainId]; // Use 'as' to assert the type
-  const provider = new ethers.providers.InfuraProvider(chainId, InfuraAPIKey);
-
-  return provider;
-};
-
-export const resolveWeb3Name = async (address: string, user: PushAPI | undefined) => {
-  const walletLowercase = pCAIP10ToWallet(address).toLowerCase();
-  const checksumWallet = ethers.utils.getAddress(walletLowercase);
-
-  // get provider
-  const provider = getProvider(user);
+  const web3NameClient = createWeb3Name();
 
   let result: string | null = null;
 
   try {
-    const ens = await provider.lookupAddress(checksumWallet);
-    if (ens) {
-      result = ens;
-    } else {
-      try {
-        const udResolver = getUdResolver(user ? user.env : CONSTANTS.ENV.PROD);
-        if (!udResolver) {
-          throw new Error('UIWeb::helpers::address::resolveWeb3Name::Error in UD resolver');
-        }
+    result = await web3NameClient.getDomainName({
+      address: checksumWallet,
+      queryChainIdList: allowedNetworks[env],
+    });
+    if (!result) {
+      const udResolverClient = getUdResolverClient(env);
+      if (!udResolverClient) {
+        throw new Error('UIWeb::helpers::address::resolveWeb3Name::Error in UD resolver');
+      }
+      // attempt reverse resolution on provided address
+      const udDomainName = await udResolverClient.reverse(checksumWallet);
 
-        // attempt reverse resolution on provided address
-        const udName = await udResolver.reverse(checksumWallet);
-        if (udName) {
-          result = udName;
-        } else {
-          result = null;
-        }
-      } catch (err) {
-        console.error('UIWeb::helpers::address::resolveWeb3Name::Error in resolving via UD', err);
+      if (udDomainName) {
+        result = udDomainName;
       }
     }
   } catch (err) {
