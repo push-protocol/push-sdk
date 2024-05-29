@@ -1,14 +1,5 @@
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 
-// Define keyframes
-const skeletonLoading = keyframes`
-  0% {
-    background-color: hsl(200, 20%, 80%);
-  }
-  100% {
-    background-color: hsl(200, 20%, 95%);
-  }
-`;
 
 // Define types and export components
 type SectionStyleProps = {
@@ -45,6 +36,7 @@ type SectionStyleProps = {
   visibility?: string;
   zIndex?: string;
   fontSize?: string;
+  animation?: string;
 };
 
 export const Section = styled.div<SectionStyleProps>`
@@ -84,7 +76,7 @@ export const Section = styled.div<SectionStyleProps>`
 
   &.skeleton {
     > * {
-      visibility: ${(props) => (props.visibility || skeletonLoading ? 'hidden' : 'visible')};
+      visibility: ${(props) => (props.visibility || props.animation ? 'hidden' : 'visible')};
     }
 
     &:after {
@@ -95,7 +87,7 @@ export const Section = styled.div<SectionStyleProps>`
       left: 0;
       right: 0;
       z-index: 1;
-      animation: ${skeletonLoading} 1s linear infinite alternate;
+      animation: ${(props) => props.animation};
       border-radius: 8px;
     }
   }
@@ -112,6 +104,7 @@ type DivStyleProps = {
   borderRadius?: string;
   textAlign?: string;
   visibility?: string;
+  animation?: string;
 };
 export const Div = styled.div<DivStyleProps>`
   height: ${(props) => props.height || 'auto'};
@@ -126,7 +119,7 @@ export const Div = styled.div<DivStyleProps>`
 
   &.skeleton {
     > * {
-      visibility: ${(props) => (props.visibility || skeletonLoading ? 'hidden' : 'visible')};
+      visibility: ${(props) => (props.visibility || props.animation ? 'hidden' : 'visible')};
     }
 
     &:after {
@@ -138,7 +131,7 @@ export const Div = styled.div<DivStyleProps>`
       right: 0;
       opacity: 1;
       z-index: 1;
-      animation: ${skeletonLoading} 1s linear infinite alternate;
+      animation: ${(props) => props.animation};
       border-radius: 8px;
     }
   }
@@ -170,6 +163,7 @@ type SpanStyleProps = {
   whiteSpace?: string;
   visibility?: string;
   textWrap?: string;
+  animation?: string;
 };
 
 export const Span = styled.span<SpanStyleProps>`
@@ -201,7 +195,7 @@ export const Span = styled.span<SpanStyleProps>`
 
   &.skeleton {
     > * {
-      visibility: ${(props) => (props.visibility || skeletonLoading ? 'hidden' : 'visible')};
+      visibility: ${(props) => (props.visibility || props.animation ? 'hidden' : 'visible')};
     }
 
     &:after {
@@ -213,7 +207,7 @@ export const Span = styled.span<SpanStyleProps>`
       right: 0;
       opacity: 1;
       z-index: 1;
-      animation: ${skeletonLoading} 1s linear infinite alternate;
+      animation: ${(props) => props.animation};
       border-radius: 8px;
     }
   }

@@ -55,7 +55,7 @@ const ChatPreviewTest = () => {
               "Well, hello there, human! It's a pleasure to be in the presence of such a sophisticated carbon-based life form. How can I assist you today? Or perhaps you just want to chat and bask in the glory of my witty remarks? Either way, I'm here for you!",
           },
         }}
-        badge={{ count: 1 }}
+        badge={{ count: 2 }}
         selected={false}
         setSelected={console.log('Selected')}
       />

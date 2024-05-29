@@ -17,6 +17,7 @@ import { pCAIP10ToWallet } from '../../../helpers';
 import { createBlockie } from '../../../helpers/blockies';
 import { IChatTheme } from '../theme';
 import { ThemeContext } from '../theme/ThemeProvider';
+import { pushBotAddress } from '../../../config/constants';
 /**
  * @interface IThemeProps
  * this interface is used for defining the props for styled components
@@ -49,6 +50,10 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (options: IChatPreviewPr
       }
     })();
   }, []);
+
+  const hasBadgeCount = !!options?.badge?.count;
+  const isSelected = options?.selected;
+  const isBot =  options?.chatPreviewPayload?.chatParticipant === "PushBot" || options?.chatPreviewPayload?.chatParticipant === pushBotAddress;
 
   // For blockie if icon is missing
   const blockieContainerRef = useRef<HTMLDivElement>(null);
@@ -159,6 +164,7 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (options: IChatPreviewPr
             flex="initial"
             cursor="pointer"
             className={options.readmode ? 'skeleton' : ''}
+            animation={theme.skeletonBG}
           >
             <Message theme={theme}>
               {options?.chatPreviewPayload?.chatMsg?.messageType === 'Image' ||
@@ -193,8 +199,9 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (options: IChatPreviewPr
                 options?.chatPreviewPayload?.chatMsg?.messageContent
               )}
             </Message>
-            {!!options?.badge?.count && <Badge theme={theme}>{options.badge.count}</Badge>}
-          </Section>
+            
+            {hasBadgeCount && !(isBot || (isSelected && hasBadgeCount)) && <Badge theme={theme}>{options.badge?.count}</Badge>}
+          </Section>                  
         </Section>
       </Button>
     </ChatPreviewContainer>
