@@ -158,4 +158,4 @@ export const LIVEKIT_TOKEN_GENERATOR_SERVER_URL =
   'https://ms-lk-server.onrender.com';
 export const GUEST_MODE_ACCOUNT = '0x0000000000000000000000000000000000000001';
 
-export const pushBotAddress = "0x99A08ac6254dcf7ccc37CeC662aeba8eFA666666";
+export const pushBotAddress = "eip155:0x99A08ac6254dcf7ccc37CeC662aeba8eFA666666";

@@ -52,7 +52,8 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (options: IChatPreviewPr
   }, []);
 
   const hasBadgeCount = !!options?.badge?.count;
-  const isBot =  options?.chatPreviewPayload?.chatId === pushBotAddress;
+  const isSelected = options?.selected;
+  const isBot =  options?.chatPreviewPayload?.chatParticipant === "PushBot" || options?.chatPreviewPayload?.chatParticipant === pushBotAddress;
 
   // For blockie if icon is missing
   const blockieContainerRef = useRef<HTMLDivElement>(null);
@@ -198,8 +199,8 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (options: IChatPreviewPr
               )}
             </Message>
             
-            {((hasBadgeCount || isBot) && !options?.selected) && <Badge theme={theme}>{options.badge?.count}</Badge>}
-          </Section>
+            {hasBadgeCount && !(isBot || (isSelected && hasBadgeCount)) && <Badge theme={theme}>{options.badge?.count}</Badge>}
+          </Section>                  
         </Section>
       </Button>
     </ChatPreviewContainer>
