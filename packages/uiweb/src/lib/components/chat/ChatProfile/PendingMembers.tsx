@@ -110,6 +110,7 @@ export const PendingMembers = ({
           justifyContent="start"
           borderRadius="12px"
           theme={theme}
+          padding='10px 0 0 0'
         >
           {showPendingRequests &&
             pendingMembers &&
@@ -304,6 +305,7 @@ export const AcceptedMembers = ({
         overflow="hidden auto"
         maxHeight="15rem"
         theme={theme}
+        padding='10px 0 0 0'
       >
         {acceptedMembers.map((item, index) => (
           <MemberProfileCard
@@ -313,8 +315,8 @@ export const AcceptedMembers = ({
               isAdmin(item) && accountStatus?.role === GROUP_ROLES.ADMIN.toLowerCase()
                 ? [removeAdminDropdown, removeMemberDropdown]
                 : accountStatus?.role === GROUP_ROLES.ADMIN.toLowerCase()
-                ? [addAdminDropdown, removeMemberDropdown]
-                : []
+                  ? [addAdminDropdown, removeMemberDropdown]
+                  : []
             }
             selectedMemberAddress={selectedMemberAddress}
             setSelectedMemberAddress={setSelectedMemberAddress}
@@ -371,11 +373,11 @@ const PendingSection = styled.div`
   align-items: center;
   flex: 1;
   cursor: pointer;
-  padding: 15px 20px;
+  padding: 15px 20px 5px 20px;
   box-sizing: border-box;
 `;
 
-const ArrowImage = styled(Image)<ShadowedProps>`
+const ArrowImage = styled(Image) <ShadowedProps>`
   margin-left: auto;
   transform: ${(props) => (props?.setPosition ? 'rotate(0)' : 'rotate(180deg)')};
 `;
@@ -390,7 +392,7 @@ const Badge = styled.div`
   font-weight: 700;
 `;
 
-const ProfileSection = styled(Section)<{ theme: IChatTheme }>`
+const ProfileSection = styled(Section) <{ theme: IChatTheme }>`
   height: fit-content;
   &::-webkit-scrollbar-thumb {
     background: transparent;
