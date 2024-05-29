@@ -105,8 +105,6 @@ export const PendingMembers = ({
         <ProfileSection
           flexDirection="column"
           flex="1"
-          maxHeight="10rem"
-          overflow="hidden auto"
           justifyContent="start"
           borderRadius="12px"
           theme={theme}
@@ -301,8 +299,6 @@ export const AcceptedMembers = ({
         flexDirection="column"
         zIndex="2"
         justifyContent="start"
-        overflow="hidden auto"
-        maxHeight="15rem"
         theme={theme}
       >
         {acceptedMembers.map((item, index) => (
@@ -313,8 +309,8 @@ export const AcceptedMembers = ({
               isAdmin(item) && accountStatus?.role === GROUP_ROLES.ADMIN.toLowerCase()
                 ? [removeAdminDropdown, removeMemberDropdown]
                 : accountStatus?.role === GROUP_ROLES.ADMIN.toLowerCase()
-                ? [addAdminDropdown, removeMemberDropdown]
-                : []
+                  ? [addAdminDropdown, removeMemberDropdown]
+                  : []
             }
             selectedMemberAddress={selectedMemberAddress}
             setSelectedMemberAddress={setSelectedMemberAddress}
@@ -375,7 +371,7 @@ const PendingSection = styled.div`
   box-sizing: border-box;
 `;
 
-const ArrowImage = styled(Image)<ShadowedProps>`
+const ArrowImage = styled(Image) <ShadowedProps>`
   margin-left: auto;
   transform: ${(props) => (props?.setPosition ? 'rotate(0)' : 'rotate(180deg)')};
 `;
@@ -390,7 +386,7 @@ const Badge = styled.div`
   font-weight: 700;
 `;
 
-const ProfileSection = styled(Section)<{ theme: IChatTheme }>`
+const ProfileSection = styled(Section) <{ theme: IChatTheme }>`
   height: fit-content;
   &::-webkit-scrollbar-thumb {
     background: transparent;
