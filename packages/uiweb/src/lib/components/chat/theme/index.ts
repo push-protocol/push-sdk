@@ -2,6 +2,7 @@
  * @file theme file: all the predefined themes are defined here
  */
 import { CHAT_THEME_OPTIONS } from '../exportedTypes';
+import styled, { keyframes, css } from 'styled-components';
 // bgColorPrimary: "#fff",
 //   bgColorSecondary: "#D53A94",
 //   textColorPrimary: "#1e1e1e",
@@ -191,9 +192,37 @@ export interface IChatTheme {
   textColor?: ITextColor;
   backdropFilter?: string;
   scrollbarColor?: string;
-
+  skeletonBG?: any;
   spinnerColor?: string;
 }
+
+const lightSkeletonLoading = keyframes`
+  0% {
+    background-color: hsl(200, 20%, 80%);
+  }
+  100% {
+    background-color: hsl(200, 20%, 95%);
+  }
+`;
+
+const darkSkeletonLoading = keyframes`
+  0% {
+    background-color: #575D73;
+  }
+  100% {
+    background-color: #6E748B;
+  }
+`;
+
+const animation = () =>
+  css`
+    ${lightSkeletonLoading} 1s linear infinite alternate;
+`;
+
+const darkAnimation = () =>
+  css`
+    ${darkSkeletonLoading} 1s linear infinite alternate;
+`;
 
 //dark theme object
 export const lightChatTheme: IChatTheme = {
@@ -368,6 +397,7 @@ export const lightChatTheme: IChatTheme = {
   backdropFilter: 'none',
   spinnerColor: 'rgb(202, 89, 155)',
   scrollbarColor: 'rgb(202, 89, 155)',
+  skeletonBG: animation
 };
 
 export const darkChatTheme: IChatTheme = {
@@ -541,4 +571,5 @@ export const darkChatTheme: IChatTheme = {
   backdropFilter: 'none',
   spinnerColor: 'rgb(202, 89, 155)',
   scrollbarColor: 'rgb(202, 89, 155)',
+  skeletonBG: darkAnimation
 };

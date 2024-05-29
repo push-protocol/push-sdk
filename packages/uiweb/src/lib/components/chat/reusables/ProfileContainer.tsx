@@ -73,6 +73,7 @@ export const ProfileContainer = ({ theme, member, copy, customStyle, loading }: 
         borderRadius="100%"
         overflow="hidden"
         className={loading ? 'skeleton' : ''}
+        animation={theme.skeletonBG}
       >
         {member?.icon && (
           <Image
@@ -131,6 +132,7 @@ export const ProfileContainer = ({ theme, member, copy, customStyle, loading }: 
                 setCopyText('Copied');
               }}
               className={loading ? 'skeleton' : ''}
+              animation={theme.skeletonBG}
             >
               <RecipientSpan
                 fontSize={member?.name || member?.web3Name ? '14px' : customStyle?.fontSize ?? '18px'}
