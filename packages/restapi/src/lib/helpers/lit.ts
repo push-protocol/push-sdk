@@ -4,6 +4,7 @@ import { SignerType } from '../types';
 import { ENV } from '../constants';
 import { isValidSCWCAIP, pCAIP10ToWallet } from './address';
 import * as viem from 'viem';
+import { Signer } from './signer';
 
 export class Lit {
   public static LitInstance: Lit;
@@ -50,6 +51,8 @@ export class Lit {
     const domain = 'push.org';
     const origin = 'https://app.push.org';
     const statement = 'Enable Push Profile';
+    const nonce = await this.litNodeClient.getLatestBlockhash();
+
     const siweMessage = new siwe.SiweMessage({
       domain,
       address,
@@ -57,17 +60,19 @@ export class Lit {
       uri: origin,
       version: '1',
       chainId,
+      nonce,
       expirationTime: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
     });
     const messageToSign = siweMessage.prepareMessage();
 
     // Sign the message and format the authSig
-    const signature = await signer.signMessage(messageToSign as any);
+    const pushSigner = new Signer(signer);
+    const signature = await pushSigner.signMessage(messageToSign as any);
 
     const authSig = {
       sig: signature,
       derivedVia: 'EIP1271',
-      signedMessage: viem.hashMessage(messageToSign),
+      signedMessage: messageToSign,
       address,
     };
     return authSig;
@@ -80,10 +85,10 @@ export class Lit {
       chainId
     );
 
-    console.log(authSig);
-    console.log(this.accessControlConditions);
-    console.log(this.chain);
-    console.log(dataToEncrypt);
+    console.info(authSig);
+    console.info(this.accessControlConditions);
+    console.info(this.chain);
+    console.info(dataToEncrypt);
 
     const { ciphertext, dataToEncryptHash } = await LitJsSdk.encryptString(
       {
@@ -113,11 +118,11 @@ export class Lit {
       chainId
     );
 
-    console.log(authSig);
-    console.log(this.accessControlConditions);
-    console.log(this.chain);
-    console.log(dataToEncryptHash);
-    console.log(ciphertext);
+    console.info(authSig);
+    console.info(this.accessControlConditions);
+    console.info(this.chain);
+    console.info(dataToEncryptHash);
+    console.info(ciphertext);
 
     return await LitJsSdk.decryptToString(
       {

@@ -251,7 +251,7 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
         const LitInstance = await Lit.createInstance(
           wallet.signer as SignerType,
           wallet.account as string,
-          'ethereum',
+          'sepolia',
           env
         );
 
@@ -522,6 +522,10 @@ export const encryptPGPKey = async (
         PARTS,
         QUORUM
       );
+
+      console.info('Shards');
+      console.info(shard1, shard2, shard3);
+
       // 3. Encrypt private key with secret
       const enc = new TextEncoder();
       const encodedPrivateKey = enc.encode(privateKey);
@@ -539,7 +543,7 @@ export const encryptPGPKey = async (
       const LitInstance = await Lit.createInstance(
         wallet.signer as SignerType,
         wallet.account as string,
-        'ethereum',
+        'sepolia',
         env
       );
 
