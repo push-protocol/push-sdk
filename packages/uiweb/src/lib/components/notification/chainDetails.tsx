@@ -9,6 +9,7 @@ import { OptimismSvg } from '../../icons/OptimismSvg';
 import { PolygonSvg } from '../../icons/PolygonSvg';
 import { PolygonzkevmSvg } from '../../icons/PolygonzkevmSvg';
 import { TheGraphSvg } from '../../icons/TheGraphSvg';
+import LineaSVG from '../../icons/LineaSVG';
 import { CyberConnectSVG } from '../../icons/CyberConnectSVG';
 const createSVGIcon = (element: any, chainName: string) => {
   return (
@@ -87,6 +88,14 @@ export default {
   CYBER_CONNECT_TESTNET: {
     label: 'CYBER CONNECT TESTNET',
     icon: createSVGIcon(<CyberConnectSVG/>, 'CyberConnect Testnet'),
+  },
+  LINEA_TESTNET : {
+    label: 'LINEA TESTNET',
+    icon: createSVGIcon(<LineaSVG/>, 'Linea Testnet'),
+  },
+  LIENA_MAINNET : {
+    label: 'LIENA MAINNET',
+    icon: createSVGIcon(<LineaSVG/>, 'Linea Mainnet'),
   },
   CYBER_CONNECT_MAINNET: {
     label: 'CYBER CONNECT MAINNET',
