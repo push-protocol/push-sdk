@@ -110,6 +110,7 @@ export const PendingMembers = ({
           justifyContent="start"
           borderRadius="12px"
           theme={theme}
+          padding='10px 0 0 0'
         >
           {showPendingRequests &&
             pendingMembers &&
@@ -304,6 +305,7 @@ export const AcceptedMembers = ({
         overflow="hidden auto"
         maxHeight="15rem"
         theme={theme}
+        padding='10px 0 0 0'
       >
         {acceptedMembers.map((item, index) => (
           <MemberProfileCard
@@ -371,7 +373,7 @@ const PendingSection = styled.div`
   align-items: center;
   flex: 1;
   cursor: pointer;
-  padding: 15px 20px;
+  padding: 15px 20px 5px 20px;
   box-sizing: border-box;
 `;
 
