@@ -88,6 +88,7 @@ export const allowedNetworks = {
     10, // for optimism mainnet
     42161, // for arbitrum mainnet
     122, // for fuse mainnet
+    59144, // for linea mainnet
     7569, // for cyber connect mainnet
   ],
   dev: [
@@ -98,6 +99,7 @@ export const allowedNetworks = {
     421614, // for arbitrum testnet
     123, // for fuse testnet
     80085, // for berachain testnet
+    59141, // for linea testnet
     2442, // polygon zkevm
     111557560, // cyber connect testnet
   ],
@@ -110,6 +112,7 @@ export const allowedNetworks = {
     421614, // for arbitrum testnet
     123, // for fuse testnet
     80085, // for berachain testnet
+    59141, // for linea testnet
     2442, // polygon zkevm
     111557560, // cyber connect testnet
   ],
@@ -121,6 +124,7 @@ export const allowedNetworks = {
     421614, // for arbitrum testnet
     123, // for fuse testnet
     80085, // for berachain testnet
+    59141, // for linea testnet
     2442, // polygon zkevm
     111557560, // cyber connect testnet
   ],
@@ -156,4 +160,4 @@ export const LIVEKIT_SERVER_WEBSOCKET_URL = 'wss://spacev2-demo-17wvllxz.livekit
 export const LIVEKIT_TOKEN_GENERATOR_SERVER_URL = 'https://ms-lk-server.onrender.com';
 export const GUEST_MODE_ACCOUNT = '0x0000000000000000000000000000000000000001';
 
-export const pushBotAddress = "eip155:0x99A08ac6254dcf7ccc37CeC662aeba8eFA666666";
+export const pushBotAddress = 'eip155:0x99A08ac6254dcf7ccc37CeC662aeba8eFA666666';

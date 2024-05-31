@@ -46,8 +46,8 @@ export const pCAIP10ToWallet = (wallet: string): string => {
   return wallet;
 };
 
-export const resolveWeb3Name = async (address: string, env: ENV | undefined) => {
-  env = env || CONSTANTS.ENV.PROD;
+export const resolveWeb3Name = async (address: string, incomingEnv: ENV | undefined) => {
+  const env = (incomingEnv || CONSTANTS.ENV.PROD) as ENV;
   const walletLowercase = pCAIP10ToWallet(address).toLowerCase();
   const checksumWallet = ethers.utils.getAddress(walletLowercase);
   const web3NameClient = createWeb3Name();

@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 
-
 // Define types and export components
 type SectionStyleProps = {
   flexDirection?: string;

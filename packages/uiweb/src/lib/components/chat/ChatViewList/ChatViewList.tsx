@@ -527,9 +527,8 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
               flexDirection="column"
               justifyContent="start"
               width="100%"
-               ref={chatContainerRef}
-               blur={initialized.isHidden && initialized?.chatInfo?.list !== 'REQUESTS'}
-
+              ref={chatContainerRef}
+              blur={initialized.isHidden && initialized?.chatInfo?.list !== 'REQUESTS'}
             >
               {messages &&
                 messages?.map((chat: IMessageIPFS, index: number) => {

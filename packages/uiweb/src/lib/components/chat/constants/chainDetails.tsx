@@ -10,6 +10,8 @@ import { ArbitrumSvg } from "../../../icons/ArbitrumSvg"
 import { FuseSvg } from "../../../icons/FuseSvg"
 import React from "react";
 import { BerachainSVG } from "../../../icons/BerachainSVG";
+import LineaSVG from "../../../icons/LineaSVG";
+
 import { CyberConnectSVG } from "../../../icons/CyberConnectSVG";
 const createSVGIcon = (element:any, chainName: string) => {
   return (
@@ -80,6 +82,14 @@ export const NETWORK_ICON_DETAILS =  {
   80085 : {
     label: 'BERACHAIN TESTNET',
     icon: createSVGIcon(<BerachainSVG/>, 'Berachain Testnet'),
+  },
+  59141 : {
+    label: 'LINEA TESTNET',
+    icon: createSVGIcon(<LineaSVG/>, 'Linea Testnet'),
+  },
+  59144 : {
+    label: 'LIENA MAINNET',
+    icon: createSVGIcon(<LineaSVG/>, 'Linea Mainnet'),
   },
   111557560: {
     label: 'CYBER CONNECT TESTNET',
