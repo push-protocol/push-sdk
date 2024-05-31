@@ -3,7 +3,7 @@ import Resolution from '@unstoppabledomains/resolution';
 import { ethers } from 'ethers';
 import { allowedNetworks, InfuraAPIKey, NETWORK_DETAILS } from '../config';
 
-export const getUdResolver = (env: Env): Resolution | undefined => {
+export const getUdResolverClient = (env: Env): Resolution | undefined => {
   try {
     const l1ChainId = allowedNetworks[env].includes(1) ? 1 : 5;
     const l2ChainId = allowedNetworks[env].includes(137) ? 137 : 80002;
@@ -24,7 +24,7 @@ export const getUdResolver = (env: Env): Resolution | undefined => {
       },
     });
   } catch (e) {
-    console.debug(`Errored:UIWeb::helpers::getUdResolver::UD doesnot provide support for the network`);
+    console.debug(`Errored:UIWeb::helpers::getUdResolverClient::UD doesnot provide support for the network`);
     return undefined;
   }
 };

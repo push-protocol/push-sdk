@@ -62,7 +62,6 @@ export const AddWallets = ({
   };
 
   const handleSearch = async ({ searchedText }: { searchedText: string }): Promise<void> => {
-    //fix ens search
     const newChatUser = await getNewChatUser({
       searchText: searchedText,
       fetchChatProfile: fetchUserProfile,
