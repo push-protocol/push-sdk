@@ -105,8 +105,6 @@ export const PendingMembers = ({
         <ProfileSection
           flexDirection="column"
           flex="1"
-          maxHeight="10rem"
-          overflow="hidden auto"
           justifyContent="start"
           borderRadius="12px"
           theme={theme}
@@ -302,8 +300,6 @@ export const AcceptedMembers = ({
         flexDirection="column"
         zIndex="2"
         justifyContent="start"
-        overflow="hidden auto"
-        maxHeight="15rem"
         theme={theme}
         padding='10px 0 0 0'
       >
