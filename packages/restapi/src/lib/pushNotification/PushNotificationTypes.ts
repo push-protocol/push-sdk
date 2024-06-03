@@ -26,7 +26,7 @@ export type SubscribeUnsubscribeOptions = {
 
 export type UserSetting = {
   enabled: boolean;
-  value?: number | { lower: number; upper: number };
+  value?: number | { lower: number; upper: number } | string[];
 };
 
 export type AliasOptions = Omit<GetAliasInfoOptionsType, 'env'>;
@@ -110,13 +110,15 @@ export type CreateChannelOptions = {
 
 export type NotificationSetting = {
   type: number;
-  default: number | { upper: number; lower: number };
+  default: string | number | { upper: number; lower: number };
   description: string;
   data?: {
     upper: number;
     lower: number;
     enabled?: boolean;
     ticker?: number;
+    multiple?: boolean;
+    choices?: string[]
   };
 };
 

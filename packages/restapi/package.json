@@ -35,11 +35,13 @@
     "@types/chai-as-promised": "^7.1.5",
     "@types/crypto-js": "^4.1.1",
     "@types/mocha": "^10.0.1",
+    "@types/sinon": "^17.0.3",
     "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",
     "envfile": "^7.1.0",
     "mocha": "^10.2.0",
     "mocha-typescript": "^1.1.17",
+    "sinon": "^18.0.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.2"
   }
