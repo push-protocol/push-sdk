@@ -108,8 +108,6 @@ export const formatAddress = async (chatPreviewPayload: IChatPreviewPayload, env
     // check and remove eip155:
     if (formattedAddress.includes('eip155:')) {
       formattedAddress = formattedAddress.replace('eip155:', '');
-    } else if (formattedAddress.includes('.')) {
-      formattedAddress = (await getAddress(formattedAddress, env))!;
     }
   }
 

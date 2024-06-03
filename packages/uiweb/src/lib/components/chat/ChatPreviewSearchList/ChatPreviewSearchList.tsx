@@ -211,7 +211,6 @@ export const ChatPreviewSearchList: React.FC<IChatPreviewSearchListProps> = (opt
             const groupInfo = await getGroupByIDnew({
               groupId: derivedChatId,
             });
-
             if (groupInfo) {
               searchedChat = {
                 ...searchedChat,
@@ -230,11 +229,14 @@ export const ChatPreviewSearchList: React.FC<IChatPreviewSearchListProps> = (opt
           } else {
             const userProfile = await user?.info({ overrideAccount: chatInfo.recipient });
             console.debug('UIWeb::components::ChatPreviewSearchList::loadMoreChats::userProfile', userProfile);
-
             searchedChat = {
               ...searchedChat,
               chatId: derivedChatId,
-              chatParticipant: derivedChatId,
+              chatParticipant: derivedChatId
+                ? formattedChatId.includes('.')
+                  ? formattedChatId
+                  : derivedChatId
+                : derivedChatId,
               chatGroup: false,
               chatPic: userProfile?.profile?.picture || null,
               chatMsg: {
@@ -242,7 +244,6 @@ export const ChatPreviewSearchList: React.FC<IChatPreviewSearchListProps> = (opt
                 messageContent: chatInfo?.list === 'CHATS' ? 'Resume Chat!' : 'Start Chat!',
               },
             };
-
             resolved = true;
           }
         } else {
