@@ -155,13 +155,13 @@ const PROGRESSHOOK: Record<
   'PUSH-DECRYPT-AUTH-01': {
     progressId: 'PUSH-DECRYPT-AUTH-01',
     progressTitle: 'Decrypting Profile Creds',
-    progressInfo: 'Please sign the transaction to decrypt profile creds',
+    progressInfo: 'Please sign the transaction to decrypt profile creds.',
     level: 'INFO',
   },
   'PUSH-DECRYPT-AUTH-02': {
     progressId: 'PUSH-DECRYPT-AUTH-02',
     progressTitle: 'Push Profile Creds Unlocked',
-    progressInfo: 'Unlocking push profile creds',
+    progressInfo: 'Unlocking push profile creds.',
     level: 'SUCCESS',
   },
   /**
@@ -191,7 +191,7 @@ const PROGRESSHOOK: Record<
   'PUSH-CHANNEL-CREATE-02': {
     progressId: 'PUSH-CHANNEL-CREATE-02',
     progressTitle: 'Approving PUSH tokens',
-    progressInfo: 'Gives approval to Push Core contract to spend 50 DAI',
+    progressInfo: 'Gives approval to Push Core contract to spend 50 PUSH',
     level: 'INFO',
   },
   'PUSH-CHANNEL-CREATE-03': {
@@ -218,7 +218,7 @@ const PROGRESSHOOK: Record<
   'PUSH-CHANNEL-UPDATE-02': {
     progressId: 'PUSH-CHANNEL-UPDATE-02',
     progressTitle: 'Approving PUSH tokens',
-    progressInfo: 'Gives approval to Push Core contract to spend 50 DAI',
+    progressInfo: 'Gives approval to Push Core contract to spend 50 PUSH',
     level: 'INFO',
   },
   'PUSH-CHANNEL-UPDATE-03': {
