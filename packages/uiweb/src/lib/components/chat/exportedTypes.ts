@@ -172,6 +172,7 @@ export interface User {
 
 export interface CreateGroupModalProps {
   onClose: () => void;
+  closeonClickAway?: boolean;
   modalBackground?: ModalBackgroundType;
   modalPositionType?: ModalPositionType;
   onSuccess?: (group: GroupInfoDTO | GroupDTO | undefined) => void;

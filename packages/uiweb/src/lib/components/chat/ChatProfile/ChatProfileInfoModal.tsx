@@ -927,7 +927,8 @@ export const GroupInfoModal = ({
   if (chatProfileInfo) {
     return (
       <Modal
-        clickawayClose={onClose}
+        onClose={onClose}
+        closeonClickAway
         modalBackground={groupInfoModalBackground}
         modalPositionType={groupInfoModalPositionType}
       >
