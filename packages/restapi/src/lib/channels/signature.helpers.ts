@@ -50,6 +50,32 @@ export const getSubscriptionMessageV2 = (
   }
 };
 
+export const getSubscriptionMessageV3 = (
+  channel: string,
+  userAddress: string,
+  action: channelActionType,
+  userSetting?: string | null
+) => {
+  const actionTypeKey =
+    action === 'Unsubscribe' ? 'unsubscriber' : 'subscriber';
+  if (action == 'Subscribe') {
+    return JSON.stringify({
+      channel,
+      [actionTypeKey]: userAddress,
+      action: action,
+      userSetting: userSetting?? '',
+      timestamp: Math.floor(Date.now() / 1000),
+    }, null, 4);
+  } else {
+    return JSON.stringify({
+      channel,
+      [actionTypeKey]: userAddress,
+      action: action,
+      timestamp: Math.floor(Date.now() / 1000),
+    }, null, 4);
+  }
+};
+
 export const getTypeInformation = (action: string) => {
   if (action === 'Subscribe') {
     return {
