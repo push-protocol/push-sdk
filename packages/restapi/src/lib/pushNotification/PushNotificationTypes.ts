@@ -67,6 +67,7 @@ export type IPayload = {
   cta?: string;
   embed?: string;
   category?: number;
+  value?: string[];
   meta?: {
     domain?: string;
     type: `${ADDITIONAL_META_TYPE}+${number}`;

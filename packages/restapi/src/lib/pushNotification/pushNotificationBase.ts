@@ -190,6 +190,18 @@ export class PushNotificationBaseClass {
           SETTING_DELIMITER +
           settings[options.payload.category - 1].default.lower;
       }
+      if (
+        (settings[options.payload.category - 1].type == SELECT_TYPE ||
+          settings[options.payload.category - 1].type == TEXT_TYPE) &&
+        options.payload.value
+      ) {
+        index =
+          options.payload.category +
+          SETTING_DELIMITER +
+          SELECT_TYPE +
+          SETTING_DELIMITER +
+          options.payload.value.join(SETTING_DELIMITER);
+      }
     }
     const notificationPayload: ISendNotificationInputOptions = {
       signer: signer,
