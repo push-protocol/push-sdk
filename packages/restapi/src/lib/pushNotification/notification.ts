@@ -166,7 +166,7 @@ export class Notification extends PushNotificationBaseClass {
         parseInt(caipDetail?.networkId as string)
       );
       // convert the setting to minimal version
-      const minimalSetting = this.getMinimalUserSetting(settings!);
+      const minimalSetting = await this.verifyAndBuildMinimalUserSetting(settings!, channel);
       return await PUSH_CHANNEL.subscribeV2({
         signer: this.signer!,
         channelAddress: channel,

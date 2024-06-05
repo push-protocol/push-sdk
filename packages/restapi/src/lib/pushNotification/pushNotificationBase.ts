@@ -32,9 +32,7 @@ import {
 } from '../helpers';
 import { axiosGet, axiosPost } from '../utils/axiosUtil';
 import { PushAPI } from '../pushapi/PushAPI';
-import { channel } from 'diagnostics_channel';
 import * as viem from 'viem';
-
 
 // ERROR CONSTANTS
 const ERROR_ACCOUNT_NEEDED = 'Account is required';
@@ -48,6 +46,8 @@ const SETTING_SEPARATOR = '+';
 const RANGE_TYPE = 3;
 const SLIDER_TYPE = 2;
 const BOOLEAN_TYPE = 1;
+const SELECT_TYPE = 4;
+const TEXT_TYPE = 5;
 const DEFAULT_ENABLE_VALUE = '1';
 const DEFAULT_TICKER_VALUE = '1';
 
@@ -189,6 +189,18 @@ export class PushNotificationBaseClass {
           RANGE_TYPE +
           SETTING_DELIMITER +
           settings[options.payload.category - 1].default.lower;
+      }
+      if (
+        (settings[options.payload.category - 1].type == SELECT_TYPE ||
+          settings[options.payload.category - 1].type == TEXT_TYPE) &&
+        options.payload.value
+      ) {
+        index =
+          options.payload.category +
+          SETTING_DELIMITER +
+          SELECT_TYPE +
+          SETTING_DELIMITER +
+          options.payload.value.join(SETTING_DELIMITER);
       }
     }
     const notificationPayload: ISendNotificationInputOptions = {
@@ -691,73 +703,96 @@ export class PushNotificationBaseClass {
     return 0;
   }
 
+  protected formatEnabled(data: { enabled?: boolean }): string {
+    return data && data.enabled !== undefined
+      ? Number(data.enabled).toString()
+      : DEFAULT_ENABLE_VALUE;
+  }
+
+  protected formatTicker(data: { ticker?: number }): string {
+    return data.ticker !== undefined
+      ? data.ticker.toString()
+      : DEFAULT_TICKER_VALUE;
+  }
+
+  protected joinWithDelimiter(...parts: (string | number)[]): string {
+    return parts.join(SETTING_DELIMITER);
+  }
+
+  protected handleDefault(data: any, defaultValue: any): string {
+    return typeof defaultValue === 'object'
+      ? this.joinWithDelimiter(defaultValue.lower, defaultValue.upper)
+      : defaultValue.toString();
+  }
+
   protected getMinimalSetting(configuration: NotificationSettings): {
     setting: string;
     description: string;
   } {
     let notificationSetting = '';
     let notificationSettingDescription = '';
-    for (let i = 0; i < configuration.length; i++) {
-      const ele = configuration[i];
-      if (ele.type == BOOLEAN_TYPE) {
-        notificationSetting =
-          notificationSetting +
-          SETTING_SEPARATOR +
-          BOOLEAN_TYPE +
-          SETTING_DELIMITER +
-          ele.default;
-      }
-      if (ele.type == SLIDER_TYPE) {
-        if (ele.data) {
-          const enabled =
-            ele.data && ele.data.enabled != undefined
-              ? Number(ele.data.enabled).toString()
-              : DEFAULT_ENABLE_VALUE;
-          const ticker = ele.data.ticker ?? DEFAULT_TICKER_VALUE;
-          notificationSetting =
-            notificationSetting +
-            SETTING_SEPARATOR +
-            SLIDER_TYPE +
-            SETTING_DELIMITER +
-            enabled +
-            SETTING_DELIMITER +
-            ele.default +
-            SETTING_DELIMITER +
-            ele.data.lower +
-            SETTING_DELIMITER +
-            ele.data.upper +
-            SETTING_DELIMITER +
-            ticker;
-        }
-      }
-      if (ele.type == RANGE_TYPE) {
-        if (ele.default && typeof ele.default == 'object' && ele.data) {
-          const enabled =
-            ele.data && ele.data.enabled != undefined
-              ? Number(ele.data.enabled).toString()
-              : DEFAULT_ENABLE_VALUE;
-          const ticker = ele.data.ticker ?? DEFAULT_TICKER_VALUE;
-          notificationSetting =
-            notificationSetting +
-            SETTING_SEPARATOR +
-            RANGE_TYPE +
-            SETTING_DELIMITER +
-            enabled +
-            SETTING_DELIMITER +
-            ele.default.lower +
-            SETTING_DELIMITER +
-            ele.default.upper +
-            SETTING_DELIMITER +
-            ele.data.lower +
-            SETTING_DELIMITER +
-            ele.data.upper +
-            SETTING_DELIMITER +
-            ticker;
-        }
+    for (const ele of configuration) {
+      let settingPart = '';
+      const { type, default: def, description, data } = ele;
+
+      switch (type) {
+        case BOOLEAN_TYPE:
+          settingPart = this.joinWithDelimiter(type, def as string);
+          break;
+
+        case SLIDER_TYPE:
+          if (data) {
+            settingPart = this.joinWithDelimiter(
+              type,
+              this.formatEnabled(data),
+              def as number,
+              data.lower,
+              data.upper,
+              this.formatTicker(data)
+            );
+          }
+          break;
+
+        case RANGE_TYPE:
+          if (typeof def === 'object' && data) {
+            settingPart = this.joinWithDelimiter(
+              type,
+              this.formatEnabled(data),
+              def.lower,
+              def.upper,
+              data.lower,
+              data.upper,
+              this.formatTicker(data)
+            );
+          }
+          break;
+
+        case SELECT_TYPE:
+          if (data && data.choices) {
+            settingPart = this.joinWithDelimiter(
+              type,
+              this.formatEnabled(data),
+              data.multiple ? 1 : 0,
+              def as string,
+              ...data.choices
+            );
+          }
+          break;
+        case TEXT_TYPE:
+          if (data) {
+            settingPart = this.joinWithDelimiter(
+              type,
+              this.formatEnabled(data)
+            );
+          }
+          break;
+
+        default:
+          break;
       }
 
-      notificationSettingDescription =
-        notificationSettingDescription + SETTING_SEPARATOR + ele.description;
+      notificationSetting += SETTING_SEPARATOR + settingPart;
+      notificationSettingDescription += SETTING_SEPARATOR + description;
     }
     return {
       setting: notificationSetting.replace(/^\+/, ''),
@@ -765,46 +800,96 @@ export class PushNotificationBaseClass {
     };
   }
 
-  protected getMinimalUserSetting(setting: UserSetting[]) {
-    if (!setting) {
+  protected async verifyAndBuildMinimalUserSetting(
+    userSetting: UserSetting[],
+    channel: string
+  ): Promise<string | null> {
+    const minimalUserSettingParts: string[] = [];
+    let numberOfSettings = 0;
+    const channelInfo = await this.getChannelOrAliasInfo(channel);
+
+    if (!channelInfo || !channelInfo.channel_settings) {
       return null;
     }
-    let userSetting = '';
-    let numberOfSettings = 0;
-    for (let i = 0; i < setting.length; i++) {
-      const ele = setting[i];
-      const enabled = ele.enabled ? 1 : 0;
-      if (ele.enabled) numberOfSettings++;
 
-      if (Object.keys(ele).includes('value')) {
-        // slider type
-        if (typeof ele.value == 'number')
-          userSetting =
-            userSetting +
-            SLIDER_TYPE +
-            SETTING_DELIMITER +
-            enabled +
-            SETTING_DELIMITER +
-            ele.value;
-        else {
-          userSetting =
-            userSetting +
-            RANGE_TYPE +
-            SETTING_DELIMITER +
-            enabled +
-            SETTING_DELIMITER +
-            ele.value?.lower +
-            SETTING_DELIMITER +
-            ele.value?.upper;
-        }
-      } else {
-        // boolean type
-        userSetting = userSetting + BOOLEAN_TYPE + SETTING_DELIMITER + enabled;
-      }
-      if (i != setting.length - 1)
-        userSetting = userSetting + SETTING_SEPARATOR;
+    const channelSettings =
+      typeof channelInfo.channel_settings === 'string'
+        ? JSON.parse(channelInfo.channel_settings)
+        : channelInfo.channel_settings;
+
+    if (channelSettings.length !== userSetting.length) {
+      return null;
     }
-    return numberOfSettings + SETTING_SEPARATOR + userSetting;
+
+    for (let i = 0; i < channelSettings.length; i++) {
+      let localSettings = '';
+      const ele = userSetting[i];
+      const enabled = ele.enabled ? 1 : 0;
+
+      if (ele.enabled) {
+        numberOfSettings++;
+      }
+
+      switch (channelSettings[i].type) {
+        case BOOLEAN_TYPE:
+          localSettings = `${BOOLEAN_TYPE}${SETTING_DELIMITER}${enabled}`;
+          break;
+
+        case SLIDER_TYPE:
+          if (typeof ele.value === 'number') {
+            localSettings = `${SLIDER_TYPE}${SETTING_DELIMITER}${enabled}${SETTING_DELIMITER}${ele.value}`;
+          }
+          break;
+
+        case RANGE_TYPE:
+          if (
+            typeof ele.value === 'object' &&
+            'lower' in ele.value &&
+            'upper' in ele.value
+          ) {
+            localSettings = `${RANGE_TYPE}${SETTING_DELIMITER}${enabled}${SETTING_DELIMITER}${ele.value.lower}${SETTING_DELIMITER}${ele.value.upper}`;
+          }
+          break;
+
+        case TEXT_TYPE:
+          if (ele.value && Array.isArray(ele.value)) {
+            localSettings = `${
+              channelSettings[i].type
+            }${SETTING_DELIMITER}${enabled}${
+              ele.value.length
+                ? SETTING_DELIMITER + ele.value.join(SETTING_DELIMITER)
+                : ''
+            }`;
+          }
+          break;
+        case SELECT_TYPE:
+          if (ele.value && Array.isArray(ele.value)) {
+            const channelOptionsSet = new Set(channelSettings[i].options);
+            const choices = ele.value.length
+              ? ele.value.filter((choice: string) =>
+                  channelOptionsSet.has(choice)
+                )
+              : [];
+            localSettings = `${
+              channelSettings[i].type
+            }${SETTING_DELIMITER}${enabled}${
+              choices.length
+                ? SETTING_DELIMITER + choices.join(SETTING_DELIMITER)
+                : ''
+            }`;
+          }
+          break;
+      }
+
+      minimalUserSettingParts.push(localSettings);
+    }
+
+    if (!minimalUserSettingParts.length) {
+      return null;
+    }
+
+    const minimalUserSetting = minimalUserSettingParts.join(SETTING_SEPARATOR);
+    return `${numberOfSettings}${SETTING_SEPARATOR}${minimalUserSetting}`;
   }
 
   /**
