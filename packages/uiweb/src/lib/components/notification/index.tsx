@@ -45,6 +45,8 @@ export type chainNameType =
   | 'LINEA_TESTNET'
   | 'CYBER_CONNECT_TESTNET'
   | 'CYBER_CONNECT_MAINNET'
+  | 'BASE_TESTNET'
+  | 'BASE_MAINNET'
   | undefined;
 
 export type NotificationItemProps = {
