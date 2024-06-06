@@ -18,7 +18,7 @@ export type UnSubscribeOptionsV2Type = {
   onError?: (err: Error) => void;
 };
 
-export const unsubscribeV2 = async (options: UnSubscribeOptionsV2Type) => {
+export const unsubscribeV3 = async (options: UnSubscribeOptionsV2Type) => {
   const {
     signer,
     channelAddress,

@@ -9,4 +9,6 @@ export * from './subscribe';
 export * from './subscribeV2';
 export * from './unsubscribe';
 export * from './unsubscribeV2';
+export {subscribeV3}  from "./subscribeV3";
+export {unsubscribeV3} from "./unsubscribeV3";
 

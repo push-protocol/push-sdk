@@ -167,7 +167,7 @@ export class Notification extends PushNotificationBaseClass {
       );
       // convert the setting to minimal version
       const minimalSetting = this.getMinimalUserSetting(settings!);
-      return await PUSH_CHANNEL.subscribeV2({
+      return await PUSH_CHANNEL.subscribeV3({
         signer: this.signer!,
         channelAddress: channel,
         userAddress: userAddressInCaip,
@@ -218,7 +218,7 @@ export class Notification extends PushNotificationBaseClass {
         this.account!,
         parseInt(caipDetail?.networkId as string)
       );
-      return await PUSH_CHANNEL.unsubscribeV2({
+      return await PUSH_CHANNEL.unsubscribeV3({
         signer: this.signer!,
         channelAddress: channel,
         userAddress: userAddressInCaip,

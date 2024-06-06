@@ -20,7 +20,7 @@ export type SubscribeOptionsV2Type = {
   onError?: (err: Error) => void;
 };
 
-export const subscribeV2 = async (options: SubscribeOptionsV2Type) => {
+export const subscribeV3 = async (options: SubscribeOptionsV2Type) => {
   const {
     signer,
     channelAddress,
