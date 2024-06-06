@@ -226,3 +226,7 @@ export const transformStreamToIMessageIPFSWithCID: (item: any) => IMessageIPFSWi
   };
   return transformedItem;
 };
+
+export const getChatParticipantDisplayName = (derivedChatId: string, chatId: string) => {
+  return derivedChatId ? (chatId.includes('.') ? chatId : derivedChatId) : derivedChatId;
+};

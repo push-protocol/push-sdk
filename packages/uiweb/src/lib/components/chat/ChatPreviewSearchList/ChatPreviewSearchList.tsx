@@ -1,33 +1,17 @@
 // React + Web3 Essentials
-import { ethers } from 'ethers';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
 // External Packages
-import { CONSTANTS, IFeeds, IUser } from '@pushprotocol/restapi';
 import styled from 'styled-components';
 
 // Internal Compoonents
-import {
-  deriveChatId,
-  getAddress,
-  getNewChatUser,
-  pCAIP10ToWallet,
-  traceStackCalls,
-  walletToPCAIP10,
-} from '../../../helpers';
-import { useChatData, usePushChatStream } from '../../../hooks';
+import { deriveChatId, pCAIP10ToWallet } from '../../../helpers';
+import { useChatData } from '../../../hooks';
 import useFetchChat from '../../../hooks/chat/useFetchChat';
-import useFetchMessageUtilities from '../../../hooks/chat/useFetchMessageUtilities';
 import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
-import usePushUser from '../../../hooks/usePushUser';
 import { Button, Section, Span, Spinner } from '../../reusables';
 import { ChatPreview } from '../ChatPreview';
-import {
-  displayDefaultUser,
-  generateRandomNonce,
-  transformChatItems,
-  transformStreamToIChatPreviewPayload,
-} from '../helpers';
+import { generateRandomNonce, getChatParticipantDisplayName, transformStreamToIChatPreviewPayload } from '../helpers';
 
 // Internal Configs
 import { ThemeContext } from '../theme/ThemeProvider';
@@ -37,7 +21,6 @@ import { ThemeContext } from '../theme/ThemeProvider';
 // Interfaces & Types
 import {
   ChatPreviewSearchListErrorCodes,
-  Group,
   IChatPreviewSearchListError,
   IChatPreviewSearchListProps,
   IChatPreviewPayload,
@@ -73,7 +56,6 @@ interface IChatPreviewListMeta {
 }
 
 // Constants
-const CHAT_PAGE_LIMIT = 10;
 const SCROLL_LIMIT = 25;
 
 // Exported Interfaces & Types
@@ -82,9 +64,7 @@ const SCROLL_LIMIT = 25;
 export const ChatPreviewSearchList: React.FC<IChatPreviewSearchListProps> = (options: IChatPreviewSearchListProps) => {
   // get hooks
   const { user } = useChatData();
-  const { fetchUserProfile } = usePushUser();
   const { getGroupByIDnew } = useGetGroupByIDnew();
-  const { fetchLatestMessage, fetchChatList } = useFetchMessageUtilities();
 
   // set chat preview list
   const [chatPreviewList, setChatPreviewList] = useState<IChatPreviewList>({
@@ -232,11 +212,7 @@ export const ChatPreviewSearchList: React.FC<IChatPreviewSearchListProps> = (opt
             searchedChat = {
               ...searchedChat,
               chatId: derivedChatId,
-              chatParticipant: derivedChatId
-                ? formattedChatId.includes('.')
-                  ? formattedChatId
-                  : derivedChatId
-                : derivedChatId,
+              chatParticipant: getChatParticipantDisplayName(derivedChatId, formattedChatId),
               chatGroup: false,
               chatPic: userProfile?.profile?.picture || null,
               chatMsg: {
@@ -348,22 +324,6 @@ export const ChatPreviewSearchList: React.FC<IChatPreviewSearchListProps> = (opt
     items.forEach((item) => {
       setBadge(item!, 0);
     });
-  };
-
-  //Transform group creation stream
-  const transformGroupCreationStream: (item: any) => void = async (item: any) => {
-    const transformedItem: IChatPreviewPayload = {
-      chatId: item?.chatId,
-      chatPic: item?.meta.image,
-      chatParticipant: item?.meta.name,
-      chatGroup: true,
-      chatTimestamp: undefined,
-      chatMsg: {
-        messageType: '',
-        messageContent: '',
-      },
-    };
-    addChatItems([transformedItem], false);
   };
 
   // Transform stream message
