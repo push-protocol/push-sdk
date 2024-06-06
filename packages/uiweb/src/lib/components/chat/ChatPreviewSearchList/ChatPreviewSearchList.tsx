@@ -5,7 +5,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 // Internal Compoonents
-import { deriveChatId, pCAIP10ToWallet } from '../../../helpers';
+import { deriveChatId, getDomainIfExists, pCAIP10ToWallet } from '../../../helpers';
 import { useChatData } from '../../../hooks';
 import useFetchChat from '../../../hooks/chat/useFetchChat';
 import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
@@ -172,7 +172,7 @@ export const ChatPreviewSearchList: React.FC<IChatPreviewSearchListProps> = (opt
       let derivedChatId = formattedChatId;
 
       // Check if the chatId is ENS / Web3 Name
-      if (formattedChatId.includes('.')) {
+      if (getDomainIfExists(formattedChatId)) {
         // resolve web3 name
         derivedChatId = await deriveChatId(formattedChatId, user);
       }
