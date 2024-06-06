@@ -423,7 +423,6 @@ const GroupInformation = ({
         <Section
           borderRadius="16px"
           flexDirection="column"
-          gap="16px"
         >
           {groupMembers.loading ? (
             <Spinner
@@ -1014,7 +1013,7 @@ const GroupDescription = styled.div`
   gap: 5px;
 `;
 
-const PublicEncrypted = styled(Section)<{ alert?: boolean }>`
+const PublicEncrypted = styled(Section) <{ alert?: boolean }>`
   display: flex;
   flex-direction: row;
   width: 100%;
@@ -1040,7 +1039,7 @@ const AddWalletContainer = styled.div`
   align-items: center;
 `;
 
-const ConditionSection = styled(Section)<{ theme: IChatTheme }>`
+const ConditionSection = styled(Section) <{ theme: IChatTheme }>`
   &::-webkit-scrollbar-thumb {
     background: ${(props) => props.theme.scrollbarColor};
     border-radius: 10px;
@@ -1053,7 +1052,7 @@ const ConditionSection = styled(Section)<{ theme: IChatTheme }>`
   }
 `;
 
-const ScrollSection = styled(Section)<{ theme: IChatTheme }>`
+const ScrollSection = styled(Section) <{ theme: IChatTheme }>`
   &::-webkit-scrollbar-thumb {
     background: ${(props) => props.theme.scrollbarColor};
     border-radius: 10px;
