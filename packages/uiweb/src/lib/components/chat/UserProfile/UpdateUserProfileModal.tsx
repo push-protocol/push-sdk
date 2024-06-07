@@ -161,7 +161,8 @@ export const UpdateUserProfileModal = ({
 
   return (
     <Modal
-      clickawayClose={onClose}
+      onClose={onClose}
+      closeonClickAway
       modalBackground={updateUserProfileModalBackground}
       modalPositionType={updateUserProfileModalPositionType}
     >
