@@ -14,7 +14,7 @@
     }
   },
   "dependencies": {
-    "@lit-protocol/lit-node-client": "^5.0.0",
+    "@lit-protocol/lit-node-client": "^5.1.0",
     "@metamask/eth-sig-util": "^5.0.2",
     "buffer": "^6.0.3",
     "crypto-js": "^4.1.1",

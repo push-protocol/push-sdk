@@ -32,7 +32,7 @@ export class Lit {
       {
         contractAddress: '',
         standardContractType: '',
-        chain: this.chain,
+        chain: 'ethereum',
         method: '',
         parameters: [':userAddress'],
         returnValueTest: {
@@ -72,7 +72,7 @@ export class Lit {
     const authSig = {
       sig: signature,
       derivedVia: 'EIP1271',
-      signedMessage: messageToSign,
+      signedMessage: viem.hashMessage(messageToSign),
       address,
     };
     return authSig;
@@ -94,7 +94,7 @@ export class Lit {
       {
         accessControlConditions: this.accessControlConditions,
         authSig,
-        // `ethereum` chain is valid for all EVM chains
+        // chain on which the wallet exists
         chain: this.chain,
         dataToEncrypt,
       },
@@ -130,6 +130,7 @@ export class Lit {
         ciphertext,
         dataToEncryptHash,
         authSig,
+        // chain on which the wallet exists
         chain: this.chain,
       },
       this.litNodeClient

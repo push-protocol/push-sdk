@@ -522,10 +522,6 @@ export const encryptPGPKey = async (
         PARTS,
         QUORUM
       );
-
-      console.info('Shards');
-      console.info(shard1, shard2, shard3);
-
       // 3. Encrypt private key with secret
       const enc = new TextEncoder();
       const encodedPrivateKey = enc.encode(privateKey);
