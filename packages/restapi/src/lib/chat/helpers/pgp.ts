@@ -75,6 +75,8 @@ const PGPHelper:IPGPHelper = {
     })
     const publicKey: openpgp.PublicKey = await openpgp.readKey({ armoredKey: publicKeyArmored })
     const verificationResult = await openpgp.verify({
+      // setting date to 1 day in the future to avoid issues with clock skew
+      date: new Date(Date.now() + 1000 * 60 * 60 * 24),
       message,
       signature,
       verificationKeys: publicKey
