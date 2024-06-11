@@ -105,6 +105,7 @@ export type CreateChannelOptions = {
   icon: string;
   url: string;
   alias?: string;
+  tags?: string[];
   progressHook?: (progress: ProgressHookType) => void;
 };
 

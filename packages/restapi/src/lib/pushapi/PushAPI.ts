@@ -166,7 +166,7 @@ export class PushAPI {
 
       // Default options
       const defaultOptions: PushAPIInitializeProps = {
-        env: ENV.STAGING,
+        env: ENV.LOCAL,
         version: Constants.ENC_TYPE_V3,
         autoUpgrade: true,
         account: null,
