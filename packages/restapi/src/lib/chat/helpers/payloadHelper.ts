@@ -110,7 +110,7 @@ export const sendMessagePayloadCore = async (
   env: ENV,
   pgpHelper: IPGPHelper
 ): Promise<ISendMessagePayload> => {
-  const isGroup = !isValidPushCAIP(receiverAddress);
+  const isGroup = group !== null;
 
   let secretKey: string;
   if (isGroup && group?.encryptedSecret && group.sessionKey) {
