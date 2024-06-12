@@ -48,7 +48,7 @@ export interface GroupInputDetailsType {
 
 export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   onClose,
-  closeonClickAway = false,
+  closeModalOnClickAway = false,
   modalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
   modalPositionType = MODAL_POSITION_TYPE.GLOBAL,
   onSuccess,
@@ -259,7 +259,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   return (
     <Modal
       onClose={onClose} // onClose function to close the modal
-      closeonClickAway={closeonClickAway} // boolean to handle the onClick activity of the user
+      closeonClickAway={closeModalOnClickAway} // boolean to handle the onClick activity of the user
       modalBackground={modalBackground}
       modalPositionType={modalPositionType}
     >

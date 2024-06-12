@@ -76,10 +76,12 @@ export interface IChatViewComponentProps {
   chatProfileRightHelperComponent?: React.ReactNode;
   chatProfileLeftHelperComponent?: React.ReactNode;
   welcomeComponent?: React.ReactNode;
+  closeModalOnClickAway?: boolean;
 }
 
 export interface IChatProfile {
   chatId: string;
+  closeModalOnClickAway?: boolean;
   groupInfoModalBackground?: ModalBackgroundType;
   groupInfoModalPositionType?: ModalPositionType;
   chatProfileRightHelperComponent?: React.ReactNode;
@@ -172,7 +174,7 @@ export interface User {
 
 export interface CreateGroupModalProps {
   onClose: () => void;
-  closeonClickAway?: boolean;
+  closeModalOnClickAway?: boolean;
   modalBackground?: ModalBackgroundType;
   modalPositionType?: ModalPositionType;
   onSuccess?: (group: GroupInfoDTO | GroupDTO | undefined) => void;
@@ -182,6 +184,7 @@ export interface UserProfileProps {
   updateUserProfileModalBackground?: ModalBackgroundType;
   updateUserProfileModalPositionType?: ModalPositionType;
   onUserProfileUpdateModalOpen?: (open: boolean) => void;
+  closeModalOnClickAway?: boolean;
 }
 
 export interface ModalButtonProps {

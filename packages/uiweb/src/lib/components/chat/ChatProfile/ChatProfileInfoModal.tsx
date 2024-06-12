@@ -221,6 +221,7 @@ type GroupSectionProps = GroupInfoModalProps & {
 type GroupInfoModalProps = {
   theme: IChatTheme;
   setModal: React.Dispatch<React.SetStateAction<boolean>>;
+  closeModalOnClickAway?: boolean;
   groupInfo: Group;
   setGroupInfo: React.Dispatch<React.SetStateAction<Group | null>>;
   chatProfileInfo?: IChatProfileUserInfo;
@@ -461,6 +462,7 @@ const GroupInformation = ({
 export const GroupInfoModal = ({
   theme,
   setModal,
+  closeModalOnClickAway,
   setGroupInfo,
   groupInfo,
   chatProfileInfo,
@@ -928,7 +930,7 @@ export const GroupInfoModal = ({
     return (
       <Modal
         onClose={onClose}
-        closeonClickAway
+        closeonClickAway={closeModalOnClickAway}
         modalBackground={groupInfoModalBackground}
         modalPositionType={groupInfoModalPositionType}
       >

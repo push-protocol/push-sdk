@@ -43,6 +43,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (options: IC
     chatProfileRightHelperComponent = null,
     chatProfileLeftHelperComponent = null,
     welcomeComponent = null,
+    closeModalOnClickAway = false
   } = options || {};
 
   const { user } = useChatData();
@@ -109,6 +110,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (options: IC
             >
               <ChatProfile
                 key={chatId}
+                closeModalOnClickAway={closeModalOnClickAway}
                 chatProfileRightHelperComponent={chatProfileRightHelperComponent}
                 chatProfileLeftHelperComponent={chatProfileLeftHelperComponent}
                 chatId={initialized.derivedChatId}
@@ -170,12 +172,12 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (options: IC
 };
 
 //styles
-const Conatiner = styled(Section)<IThemeProps>`
+const Conatiner = styled(Section) <IThemeProps>`
   border: ${(props) => props.theme.border?.chatViewComponent};
   box-sizing: border-box;
 `;
 
-const ChatViewSection = styled(Section)<IThemeProps>`
+const ChatViewSection = styled(Section) <IThemeProps>`
   @media (${device.mobileL}) {
     margin: 0;
   }
