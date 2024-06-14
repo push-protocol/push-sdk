@@ -27,7 +27,7 @@ export const getChannels = async (options: getChannelsOptionsType) => {
     order = CONSTANTS.FILTER.CHANNEL_LIST.ORDER.DESCENDING,
   } = options || {};
 
-  const API_BASE_URL = getAPIBaseUrls(env);
+  const API_BASE_URL = await getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/channels`;
   const requestUrl = `${apiEndpoint}?page=${page}&limit=${limit}&sort=${sort}&order=${order}`;
 

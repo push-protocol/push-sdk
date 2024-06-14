@@ -102,7 +102,7 @@ export const profileUpdateCore = async (
 
     const body = { ...updatedProfile, verificationProof };
 
-    const API_BASE_URL = getAPIBaseUrls(env);
+    const API_BASE_URL = await getAPIBaseUrls(env);
     const apiEndpoint = `${API_BASE_URL}/v2/users/${user.did}/profile`;
 
     // Report Progress

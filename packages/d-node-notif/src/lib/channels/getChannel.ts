@@ -17,7 +17,7 @@ export const getChannel = async (options: GetChannelOptionsType) => {
   const { channel, env = Constants.ENV.PROD, raw = true } = options || {};
 
   const _channel = await getCAIPAddress(env, channel, 'Channel');
-  const API_BASE_URL = getAPIBaseUrls(env);
+  const API_BASE_URL = await getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/channels`;
   const requestUrl = `${apiEndpoint}/${_channel}`;
 

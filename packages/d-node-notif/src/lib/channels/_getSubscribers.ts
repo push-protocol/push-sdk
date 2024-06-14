@@ -34,7 +34,7 @@ export const _getSubscribers = async (
 
   const chainId = channelCAIPDetails.networkId;
 
-  const API_BASE_URL = getAPIBaseUrls(env);
+  const API_BASE_URL = await getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/channels/_get_subscribers`;
   const requestUrl = `${apiEndpoint}`;
 

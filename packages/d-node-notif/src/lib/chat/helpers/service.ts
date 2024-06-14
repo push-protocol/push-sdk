@@ -35,7 +35,7 @@ export const createUserService = async (options: CreateUserOptionsType) => {
   } = options || {};
   let { user } = options || {};
 
-  const API_BASE_URL = getAPIBaseUrls(env);
+  const API_BASE_URL = await getAPIBaseUrls(env);
 
   const requestUrl = `${API_BASE_URL}/v2/users/`;
 
@@ -88,7 +88,7 @@ export const authUpdateUserService = async (options: CreateUserOptionsType) => {
     env = Constants.ENV.PROD,
   } = options || {};
 
-  const API_BASE_URL = getAPIBaseUrls(env);
+  const API_BASE_URL = await getAPIBaseUrls(env);
 
   const requestUrl = `${API_BASE_URL}/v2/users/${walletToPCAIP10(user)}/auth`;
 

@@ -2,6 +2,7 @@ import { ENV } from './constants';
 import { coreABI } from './abis/core';
 import { commABI } from './abis/comm';
 import { tokenABI } from './abis/token';
+import { validatorABI } from './abis/validator';
 import {
   mainnet,
   polygon,
@@ -20,6 +21,7 @@ import {
   polygonZkEvmCardona,
   cyberTestnet,
   cyber,
+  localhost,
 } from 'viem/chains';
 
 // for methods not needing the entire config
@@ -30,7 +32,7 @@ export const API_BASE_URL = {
   /**
    * **This is for local development only**
    */
-  [ENV.LOCAL]: 'http://localhost:4000/apis',
+  [ENV.LOCAL]: 'http://localhost:4001/apis',
 };
 
 const BLOCKCHAIN_NETWORK = {
@@ -69,6 +71,7 @@ export const ETH_CHAIN_ID = {
   [ENV.DEV]: 11155111,
   [ENV.LOCAL]: 11155111,
 };
+
 export const ALIAS_CHAIN_ID: {
   [key: string]: { [key in ENV]: number };
 } = {
@@ -197,7 +200,7 @@ export const CORE_CONFIG = {
     EPNS_CORE_CONTRACT: '0x5ab1520e2bd519bdab2e1347eee81c00a77f4946',
   },
   [ENV.LOCAL]: {
-    API_BASE_URL: API_BASE_URL[ENV.DEV],
+    API_BASE_URL: API_BASE_URL[ENV.LOCAL],
     EPNS_CORE_CONTRACT: '0x5ab1520e2bd519bdab2e1347eee81c00a77f4946',
   },
 };
@@ -347,13 +350,14 @@ const CONFIG = {
       EPNS_COMMUNICATOR_CONTRACT: '0xA1DF3E68D085aa6918bcc2506b24e499830Db0eB',
     },
     [BLOCKCHAIN_NETWORK.CYBER_CONNECT_TESTNET]: {
-      API_BASE_URL: API_BASE_URL[ENV.DEV],
+      API_BASE_URL: API_BASE_URL[ENV.LOCAL],
       EPNS_COMMUNICATOR_CONTRACT: '0x9cb3bd7550B5c92baA056Fc0F08132f49508145F',
     },
   },
 };
 
 export default CONFIG;
+
 export const TOKEN = {
   [ENV.PROD]: '0xf418588522d5dd018b425E472991E52EBBeEEEEE',
   [ENV.STAGING]: '0x37c779a1564DCc0e3914aB130e0e787d93e21804',
@@ -374,10 +378,12 @@ export const MIN_TOKEN_BALANCE = {
   [ENV.DEV]: 50,
   [ENV.LOCAL]: 50,
 };
+
 export const ABIS = {
   CORE: coreABI,
   COMM: commABI,
   TOKEN: tokenABI,
+  VALIDATOR: validatorABI,
 };
 
 export const CHANNEL_TYPE = {
@@ -525,27 +531,27 @@ export const VIEM_CONFIG = {
   [ENV.LOCAL]: {
     [BLOCKCHAIN_NETWORK.ETH_SEPOLIA]: {
       NETWORK: sepolia,
-      API_BASE_URL: API_BASE_URL[ENV.DEV],
+      API_BASE_URL: API_BASE_URL[ENV.LOCAL],
       EPNS_COMMUNICATOR_CONTRACT: '0x9dDCD7ed7151afab43044E4D694FA064742C428c',
     },
     [BLOCKCHAIN_NETWORK.POLYGON_AMOY]: {
       NETWORK: polygonAmoy,
-      API_BASE_URL: API_BASE_URL[ENV.DEV],
+      API_BASE_URL: API_BASE_URL[ENV.LOCAL],
       EPNS_COMMUNICATOR_CONTRACT: '0x9cb3bd7550b5c92baa056fc0f08132f49508145f',
     },
     [BLOCKCHAIN_NETWORK.BSC_TESTNET]: {
       NETWORK: bscTestnet,
-      API_BASE_URL: API_BASE_URL[ENV.DEV],
+      API_BASE_URL: API_BASE_URL[ENV.LOCAL],
       EPNS_COMMUNICATOR_CONTRACT: '0x4132061E3349ff36cFfCadA460E10Bd4f31F7ea8',
     },
     [BLOCKCHAIN_NETWORK.OPTIMISM_TESTNET]: {
       NETWORK: optimismSepolia,
-      API_BASE_URL: API_BASE_URL[ENV.DEV],
+      API_BASE_URL: API_BASE_URL[ENV.LOCAL],
       EPNS_COMMUNICATOR_CONTRACT: '0x754787358fac861ef904c92d54f7adb659779317',
     },
     [BLOCKCHAIN_NETWORK.POLYGON_ZK_EVM_TESTNET]: {
       NETWORK: polygonZkEvmCardona,
-      API_BASE_URL: API_BASE_URL[ENV.DEV],
+      API_BASE_URL: API_BASE_URL[ENV.LOCAL],
       EPNS_COMMUNICATOR_CONTRACT: '0x9cb3bd7550b5c92baa056fc0f08132f49508145f',
     },
     [BLOCKCHAIN_NETWORK.ARBITRUM_TESTNET]: {
@@ -565,7 +571,7 @@ export const VIEM_CONFIG = {
     },
     [BLOCKCHAIN_NETWORK.CYBER_CONNECT_TESTNET]: {
       NETWORK: cyberTestnet,
-      API_BASE_URL: API_BASE_URL[ENV.STAGING],
+      API_BASE_URL: API_BASE_URL[ENV.LOCAL],
       EPNS_COMMUNICATOR_CONTRACT: '0x9cb3bd7550B5c92baA056Fc0F08132f49508145F',
     },
   },
@@ -577,5 +583,24 @@ export const ALPHA_FEATURE_CONFIG = {
   },
   ALPHA: {
     feature: [] as string[],
+  },
+};
+
+export const VALIDATOR_CONFIG = {
+  [ENV.PROD]: {
+    NETWORK: mainnet,
+    VALIDATOR_CONTRACT: 'TODO',
+  },
+  [ENV.STAGING]: {
+    NETWORK: sepolia,
+    VALIDATOR_CONTRACT: 'TODO',
+  },
+  [ENV.DEV]: {
+    NETWORK: sepolia,
+    VALIDATOR_CONTRACT: 'TODO',
+  },
+  [ENV.LOCAL]: {
+    NETWORK: localhost,
+    VALIDATOR_CONTRACT: '0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9',
   },
 };

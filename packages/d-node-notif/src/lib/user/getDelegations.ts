@@ -1,7 +1,4 @@
-import {
-  getCAIPAddress,
-  getAPIBaseUrls
-} from '../helpers';
+import { getCAIPAddress, getAPIBaseUrls } from '../helpers';
 import Constants, { ENV } from '../constants';
 import { axiosGet } from '../utils/axiosUtil';
 
@@ -13,22 +10,17 @@ export type UserDelegationsOptionsType = {
   /** wallet address of user */
   user: string;
   env?: ENV;
-}
+};
 
 /**
  *  Returns the list of channels that the user has been delegated to
  */
 
-export const getDelegations = async (
-  options : UserDelegationsOptionsType
-) => {
-  const {
-    user,
-    env = Constants.ENV.PROD,
-  } = options || {};
+export const getDelegations = async (options: UserDelegationsOptionsType) => {
+  const { user, env = Constants.ENV.PROD } = options || {};
 
   const _user = await getCAIPAddress(env, user, 'User');
-  const API_BASE_URL = getAPIBaseUrls(env);
+  const API_BASE_URL = await getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/users/${_user}/delegations`;
   const requestUrl = `${apiEndpoint}`;
 
@@ -37,4 +29,4 @@ export const getDelegations = async (
     .catch((err) => {
       console.error(`[EPNS-SDK] - API ${requestUrl}: `, err);
     });
-}
+};

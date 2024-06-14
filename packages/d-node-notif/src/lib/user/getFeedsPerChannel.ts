@@ -32,7 +32,7 @@ export const getFeedsPerChannel = async (
   } = options || {};
 
   const _user = await getCAIPAddress(env, user, 'User');
-  const API_BASE_URL = getAPIBaseUrls(env);
+  const API_BASE_URL = await getAPIBaseUrls(env);
   if (channels.length == 0) {
     throw new Error('channels cannot be empty');
   }

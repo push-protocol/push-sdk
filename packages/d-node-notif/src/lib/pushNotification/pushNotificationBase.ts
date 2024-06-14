@@ -917,7 +917,7 @@ export class PushNotificationBaseClass {
    * @returns Channel info for the alias
    */
   private async getAliasInfo(aliasInCaip: string) {
-    const API_BASE_URL = getAPIBaseUrls(this.env!);
+    const API_BASE_URL = await getAPIBaseUrls(this.env!);
     const apiEndpoint = `${API_BASE_URL}/v1/alias`;
     const requestUrl = `${apiEndpoint}/${aliasInCaip}/channel`;
 

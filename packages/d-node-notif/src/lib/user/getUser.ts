@@ -11,7 +11,7 @@ export const get = async (options: AccountEnvOptionsType): Promise<IUser> => {
     throw new Error(`Invalid address!`);
   }
   const caip10 = walletToPCAIP10(account);
-  const API_BASE_URL = getAPIBaseUrls(env);
+  const API_BASE_URL = await getAPIBaseUrls(env);
   const requestUrl = `${API_BASE_URL}/v2/users/?caip10=${caip10}`;
   return axiosGet(requestUrl)
     .then(async (response) => {

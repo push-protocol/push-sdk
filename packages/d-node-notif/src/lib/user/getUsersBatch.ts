@@ -13,7 +13,7 @@ export interface GetBatchType {
 export const getBatch = async (options: GetBatchType): Promise<IUser> => {
   const { env = Constants.ENV.PROD, userIds } = options || {};
 
-  const API_BASE_URL = getAPIBaseUrls(env);
+  const API_BASE_URL = await getAPIBaseUrls(env);
   const requestUrl = `${API_BASE_URL}/v2/users/batch`;
 
   const MAX_USER_IDS_LENGTH = 100;

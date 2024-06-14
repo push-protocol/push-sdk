@@ -25,7 +25,7 @@ export const getChannelNotifications = async (
   } = options || {};
 
   const _channel = await getCAIPAddress(env, channel, 'Channel');
-  const API_BASE_URL = getAPIBaseUrls(env);
+  const API_BASE_URL = await getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v2/channels`;
   const query = getQueryParams(
     filter

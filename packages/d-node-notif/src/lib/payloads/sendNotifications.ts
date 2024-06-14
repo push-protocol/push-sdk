@@ -155,7 +155,7 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
     const uuid = getUUID();
     const chainId = parseInt(channelCAIPDetails.networkId, 10);
 
-    const API_BASE_URL = getAPIBaseUrls(env);
+    const API_BASE_URL = await getAPIBaseUrls(env);
     let COMMUNICATOR_CONTRACT = '';
     if (senderType === 0) {
       const { EPNS_COMMUNICATOR_CONTRACT } = getConfig(env, channelCAIPDetails);

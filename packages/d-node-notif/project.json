@@ -23,7 +23,7 @@
   },
   "test": {
     "executor": "@nrwl/workspace:run-commands",
-    "outputs": ["coverage/packages/restapi"],
+    "outputs": ["coverage/packages/d-node-notif"],
     "options": {
       "commands": ["yarn run test:d-node-notif"],
       "passWithNoTests": true
