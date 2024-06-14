@@ -4,7 +4,7 @@ import { ethers } from 'ethers';
 import { ENV } from '../../../src/lib/constants';
 import { ActiveValidator } from '../../../src/lib/pushValidator/pushValidatorTypes';
 
-describe.only('PushValidator Class', () => {
+describe('PushValidator Class', () => {
   // accessing env dynamically using process.env
   const envMode = process.env.ENV as keyof typeof ENV;
   const env = ENV[envMode];

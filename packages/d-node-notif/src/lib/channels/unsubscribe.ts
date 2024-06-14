@@ -1,14 +1,18 @@
-import { getCAIPAddress, getConfig, getCAIPDetails, Signer } from '../helpers';
+import {
+  getCAIPAddress,
+  getConfig,
+  getCAIPDetails,
+  Signer,
+  getAPIBaseUrls,
+} from '../helpers';
 import {
   getTypeInformation,
   getDomainInformation,
   getSubscriptionMessage,
 } from './signature.helpers';
-import Constants, {ENV} from '../constants';
-import { SignerType } from "../types";
-import { axiosPost } from "../utils/axiosUtil";
- 
-
+import Constants, { ENV } from '../constants';
+import { SignerType } from '../types';
+import { axiosPost } from '../utils/axiosUtil';
 
 export type UnSubscribeOptionsType = {
   signer: SignerType;
@@ -48,10 +52,8 @@ export const unsubscribe = async (options: UnSubscribeOptionsType) => {
     const userCAIPDetails = getCAIPDetails(_userAddress);
     if (!userCAIPDetails) throw Error('Invalid User CAIP!');
 
-    const { API_BASE_URL, EPNS_COMMUNICATOR_CONTRACT } = getConfig(
-      env,
-      channelCAIPDetails
-    );
+    const API_BASE_URL = await getAPIBaseUrls(env);
+    const { EPNS_COMMUNICATOR_CONTRACT } = getConfig(env, channelCAIPDetails);
 
     const requestUrl = `${API_BASE_URL}/v1/channels/${_channelAddress}/unsubscribe`;
 

@@ -1,7 +1,7 @@
 import { io } from 'socket.io-client';
-import { API_BASE_URL } from '../config';
 import { getCAIPAddress } from '../helpers';
 import { SocketInputOptions } from './pushStreamTypes';
+import { getAPIBaseUrls } from '../helpers';
 
 export async function createSocketConnection({
   user,
@@ -15,7 +15,7 @@ export async function createSocketConnection({
     reconnectionDelayMax,
   } = socketOptions || {};
 
-  let pushWSUrl = API_BASE_URL[env];
+  let pushWSUrl = await getAPIBaseUrls(env);
 
   if (pushWSUrl.endsWith('/apis')) {
     pushWSUrl = pushWSUrl.substring(0, pushWSUrl.length - 5);

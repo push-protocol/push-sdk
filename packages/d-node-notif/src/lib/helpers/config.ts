@@ -1,10 +1,9 @@
-import CONFIG, { API_BASE_URL, ConfigType } from '../config';
+import CONFIG, { ConfigType } from '../config';
 import { ENV } from '../constants';
 import { PushValidator } from '../pushValidator/pushValidator';
 
 /**
- * This config helper returns the API url as well as the
- * EPNS communicator contract method address
+ * This config helper returns the EPNS communicator contract method address
  */
 export const getConfig = (
   env: ENV,

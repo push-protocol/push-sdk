@@ -26,6 +26,7 @@ import {
 } from './constants';
 import { ENV } from '../constants';
 import { axiosPost } from '../utils/axiosUtil';
+import { PushValidator } from '../pushValidator/pushValidator';
 /**
  * Validate options for some scenarios
  */
@@ -155,7 +156,6 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
     const uuid = getUUID();
     const chainId = parseInt(channelCAIPDetails.networkId, 10);
 
-    const API_BASE_URL = await getAPIBaseUrls(env);
     let COMMUNICATOR_CONTRACT = '';
     if (senderType === 0) {
       const { EPNS_COMMUNICATOR_CONTRACT } = getConfig(env, channelCAIPDetails);
@@ -209,6 +209,9 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
       ? SOURCE_TYPES.SIMULATE
       : getSource(chainId, identityType, senderType);
 
+    const pushValidator = await PushValidator.initalize({ env });
+    const token = await pushValidator.getToken();
+
     const apiPayload = {
       verificationProof,
       identity,
@@ -217,6 +220,7 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
           ? `${channelCAIPDetails?.blockchain}:${channelCAIPDetails?.address}`
           : _channelAddress,
       source,
+      validatorToken: token?.validatorToken,
       /** note this recipient key has a different expectation from the BE API, see the funciton for more */
       recipient: await getRecipientFieldForAPIPayload({
         env,
@@ -241,7 +245,7 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
         : {}),
     };
 
-    const requestURL = `${API_BASE_URL}/v1/payloads/`;
+    const requestURL = `${token?.validatorUrl}/apis/v1/payloads/`;
     return await axiosPost(requestURL, apiPayload, {
       headers: {
         'Content-Type': 'application/json',

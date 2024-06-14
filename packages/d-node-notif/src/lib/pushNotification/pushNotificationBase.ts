@@ -679,10 +679,10 @@ export class PushNotificationBaseClass {
 
   protected async uploadToIPFSViaPushNode(data: string): Promise<string> {
     try {
-      const response = await axiosPost(
-        `${config.CORE_CONFIG[this.env!].API_BASE_URL}/v1/ipfs/upload`,
-        { data }
-      );
+      const API_BASE_URL = await getAPIBaseUrls(this.env!);
+      const response = await axiosPost(`${API_BASE_URL}/v1/ipfs/upload`, {
+        data,
+      });
       return response.data.cid as string;
     } catch (error) {
       throw new Error('Something went wrong while uploading data to IPFS');

@@ -108,7 +108,7 @@ export class PushAPI {
       }
 
       // Determine readMode based on the presence of signer and decryptedPGPPrivateKey
-      let readMode = !signer && !decryptedPGPPrivateKey;
+      const readMode = !signer && !decryptedPGPPrivateKey;
 
       // Default options
       const defaultOptions: PushAPIInitializeProps = {
@@ -166,62 +166,63 @@ export class PushAPI {
        * If user exists, decrypts the PGP private key
        * If user does not exist, creates a new user and returns the decrypted PGP private key
        */
-      const user = await PUSH_USER.get({
-        account: derivedAccount,
-        env: settings.env,
-      });
+      // TODO: Uncomment this block after this is handled by validator nodes
+      // const user = await PUSH_USER.get({
+      //   account: derivedAccount,
+      //   env: settings.env,
+      // });
 
-      if (user && user.publicKey) {
-        pgpPublicKey = user.publicKey;
-      }
+      // if (user && user.publicKey) {
+      //   pgpPublicKey = user.publicKey;
+      // }
 
-      if (!readMode) {
-        try {
-          if (user && user.encryptedPrivateKey) {
-            if (!decryptedPGPPrivateKey) {
-              decryptedPGPPrivateKey = await decryptPGPKey({
-                encryptedPGPPrivateKey: user.encryptedPrivateKey,
-                signer: signer,
-                toUpgrade: settings.autoUpgrade,
-                additionalMeta: settings.versionMeta,
-                progressHook: settings.progressHook,
-                env: settings.env,
-              });
-            }
-          } else {
-            const newUser = await PUSH_USER.create({
-              env: settings.env,
-              account: derivedAccount,
-              signer,
-              version: settings.version,
-              additionalMeta: settings.versionMeta,
-              origin: settings.origin,
-              progressHook: settings.progressHook,
-            });
-            decryptedPGPPrivateKey = newUser.decryptedPrivateKey as string;
-            pgpPublicKey = newUser.publicKey;
-          }
-        } catch (error) {
-          const decryptionError =
-            'Error decrypting PGP private key ...swiching to Guest mode';
-          initializationErrors.push({
-            type: 'ERROR',
-            message: decryptionError,
-          });
-          console.error(decryptionError);
-          if (isValidNFTCAIP(derivedAccount)) {
-            const nftDecryptionError =
-              'NFT Account Detected. If this NFT was recently transferred to you, please ensure you have received the correct password from the previous owner. Alternatively, you can reinitialize for a fresh start. Please be aware that reinitialization will result in the loss of all previous account data.';
+      // if (!readMode) {
+      //   try {
+      //     if (user && user.encryptedPrivateKey) {
+      //       if (!decryptedPGPPrivateKey) {
+      //         decryptedPGPPrivateKey = await decryptPGPKey({
+      //           encryptedPGPPrivateKey: user.encryptedPrivateKey,
+      //           signer: signer,
+      //           toUpgrade: settings.autoUpgrade,
+      //           additionalMeta: settings.versionMeta,
+      //           progressHook: settings.progressHook,
+      //           env: settings.env,
+      //         });
+      //       }
+      //     } else {
+      //       const newUser = await PUSH_USER.create({
+      //         env: settings.env,
+      //         account: derivedAccount,
+      //         signer,
+      //         version: settings.version,
+      //         additionalMeta: settings.versionMeta,
+      //         origin: settings.origin,
+      //         progressHook: settings.progressHook,
+      //       });
+      //       decryptedPGPPrivateKey = newUser.decryptedPrivateKey as string;
+      //       pgpPublicKey = newUser.publicKey;
+      //     }
+      //   } catch (error) {
+      //     const decryptionError =
+      //       'Error decrypting PGP private key ...swiching to Guest mode';
+      //     initializationErrors.push({
+      //       type: 'ERROR',
+      //       message: decryptionError,
+      //     });
+      //     console.error(decryptionError);
+      //     if (isValidNFTCAIP(derivedAccount)) {
+      //       const nftDecryptionError =
+      //         'NFT Account Detected. If this NFT was recently transferred to you, please ensure you have received the correct password from the previous owner. Alternatively, you can reinitialize for a fresh start. Please be aware that reinitialization will result in the loss of all previous account data.';
 
-            initializationErrors.push({
-              type: 'WARN',
-              message: nftDecryptionError,
-            });
-            console.warn(nftDecryptionError);
-          }
-          readMode = true;
-        }
-      }
+      //       initializationErrors.push({
+      //         type: 'WARN',
+      //         message: nftDecryptionError,
+      //       });
+      //       console.warn(nftDecryptionError);
+      //     }
+      //     readMode = true;
+      //   }
+      // }
       // Initialize PushAPI instance
       const api = new PushAPI(
         settings.env as ENV,

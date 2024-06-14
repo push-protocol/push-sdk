@@ -1,4 +1,10 @@
-import { getCAIPAddress, getConfig, getCAIPDetails, Signer } from '../helpers';
+import {
+  getCAIPAddress,
+  getConfig,
+  getCAIPDetails,
+  Signer,
+  getAPIBaseUrls,
+} from '../helpers';
 import {
   getDomainInformation,
   getTypeInformationV2,
@@ -49,10 +55,8 @@ export const subscribeV2 = async (options: SubscribeOptionsV2Type) => {
     const userCAIPDetails = getCAIPDetails(_userAddress);
     if (!userCAIPDetails) throw Error('Invalid User CAIP!');
 
-    const { API_BASE_URL, EPNS_COMMUNICATOR_CONTRACT } = getConfig(
-      env,
-      channelCAIPDetails
-    );
+    const API_BASE_URL = await getAPIBaseUrls(env);
+    const { EPNS_COMMUNICATOR_CONTRACT } = getConfig(env, channelCAIPDetails);
 
     const requestUrl = `${API_BASE_URL}/v1/channels/${_channelAddress}/subscribe`;
     // get domain information
@@ -87,7 +91,7 @@ export const subscribeV2 = async (options: SubscribeOptionsV2Type) => {
     const body = {
       verificationProof: `eip712v2:${verificationProof}`,
       message: messageInformation.data,
-      origin: origin
+      origin: origin,
     };
 
     const res = await axiosPost(requestUrl, body);
