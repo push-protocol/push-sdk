@@ -199,7 +199,7 @@ export function getFallbackETHCAIPAddress(env: ENV, address: string) {
     env === Constants.ENV.STAGING ||
     env === Constants.ENV.LOCAL
   ) {
-    chainId = 11155111;
+    chainId = 5;
   }
 
   return `eip155:${chainId}:${address}`;

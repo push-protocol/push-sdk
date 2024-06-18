@@ -60,14 +60,14 @@ describe('PushAPI.notification functionality', () => {
 
     it('Should return feeds with signer object when an account is passed', async () => {
       const response = await userAlice.notification.list('SPAM', {
-        account: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
+        account: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
       });
       expect(response).not.null;
     });
 
     it('Should return feeds without signer object when an account is passed', async () => {
       const response = await userBob.notification.list('SPAM', {
-        account: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
+        account: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
       });
       expect(response).not.null;
     });
@@ -105,7 +105,7 @@ describe('PushAPI.notification functionality', () => {
 
     it('Should return feeds when signer with provider is used', async () => {
       const response = await userKate.notification.list('INBOX', {
-        account: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
+        account: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
         channels: ['0xD8634C39BBFd4033c0d3289C4515275102423681'],
         raw: true,
       });
@@ -128,10 +128,10 @@ describe('PushAPI.notification functionality', () => {
 
     it('Should return feeds when signer with provider is used', async () => {
       const response = await userKate.notification.list('INBOX', {
-        account: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
+        account: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
         channels: [
-          'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
-          'eip155:11155111:0x53474D90663de06BEf5D0017F450730D83168063',
+          'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
+          'eip155:5:0x53474D90663de06BEf5D0017F450730D83168063',
         ],
         raw: true,
       });
@@ -143,24 +143,24 @@ describe('PushAPI.notification functionality', () => {
   describe('notification :: subscribe', () => {
     beforeEach(async () => {
       //   await userAlice.notification.unsubscribe(
-      //     'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
+      //     'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681'
       //   );
       //   await userKate.notification.unsubscribe(
-      //     'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
+      //     'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681'
       //   );
       // });
       // afterEach(async () => {
       //   await userAlice.notification.unsubscribe(
-      //     'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
+      //     'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681'
       //   );
       //   await userKate.notification.unsubscribe(
-      //     'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
+      //     'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681'
       //   );
     });
     it.skip('Without signer object: should throw error', async () => {
       await expect(() =>
         userBob.notification.subscribe(
-          'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
+          'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681'
         )
       ).to.Throw;
     });
@@ -183,7 +183,7 @@ describe('PushAPI.notification functionality', () => {
 
     it('With signer object: Should subscribe', async () => {
       const res = await userAlice.notification.subscribe(
-        'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
+        'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
         {
           settings: [
             {
@@ -202,7 +202,7 @@ describe('PushAPI.notification functionality', () => {
 
     it('With signer and provider: Should subscribe', async () => {
       const res = await userKate.notification.subscribe(
-        'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
+        'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681'
       );
       // console.log(res)
       expect(res).not.null;
@@ -210,7 +210,7 @@ describe('PushAPI.notification functionality', () => {
 
     it('With signer and provider: Should subscribe', async () => {
       const res = await userKate.notification.subscribe(
-        'eip155:11155111:0xC8c243a4fd7F34c49901fe441958953402b7C024',
+        'eip155:5:0xC8c243a4fd7F34c49901fe441958953402b7C024',
         {
           settings: [
             {
@@ -243,14 +243,14 @@ describe('PushAPI.notification functionality', () => {
 
     it('With viem signer and provider: Should subscribe', async () => {
       const res = await userViem.notification.subscribe(
-        'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
+        'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681'
       );
       expect(res.message).to.equal('successfully opted into channel');
     });
 
     it('With viem signer and provider: Should unsubscribe', async () => {
       const res = await userViem.notification.unsubscribe(
-        'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
+        'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681'
       );
       expect(res.message).to.equal('successfully opted out channel');
     });
