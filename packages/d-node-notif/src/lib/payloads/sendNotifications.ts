@@ -245,7 +245,7 @@ export async function sendNotification(options: ISendNotificationInputOptions) {
         : {}),
     };
 
-    const requestURL = `${token?.validatorUrl}/apis/v1/payloads/`;
+    const requestURL = `${token?.validatorUrl}/apis/v1/messaging/addBlocking/`;
     return await axiosPost(requestURL, apiPayload, {
       headers: {
         'Content-Type': 'application/json',

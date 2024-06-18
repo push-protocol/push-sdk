@@ -14,7 +14,7 @@ describe('PushAPI.channel functionality', () => {
     signer = ethers.Wallet.createRandom();
   });
 
-  it('Initialize user with validator node', async () => {
+  it('Initialize user', async () => {
     await PushAPI.initialize(signer, {
       env,
     });
