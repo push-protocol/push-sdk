@@ -300,7 +300,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
     }
 
     return () => {
-      // add comment
+      //Empty return
     };
   }, [chatAcceptStream, participantJoinStream]);
 

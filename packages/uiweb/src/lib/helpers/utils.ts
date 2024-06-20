@@ -28,7 +28,7 @@ export const deriveChatId = async (chatId: string, user: PushAPI | undefined): P
   } else if (chatId.includes('eip155:')) {
     // remove eip155:
     chatId = chatId.replace('eip155:', '');
-  } else if (chatId.includes('.')) {
+  } else if (getDomainIfExists(chatId)) {
     chatId = (await getAddress(chatId, user ? user.env : CONSTANTS.ENV.PROD))!;
   }
 
@@ -40,3 +40,5 @@ export const isMessageEncrypted = (message: string) => {
 
   return message.startsWith('U2FsdGVkX1');
 };
+
+export const getDomainIfExists = (chatId: string) => (chatId.includes('.') ? chatId : null);
