@@ -74,7 +74,7 @@ const validateGUILDData = async (condition: Rule): Promise<CriteriaValidationErr
     return { ...errors, guildId: 'Guild ID is missing' };
   } else {
     try {
-      const response = await axios.get(` https://api.guild.xyz/v2/guilds/guild-page/${(data as GuildData).id}`);
+      const response = await axios.get(`https://api.guild.xyz/v2/guilds/guild-page/${(data as GuildData).id}`);
 
       if (response.status !== 200) {
         return { ...errors, guildId: 'Guild ID is missing' };
