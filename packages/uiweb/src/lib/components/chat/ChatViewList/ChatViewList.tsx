@@ -585,7 +585,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
 };
 
 //styles
-const ChatViewListCard = styled(Section) <IThemeProps>`
+const ChatViewListCard = styled(Section)<IThemeProps>`
   &::-webkit-scrollbar-thumb {
     background: ${(props) => props.theme.scrollbarColor};
     border-radius: 10px;
