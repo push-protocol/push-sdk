@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ethers } from "ethers";
+import { ethers } from 'ethers';
 
 import { fetchERC20Info, fetchERC721nfo } from './tokenHelpers';
 import {
@@ -13,10 +13,7 @@ import {
   TYPE,
 } from '../types';
 
-const handleDefineCondition = (
-  entryCriteria: CriteriaStateType,
-  handlePrevious: (() => void) | undefined
-) => {
+const handleDefineCondition = (entryCriteria: CriteriaStateType, handlePrevious: (() => void) | undefined) => {
   if (entryCriteria.isCondtionUpdateEnabled()) {
     // handle update
     entryCriteria.updateCondition();
@@ -30,9 +27,7 @@ const handleDefineCondition = (
   }
 };
 
-const validateCustomEndpointData = async (
-  condition: Rule
-): Promise<CriteriaValidationErrorType> => {
+const validateCustomEndpointData = async (condition: Rule): Promise<CriteriaValidationErrorType> => {
   const { data, type, subcategory } = condition;
   const errors: CriteriaValidationErrorType = {};
 
@@ -40,10 +35,7 @@ const validateCustomEndpointData = async (
     return { url: 'URL is missing' };
   } else {
     // Protocol Validation
-    if (
-      !(data as PushData)?.url!.startsWith('http://') &&
-      !(data as PushData).url!.startsWith('https://')
-    ) {
+    if (!(data as PushData)?.url!.startsWith('http://') && !(data as PushData).url!.startsWith('https://')) {
       return {
         url: 'Invalid URL protocol. Only "http://" and "https://" are allowed.',
       };
@@ -73,9 +65,7 @@ const validateCustomEndpointData = async (
   return {};
 };
 
-const validateGUILDData = async (
-  condition: Rule
-): Promise<CriteriaValidationErrorType> => {
+const validateGUILDData = async (condition: Rule): Promise<CriteriaValidationErrorType> => {
   const { data } = condition;
   const errors: CriteriaValidationErrorType = {};
 
@@ -84,9 +74,7 @@ const validateGUILDData = async (
     return { ...errors, guildId: 'Guild ID is missing' };
   } else {
     try {
-      const response = await axios.get(
-        `https://api.guild.xyz/v1/guild/${(data as GuildData).id}`
-      );
+      const response = await axios.get(` https://api.guild.xyz/v2/guilds/guild-page/${(data as GuildData).id}`);
 
       if (response.status !== 200) {
         return { ...errors, guildId: 'Guild ID is missing' };
@@ -98,8 +86,7 @@ const validateGUILDData = async (
           }
         } else if ((data as GuildData).role) {
           const roleExists = response.data.roles.some(
-            (role: { id: number }) =>
-              role.id.toString() === (data as GuildData).role
+            (role: { id: number }) => role.id.toString() === (data as GuildData).role
           );
           if (!roleExists) {
             return { ...errors, guildRole: 'Invalid Guild Role ID' };
@@ -124,54 +111,49 @@ const validateGUILDData = async (
   return {};
 };
 
-const validateTokenData = async (condition:Rule):Promise<CriteriaValidationErrorType> =>{
-  const data:PushData = condition.data;
-  const _contract = data.contract || ""
-  const _eip155Format = _contract.split(":")
+const validateTokenData = async (condition: Rule): Promise<CriteriaValidationErrorType> => {
+  const data: PushData = condition.data;
+  const _contract = data.contract || '';
+  const _eip155Format = _contract.split(':');
 
-  if(_eip155Format.length !==3){
-    return {tokenError:"Invalid contract address"}
+  if (_eip155Format.length !== 3) {
+    return { tokenError: 'Invalid contract address' };
   }
-  const [chainId, address] = [parseInt(_eip155Format[1]), _eip155Format[2]]
+  const [chainId, address] = [parseInt(_eip155Format[1]), _eip155Format[2]];
 
-  if(!ethers.utils.isAddress(address)){
-    return {tokenError:`Invalid contract address`}
+  if (!ethers.utils.isAddress(address)) {
+    return { tokenError: `Invalid contract address` };
   }
-  const [err] = condition.category === CATEGORY.ERC721 ? 
-    await fetchERC721nfo(address, chainId) : await fetchERC20Info(address, chainId);
+  const [err] =
+    condition.category === CATEGORY.ERC721
+      ? await fetchERC721nfo(address, chainId)
+      : await fetchERC20Info(address, chainId);
 
-  if(err){
-   return {tokenError:`Invalid ${condition.category} contract`} 
+  if (err) {
+    return { tokenError: `Invalid ${condition.category} contract` };
   }
-  if(!data.amount){
-    return {tokenAmount:`Amount cannot be 0`}
-  }
-  else{
-    if(data.amount<0){
-      return {tokenAmount:`Amount cannot be in negative`}
+  if (!data.amount) {
+    return { tokenAmount: `Amount cannot be 0` };
+  } else {
+    if (data.amount < 0) {
+      return { tokenAmount: `Amount cannot be in negative` };
     }
   }
-  return {}  
-}
-
-const validationCriteria =  async (condition: Rule):Promise<CriteriaValidationErrorType> => {
- if(condition.type === TYPE.GUILD)
- {
-  return validateGUILDData(condition);
- }else{
-  if(condition.category === CATEGORY.INVITE){
-    return {}
-  }else  if (condition.category === CATEGORY.CustomEndpoint){
-  return validateCustomEndpointData(condition);
-  }else{
-    return validateTokenData(condition)
-  }
- }
-
-}
-
-export {
-  handleDefineCondition,
-  validationCriteria,
-  validateCustomEndpointData,
+  return {};
 };
+
+const validationCriteria = async (condition: Rule): Promise<CriteriaValidationErrorType> => {
+  if (condition.type === TYPE.GUILD) {
+    return validateGUILDData(condition);
+  } else {
+    if (condition.category === CATEGORY.INVITE) {
+      return {};
+    } else if (condition.category === CATEGORY.CustomEndpoint) {
+      return validateCustomEndpointData(condition);
+    } else {
+      return validateTokenData(condition);
+    }
+  }
+};
+
+export { handleDefineCondition, validationCriteria, validateCustomEndpointData };
