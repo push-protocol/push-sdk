@@ -21,7 +21,7 @@ type UpdateUserProfileModalProps = {
   userProfile: IUser;
   setUserProfile: React.Dispatch<React.SetStateAction<IUser | undefined>>;
   setModal: React.Dispatch<React.SetStateAction<boolean>>;
-  closeModalOnClickAway?: boolean;
+  closeProfileModalOnClickAway?: boolean;
   updateUserProfileModalBackground?: ModalBackgroundType;
   updateUserProfileModalPositionType?: ModalPositionType;
 };
@@ -34,7 +34,7 @@ export interface UserProfileType {
 export const UpdateUserProfileModal = ({
   theme,
   setModal,
-  closeModalOnClickAway,
+  closeProfileModalOnClickAway,
   userProfile,
   setUserProfile,
   updateUserProfileModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
@@ -164,7 +164,7 @@ export const UpdateUserProfileModal = ({
   return (
     <Modal
       onClose={onClose}
-      closeonClickAway={closeModalOnClickAway}
+      closeonClickAway={closeProfileModalOnClickAway}
       modalBackground={updateUserProfileModalBackground}
       modalPositionType={updateUserProfileModalPositionType}
     >

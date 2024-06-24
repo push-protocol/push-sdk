@@ -56,7 +56,7 @@ export interface IChatProfileUserInfo {
 // Exported Functions
 export const ChatProfile: React.FC<IChatProfile> = ({
   chatId,
-  closeModalOnClickAway,
+  closeGroupInfoModalOnClickAway,
   groupInfoModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
   groupInfoModalPositionType = MODAL_POSITION_TYPE.GLOBAL,
   chatProfileRightHelperComponent = null,
@@ -333,7 +333,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
             <GroupInfoModal
               theme={theme}
               setModal={setModal}
-              closeModalOnClickAway={closeModalOnClickAway}
+              closeModalOnClickAway={closeGroupInfoModalOnClickAway}
               groupInfo={initialized.groupInfo!}
               chatProfileInfo={initialized.profile}
               setGroupInfo={(mutatedGroupInfo) =>
