@@ -1,67 +1,54 @@
 import { useState } from 'react';
-import {
-  Condition,
-  ConditionType,
-  CriteriaStateType,
-  Rule,
-  TokenGatedRule,
-} from '../../components/chat/types';
+import { Condition, ConditionType, CriteriaStateType, Rule, TokenGatedRule } from '../../components/chat/types';
 import { OPERATOR_OPTIONS } from '../../components/chat/constants';
 
-export const useCriteriaState = (
-  defaultRules: Rule[][],
-  defaultConditionTypes: ConditionType[]
-): CriteriaStateType => {
+export const useCriteriaState = (defaultRules: Rule[][], defaultConditionTypes: ConditionType[]): CriteriaStateType => {
   const [entryRootCondition, setEntryRootCondition] = useState<ConditionType>(
     OPERATOR_OPTIONS[1]?.value as ConditionType
   );
-  const [entryRuleTypeCondition, setEntryRuleTypeCondition] =
-    useState<ConditionType>(OPERATOR_OPTIONS[1]?.value as ConditionType);
-  const [entryOptionTypeArray, setEntryOptionTypeArray] = useState<
-    ConditionType[]
-  >(defaultConditionTypes);
-  const [entryOptionsDataArray, setEntryOptionsDataArray] =
-    useState<Rule[][]>(defaultRules);
+  const [entryRuleTypeCondition, setEntryRuleTypeCondition] = useState<ConditionType>(
+    OPERATOR_OPTIONS[1]?.value as ConditionType
+  );
+  const [entryOptionTypeArray, setEntryOptionTypeArray] = useState<ConditionType[]>(defaultConditionTypes);
+  const [entryOptionsDataArray, setEntryOptionsDataArray] = useState<Rule[][]>(defaultRules);
 
   const [selectedCriteria, setSelectedCriteria] = useState(-1);
   const [selectedRules, setSelectedRule] = useState<Rule[]>([]);
 
-  const [entryOptionsDataArrayUpdate, setEntryOptionsDataArrayUpdate] =
-    useState(-1);
+  const [entryOptionsDataArrayUpdate, setEntryOptionsDataArrayUpdate] = useState(-1);
   const [updateCriteriaIdx, setUpdateCriteriaIdx] = useState(-1);
 
-  
-  const isDuplicateRule = (rule:Rule)=>{
-    const newRule = JSON.stringify(rule)
+  const isDuplicateRule = (rule: Rule) => {
+    const newRule = JSON.stringify(rule);
 
     // check on current conditions
-    for(let i=0; i<selectedRules.length;i++){
-      const selectedRule = JSON.stringify(selectedRules[i])
-      if (newRule === selectedRule){
-        console.log(newRule, " equals ", selectedRule);
-        
-        return true
+    for (let i = 0; i < selectedRules.length; i++) {
+      const selectedRule = JSON.stringify(selectedRules[i]);
+      if (newRule === selectedRule) {
+        console.log(newRule, ' equals ', selectedRule);
+
+        return true;
       }
     }
 
     // check on already selected condtions
     for (let i = 0; i < entryOptionsDataArray.length; i++) {
-      const _rules = entryOptionsDataArray[i]
-      for (let j = 0;  j < _rules.length; j++) {
-        const selectedRule = JSON.stringify(_rules[j])
-        if (newRule === selectedRule){
-          console.log(newRule, " equals ", selectedRule);
-          return true
+      const _rules = entryOptionsDataArray[i];
+      for (let j = 0; j < _rules.length; j++) {
+        const selectedRule = JSON.stringify(_rules[j]);
+        if (newRule === selectedRule) {
+          console.log(newRule, ' equals ', selectedRule);
+          return true;
         }
       }
-    }    
+    }
 
-    return false
-  }
+    return false;
+  };
 
   const addNewRule = (newRule: Rule) => {
-    if(isDuplicateRule(newRule)){
-      return false
+    if (isDuplicateRule(newRule)) {
+      return false;
     }
 
     if (selectedCriteria === -1) {
@@ -78,7 +65,7 @@ export const useCriteriaState = (
       setSelectedRule((prev) => [...prev, newRule]);
     }
 
-    return true
+    return true;
   };
 
   const deleteRule = (idx: number) => {
@@ -97,13 +84,10 @@ export const useCriteriaState = (
 
   const updateCondition = () => {
     const optionTypeArrayUpdated = [...entryOptionTypeArray];
-    optionTypeArrayUpdated[entryOptionsDataArrayUpdate] =
-      entryRuleTypeCondition;
+    optionTypeArrayUpdated[entryOptionsDataArrayUpdate] = entryRuleTypeCondition;
 
     const entryOptionsDataArrayUpdated = [...entryOptionsDataArray];
-    entryOptionsDataArrayUpdated[entryOptionsDataArrayUpdate] = [
-      ...selectedRules,
-    ];
+    entryOptionsDataArrayUpdated[entryOptionsDataArrayUpdate] = [...selectedRules];
 
     setEntryOptionTypeArray(optionTypeArrayUpdated);
     setEntryOptionsDataArray(entryOptionsDataArrayUpdated);
@@ -173,9 +157,7 @@ export interface CriteriaStateManagerType {
 }
 
 export const useCriteriaStateManager = (): CriteriaStateManagerType => {
-  const [seletedCriteria, setSelectedCriteria] = useState<SelectedCriteria>(
-    SelectedCriteria.CHAT
-  );
+  const [seletedCriteria, setSelectedCriteria] = useState<SelectedCriteria>(SelectedCriteria.CHAT);
   const entryCriteria = useCriteriaState(
     [
       [
@@ -210,22 +192,21 @@ export const useCriteriaStateManager = (): CriteriaStateManagerType => {
 
   const resetCriteriaIdx = () => {
     entryCriteria.setUpdateCriteriaIdx(-1);
+    console.debug(entryCriteria, chatCriteria);
     chatCriteria.setUpdateCriteriaIdx(-1);
   };
 
-  const _generate = (
-    rules: Rule[][],
-    conditionTypes: ConditionType[]
-  ): Condition[] => {
-    if(rules.length === 0){
-      return []
+  const _generate = (rules: Rule[][], conditionTypes: ConditionType[]): Condition[] => {
+    console.debug('generate', rules);
+    if (rules.length === 0) {
+      return [];
     }
-    
-    console.log(`Generating for ${JSON.stringify(rules)}`)
-    console.log("condition type",conditionTypes);
-    
+
+    console.log(`Generating for ${JSON.stringify(rules)}`);
+    console.log('condition type', conditionTypes);
+
     return conditionTypes.map((el, idx) => ({
-      [el]: rules[idx].map((_el) => _el),
+      [el]: rules[idx]?.map((_el) => _el) ?? [],
     })) as any;
   };
 
@@ -249,7 +230,6 @@ export const useCriteriaStateManager = (): CriteriaStateManagerType => {
       },
     } as any;
   };
-
   return {
     entryCriteria,
     chatCriteria,
