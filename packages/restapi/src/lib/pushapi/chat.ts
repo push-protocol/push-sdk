@@ -149,7 +149,7 @@ export class Chat {
       reference?: string | null;
     }
   ) {
-    const reference: string | null = null;
+    let reference: string | null = null;
 
     const { threadHash, intent } = await PUSH_CHAT.conversationHash({
       conversationId: target,

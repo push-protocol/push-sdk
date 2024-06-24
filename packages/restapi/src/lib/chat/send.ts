@@ -42,7 +42,7 @@ export const sendCore = async (
      * 2. Takes care of deprecated fields
      */
     const computedOptions = computeOptions(options);
-    const { messageType, messageObj, account, to, signer, pgpPrivateKey, env } =
+    let { messageType, messageObj, account, to, signer, pgpPrivateKey, env } =
       computedOptions;
     /**
      * Validate Input Options
