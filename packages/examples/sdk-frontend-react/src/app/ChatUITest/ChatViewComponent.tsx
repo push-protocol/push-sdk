@@ -1,6 +1,10 @@
 import styled from 'styled-components';
 
-import { ChatView, MODAL_BACKGROUND_TYPE } from '@pushprotocol/uiweb';
+import {
+  ChatView,
+  CreateGroupModal,
+  MODAL_BACKGROUND_TYPE,
+} from '@pushprotocol/uiweb';
 import { Section } from '../components/StyledComponents';
 import Img from '../../assets/epnsLogo.png';
 import { CHAT_ID } from '../constants';
@@ -17,7 +21,12 @@ const ChatViewComponentTest = () => {
 
       <ChatViewComponentCard>
         {/* uncomment the below code to test create group modal */}
-        {/* <CreateGroupModal onClose={()=>{console.log('in close')}}  modalBackground={MODAL_BACKGROUND_TYPE.OVERLAY} modalPositionType={MODAL_POSITION_TYPE.RELATIVE}/> */}
+        <CreateGroupModal
+          onClose={() => {
+            console.log('in close');
+          }}
+          modalBackground={MODAL_BACKGROUND_TYPE.OVERLAY}
+        />
         <ChatView
           onVerificationFail={() => console.log('Verification Failed')}
           chatId={CHAT_ID}
