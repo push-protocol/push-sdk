@@ -33,6 +33,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({
   updateUserProfileModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
   updateUserProfileModalPositionType = MODAL_POSITION_TYPE.GLOBAL,
   onUserProfileUpdateModalOpen,
+  closeUserProfileModalOnClickAway = false
 }) => {
   const { user } = useChatData();
   const [userProfile, setUserProfile] = useState<IUser>();
@@ -143,6 +144,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({
           <UpdateUserProfileModal
             theme={theme}
             setModal={setShowUpdateUserProfileModal}
+            closeUserProfileModalOnClickAway={closeUserProfileModalOnClickAway}
             userProfile={userProfile!}
             setUserProfile={setUserProfile}
             updateUserProfileModalBackground={updateUserProfileModalBackground}
@@ -155,7 +157,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({
 };
 
 //styles
-const Conatiner = styled(Section)<IThemeProps>`
+const Conatiner = styled(Section) <IThemeProps>`
   border: ${(props) => props.theme.border?.userProfile};
   box-sizing: border-box;
 `;

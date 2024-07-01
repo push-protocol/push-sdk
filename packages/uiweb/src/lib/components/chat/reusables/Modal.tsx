@@ -18,7 +18,8 @@ import { device } from '../../../config';
 
 interface IModalProps {
   width?: string;
-  clickawayClose?: () => void;
+  onClose?: () => void;
+  closeonClickAway?: boolean;
   children: any;
   theme?: IChatTheme;
   modalBackground?: ModalBackgroundType;
@@ -31,13 +32,13 @@ interface IModalHeader {
   title: string;
 }
 
-const ClickawayCloseModal = ({ children, clickawayClose, width }: IModalProps) => {
+const ClickawayCloseModal = ({ children, onClose, width, closeonClickAway }: IModalProps) => {
   const modalRef = useRef(null);
   const theme = useContext(ThemeContext);
 
   useClickAway(modalRef, () => {
-    if (clickawayClose) {
-      clickawayClose();
+    if (onClose && closeonClickAway) {
+      onClose();
     }
   });
 
@@ -53,7 +54,8 @@ const ClickawayCloseModal = ({ children, clickawayClose, width }: IModalProps) =
 };
 
 export const Modal = ({
-  clickawayClose,
+  onClose,
+  closeonClickAway,
   children,
   width,
   modalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
@@ -66,10 +68,11 @@ export const Modal = ({
       modalBackground={modalBackground}
       modalPositionType={modalPositionType}
     >
-      {clickawayClose ? (
+      {closeonClickAway ? (
         <ClickawayCloseModal
-          clickawayClose={clickawayClose}
+          onClose={onClose}
           width={width}
+          closeonClickAway={closeonClickAway}
         >
           {children}
         </ClickawayCloseModal>
