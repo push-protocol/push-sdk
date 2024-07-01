@@ -1,4 +1,9 @@
-import { convertToValidDID, getAPIBaseUrls, isValidPushCAIP } from '../helpers';
+import {
+  convertToValidDID,
+  getAPIBaseUrls,
+  isValidPushCAIP,
+  walletToPCAIP10,
+} from '../helpers';
 import Constants, { MessageType, ENV } from '../constants';
 import { ChatSendOptionsType, MessageWithCID, SignerType } from '../types';
 import {
@@ -15,6 +20,7 @@ import { validateMessageObj } from '../validations/messageObject';
 import { axiosPost } from '../utils/axiosUtil';
 import { getGroupInfo } from './getGroupInfo';
 import { handleError } from '../errors/validationError';
+import * as PUSH_CHAT from '../chat';
 
 /**
  * SENDS A PUSH CHAT MESSAGE
@@ -36,8 +42,9 @@ export const sendCore = async (
      * 2. Takes care of deprecated fields
      */
     const computedOptions = computeOptions(options);
-    const { messageType, messageObj, account, to, signer, pgpPrivateKey, env } =
+    const { messageType, messageObj, account, signer, pgpPrivateKey, env } =
       computedOptions;
+    let { to } = computedOptions;
     /**
      * Validate Input Options
      */
@@ -50,16 +57,40 @@ export const sendCore = async (
       env,
       pgpHelper
     );
-    const receiver = await convertToValidDID(to, env);
+    let receiver = await convertToValidDID(to, env);
     const API_BASE_URL = getAPIBaseUrls(env);
-    const isGroup = isValidPushCAIP(to) ? false : true;
 
-    const group = isGroup
-      ? await getGroupInfo({
-          chatId: to,
-          env: env,
-        })
-      : null;
+    const isChatId = isValidPushCAIP(to) ? false : true;
+    let isGroup = false;
+    let group = null;
+
+    if (isChatId) {
+      const request: PUSH_CHAT.GetChatInfoType = {
+        recipient: to,
+        account: account!,
+        env: env,
+      };
+
+      const chatInfo = await PUSH_CHAT.getChatInfo(request);
+      isGroup = chatInfo?.meta?.group ?? false;
+
+      group = isGroup
+        ? await getGroupInfo({
+            chatId: to,
+            env: env,
+          })
+        : null;
+
+      if (!isGroup) {
+        const participants = chatInfo.participants ?? [];
+        // Find the participant that is not the account being used
+        const messageSentTo = participants.find(
+          (participant) => participant !== walletToPCAIP10(account!)
+        );
+        to = messageSentTo!;
+        receiver = to;
+      }
+    }
 
     // Not supported by legacy sdk versions, need to override messageContent to avoid parsing errors on legacy sdk versions
     let messageContent: string;

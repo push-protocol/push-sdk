@@ -7,7 +7,14 @@ import { CONSTANTS, IFeeds, IUser } from '@pushprotocol/restapi';
 import styled from 'styled-components';
 
 // Internal Compoonents
-import { getAddress, getNewChatUser, pCAIP10ToWallet, traceStackCalls, walletToPCAIP10 } from '../../../helpers';
+import {
+  getAddress,
+  getDomainIfExists,
+  getNewChatUser,
+  pCAIP10ToWallet,
+  traceStackCalls,
+  walletToPCAIP10,
+} from '../../../helpers';
 import { useChatData, usePushChatStream } from '../../../hooks';
 import useFetchChat from '../../../hooks/chat/useFetchChat';
 import useFetchMessageUtilities from '../../../hooks/chat/useFetchMessageUtilities';
@@ -609,7 +616,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
           let userProfile: IUser | undefined = undefined;
           let groupProfile: Group;
 
-          if (formattedChatId.includes('.')) {
+          if (getDomainIfExists(formattedChatId)) {
             const address = await getAddress(formattedChatId, user ? user.env : CONSTANTS.ENV.PROD);
             if (address) formattedChatId = pCAIP10ToWallet(address);
             else {

@@ -143,6 +143,32 @@ export class Chat {
     return historyMessages.map((message: any) => ({ ...message, listType }));
   }
 
+  async message(
+    target: string,
+    options?: {
+      reference?: string | null;
+    }
+  ) {
+    let reference: string | null = null;
+
+    const { threadHash, intent } = await PUSH_CHAT.conversationHash({
+      conversationId: target,
+      account: this.account,
+      env: this.env,
+    });
+
+    reference = options?.reference || threadHash;
+
+    if (!reference) return {};
+
+    const historyMessages = await this.history(target, { reference, limit: 1 });
+    const listType = intent ? 'CHATS' : 'REQUESTS';
+
+    return historyMessages.length > 0
+      ? { ...historyMessages[0], listType }
+      : null;
+  }
+
   async send(recipient: string, options: Message): Promise<MessageWithCID> {
     if (!this.decryptedPgpPvtKey) {
       throw new Error(PushAPI.ensureSignerMessage());

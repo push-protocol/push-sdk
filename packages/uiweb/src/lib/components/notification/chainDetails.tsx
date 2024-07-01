@@ -9,8 +9,9 @@ import { OptimismSvg } from '../../icons/OptimismSvg';
 import { PolygonSvg } from '../../icons/PolygonSvg';
 import { PolygonzkevmSvg } from '../../icons/PolygonzkevmSvg';
 import { TheGraphSvg } from '../../icons/TheGraphSvg';
-import LineaSVG from '../../icons/LineaSVG';
+import { LineaSVG } from '../../icons/LineaSVG';
 import { CyberConnectSVG } from '../../icons/CyberConnectSVG';
+import { BaseSVG } from '../../icons/baseSVG';
 const createSVGIcon = (element: any, chainName: string) => {
   return <Tooltip tooltipContent={`Delivered by ${chainName}`}>{element}</Tooltip>;
 };
@@ -98,5 +99,13 @@ export default {
   CYBER_CONNECT_MAINNET: {
     label: 'CYBER CONNECT MAINNET',
     icon: createSVGIcon(<CyberConnectSVG />, 'CyberConnect Mainnet'),
+  },
+  BASE_TESTNET: {
+    label: 'BASE TESTNET',
+    icon: createSVGIcon(<BaseSVG />, 'Base Testnet'),
+  },
+  BASE_MAINNET: {
+    label: 'BASE MAINNET',
+    icon: createSVGIcon(<BaseSVG />, 'Base Mainnet'),
   },
 };

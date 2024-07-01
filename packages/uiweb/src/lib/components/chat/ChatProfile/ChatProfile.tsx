@@ -12,6 +12,7 @@ import styled from 'styled-components';
 import {
   deriveChatId,
   getAddress,
+  getDomainIfExists,
   pCAIP10ToWallet,
   resolveWeb3Name,
   shortenText,
@@ -167,6 +168,7 @@ export const ChatProfile: React.FC<IChatProfile> = ({
                 profile.abbrRecipient = getAbbreiatedRecipient(recipient);
                 profile.desc = profileInfo.profile?.desc;
                 profile.isGroup = false;
+                profile.web3Name = getDomainIfExists(chatId);
               } else {
                 throw new Error(
                   'UIWeb::ChatProfile::user.profile.info fetch error, possible push user does not exist.'
@@ -181,13 +183,14 @@ export const ChatProfile: React.FC<IChatProfile> = ({
               profile.icon = null;
               profile.chatId = derivedChatId;
               profile.recipient = recipient;
+              profile.web3Name = getDomainIfExists(chatId);
               profile.abbrRecipient = getAbbreiatedRecipient(recipient);
               profile.desc = '';
               profile.isGroup = false;
             }
 
             // get and set web3 name asynchrounously
-            if (profile.recipient) {
+            if (profile.recipient && !profile.web3Name) {
               setupWeb3Name(profile.recipient);
             }
           }

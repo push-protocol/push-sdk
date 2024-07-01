@@ -5,6 +5,7 @@ import { pCAIP10ToWallet, walletToPCAIP10 } from '../address';
 import { getUdResolverClient } from '../udResolver';
 import { displayDefaultUser } from './user';
 import { createWeb3Name } from '@web3-name-sdk/core';
+import { getDomainIfExists } from '../utils';
 
 export const getObjectsWithMatchingKeys = (
   obj: ChatFeedsType,
@@ -61,7 +62,7 @@ export const getAddress = async (searchText: string, env: Env) => {
   const udResolverClient = getUdResolverClient(env);
   const web3NameClient = createWeb3Name();
   let address: string | null = null;
-  if (searchText.includes('.')) {
+  if (getDomainIfExists(searchText)) {
     try {
       address = await web3NameClient.getAddress(searchText);
       if (!address) {
