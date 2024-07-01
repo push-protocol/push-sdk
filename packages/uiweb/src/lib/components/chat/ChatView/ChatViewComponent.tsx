@@ -43,7 +43,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (options: IC
     chatProfileRightHelperComponent = null,
     chatProfileLeftHelperComponent = null,
     welcomeComponent = null,
-    closeGroupInfoModalOnClickAway = false
+    closeChatProfileInfoModalOnClickAway = false
   } = options || {};
 
   const { user } = useChatData();
@@ -110,7 +110,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (options: IC
             >
               <ChatProfile
                 key={chatId}
-                closeGroupInfoModalOnClickAway={closeGroupInfoModalOnClickAway}
+                closeChatProfileInfoModalOnClickAway={closeChatProfileInfoModalOnClickAway}
                 chatProfileRightHelperComponent={chatProfileRightHelperComponent}
                 chatProfileLeftHelperComponent={chatProfileLeftHelperComponent}
                 chatId={initialized.derivedChatId}
