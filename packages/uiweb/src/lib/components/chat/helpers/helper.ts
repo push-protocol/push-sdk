@@ -2,7 +2,7 @@ import { Env, IFeeds, IMessageIPFSWithCID, IUser, ParticipantStatus } from '@pus
 import { ethers } from 'ethers';
 import moment from 'moment';
 import { ProfilePicture } from '../../../config';
-import { getAddress, walletToPCAIP10 } from '../../../helpers';
+import { getAddress, getDomainIfExists, walletToPCAIP10 } from '../../../helpers';
 import { Group, IChatPreviewPayload, IMessagePayload, User } from '../exportedTypes';
 
 export const profilePicture = `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==`;
@@ -108,8 +108,6 @@ export const formatAddress = async (chatPreviewPayload: IChatPreviewPayload, env
     // check and remove eip155:
     if (formattedAddress.includes('eip155:')) {
       formattedAddress = formattedAddress.replace('eip155:', '');
-    } else if (formattedAddress.includes('.')) {
-      formattedAddress = (await getAddress(formattedAddress, env))!;
     }
   }
 
@@ -227,4 +225,8 @@ export const transformStreamToIMessageIPFSWithCID: (item: any) => IMessageIPFSWi
     verificationProof: item?.raw?.verificationProof || '',
   };
   return transformedItem;
+};
+
+export const getChatParticipantDisplayName = (derivedChatId: string, chatId: string) => {
+  return derivedChatId ? getDomainIfExists(chatId) ?? derivedChatId : derivedChatId;
 };

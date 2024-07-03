@@ -1,12 +1,11 @@
 import type { Env, IFeeds, IUser, PushAPI } from '@pushprotocol/restapi';
-import { add } from 'date-fns';
 import { ethers } from 'ethers';
-import { CoreContractChainId, ENV, InfuraAPIKey, ProfilePicture } from '../../config';
-import type { FetchProfileParams, GetProfileParams } from '../../hooks';
 import type { ChatFeedsType, NotificationFeedsType, ParsedNotificationType, Web3NameListType } from '../../types';
 import { pCAIP10ToWallet, walletToPCAIP10 } from '../address';
-import { getUdResolver } from '../udResolver';
+import { getUdResolverClient } from '../udResolver';
 import { displayDefaultUser } from './user';
+import { createWeb3Name } from '@web3-name-sdk/core';
+import { getDomainIfExists } from '../utils';
 
 export const getObjectsWithMatchingKeys = (
   obj: ChatFeedsType,
@@ -60,23 +59,19 @@ export const getNewChatUser = async ({
 };
 
 export const getAddress = async (searchText: string, env: Env) => {
-  const udResolver = getUdResolver(env);
-  const provider = new ethers.providers.InfuraProvider(CoreContractChainId[env], InfuraAPIKey);
+  const udResolverClient = getUdResolverClient(env);
+  const web3NameClient = createWeb3Name();
   let address: string | null = null;
-  if (searchText.includes('.')) {
+  if (getDomainIfExists(searchText)) {
     try {
-      if (!udResolver) throw new Error('No udResolver available for the network');
-      address = await udResolver?.owner(searchText);
-    } catch (err) {
-      try {
-        address = await provider.resolveName(searchText);
-      } catch (err) {
-        console.debug(err);
+      address = await web3NameClient.getAddress(searchText);
+      if (!address) {
+        if (!udResolverClient) throw new Error('No udResolverClient available for the network');
+        address = await udResolverClient?.owner(searchText);
       }
-
+    } catch (err) {
       console.debug(err);
     }
-
     return address || null;
   } else if (await ethers.utils.isAddress(pCAIP10ToWallet(searchText))) {
     return searchText;

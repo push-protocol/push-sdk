@@ -9,11 +9,11 @@ import { OptimismSvg } from '../../icons/OptimismSvg';
 import { PolygonSvg } from '../../icons/PolygonSvg';
 import { PolygonzkevmSvg } from '../../icons/PolygonzkevmSvg';
 import { TheGraphSvg } from '../../icons/TheGraphSvg';
+import { LineaSVG } from '../../icons/LineaSVG';
 import { CyberConnectSVG } from '../../icons/CyberConnectSVG';
+import { BaseSVG } from '../../icons/baseSVG';
 const createSVGIcon = (element: any, chainName: string) => {
-  return (
-    <Tooltip tooltipContent={`Delivered by ${chainName}`}>{element}</Tooltip>
-  );
+  return <Tooltip tooltipContent={`Delivered by ${chainName}`}>{element}</Tooltip>;
 };
 
 export default {
@@ -83,13 +83,29 @@ export default {
   BERACHAIN_TESTNET: {
     label: 'BERACHAIN TESTNET',
     icon: createSVGIcon(<BerachainSVG />, 'Berachain Testnet'),
-  }, 
+  },
   CYBER_CONNECT_TESTNET: {
     label: 'CYBER CONNECT TESTNET',
-    icon: createSVGIcon(<CyberConnectSVG/>, 'CyberConnect Testnet'),
+    icon: createSVGIcon(<CyberConnectSVG />, 'CyberConnect Testnet'),
+  },
+  LINEA_TESTNET: {
+    label: 'LINEA TESTNET',
+    icon: createSVGIcon(<LineaSVG />, 'Linea Testnet'),
+  },
+  LINEA_MAINNET: {
+    label: 'LINEA MAINNET',
+    icon: createSVGIcon(<LineaSVG />, 'Linea Mainnet'),
   },
   CYBER_CONNECT_MAINNET: {
     label: 'CYBER CONNECT MAINNET',
-    icon: createSVGIcon(<CyberConnectSVG/>, 'CyberConnect Mainnet'),
-  }
+    icon: createSVGIcon(<CyberConnectSVG />, 'CyberConnect Mainnet'),
+  },
+  BASE_TESTNET: {
+    label: 'BASE TESTNET',
+    icon: createSVGIcon(<BaseSVG />, 'Base Testnet'),
+  },
+  BASE_MAINNET: {
+    label: 'BASE MAINNET',
+    icon: createSVGIcon(<BaseSVG />, 'Base Mainnet'),
+  },
 };

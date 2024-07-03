@@ -6,7 +6,7 @@ import { createPortal } from 'react-dom';
 import { MdCheckCircle, MdError } from 'react-icons/md';
 import styled from 'styled-components';
 
-import { deriveChatId, pCAIP10ToWallet, setAccessControl, walletToPCAIP10 } from '../../../helpers';
+import { deriveChatId, getDomainIfExists, pCAIP10ToWallet, setAccessControl, walletToPCAIP10 } from '../../../helpers';
 import { useChatData, useClickAway, useDeviceWidthCheck, usePushChatStream } from '../../../hooks';
 import useFetchChat from '../../../hooks/chat/useFetchChat';
 import useGetGroupByIDnew from '../../../hooks/chat/useGetGroupByIDnew';
@@ -163,7 +163,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       if (!user) return;
       if (chatId) {
         let derivedChatId = chatId;
-        if (derivedChatId.includes('.')) {
+        if (getDomainIfExists(derivedChatId)) {
           derivedChatId = (await deriveChatId(chatId, user))!;
         }
 

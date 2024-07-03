@@ -1,32 +1,34 @@
-import { ethers } from 'ethers';
 import React, { useContext, useEffect, useState } from 'react';
+
 import styled from 'styled-components';
-import { Constants, ENV, InfuraAPIKey, allowedNetworks } from '../../config';
-import { SupportChatPropsContext } from '../../context';
-import { copyToClipboard, pCAIP10ToWallet, resolveWeb3Name, } from '../../helpers';
-import { CopySvg } from '../../icons/CopySvg';
+import { ethers } from 'ethers';
+
 import { ChatProps } from './Chat';
 
-export const AddressInfo: React.FC = () => {
+import { SupportChatPropsContext } from '../../context';
+import { Constants, ENV, InfuraAPIKey, allowedNetworks } from '../../config';
 
+import { copyToClipboard, pCAIP10ToWallet, resolveWeb3Name } from '../../helpers';
+import { CopySvg } from '../../icons/CopySvg';
+
+export const AddressInfo: React.FC = () => {
   const { supportAddress, env, theme, user } = useContext<ChatProps>(SupportChatPropsContext);
 
   const [ensName, setEnsName] = useState<string>('');
   const [pushUser, setPushUser] = useState<any>({});
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const walletAddress = pCAIP10ToWallet(supportAddress!);
-  const l1ChainId = (allowedNetworks[env!]?.includes(1)) ? 1 : 5;
+  const l1ChainId = allowedNetworks[env!]?.includes(1) ? 1 : 5;
   const provider = new ethers.providers.InfuraProvider(l1ChainId, InfuraAPIKey);
 
   useEffect(() => {
     const getUser = async () => {
-if(user){
-  const fetchedUser = await user.info();
- const ensNameResult = await resolveWeb3Name(supportAddress!, user) 
-  setEnsName(ensNameResult!)
-setPushUser(fetchedUser);
-}
-      
+      if (user) {
+        const fetchedUser = await user.info();
+        const ensNameResult = await resolveWeb3Name(supportAddress!, user?.env);
+        setEnsName(ensNameResult!);
+        setPushUser(fetchedUser);
+      }
     };
     getUser();
   }, [supportAddress, user]);
@@ -36,20 +38,13 @@ setPushUser(fetchedUser);
       <Section>
         <ImgSpan>
           <Image
-            src={
-              pushUser?.profile?.picture
-                ? pushUser?.profile.picture
-                : Constants.DEFAULT_PROFILE_PICTURE
-            }
+            src={pushUser?.profile?.picture ? pushUser?.profile.picture : Constants.DEFAULT_PROFILE_PICTURE}
             alt="address profile"
           />
         </ImgSpan>
         <Span theme={theme}>
           {ensName && `${ensName}`}
-          {!ensName &&
-            `${walletAddress.substring(0, 8)}...${walletAddress.substring(
-              walletAddress.length - 8
-            )}`}
+          {!ensName && `${walletAddress.substring(0, 8)}...${walletAddress.substring(walletAddress.length - 8)}`}
         </Span>
       </Section>
       {!isCopied && (
