@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const packageJson = require('../../../../restapi/package.json');
+const packageJson = require('../../../package.json');
 const version = packageJson.version;
 
 const addSdkVersionHeader = (

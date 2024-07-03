@@ -15,13 +15,14 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@pushprotocol/dnode": ["packages/dnode/src/index.ts"],
       "@pushprotocol/ledgerlive": ["packages/ledgerlive/src/index.ts"],
       "@pushprotocol/reactnative": ["packages/reactnative/src/index.ts"],
       "@pushprotocol/restapi": ["packages/restapi/src/index.ts"],
       "@pushprotocol/socket": ["packages/socket/src/index.ts"],
       "@pushprotocol/uiembed": ["packages/uiembed/src/index.ts"],
-      "@pushprotocol/uiweb": ["packages/uiweb/src/index.ts"],
-      "@sdk/dnode": ["packages/dnode/src/index.ts"]
+      "@pushprotocol/uiweb": ["packages/uiweb/src/index.ts"]
+
     }
   },
   "exclude": ["node_modules", "tmp"]

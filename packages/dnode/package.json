@@ -1,5 +1,5 @@
 {
-  "name": "@sdk/dnode",
+  "name": "@pushprotocol/dnode",
   "version": "0.0.1",
   "type": "commonjs",
   "publishConfig": {

@@ -33,7 +33,7 @@
       "options": {
         "preset": "angular",
         "commitMessageFormat": "ci(${projectName}): 🎉 cut release to ${projectName}-v${version}",
-        "postTargets": ["d-node_notif:build", "d-node_notif:ci-publish"]
+        "postTargets": ["dnode:build", "dnode:ci-publish"]
       }
     },
     "ci-version-beta": {
@@ -41,7 +41,7 @@
       "options": {
         "preset": "angular",
         "commitMessageFormat": "ci(${projectName}): 🎉 cut beta release to ${projectName}-v${version}",
-        "postTargets": ["d-node_notif:build", "d-node_notif:ci-publish"],
+        "postTargets": ["dnode:build", "dnode:ci-publish"],
         "version": "prerelease",
         "preid": "alpha"
       }
@@ -49,7 +49,7 @@
     "ci-publish": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "command": "node tools/scripts/publish.mjs d-node_notif"
+        "command": "node tools/scripts/publish.mjs dnode"
       }
     }
   },
