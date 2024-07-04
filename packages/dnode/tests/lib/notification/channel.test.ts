@@ -88,7 +88,6 @@ describe('PushAPI.channel functionality', () => {
           raw: false,
         }
       );
-      console.log(res.channel_settings);
       expect(res).not.null;
     });
   });
@@ -204,7 +203,7 @@ describe('PushAPI.channel functionality', () => {
     });
   });
 
-  describe.only('channel :: send', () => {
+  describe('channel :: send', () => {
     it('With signer : broadcast  : Should send notification with title and body', async () => {
       const res = await userAlice.channel.send(['*'], {
         notification: {

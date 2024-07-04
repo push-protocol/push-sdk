@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { getRandomElement } from '../helpers';
 import {
   ActiveValidator,
