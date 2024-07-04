@@ -1,5 +1,7 @@
 import { authUpdate } from './auth.updateUser';
 import { profileUpdate, profileUpdateCore } from './profile.updateUser';
+import { configUpdate, configUpdateCore } from './config.updateUser';
+
 export type { ProfileUpdateProps } from './profile.updateUser';
 export * from './createUser';
 export * from './getFeeds';
@@ -18,4 +20,9 @@ export const auth = {
 export const profile = {
   update: profileUpdate,
   updateCore: profileUpdateCore,
+};
+
+export const config = {
+  update: configUpdate,
+  updateCore: configUpdateCore,
 };

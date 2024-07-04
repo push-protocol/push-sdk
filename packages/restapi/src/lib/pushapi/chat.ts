@@ -255,13 +255,10 @@ export class Chat {
       throw new Error(PushAPI.ensureSignerMessage());
     }
 
-    return await PUSH_USER.profile.update({
+    return await PUSH_USER.config.update({
       pgpPrivateKey: this.decryptedPgpPvtKey,
       account: this.account,
-      profile: {
-        name: user.profile.name!,
-        desc: user.profile.desc!,
-        picture: user.profile.picture!,
+      config: {
         blockedUsersList: user.profile.blockedUsersList,
       },
       env: this.env,
@@ -294,7 +291,7 @@ export class Chat {
     const userDIDs = await Promise.all(userDIDsPromises);
 
     user.profile.blockedUsersList = user.profile.blockedUsersList.filter(
-      (blockedUser) => {
+      (blockedUser: string) => {
         !userDIDs.includes(blockedUser.toLowerCase());
       }
     );

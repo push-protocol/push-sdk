@@ -13,7 +13,7 @@ import { populateDeprecatedUser } from '../utils/populateIUser';
 import PROGRESSHOOK from '../progressHook';
 import { axiosPut } from '../utils/axiosUtil';
 
-export type ProfileUpdateProps = {
+export type ConfigUpdateProps = {
   /**
    * PGP Private Key
    */
@@ -25,10 +25,7 @@ export type ProfileUpdateProps = {
   /**
    *  Profile properties that can be changed
    */
-  profile: {
-    name?: string;
-    desc?: string;
-    picture?: string;
+  config: {
     blockedUsersList?: Array<string>;
   };
   env?: ENV;
@@ -38,20 +35,20 @@ export type ProfileUpdateProps = {
 /**
  * Updation of profile
  */
-export const profileUpdate = async (
-  options: ProfileUpdateProps
+export const configUpdate = async (
+  options: ConfigUpdateProps
 ): Promise<IUser> => {
-  return profileUpdateCore(options, PGPHelper);
+  return configUpdateCore(options, PGPHelper);
 };
 
-export const profileUpdateCore = async (
-  options: ProfileUpdateProps,
+export const configUpdateCore = async (
+  options: ConfigUpdateProps,
   pgpHelper: IPGPHelper
 ): Promise<IUser> => {
   const {
     pgpPrivateKey,
     account,
-    profile,
+    config,
     env = Constants.ENV.PROD,
     progressHook,
   } = options || {};
@@ -65,8 +62,8 @@ export const profileUpdateCore = async (
       throw new Error('User not Found!');
     }
     let blockedUsersList = null;
-    if (profile.blockedUsersList) {
-      for (const element of profile.blockedUsersList) {
+    if (config.blockedUsersList) {
+      for (const element of config.blockedUsersList) {
         // Check if the element is a valid CAIP-10 address
         if (!isValidPushCAIP(element)) {
           throw new Error(
@@ -75,7 +72,7 @@ export const profileUpdateCore = async (
         }
       }
 
-      const convertedBlockedListUsersPromise = profile.blockedUsersList.map(
+      const convertedBlockedListUsersPromise = config.blockedUsersList.map(
         async (each) => {
           return convertToValidDID(each, env);
         }
@@ -85,45 +82,24 @@ export const profileUpdateCore = async (
       blockedUsersList = Array.from(new Set(blockedUsersList));
     }
 
-    const updatedProfile = {
-      name: profile.name ? profile.name : user.profile.name,
-      desc: profile.desc ? profile.desc : user.profile.desc,
-      picture: profile.picture ? profile.picture : user.profile.picture,
-      // If profile.blockedUsersList is empty no users in block list
-      blockedUsersList: profile.blockedUsersList ? blockedUsersList : [],
+    const updatedUserConfig = {
+      blockedUsersList: config.blockedUsersList ? blockedUsersList : [],
     };
-    const hash = CryptoJS.SHA256(JSON.stringify(updatedProfile)).toString();
+    const hash = CryptoJS.SHA256(JSON.stringify(updatedUserConfig)).toString();
     const signature = await pgpHelper.sign({
       message: hash,
       signingKey: pgpPrivateKey,
     });
-    const sigType = 'pgpv2';
-    const verificationProof = `${sigType}:${signature}`;
+    const sigType = 'pgp';
+    const configVerificationProof = `${sigType}:${signature}`;
 
-    const updatedConfig = {
-      blockedUsersList: profile.blockedUsersList ? blockedUsersList : [],
-    };
-    const blockedUsersListHash = CryptoJS.SHA256(
-      JSON.stringify(updatedConfig)
-    ).toString();
-    const blockedUsersListSignature = await pgpHelper.sign({
-      message: blockedUsersListHash,
-      signingKey: pgpPrivateKey,
-    });
-    const blockedUsersListSigType = 'pgp';
-    const configVerificationProof = `${blockedUsersListSigType}:${blockedUsersListSignature}`;
-
-    const body = {
-      ...updatedProfile,
-      verificationProof,
-      configVerificationProof,
-    };
+    const body = { ...updatedUserConfig, configVerificationProof };
 
     const API_BASE_URL = getAPIBaseUrls(env);
-    const apiEndpoint = `${API_BASE_URL}/v2/users/${user.did}/profile`;
+    const apiEndpoint = `${API_BASE_URL}/v2/users/${user.did}/config`;
 
     // Report Progress
-    progressHook?.(PROGRESSHOOK['PUSH-PROFILE-UPDATE-01'] as ProgressHookType);
+    progressHook?.(PROGRESSHOOK['PUSH-CONFIG-UPDATE-01'] as ProgressHookType);
     const response = await axiosPut(apiEndpoint, body);
     if (response.data)
       response.data.publicKey = await verifyProfileKeys(
@@ -135,16 +111,16 @@ export const profileUpdateCore = async (
       );
 
     // Report Progress
-    progressHook?.(PROGRESSHOOK['PUSH-PROFILE-UPDATE-02'] as ProgressHookType);
+    progressHook?.(PROGRESSHOOK['PUSH-CONFIG-UPDATE-02'] as ProgressHookType);
     return populateDeprecatedUser(response.data);
   } catch (err) {
     // Report Progress
     const errorProgressHook = PROGRESSHOOK[
       'PUSH-ERROR-00'
     ] as ProgressHookTypeFunction;
-    progressHook?.(errorProgressHook(profileUpdate.name, err));
+    progressHook?.(errorProgressHook(configUpdate.name, err));
     throw Error(
-      `[Push SDK] - API - Error - API ${profileUpdate.name} -: ${err}`
+      `[Push SDK] - API - Error - API ${configUpdate.name} -: ${err}`
     );
   }
 };
