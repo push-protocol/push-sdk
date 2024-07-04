@@ -12,7 +12,7 @@ export interface ITextInputProps {
   onInputChange?: any;
   disabled?: boolean;
   customStyle?: CustomStyleParamsType;
-  error?:boolean;
+  error?: boolean;
 }
 type CustomStyleParamsType = {
   background?: string;
@@ -73,19 +73,17 @@ const LabelContainer = styled.div`
   justify-content: space-between;
 
   font-weight: 500;
-  font-size: 16px;
+  font-size: 14px;
   color: ${(props) => props.theme.textColor?.modalHeadingText ?? '#000'};
 `;
 
-const Input = styled.input<IChatTheme & {customStyle:CustomStyleParamsType,error:boolean}>`
+const Input = styled.input<IChatTheme & { customStyle: CustomStyleParamsType; error: boolean }>`
   padding: 16px;
   margin-top: 8px;
   color: ${(props) => props.theme.textColor?.modalHeadingText ?? '#000'};
   background: ${(props) =>
-    props.customStyle?.background
-      ? props.customStyle.background
-      : props.theme.backgroundColor.modalInputBackground};
-  border: ${(props) => props.error?' 1px solid #ED5858':props.theme.border.modalInnerComponents};
+    props.customStyle?.background ? props.customStyle.background : props.theme.backgroundColor.modalInputBackground};
+  border: ${(props) => (props.error ? ' 1px solid #ED5858' : props.theme.border.modalInnerComponents)};
   border-radius: ${(props) => props.theme.borderRadius.modalInnerComponents};
 
   font-family: ${(props) => props.theme.fontFamily};
@@ -98,7 +96,6 @@ const Input = styled.input<IChatTheme & {customStyle:CustomStyleParamsType,error
   &:focus {
     border: 1px solid #ffdbf0;
   }
- 
 `;
 
 const CharCounter = styled.div<IChatTheme>`

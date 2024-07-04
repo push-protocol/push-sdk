@@ -105,7 +105,7 @@ export const ProfileContainer = ({ theme, member, copy, customStyle, loading }: 
         <>
           {member?.name || member?.web3Name ? (
             <Span
-              fontSize={customStyle?.fontSize ?? '18px'}
+              fontSize={customStyle?.fontSize ?? '16px'}
               fontWeight={customStyle?.fontWeight ?? '400'}
               color={customStyle?.textColor ?? theme.textColor?.modalSubHeadingText}
               position="relative"
@@ -135,7 +135,7 @@ export const ProfileContainer = ({ theme, member, copy, customStyle, loading }: 
               animation={theme.skeletonBG}
             >
               <RecipientSpan
-                fontSize={member?.name || member?.web3Name ? '14px' : customStyle?.fontSize ?? '18px'}
+                fontSize={member?.name || member?.web3Name ? '14px' : customStyle?.fontSize ?? '16px'}
                 fontWeight={member?.name || member?.web3Name ? '500' : customStyle?.fontWeight ?? '400'}
                 color={
                   member?.name || member?.web3Name
