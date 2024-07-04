@@ -1,11 +1,40 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { getChannelInfo, sendNotification } from '../utils/push';
+import { useAccount, useWalletClient } from 'wagmi';
 
 const SendNotification: React.FC = () => {
   const [title, setTitle] = useState<string>('');
   const [body, setBody] = useState<string>('');
   const [channel, setChannel] = useState<string>('');
   const [notificationType, setNotificationType] = useState<string>('broadcast');
-  const [recipient, setRecipient] = useState<string | string[]>([]); // State for recipients
+  const [recipient, setRecipient] = useState<string[]>(['*']); // State for recipients
+  const [allowNotification, setAllowNotification] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>(''); // State for error message
+
+  const { isConnected } = useAccount();
+  const walletClient = useWalletClient();
+
+  useEffect(() => {
+    const checkNotificationPermission = async () => {
+      if (isConnected && walletClient.data) {
+        try {
+          const channelInfo = await getChannelInfo(walletClient.data);
+          if (channelInfo !== null) {
+            setAllowNotification(true);
+            setChannel(channelInfo.channel);
+            setErrorMessage(''); // Clear error message if the channel is found
+          } else {
+            setAllowNotification(false);
+            setErrorMessage('Channel not found. Please check your settings.'); // Set error message
+          }
+        } catch (error) {
+          setAllowNotification(false);
+          setErrorMessage('Error fetching channel info.'); // Set error message
+        }
+      }
+    };
+    checkNotificationPermission();
+  }, [walletClient]);
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
@@ -15,9 +44,9 @@ const SendNotification: React.FC = () => {
     setBody(event.target.value);
   };
 
-  const handleChannelChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setChannel(event.target.value);
-  };
+  // const handleChannelChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  //   setChannel(event.target.value);
+  // };
 
   const handleNotificationTypeChange = (
     event: React.ChangeEvent<HTMLSelectElement>
@@ -25,7 +54,7 @@ const SendNotification: React.FC = () => {
     const value = event.target.value;
     setNotificationType(value);
     // Reset recipient field when changing notification type
-    setRecipient(value === 'broadcast' ? '' : []);
+    setRecipient(value === 'broadcast' ? ['*'] : []);
   };
 
   const handleRecipientChange = (
@@ -36,7 +65,7 @@ const SendNotification: React.FC = () => {
     setRecipient(value.split(',').map((email) => email.trim()));
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // Add your notification sending logic here
     console.log(
@@ -47,12 +76,19 @@ const SendNotification: React.FC = () => {
       notificationType,
       recipient
     );
+    const res = await sendNotification(
+      title,
+      body,
+      recipient,
+      walletClient.data
+    );
+    console.log(res);
     // Reset form fields if needed
     setTitle('');
     setBody('');
     setChannel('');
     setNotificationType('broadcast');
-    setRecipient('');
+    setRecipient(['*']);
   };
 
   return (
@@ -71,6 +107,12 @@ const SendNotification: React.FC = () => {
           </p>
         </div>
 
+        {errorMessage && (
+          <div className="mb-4 text-center">
+            <p className="text-sm text-red-600">{errorMessage}</p>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 gap-y-6">
           <div>
             <label
@@ -79,17 +121,13 @@ const SendNotification: React.FC = () => {
             >
               Channel
             </label>
-            <select
+            <input
               id="channel"
               name="channel"
               value={channel}
-              onChange={handleChannelChange}
+              disabled={true}
               className="w-full px-3 py-2 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            >
-              <option value="channel1">Channel 1</option>
-              <option value="channel2">Channel 2</option>
-              <option value="channel3">Channel 3</option>
-            </select>
+            ></input>
           </div>
           <div>
             <label
@@ -177,7 +215,12 @@ const SendNotification: React.FC = () => {
         <div className="mt-6 flex justify-center">
           <button
             type="submit"
-            className="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-md shadow-md hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-100"
+            disabled={!allowNotification}
+            className={`px-4 py-2 font-semibold rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 ${
+              allowNotification
+                ? 'bg-indigo-600 text-white hover:bg-indigo-500 focus:ring-indigo-500'
+                : 'bg-gray-300 text-gray-600 cursor-not-allowed'
+            }`}
           >
             Send
           </button>
