@@ -825,7 +825,7 @@ export class PushNotificationBaseClass {
       ) as CAIPDetailsType;
 
       let channelInCaip = channelOrAliasCaip;
-      if (networkId !== '1' && networkId !== '5') {
+      if (networkId !== '1' && networkId !== '11155111') {
         // Alias
         const aliasInfo = await this.getAliasInfo(address);
         channelInCaip = aliasInfo?.channel || channelInCaip;
