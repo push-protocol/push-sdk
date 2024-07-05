@@ -39,6 +39,79 @@ import { User, isIUser } from './user';
 import { updateGroupConfig } from '../chat/updateGroupConfig';
 import { PushAPI } from './PushAPI';
 import { ChatInfoResponse } from '../chat';
+import { IChatListResponse, IChatMessage } from '../interfaces/ichat';
+
+import { IChatListResponseV2 } from '../interfaces/ichat';
+
+export function isChatListIFeeds(
+  response: IChatListResponse
+): response is IFeeds[] {
+  return (
+    Array.isArray(response) && (response.length === 0 || 'msg' in response[0])
+  );
+}
+
+export function transformFeedToChatMessage(
+  feed: IFeeds,
+  type: `${ChatListType}`,
+  raw: boolean
+): IChatMessage {
+  return {
+    timestamp: String(feed.msg.timestamp),
+    chatId: feed.chatId || '',
+    from: {
+      wallet: feed.did,
+      profile: {
+        name: feed.name,
+        desc: feed.about,
+        image: feed.profilePicture,
+      },
+    },
+    to: {
+      wallet: feed.msg.toCAIP10,
+    },
+    message: {
+      type: feed.msg.messageType,
+      content: feed.msg.messageContent,
+    },
+    meta: {
+      type: type,
+      group: feed.groupInformation
+        ? {
+            exist: true,
+            profile: {
+              name: feed.groupInformation.groupName,
+              desc: feed.groupInformation.groupDescription,
+              image: feed.groupInformation.groupImage,
+            },
+          }
+        : undefined,
+    },
+    reference: feed.msg.cid || '',
+    previous: feed.msg.link ? [feed.msg.link] : [],
+    raw: raw
+      ? {
+          msgVerificationProof:
+            feed.msg.verificationProof || feed.msg.signature || '',
+          from: {
+            profileVerificationProof: feed.profileVerificationProof || null,
+          },
+        }
+      : undefined,
+  };
+}
+
+export async function handleChatListVersion2Response(
+  response: IFeeds[],
+  type: `${ChatListType}`,
+  raw: boolean
+): Promise<IChatListResponseV2> {
+  return {
+    messages: response.map((feed) =>
+      transformFeedToChatMessage(feed, type, raw)
+    ),
+  };
+}
 
 export class Chat {
   private userInstance: User;
@@ -61,14 +134,13 @@ export class Chat {
   async list(
     type: `${ChatListType}`,
     options?: {
-      /**
-       * @default 1
-       */
       page?: number;
       limit?: number;
       overrideAccount?: string;
+      raw?: boolean;
+      version?: number;
     }
-  ): Promise<IFeeds[]> {
+  ): Promise<IChatListResponse> {
     const accountToUse = options?.overrideAccount || this.account;
 
     const listParams = {
@@ -80,14 +152,26 @@ export class Chat {
       toDecrypt: !!this.decryptedPgpPvtKey, // Set to false if signer is undefined or null,
     };
 
+    const raw = options?.raw || false;
+    const version = options?.version || 1;
+
+    let response: IFeeds[];
     switch (type) {
       case ChatListType.CHATS:
-        return await PUSH_CHAT.chats(listParams);
+        response = await PUSH_CHAT.chats(listParams);
+        break;
       case ChatListType.REQUESTS:
-        return await PUSH_CHAT.requests(listParams);
+        response = await PUSH_CHAT.requests(listParams);
+        break;
       default:
         throw new Error('Invalid Chat List Type');
     }
+
+    if (version === 2) {
+      return handleChatListVersion2Response(response, type, raw);
+    }
+
+    return response as IFeeds[];
   }
 
   async latest(target: string) {

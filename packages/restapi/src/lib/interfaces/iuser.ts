@@ -6,15 +6,17 @@ export interface IGetUserInfoOptions {
   version?: number;
 }
 
+export interface IUserProfile {
+  name: string | null;
+  desc: string | null;
+  image: string | null;
+}
+
 export interface IUserInfoResponseV2 {
   did: string;
   wallets: string;
   origin: string | null | undefined;
-  profile: {
-    name: string | null;
-    desc: string | null;
-    image: string | null;
-  };
+  profile: IUserProfile;
   pushPubKey: string;
   config: {
     blocked: string[] | null;

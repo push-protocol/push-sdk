@@ -229,6 +229,7 @@ export interface IMessageIPFS {
    */
   sigType: string;
   link: string | null;
+  cid: string;
   timestamp?: number;
   encType: string;
   encryptedSecret: string | null;
@@ -247,6 +248,7 @@ export interface IFeeds {
   did: string;
   wallets: string;
   profilePicture: string | null;
+  profileVerificationProof: string | null;
   name: string | null;
   publicKey: string | null;
   about: string | null;
