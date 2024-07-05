@@ -1,32 +1,69 @@
-// pages/pushscan/[term].tsx
-
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
+import { getAddressTrx } from '../../utils/push';
+import SearchBar from '../../components/SearchBar';
+
+// Component to display the result data
+const NodeResult: React.FC<{ result: any }> = ({ result }) => (
+  <div className="border p-4 mb-4">
+    <h2 className="text-xl font-semibold mb-2">Node Result</h2>
+    <p>Transaction Count: {result.itemCount}</p>
+    <p>Node Quorum Result: {result.quorumResult}</p>
+    <p>Last Timestamp: {result.lastTs}</p>
+    <p>Transactions Without Quorum Count: {result.keysWithoutQuorumCount}</p>
+  </div>
+);
+
+// Component to display individual items (transactions)
+const ParsedTransactionData: React.FC<{ item: any }> = ({ item }) => (
+  <div className="border p-4 mb-4 bg-gray-100">
+    <pre className="bg-gray-800 text-white p-4 rounded whitespace-pre-wrap break-words overflow-x-auto">
+      {JSON.stringify(item, null, 2)}
+    </pre>
+  </div>
+);
 
 const PushScan: React.FC = () => {
   const router = useRouter();
-  const { address } = router.query; // Extract the dynamic term from the URL
+  const { address } = router.query; // Extract the dynamic address from the URL
   const [data, setData] = useState<any>(null); // State to store fetched data or results
 
-  //   useEffect(() => {
-  //     if (term) {
-  //       // Fetch data or perform actions based on the dynamic term
-  //       const fetchData = async () => {
-  //         // Replace this with your actual data fetching logic
-  //         const response = await fetch(`/api/pushscan/${term}`);
-  //         const result = await response.json();
-  //         setData(result);
-  //       };
+  useEffect(() => {
+    if (address) {
+      // Fetch data or perform actions based on the dynamic address
+      const fetchData = async () => {
+        try {
+          const response = await getAddressTrx(address as string);
+          setData(response);
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      };
 
-  //       fetchData();
-  //     }
-  //   }, [term]);
+      fetchData();
+    }
+  }, [address]);
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">
-        PushScan Results for: {address}
+    <div className="p-4 mx-20 mb-10">
+      {/* Header with Search Bar */}
+      <header className="flex justify-center items-center text-center mb-4">
+        <SearchBar />
+      </header>
+      <h1 className="text-lg mb-4 pt-10 pb-5">
+        PushScan Results for: <span className="font-bold">{address}</span>
       </h1>
+      {data && (
+        <div>
+          <NodeResult result={data.result} />
+          {data.items.length > 0 ? (
+            <h3 className="text-lg mb-4 pt-10 pb-0">Parsed Transaction Data</h3>
+          ) : null}
+          {data.items.map((item: any, index: number) => (
+            <ParsedTransactionData key={index} item={item} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

@@ -11,7 +11,7 @@ export default function Explorer() {
     { address: string }[]
   >([
     // generate 10 dummy data
-    { address: '0x1234567890123456789012345678901234567890' },
+    { address: '0x5ac9E6205eACA2bBbA6eF716FD9AabD76326EEee' },
     { address: '0x1234567890123456789012345678901234567891' },
     { address: '0x1234567890123456789012345678901234567892' },
     { address: '0x1234567890123456789012345678901234567893' },

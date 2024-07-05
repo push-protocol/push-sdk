@@ -23,3 +23,8 @@ export const getChannelInfo = async (signer: any) => {
   const userAlice = await PushAPI.initialize(signer, { env });
   return await userAlice.channel.info();
 };
+
+export const getAddressTrx = async (address: string) => {
+  const userAlice = await PushAPI.initialize(null, { env, account: address });
+  return await userAlice.notification.list('INBOX');
+};
