@@ -1,8 +1,15 @@
 import { ENCRYPTION_TYPE, ENV } from '../constants';
-import { SignerType, ProgressHookType } from '../types';
+import {
+  IGetEncryptionResponse,
+  IGetEncryptionResponseV1,
+  IGetEncryptionResponseV2,
+  IUpdateEncryptionOptions,
+} from '../interfaces/iencryption';
+import { IUserInfoResponse } from '../interfaces/iuser';
+import { SignerType, ProgressHookType, IUser } from '../types';
 import * as PUSH_USER from '../user';
 import { PushAPI } from './PushAPI';
-import { User } from './user';
+import { User, handleUserVersionedResponse, isIUser } from './user';
 
 export class Encryption {
   private userInstance: User;
@@ -18,10 +25,16 @@ export class Encryption {
     this.userInstance = new User(this.account, this.env);
   }
 
-  async info() {
-    const userInfo = await this.userInstance.info();
+  async info(options?: {
+    raw?: boolean;
+    version?: number;
+  }): Promise<IGetEncryptionResponse> {
+    const { version = 1 } = options || {};
     let decryptedPassword;
-    if (this.signer) {
+
+    const userInfo = await this.userInstance.info();
+
+    if (this.signer && isIUser(userInfo)) {
       decryptedPassword = await PUSH_USER.decryptAuth({
         account: this.account,
         env: this.env,
@@ -37,23 +50,31 @@ export class Encryption {
       });
     }
 
-    return {
+    if (version === 2) {
+      const responseV2: IGetEncryptionResponseV2 = {
+        pushPrivKey: this.decryptedPgpPvtKey,
+        pushPubKey: this.pgpPublicKey,
+        ...(decryptedPassword !== undefined && decryptedPassword !== null
+          ? { decryptedPassword: decryptedPassword }
+          : {}),
+      };
+      return responseV2;
+    }
+
+    const responseV1: IGetEncryptionResponseV1 = {
       decryptedPgpPrivateKey: this.decryptedPgpPvtKey,
       pgpPublicKey: this.pgpPublicKey,
       ...(decryptedPassword !== undefined && decryptedPassword !== null
         ? { decryptedPassword: decryptedPassword }
         : {}),
     };
+    return responseV1;
   }
 
   async update(
     updatedEncryptionType: ENCRYPTION_TYPE,
-    options?: {
-      versionMeta?: {
-        NFTPGP_V1?: { password: string };
-      };
-    }
-  ) {
+    options?: IUpdateEncryptionOptions
+  ): Promise<IUserInfoResponse> {
     if (!this.signer) {
       throw new Error(PushAPI.ensureSignerMessage());
     }
@@ -62,7 +83,7 @@ export class Encryption {
       throw new Error(PushAPI.ensureSignerMessage());
     }
 
-    return await PUSH_USER.auth.update({
+    const user = await PUSH_USER.auth.update({
       account: this.account,
       pgpEncryptionVersion: updatedEncryptionType,
       additionalMeta: options?.versionMeta,
@@ -72,5 +93,7 @@ export class Encryption {
       pgpPrivateKey: this.decryptedPgpPvtKey,
       pgpPublicKey: this.pgpPublicKey,
     });
+
+    return handleUserVersionedResponse(user, options || {});
   }
 }

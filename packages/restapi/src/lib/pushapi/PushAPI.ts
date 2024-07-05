@@ -1,13 +1,13 @@
 import Constants, { ENV, PACKAGE_BUILD } from '../constants';
 import { SignerType, ProgressHookType, IUser } from '../types';
-import { InfoOptions, PushAPIInitializeProps } from './pushAPITypes';
+import { PushAPIInitializeProps } from './pushAPITypes';
 import * as PUSH_USER from '../user';
 import * as PUSH_CHAT from '../chat';
 import { getAccountAddress, getWallet } from '../chat/helpers';
 import { Chat } from './chat';
 import { Profile } from './profile';
 import { Encryption } from './encryption';
-import { User } from './user';
+import { User, handleUserVersionedResponse } from './user';
 import { PushStream, StreamType } from '../pushstream/PushStream';
 import { Channel } from '../pushNotification/channel';
 import { Notification } from '../pushNotification/notification';
@@ -378,34 +378,7 @@ export class PushAPI {
       env: this.env,
     });
 
-    if (version === 2) {
-      const profileResponse: IUserInfoResponseV2 = {
-        did: response.did,
-        wallets: response.wallets,
-        origin: response.origin,
-        profile: {
-          name: response.profile.name,
-          desc: response.profile.desc,
-          image: response.profile.picture,
-        },
-        pushPubKey: response.publicKey,
-        config: { blocked: response.profile.blockedUsersList },
-      };
-
-      if (raw) {
-        profileResponse.raw = {
-          keysVerificationProof: response.verificationProof || null,
-          profileVerificationProof:
-            response.profile?.profileVerificationProof || null,
-          configVerificationProof:
-            response.config?.configVerificationProof || null,
-        };
-      }
-
-      return profileResponse;
-    }
-
-    return response as IUser;
+    return handleUserVersionedResponse(response, { raw, version });
   }
 
   readmode(): boolean {

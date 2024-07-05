@@ -7,6 +7,49 @@ import {
   IUserInfoResponseV2,
 } from '../interfaces/iuser';
 
+export function isIUser(response: IUserInfoResponse): response is IUser {
+  return (response as IUser).encryptedPrivateKey !== undefined;
+}
+
+export function handleUserVersionedResponse(
+  response: any,
+  options: {
+    raw?: boolean;
+    version?: number;
+  } = {}
+): IUserInfoResponse {
+  const { raw = false, version = 1 } = options;
+
+  if (version === 2) {
+    const profileResponse: IUserInfoResponseV2 = {
+      did: response.did,
+      wallets: response.wallets,
+      origin: response.origin,
+      profile: {
+        name: response.profile.name,
+        desc: response.profile.desc,
+        image: response.profile.picture,
+      },
+      pushPubKey: response.publicKey,
+      config: { blocked: response.profile.blockedUsersList },
+    };
+
+    if (raw) {
+      profileResponse.raw = {
+        keysVerificationProof: response.verificationProof || null,
+        profileVerificationProof:
+          response.profile?.profileVerificationProof || null,
+        configVerificationProof:
+          response.config?.configVerificationProof || null,
+      };
+    }
+
+    return profileResponse;
+  }
+
+  return response as IUser;
+}
+
 export class User {
   constructor(private account: string, private env: ENV) {}
 
@@ -19,33 +62,6 @@ export class User {
       env: this.env,
     });
 
-    if (version === 2) {
-      const profileResponse: IUserInfoResponseV2 = {
-        did: response.did,
-        wallets: response.wallets,
-        origin: response.origin,
-        profile: {
-          name: response.profile.name,
-          desc: response.profile.desc,
-          image: response.profile.picture,
-        },
-        pushPubKey: response.publicKey,
-        config: { blocked: response.profile.blockedUsersList },
-      };
-
-      if (raw) {
-        profileResponse.raw = {
-          keysVerificationProof: response.verificationProof || null,
-          profileVerificationProof:
-            response.profile?.profileVerificationProof || null,
-          configVerificationProof:
-            response.config?.configVerificationProof || null,
-        };
-      }
-
-      return profileResponse;
-    }
-
-    return response as IUser;
+    return handleUserVersionedResponse(response, { raw, version });
   }
 }

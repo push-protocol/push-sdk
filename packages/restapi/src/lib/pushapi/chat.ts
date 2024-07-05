@@ -35,7 +35,7 @@ import {
   ChatUpdateGroupProfileType,
   updateGroupProfile,
 } from '../chat/updateGroupProfile';
-import { User } from './user';
+import { User, isIUser } from './user';
 import { updateGroupConfig } from '../chat/updateGroupConfig';
 import { PushAPI } from './PushAPI';
 import { ChatInfoResponse } from '../chat';
@@ -192,12 +192,16 @@ export class Chat {
     if (!this.decryptedPgpPvtKey) {
       throw new Error(PushAPI.ensureSignerMessage());
     }
+    let connectedUser = await this.userInstance.info();
+    if (!isIUser(connectedUser)) {
+      throw new Error('Connected user does not have the required properties.');
+    }
     return await PUSH_CHAT.decryptConversation({
       pgpPrivateKey: this.decryptedPgpPvtKey,
       env: this.env,
       messages: messagePayloads,
       pgpHelper: PGPHelper,
-      connectedUser: await this.userInstance.info(),
+      connectedUser: connectedUser,
     });
   }
 
