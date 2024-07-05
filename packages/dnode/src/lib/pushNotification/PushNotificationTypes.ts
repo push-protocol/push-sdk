@@ -44,10 +44,14 @@ export enum FeedType {
 export type FeedsOptions = {
   account?: string;
   //TODO: change it to string[] once we start supporting multiple channel
-  channels?: string[];
-  page?: number;
-  limit?: number;
+  // channels?: string[];
+  // page?: number;
+  // limit?: number;
   raw?: boolean;
+  /**
+   * @desc - Format YYYYMM
+   */
+  yearMonth?: string;
 };
 
 export type ChannelSearchOptions = {

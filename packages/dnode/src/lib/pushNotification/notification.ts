@@ -44,12 +44,11 @@ export class Notification extends PushNotificationBaseClass {
     spam: `${FeedType}` = FeedType.INBOX,
     options?: FeedsOptions
   ) => {
-    const {
-      page = Constants.PAGINATION.INITIAL_PAGE,
-      limit = Constants.PAGINATION.LIMIT,
-      channels = [],
-      raw = false,
-    } = options || {};
+    const now = new Date();
+    const year = now.getFullYear();
+    // Extract the current month and format it as two digits
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const { raw = false, yearMonth = `${year}${month}` } = options || {};
     try {
       let account: string | null;
       if (options?.account) {
@@ -64,33 +63,14 @@ export class Notification extends PushNotificationBaseClass {
       // guest mode and valid address check
       this.checkUserAddressExists(account!);
       const nonCaipAccount = this.getAddressFromCaip(account!);
-      if (channels.length == 0) {
-        // else return the response
-        return await PUSH_USER.getFeeds({
-          user: nonCaipAccount!,
-          page: page,
-          limit: limit,
-          spam: FEED_MAP[spam],
-          raw: raw,
-          env: this.env,
-        });
-      } else {
-        const promises = channels.map(async (channel) => {
-          return await PUSH_USER.getFeedsPerChannel({
-            user: nonCaipAccount!,
-            page: page,
-            limit: limit,
-            spam: FEED_MAP[spam],
-            raw: raw,
-            env: this.env,
-            channels: [channel],
-          });
-        });
 
-        const results = await Promise.all(promises);
-        const feedRes = results.flat();
-        return feedRes;
-      }
+      return await PUSH_USER.getFeeds({
+        user: nonCaipAccount!,
+        spam: FEED_MAP[spam],
+        raw: raw,
+        env: this.env,
+        yearMonth,
+      });
     } catch (error) {
       throw new Error(`Push SDK Error: API : notifcaiton::list : ${error}`);
     }

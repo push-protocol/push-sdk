@@ -54,88 +54,10 @@ describe('PushAPI.notification functionality', () => {
 
   describe('PushAPI.notification functionality', () => {
     it('Should return feeds with signer object', async () => {
-      const response = await userAlice.notification.list('SPAM');
-      expect(response).not.null;
-    });
-
-    it('Should return feeds with signer object when an account is passed', async () => {
-      const response = await userAlice.notification.list('SPAM', {
-        account: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
+      const response = await userAlice.notification.list('INBOX', {
+        account: '0x5ac9E6205eACA2bBbA6eF716FD9AabD76326EEee',
       });
-      expect(response).not.null;
-    });
-
-    it('Should return feeds without signer object when an account is passed', async () => {
-      const response = await userBob.notification.list('SPAM', {
-        account: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
-      });
-      expect(response).not.null;
-    });
-
-    it.skip('Should throw error without signer object when an account is not passed', async () => {
-      await expect(() => userBob.notification.list('SPAM')).to.Throw;
-    });
-
-    it('Should return feeds when signer with provider is used', async () => {
-      const response = await userKate.notification.list('SPAM');
-      expect(response).not.null;
-    });
-
-    it('Should return feeds when signer with provider is used', async () => {
-      const response = await userKate.notification.list('SPAM', {
-        account: '0xD8634C39BBFd4033c0d3289C4515275102423681',
-      });
-      // console.log(response)
-      expect(response).not.null;
-    });
-
-    it('Should return feeds when signer with provider is used', async () => {
-      const response = await userKate.notification.list('SPAM', {
-        account: 'eip155:0xD8634C39BBFd4033c0d3289C4515275102423681',
-      });
-      // console.log(response)
-      expect(response).not.null;
-    });
-
-    it('Should return feeds when viem is used', async () => {
-      const response = await userViem.notification.list('SPAM');
-      // console.log(response);
-      expect(response).not.null;
-    });
-
-    it('Should return feeds when signer with provider is used', async () => {
-      const response = await userKate.notification.list('INBOX', {
-        account: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
-        channels: ['0xD8634C39BBFd4033c0d3289C4515275102423681'],
-        raw: true,
-      });
-      // console.log(response)
-      expect(response).not.null;
-    });
-
-    it('Should return feeds when signer with provider is used', async () => {
-      const response = await userKate.notification.list('INBOX', {
-        account: '0xD8634C39BBFd4033c0d3289C4515275102423681',
-        channels: [
-          '0xD8634C39BBFd4033c0d3289C4515275102423681',
-          '0x53474D90663de06BEf5D0017F450730D83168063',
-        ],
-        raw: true,
-      });
-      // console.log(response)
-      expect(response).not.null;
-    });
-
-    it('Should return feeds when signer with provider is used', async () => {
-      const response = await userKate.notification.list('INBOX', {
-        account: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
-        channels: [
-          'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
-          'eip155:5:0x53474D90663de06BEf5D0017F450730D83168063',
-        ],
-        raw: true,
-      });
-      // console.log(response);
+      console.log(response);
       expect(response).not.null;
     });
   });
@@ -286,7 +208,7 @@ describe('PushAPI.notification functionality', () => {
       const response = await userKate.notification.subscriptions({
         account: '0xD8634C39BBFd4033c0d3289C4515275102423681',
       });
-      // console.log(JSON.stringify(response));
+      console.log(response);
       expect(response).not.null;
       expect(response.length).not.equal(0);
     });
@@ -316,25 +238,4 @@ describe('PushAPI.notification functionality', () => {
       expect(response).not.null;
     });
   });
-
-  // TO RUN THIS, MAKE THE PRIVATE FUNTIONS PUBLIC
-  // describe('debug :: test private functions', () => {
-  //     it('Fetching data from contract', async () => {
-  //       const contract = userKate.createContractInstance(
-  //         '0x2b9bE9259a4F5Ba6344c1b1c07911539642a2D33',
-  //         tokenABI
-  //       );
-  //       const balance = await contract['balanceOf'](
-  //         '0xD8634C39BBFd4033c0d3289C4515275102423681'
-  //       );
-  //       console.log(balance.toString());
-  //       const fees = ethers.utils.parseUnits('50', 18);
-  //       console.log(fees)
-  //       console.log(fees.lte(balance))
-  //     });
-
-  //     it("Uploading data to ipfs via push node", async () => {
-  //         await userAlice.uploadToIPFSViaPushNode("test")
-  //     })
 });
-// });

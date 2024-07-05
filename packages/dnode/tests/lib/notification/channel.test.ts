@@ -112,14 +112,9 @@ describe('PushAPI.channel functionality', () => {
   });
 
   describe('channel :: subscribers', () => {
-    // TODO: remove skip after signer becomes optional
-    it.skip('Without signer and account : Should throw error', async () => {
-      await expect(() => userBob.channel.subscribers()).to.Throw;
-    });
-
     it('Without signer and account : Should return response as address is passed', async () => {
       const res = await userBob.channel.subscribers({
-        channel: 'eip155:5:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
+        channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
       });
       console.log(res);
       expect(res).not.null;
