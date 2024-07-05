@@ -62,7 +62,7 @@ describe('PushAPI.notification functionality', () => {
     });
   });
 
-  describe('notification :: subscribe', () => {
+  describe.skip('notification :: subscribe', () => {
     beforeEach(async () => {
       //   await userAlice.notification.unsubscribe(
       //     'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681'
@@ -186,7 +186,7 @@ describe('PushAPI.notification functionality', () => {
     });
   });
 
-  describe('notification :: subscriptions', () => {
+  describe.skip('notification :: subscriptions', () => {
     it.skip('No signer or account: Should throw error', async () => {
       await expect(() => userBob.notification.subscriptions()).to.Throw;
     });

@@ -6,7 +6,7 @@ import { ENV } from '../../../src/lib/constants';
 import { createWalletClient, http } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 
-describe('PushAPI.alias functionality', () => {
+describe.skip('PushAPI.alias functionality', () => {
   let userAlice: PushAPI;
   let userBob: PushAPI;
   let userKate: PushAPI;

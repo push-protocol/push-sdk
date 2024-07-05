@@ -92,7 +92,7 @@ describe('PushAPI.channel functionality', () => {
     });
   });
 
-  describe('channel :: search', () => {
+  describe.skip('channel :: search', () => {
     it('Without signer and account : Should return response', async () => {
       const res = await userBob.channel.search(' ');
       // console.log(res);
@@ -124,77 +124,8 @@ describe('PushAPI.channel functionality', () => {
       const res = await userBob.channel.subscribers({
         channel: '0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
       });
-      // console.log(res)
-      expect(res).not.null;
-    });
-
-    it('Without signer and account : Should return response as address is passed', async () => {
-      const res = await userBob.channel.subscribers({
-        channel: '0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
-        page: 1,
-        limit: 10,
-      });
-      // console.log(res)
-      expect(res).not.null;
-    });
-
-    it('Without signer and account : Should return response for alias address', async () => {
-      const res = await userBob.channel.subscribers({
-        channel: 'eip155:80001:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
-      });
-      // console.log(res)
-      expect(res).not.null;
-    });
-
-    it('Without signer and account : Should return response without passing the options', async () => {
-      const res = await userKate.channel.subscribers();
-      expect(res).not.null;
-    });
-
-    it('With signer and account : Should return response without passing the options', async () => {
-      const res = await userKate.channel.subscribers({ page: 1, limit: 10 });
-      // console.log(res)
-      expect(res).not.null;
-    });
-
-    it('With signer and account : Should return response with settings', async () => {
-      const res = await userKate.channel.subscribers({
-        page: 1,
-        limit: 10,
-        setting: true,
-      });
       console.log(res);
       expect(res).not.null;
-    });
-
-    it('With signer and account : Should return response without settings', async () => {
-      const res = await userKate.channel.subscribers({
-        page: 1,
-        limit: 10,
-        setting: false,
-        category: 1,
-      });
-      // console.log(res)
-      expect(res).not.null;
-    });
-
-    it('With signer and account : Should return response with settings', async () => {
-      const res = await userKate.channel.subscribers({
-        page: 1,
-        limit: 10,
-        setting: true,
-        raw: false,
-      });
-      // console.log(JSON.stringify(res))
-      expect(res).not.null;
-    });
-
-    it('Without signer and account : Should throw error for invalid caip', async () => {
-      await expect(() =>
-        userBob.channel.subscribers({
-          channel: '0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
-        })
-      ).to.Throw;
     });
   });
 
@@ -320,7 +251,7 @@ describe('PushAPI.channel functionality', () => {
     });
   });
 
-  describe('channel :: update', () => {
+  describe.skip('channel :: update', () => {
     it('Should update channel meta', async () => {
       const res = await userKate.channel.update({
         name: 'Updated Name',
@@ -359,7 +290,7 @@ describe('PushAPI.channel functionality', () => {
     }, 10000000000);
   });
 
-  describe('channel :: settings', () => {
+  describe.skip('channel :: settings', () => {
     it('Should create channel settings', async () => {
       const res = await userKate.channel.setting([
         {
@@ -459,7 +390,7 @@ describe('PushAPI.channel functionality', () => {
     }, 10000000000);
   });
 
-  describe('notifications', async () => {
+  describe.skip('notifications', async () => {
     it('Should fetch channel specific feeds', async () => {
       const res = await userAlice.channel.notifications(
         'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',

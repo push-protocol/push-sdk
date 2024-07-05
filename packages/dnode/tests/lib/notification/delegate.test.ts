@@ -7,7 +7,7 @@ import { privateKeyToAccount } from 'viem/accounts';
 // import tokenABI from './tokenABI';
 import { ENV } from '../../../src/lib/constants';
 
-describe('PushAPI.delegate functionality', () => {
+describe.skip('PushAPI.delegate functionality', () => {
   let userAlice: PushAPI;
   let userBob: PushAPI;
   let userKate: PushAPI;

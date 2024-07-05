@@ -11,10 +11,10 @@ export type SubscriptionOptions = {
 };
 export type ChannelInfoOptions = {
   channel?: string;
-  page?: number;
-  limit?: number;
-  category?: number;
-  setting?: boolean;
+  // page?: number;
+  // limit?: number;
+  // category?: number;
+  // setting?: boolean;
   raw?: boolean;
 };
 

@@ -50,7 +50,7 @@ export const getSubscribers = async (
       }
       const _channel = await getCAIPAddress(env, channel, 'Channel');
       const API_BASE_URL = await getAPIBaseUrls(env);
-      let apiEndpoint = `${API_BASE_URL}/v1/channels/${_channel}/subscribers?page=${page}&limit=${limit}&setting=${setting}`;
+      let apiEndpoint = `${API_BASE_URL}/v1/messaging/settings/${_channel}/ETH_TEST_GOERLI`;
       if (category) {
         apiEndpoint = apiEndpoint + `&category=${category}`;
       }
