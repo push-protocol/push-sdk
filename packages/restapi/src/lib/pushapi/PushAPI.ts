@@ -1,5 +1,5 @@
 import Constants, { ENV, PACKAGE_BUILD } from '../constants';
-import { SignerType, ProgressHookType } from '../types';
+import { SignerType, ProgressHookType, IUser } from '../types';
 import { InfoOptions, PushAPIInitializeProps } from './pushAPITypes';
 import * as PUSH_USER from '../user';
 import * as PUSH_CHAT from '../chat';
@@ -22,6 +22,11 @@ import { isValidNFTCAIP, walletToPCAIP10 } from '../helpers';
 import { LRUCache } from 'lru-cache';
 import { cache } from '../helpers/cache';
 import { v4 as uuidv4 } from 'uuid';
+import {
+  IGetUserInfoOptions,
+  IUserInfoResponse,
+  IUserInfoResponseV2,
+} from '../interfaces/iuser';
 
 export class PushAPI {
   public signer?: SignerType;
@@ -364,12 +369,43 @@ export class PushAPI {
     return this.stream;
   }
 
-  async info(options?: InfoOptions) {
+  async info(options?: IGetUserInfoOptions): Promise<IUserInfoResponse> {
     const accountToUse = options?.overrideAccount || this.account;
-    return await PUSH_USER.get({
+    const { raw = false, version = 1 } = options || {};
+
+    const response = await PUSH_USER.get({
       account: accountToUse,
       env: this.env,
     });
+
+    if (version === 2) {
+      const profileResponse: IUserInfoResponseV2 = {
+        did: response.did,
+        wallets: response.wallets,
+        origin: response.origin,
+        profile: {
+          name: response.profile.name,
+          desc: response.profile.desc,
+          image: response.profile.picture,
+        },
+        pushPubKey: response.publicKey,
+        config: { blocked: response.profile.blockedUsersList },
+      };
+
+      if (raw) {
+        profileResponse.raw = {
+          keysVerificationProof: response.verificationProof || null,
+          profileVerificationProof:
+            response.profile?.profileVerificationProof || null,
+          configVerificationProof:
+            response.config?.configVerificationProof || null,
+        };
+      }
+
+      return profileResponse;
+    }
+
+    return response as IUser;
   }
 
   readmode(): boolean {

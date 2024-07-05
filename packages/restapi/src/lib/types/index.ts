@@ -21,7 +21,7 @@ import {
 export * from './messageTypes';
 export * from './videoTypes';
 
-export type Env = typeof ENV[keyof typeof ENV];
+export type Env = (typeof ENV)[keyof typeof ENV];
 
 // the type for the the response of the input data to be parsed
 export type ApiNotificationType = {
@@ -280,6 +280,10 @@ export interface SpaceIFeeds {
   spaceInformation?: SpaceDTO;
 }
 
+export interface UserConfig {
+  configVerificationProof: string | null;
+}
+
 export interface IUser {
   msgSent: number;
   maxMsgPersisted: number;
@@ -296,6 +300,7 @@ export interface IUser {
   publicKey: string;
   verificationProof: string;
   origin?: string | null;
+  config?: UserConfig;
 
   /**
    * @deprecated Use `profile.name` instead.
