@@ -10,13 +10,14 @@ const SendNotification: React.FC = () => {
   const [recipient, setRecipient] = useState<string[]>(['*']); // State for recipients
   const [allowNotification, setAllowNotification] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>(''); // State for error message
+  const [sending, setSending] = useState<boolean>(false);
 
   const { isConnected } = useAccount();
   const walletClient = useWalletClient();
 
   useEffect(() => {
     const checkNotificationPermission = async () => {
-      if (isConnected && walletClient.data) {
+      if (isConnected && walletClient.data && channel === '') {
         try {
           const channelInfo = await getChannelInfo(walletClient.data);
           if (channelInfo !== null) {
@@ -76,19 +77,29 @@ const SendNotification: React.FC = () => {
       notificationType,
       recipient
     );
-    const res = await sendNotification(
-      title,
-      body,
-      recipient,
-      walletClient.data
-    );
-    console.log(res);
+
+    setAllowNotification(false);
+    setSending(true);
+    try {
+      const res = await sendNotification(
+        title,
+        body,
+        recipient,
+        walletClient.data
+      );
+      setAllowNotification(false);
+      console.log(res);
+    } catch (error) {
+      console.error(error);
+    }
     // Reset form fields if needed
     setTitle('');
     setBody('');
     setChannel('');
     setNotificationType('broadcast');
     setRecipient(['*']);
+    setSending(false);
+    setAllowNotification(true);
   };
 
   return (
@@ -181,7 +192,7 @@ const SendNotification: React.FC = () => {
             >
               <option value="broadcast">Broadcast</option>
               <option value="targeted">Targeted</option>
-              <option value="subset">Subset</option>
+              {/* <option value="subset">Subset</option> */}
             </select>
           </div>
 
@@ -222,7 +233,7 @@ const SendNotification: React.FC = () => {
                 : 'bg-gray-300 text-gray-600 cursor-not-allowed'
             }`}
           >
-            Send
+            {sending ? 'Sending...' : 'Send'}
           </button>
         </div>
       </div>

@@ -2,7 +2,7 @@ import { PushAPI } from '@pushprotocol/dnode';
 import { ENV } from '@pushprotocol/dnode/src/lib/constants';
 
 // TODO: Change to dev or stage
-const env = ENV.LOCAL;
+const env = ENV.DEV;
 
 export const sendNotification = async (
   title: string,
