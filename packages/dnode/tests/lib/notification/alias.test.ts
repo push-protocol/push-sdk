@@ -97,7 +97,7 @@ describe.skip('PushAPI.alias functionality', () => {
     it('Without signer and account :: should throw error', async () => {
       await expect(() =>
         userBob.channel.alias.initiate(
-          'eip155:5:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
+          'eip155:11155111:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
         )
       ).to.Throw;
     });
@@ -105,7 +105,7 @@ describe.skip('PushAPI.alias functionality', () => {
     it('With signer and without provider :: should throw error', async () => {
       await expect(() =>
         userAlice.channel.alias.initiate(
-          'eip155:5:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
+          'eip155:11155111:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
         )
       ).to.Throw;
     });
@@ -145,7 +145,7 @@ describe.skip('PushAPI.alias functionality', () => {
     it('Without signer and account :: should throw error', async () => {
       await expect(() =>
         userBob.channel.alias.verify(
-          'eip155:5:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
+          'eip155:11155111:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
         )
       ).to.Throw;
     });
@@ -153,7 +153,7 @@ describe.skip('PushAPI.alias functionality', () => {
     it('With signer and without provider :: should throw error', async () => {
       await expect(() =>
         userAlice.channel.alias.verify(
-          'eip155:5:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
+          'eip155:11155111:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
         )
       ).to.Throw;
     });

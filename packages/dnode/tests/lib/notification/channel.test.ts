@@ -83,7 +83,7 @@ describe('PushAPI.channel functionality', () => {
 
     it('Without signer and with valid caip account: Should return response', async () => {
       const res = await userBob.channel.info(
-        'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
+        'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
         {
           raw: false,
         }
@@ -114,7 +114,7 @@ describe('PushAPI.channel functionality', () => {
   describe('channel :: subscribers', () => {
     it('Without signer and account : Should return response as address is passed', async () => {
       const res = await userBob.channel.subscribers({
-        channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
+        channel: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
       });
       console.log(res);
       expect(res).not.null;
@@ -142,7 +142,7 @@ describe('PushAPI.channel functionality', () => {
 
     it('With signer : targeted  : Should send notification with title and body', async () => {
       const res = await userAlice.channel.send(
-        ['eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681'],
+        ['eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'],
         {
           notification: {
             title: 'hi',
@@ -155,7 +155,7 @@ describe('PushAPI.channel functionality', () => {
 
     it('With signer : targeted  : Should send notification with title and body', async () => {
       const res = await userAlice.channel.send(
-        ['eip155:5:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5'],
+        ['eip155:11155111:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5'],
         {
           notification: {
             title: 'hi',
@@ -169,8 +169,8 @@ describe('PushAPI.channel functionality', () => {
     it('With signer : subset  : Should send notification with title and body', async () => {
       const res = await userAlice.channel.send(
         [
-          'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
-          'eip155:5:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
+          'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
+          'eip155:11155111:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
         ],
         {
           notification: {
@@ -185,8 +185,8 @@ describe('PushAPI.channel functionality', () => {
     it('With signer : subset  : Should send notification with title and body along with additional options', async () => {
       const res = await userAlice.channel.send(
         [
-          'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
-          'eip155:5:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
+          'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
+          'eip155:11155111:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
         ],
         {
           notification: {
@@ -208,8 +208,8 @@ describe('PushAPI.channel functionality', () => {
     it('With signer : subset  : Should send notification with title and body along with additional options', async () => {
       const res = await userAlice.channel.send(
         [
-          'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
-          'eip155:5:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
+          'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
+          'eip155:11155111:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
         ],
         {
           notification: {
@@ -231,8 +231,8 @@ describe('PushAPI.channel functionality', () => {
     it('With signer : subset  : Should send notification with title and body along with additional options', async () => {
       const res = await userAlice.channel.send(
         [
-          'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
-          'eip155:5:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
+          'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
+          'eip155:11155111:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
         ],
         {
           notification: {
@@ -393,7 +393,7 @@ describe('PushAPI.channel functionality', () => {
   describe.skip('notifications', async () => {
     it('Should fetch channel specific feeds', async () => {
       const res = await userAlice.channel.notifications(
-        'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
+        'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
         { raw: false }
       );
       console.log(inspect(res, { depth: null }));
@@ -402,7 +402,7 @@ describe('PushAPI.channel functionality', () => {
 
     it('Should fetch channel specific feeds in raw format', async () => {
       const res = await userAlice.channel.notifications(
-        'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
+        'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
         { raw: true }
       );
       console.log(inspect(res, { depth: null }));

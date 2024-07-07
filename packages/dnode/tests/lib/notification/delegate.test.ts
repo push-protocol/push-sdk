@@ -57,7 +57,7 @@ describe.skip('PushAPI.delegate functionality', () => {
     it.skip('Without signer and account :: should throw error', async () => {
       await expect(() =>
         userBob.channel.delegate.add(
-          'eip155:5:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
+          'eip155:11155111:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
         )
       ).to.Throw;
     });
@@ -65,14 +65,14 @@ describe.skip('PushAPI.delegate functionality', () => {
     it('With signer and without provider :: should throw error', async () => {
       await expect(() =>
         userAlice.channel.delegate.add(
-          'eip155:5:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
+          'eip155:11155111:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
         )
       ).to.Throw;
     });
 
     it('With signer and provider :: should add delegate', async () => {
       const res = await userKate.channel.delegate.add(
-        'eip155:5:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
+        'eip155:11155111:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
       );
       //   console.log(res);
       expect(res).not.null;
@@ -80,7 +80,7 @@ describe.skip('PushAPI.delegate functionality', () => {
 
     it('With viem signer and provider :: should add delegate', async () => {
       const res = await viemUser.channel.delegate.add(
-        'eip155:5:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
+        'eip155:11155111:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
       );
       console.log(res);
       expect(res).not.null;
@@ -112,7 +112,7 @@ describe.skip('PushAPI.delegate functionality', () => {
 
     it('With viem signer: Should add delegate', async () => {
       const res = await viemUser.channel.delegate.add(
-        'eip155:5:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
+        'eip155:11155111:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
       );
       // console.log(res);
       expect(res).not.null;
@@ -124,7 +124,7 @@ describe.skip('PushAPI.delegate functionality', () => {
     it.skip('Without signer and account :: should throw error', async () => {
       await expect(() =>
         userBob.channel.delegate.remove(
-          'eip155:5:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
+          'eip155:11155111:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
         )
       ).to.Throw;
     });
@@ -132,14 +132,14 @@ describe.skip('PushAPI.delegate functionality', () => {
     it('With signer and without provider :: should throw error', async () => {
       await expect(() =>
         userAlice.channel.delegate.remove(
-          'eip155:5:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
+          'eip155:11155111:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
         )
       ).to.Throw;
     });
 
     it('With signer and provider :: should add delegate', async () => {
       const res = await userKate.channel.delegate.remove(
-        'eip155:5:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
+        'eip155:11155111:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
       );
       console.log(res);
       expect(res).not.null;
@@ -155,7 +155,7 @@ describe.skip('PushAPI.delegate functionality', () => {
 
     it('With viem signer: Should remove delegate', async () => {
       const res = await viemUser.channel.delegate.remove(
-        'eip155:5:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
+        'eip155:11155111:0x74415Bc4C4Bf4Baecc2DD372426F0a1D016Fa924'
       );
       // console.log(res);
       expect(res).not.null;
@@ -176,7 +176,7 @@ describe.skip('PushAPI.delegate functionality', () => {
 
     it('Without signer : Should fetch delegates', async () => {
       const res = await userBob.channel.delegate.get({
-        channel: 'eip155:5:0xD8634C39BBFd4033c0d3289C4515275102423681',
+        channel: 'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
       });
       // console.log(res);
       expect(res).not.null;
