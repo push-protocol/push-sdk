@@ -517,7 +517,7 @@ export const VALIDATOR_CONFIG = {
   },
   [ENV.DEV]: {
     NETWORK: sepolia,
-    VALIDATOR_CONTRACT: 'TODO',
+    VALIDATOR_CONTRACT: '0xb08d2cA537F6183138955eD4fCb012f94f681954',
   },
   [ENV.LOCAL]: {
     NETWORK: localhost,

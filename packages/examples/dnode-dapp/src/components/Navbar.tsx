@@ -45,7 +45,7 @@ const Navbar = () => {
         <div className="flex lg:flex-1">
           <Link href={'/'}>
             <span className="font-semibold text-gray-900 brand-name">
-              <img src="pushLogo.svg" alt="pushLogo" className="h-8 w-8" />
+              <img src="logo.svg" alt="pushLogo" className="h-8 w-8" />
             </span>
           </Link>
         </div>
@@ -85,7 +85,7 @@ const Navbar = () => {
           <div className="flex items-center justify-between">
             <Link href={'/'}>
               <span className="font-semibold text-gray-900 brand-name">
-                <img src="pushLogo.svg" alt="pushLogo" className="h-8 w-8" />
+                <img src="logo.svg" alt="pushLogo" className="h-8 w-8" />
               </span>
             </Link>
             <button
