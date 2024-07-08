@@ -45,12 +45,12 @@ const PushScan: React.FC = () => {
   }, [address]);
 
   return (
-    <div className="p-4 mx-20 mb-10">
+    <div className="p-4 mx-5 md:mx-10 lg:mx-20 mb-10">
       {/* Header with Search Bar */}
       <header className="flex justify-center items-center text-center mb-4">
         <SearchBar />
       </header>
-      <h1 className="text-lg mb-4 pt-10 pb-5">
+      <h1 className="text-lg mb-4 pt-10 pb-5 break-words overflow-x-auto">
         PushScan Results for: <span className="font-bold">{address}</span>
       </h1>
       {data && (

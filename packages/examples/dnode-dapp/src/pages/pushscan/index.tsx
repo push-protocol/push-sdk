@@ -56,7 +56,7 @@ export default function Explorer() {
   }, []);
 
   return (
-    <div className="p-4 mx-20 mb-10">
+    <div className="p-4 mx-5 md:mx-10 lg:mx-20 mb-10">
       {/* Header with Search Bar */}
       <header className="flex justify-center items-center text-center mb-4">
         <SearchBar />
@@ -77,7 +77,7 @@ export default function Explorer() {
                   alt={`${notification.address} img`}
                 />
                 <div className="min-w-0 flex-auto">
-                  <p className="text-sm font-semibold leading-6 text-gray-900">
+                  <p className="text-sm font-semibold leading-6 text-gray-900 break-words overflow-x-auto">
                     {notification.address}
                   </p>
                 </div>
@@ -94,14 +94,14 @@ export default function Explorer() {
       </ul>
 
       <div className="mt-6 flex justify-end space-x-4">
-        {page > 1 && (
+        {/* {page > 1 && (
           <button
             onClick={() => setPage(page - 1)}
             className="rounded-md bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-300"
           >
             Previous Page
           </button>
-        )}
+        )} */}
         {/* {page * size < total && (
           <button
             onClick={handleNextPage}
