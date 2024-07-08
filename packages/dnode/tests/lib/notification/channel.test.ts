@@ -133,10 +133,11 @@ describe('PushAPI.channel functionality', () => {
     it('With signer : broadcast  : Should send notification with title and body', async () => {
       const res = await userAlice.channel.send(['*'], {
         notification: {
-          title: 'test',
-          body: 'test',
+          title: 'Testing new notif',
+          body: 'test new notif',
         },
       });
+      console.log(res);
       expect(res.status).to.equal(200);
     });
 
@@ -155,7 +156,7 @@ describe('PushAPI.channel functionality', () => {
 
     it('With signer : targeted  : Should send notification with title and body', async () => {
       const res = await userAlice.channel.send(
-        ['eip155:11155111:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5'],
+        ['eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'],
         {
           notification: {
             title: 'hi',

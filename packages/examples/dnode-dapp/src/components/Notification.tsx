@@ -20,7 +20,7 @@ const SendNotification: React.FC = () => {
       if (isConnected && walletClient.data && channel === '') {
         try {
           const channelInfo = await getChannelInfo(walletClient.data);
-          if (channelInfo !== null) {
+          if (channelInfo !== null && channelInfo.processed == 1) {
             setAllowNotification(true);
             setChannel(channelInfo.channel);
             setErrorMessage(''); // Clear error message if the channel is found

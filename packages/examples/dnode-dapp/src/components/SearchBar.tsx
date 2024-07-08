@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/router';
+import { getCheckSumAddress } from '../utils';
 
 const SearchBar: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -9,7 +10,9 @@ const SearchBar: React.FC = () => {
   const handleSearch = () => {
     if (searchTerm.trim()) {
       // Navigate to the search results page
-      router.push(`/pushscan/${encodeURIComponent(searchTerm.trim())}`);
+      router.push(
+        `/pushscan/${encodeURIComponent(getCheckSumAddress(searchTerm.trim()))}`
+      );
     }
   };
 

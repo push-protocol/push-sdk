@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import SearchBar from '../../components/SearchBar';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { getRecentTransactionAccounts } from '../../utils/push';
+import { getCheckSumAddress } from '../../utils';
 
 export default function Explorer() {
   const [page, setPage] = useState(1);
@@ -32,19 +34,25 @@ export default function Explorer() {
   const router = useRouter();
 
   const handleClick = (address: string) => {
-    router.push(`/pushscan/${address}`);
+    router.push(`/pushscan/${getCheckSumAddress(address)}`);
   };
 
   useEffect(() => {
     // Fetch initial stats and latest blocks
     const fetchData = async () => {
-      // TODO: Fetch all address notif
-      // const statsData = await fetchNetworkStats();
-      // const latestBlocksData = await fetchLatestBlocks(30);
-      //   setStats(statsData);
-      //   setLatestBlocks(latestBlocksData);
+      const recipients = await getRecentTransactionAccounts();
+      console.log(recipients);
+      // setLatestNotifications(recipients);
     };
+
+    // Polling function
+    const intervalId = setInterval(fetchData, 30000); // 30000 ms = 30 seconds
+
+    // Fetch data immediately on component mount
     fetchData();
+
+    // Clear interval on component unmount
+    return () => clearInterval(intervalId);
   }, []);
 
   return (
@@ -94,14 +102,14 @@ export default function Explorer() {
             Previous Page
           </button>
         )}
-        {page * size < total && (
+        {/* {page * size < total && (
           <button
             onClick={handleNextPage}
             className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500"
           >
             Next Page
           </button>
-        )}
+        )} */}
       </div>
     </div>
   );
