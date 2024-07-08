@@ -5,25 +5,13 @@ import SearchBar from '../../components/SearchBar';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { getRecentTransactionAccounts } from '../../utils/push';
-import { getCheckSumAddress } from '../../utils';
+import { formatDate, getCheckSumAddress } from '../../utils';
 
 export default function Explorer() {
   const [page, setPage] = useState(1);
   const [latestNotifications, setLatestNotifications] = useState<
-    { address: string }[]
-  >([
-    // generate 10 dummy data
-    { address: '0x5ac9E6205eACA2bBbA6eF716FD9AabD76326EEee' },
-    { address: '0x1234567890123456789012345678901234567891' },
-    { address: '0x1234567890123456789012345678901234567892' },
-    { address: '0x1234567890123456789012345678901234567893' },
-    { address: '0x1234567890123456789012345678901234567894' },
-    { address: '0x1234567890123456789012345678901234567895' },
-    { address: '0x1234567890123456789012345678901234567896' },
-    { address: '0x1234567890123456789012345678901234567897' },
-    { address: '0x1234567890123456789012345678901234567898' },
-    { address: '0x1234567890123456789012345678901234567899' },
-  ]);
+    { nsId: string; last_usage: string }[]
+  >([]);
   const [total, setTotal] = useState(20);
   const size = 10; // Hardcoded in api
 
@@ -41,8 +29,7 @@ export default function Explorer() {
     // Fetch initial stats and latest blocks
     const fetchData = async () => {
       const recipients = await getRecentTransactionAccounts();
-      console.log(recipients);
-      // setLatestNotifications(recipients);
+      setLatestNotifications(recipients);
     };
 
     // Polling function
@@ -68,24 +55,23 @@ export default function Explorer() {
 
       <ul role="list" className="divide-y divide-gray-100">
         {latestNotifications.map((notification, index) => (
-          <Link href={`/pushscan/${notification.address}`} key={index}>
+          <Link href={`/pushscan/${notification.nsId}`} key={index}>
             <li className="flex justify-between gap-x-6 py-5 px-4 border border-gray-200 rounded-lg hover:scale-105 transition-transform duration-150 hover:cursor-pointer">
               <div className="flex min-w-0 gap-x-4">
                 <img
                   className="h-12 w-12 flex-none rounded-md bg-gray-50"
                   src="/user.png"
-                  alt={`${notification.address} img`}
+                  alt={`${notification.nsId} img`}
                 />
                 <div className="min-w-0 flex-auto">
                   <p className="text-sm font-semibold leading-6 text-gray-900 break-words overflow-x-auto">
-                    {notification.address}
+                    {notification.nsId}
                   </p>
                 </div>
               </div>
               <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
                 <p className="text-sm leading-6 text-gray-900">
-                  {/* {protocol.category} */}
-                  Maybe A TimeStamp
+                  {formatDate(notification.last_usage)}
                 </p>
               </div>
             </li>

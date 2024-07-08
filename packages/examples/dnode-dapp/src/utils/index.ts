@@ -1,5 +1,6 @@
 // TODO: Implement All the Fns
 
+import { getAddress } from 'viem';
 import { Block, NetworkStats, Transaction } from '../types';
 
 export const fetchNetworkStats = async (): Promise<NetworkStats> => {
@@ -43,4 +44,27 @@ export const fetchTransaction = async (
     to: '0x0987654321',
     value: '1000',
   };
+};
+
+export const getCheckSumAddress = (address: string): string => {
+  const addr = address.toLowerCase();
+  try {
+    return getAddress(addr);
+  } catch (e) {
+    return addr;
+  }
+};
+
+export const formatDate = (dateString: string): string => {
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) {
+    return 'Invalid date';
+  }
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 };

@@ -1,7 +1,8 @@
 import { PushAPI } from '@pushprotocol/dnode';
 import { ENV } from '@pushprotocol/dnode/src/lib/constants';
+import axios from 'axios';
+import { getCheckSumAddress } from '.';
 
-// TODO: Change to dev or stage
 const env = ENV.DEV;
 
 export const sendNotification = async (
@@ -11,7 +12,8 @@ export const sendNotification = async (
   signer: any
 ) => {
   const userAlice = await PushAPI.initialize(signer, { env });
-  return await userAlice.channel.send(recipient, {
+  const parsedRecipients = recipient.map((r) => getCheckSumAddress(r));
+  return await userAlice.channel.send(parsedRecipients, {
     notification: {
       title,
       body,
@@ -27,4 +29,17 @@ export const getChannelInfo = async (signer: any) => {
 export const getAddressTrx = async (address: string) => {
   const userAlice = await PushAPI.initialize(null, { env, account: address });
   return await userAlice.notification.list('INBOX');
+};
+
+export const getRecentTransactionAccounts = async () => {
+  // Example with no additional data or headers
+  return await axios
+    .post('https://s1.dev.push.org/api/v1/kv/ns/all')
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      return [];
+    });
 };
