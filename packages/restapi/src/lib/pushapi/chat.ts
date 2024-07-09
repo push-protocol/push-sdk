@@ -13,8 +13,6 @@ import {
   GroupInfoDTO,
   ChatMemberProfile,
   GroupParticipantCounts,
-  MessageObj,
-  UserProfile,
 } from '../types';
 import {
   GroupUpdateOptions,
@@ -46,6 +44,7 @@ import {
   ChatMemberProfileV2,
   GroupActionResponse,
   IChatListResponse,
+  IChatListResponseV2,
   IChatMessage,
   IGroupAccessResponseV2,
   IGroupResponseV2,
@@ -92,16 +91,16 @@ export class Chat {
       limit?: number;
       overrideAccount?: string;
     } & { raw?: boolean; version?: number }
-  ): Promise<IChatListResponse> {
+  ): Promise<IFeeds[] | IChatListResponseV2> {
     const accountToUse = options?.overrideAccount || this.account;
-
+    const toDecrypt = !!this.decryptedPgpPvtKey;
     const listParams = {
       account: accountToUse,
       pgpPrivateKey: this.decryptedPgpPvtKey,
       page: options?.page,
       limit: options?.limit,
       env: this.env,
-      toDecrypt: !!this.decryptedPgpPvtKey, // Set to false if signer is undefined or null,
+      toDecrypt: toDecrypt, // Set to false if signer is undefined or null,
     };
 
     const raw = options?.raw || false;
@@ -119,11 +118,12 @@ export class Chat {
         throw new Error('Invalid Chat List Type');
     }
 
-    if (version === 2) {
-      return handleChatListVersion2Response(response, type, raw);
+    if (version === 1) {
+      return response as IFeeds[];
+    } else if (version === 2) {
+      return handleChatListVersion2Response(response, type, raw, toDecrypt);
     }
-
-    return response as IFeeds[];
+    throw new Error('Invalid version specified');
   }
 
   async latest(
@@ -142,10 +142,11 @@ export class Chat {
     if (!threadHash) {
       return [];
     }
+    const toDecrypt = !!this.decryptedPgpPvtKey;
 
     const latestMessages = await PUSH_CHAT.latest({
       threadhash: threadHash,
-      toDecrypt: !!this.decryptedPgpPvtKey,
+      toDecrypt: toDecrypt,
       pgpPrivateKey: this.decryptedPgpPvtKey,
       account: this.account,
       env: this.env,
@@ -169,13 +170,14 @@ export class Chat {
           latestMessages[0],
           chatInfo,
           listType,
-          raw
+          raw,
+          toDecrypt
         );
       } else {
         return {} as IChatMessage;
       }
     }
-    return [];
+    throw new Error('Invalid version specified');
   }
 
   async history(
@@ -198,13 +200,14 @@ export class Chat {
     }
 
     if (!reference) return [];
+    const toDecrypt = !!this.decryptedPgpPvtKey;
 
     const historyMessages = await PUSH_CHAT.history({
       account: this.account,
       env: this.env,
       threadhash: reference,
       pgpPrivateKey: this.decryptedPgpPvtKey,
-      toDecrypt: !!this.decryptedPgpPvtKey, // Set to false if signer is undefined or null,
+      toDecrypt: toDecrypt, // Set to false if signer is undefined or null,
       limit: options?.limit,
     });
     const listType = intent ? 'CHATS' : 'REQUESTS';
@@ -220,10 +223,10 @@ export class Chat {
         env: this.env,
       });
       return historyMessages.map((message) =>
-        transformToChatMessage(message, chatInfo, listType, raw)
+        transformToChatMessage(message, chatInfo, listType, raw, toDecrypt)
       );
     } else {
-      return [];
+      throw new Error('Invalid version specified');
     }
   }
 
@@ -232,7 +235,7 @@ export class Chat {
     options?: {
       reference?: string | null;
     } & { raw?: boolean; version?: number }
-  ): Promise<IMessageIPFS | IChatMessage | null> {
+  ): Promise<IMessageIPFS | IChatMessage> {
     let reference: string | null = options?.reference || null;
     let intent: boolean | null = null;
 
@@ -246,21 +249,23 @@ export class Chat {
       intent = conversationData.intent;
     }
 
-    if (!reference) return null;
-
+    if (!reference) {
+      throw new Error('Invalid reference');
+    }
     const historyMessages = await this.history(target, { reference, limit: 1 });
     const listType = intent ? 'CHATS' : 'REQUESTS';
     const raw = options?.raw || false;
     const version = options?.version || 1;
+    const toDecrypt = !!this.decryptedPgpPvtKey;
 
-    if (historyMessages.length === 0) return null;
+    if (historyMessages.length === 0) {
+      throw new Error('Invalid reference');
+    }
 
     if (version === 1) {
       const message: IMessageIPFS = historyMessages[0] as IMessageIPFS;
       return { ...message, listType } as IMessageIPFS;
-    }
-
-    if (version === 2) {
+    } else if (version === 2) {
       const chatInfo: ChatInfoResponse = await PUSH_CHAT.getChatInfo({
         recipient: target,
         account: this.account,
@@ -271,11 +276,12 @@ export class Chat {
         historyMessages[0] as IMessageIPFS,
         chatInfo,
         listType,
-        raw
+        raw,
+        toDecrypt
       );
+    } else {
+      throw new Error('Invalid version specified');
     }
-
-    return null;
   }
 
   async send(
@@ -304,9 +310,7 @@ export class Chat {
 
     if (version === 1) {
       return response;
-    }
-
-    if (version === 2) {
+    } else if (version === 2) {
       const v2Response: ISendMessageResponseV2 = {
         timestamp: String(response.timestamp),
         chatId: response.chatId,
@@ -358,6 +362,7 @@ export class Chat {
     });
 
     const listType = intent ? 'CHATS' : 'REQUESTS';
+    const toDecrypt = !!this.decryptedPgpPvtKey;
 
     if (version === 1) {
       return historyMessages.map((message: any) => ({
@@ -371,18 +376,25 @@ export class Chat {
         env: this.env,
       });
       return historyMessages.map((message) =>
-        transformToChatMessage(message, chatInfo, listType, raw)
+        transformToChatMessage(message, chatInfo, listType, raw, toDecrypt)
       );
     } else {
-      return [];
+      throw new Error('Invalid version specified');
     }
   }
 
-  async accept(target: string): Promise<string> {
+  async accept(
+    target: string,
+    options?: { raw?: boolean; version?: number }
+  ): Promise<string | ChatActionResponse> {
     if (!this.decryptedPgpPvtKey) {
       throw new Error(PushAPI.ensureSignerMessage());
     }
-    return await PUSH_CHAT.approve({
+
+    const raw = options?.raw || false;
+    const version = options?.version || 1;
+
+    const response = await PUSH_CHAT.approve({
       senderAddress: target,
       env: this.env,
       account: this.account,
@@ -390,19 +402,54 @@ export class Chat {
       pgpPrivateKey: this.decryptedPgpPvtKey,
       overrideSecretKeyGeneration: !this.scalabilityV2Feature,
     });
+
+    if (version === 1) {
+      return `${response.fromDID}+${response.toDID}`;
+    } else if (version === 2) {
+      const result: ChatActionResponse = { success: true };
+      if (raw) {
+        result.raw = {
+          actionVerificationProof: response.verificationProof || null,
+        };
+      }
+      return result;
+    }
+
+    throw new Error('Invalid version specified');
   }
 
-  async reject(target: string): Promise<void> {
+  async reject(
+    target: string,
+    options?: { raw?: boolean; version?: number }
+  ): Promise<void | ChatActionResponse> {
     if (!this.decryptedPgpPvtKey) {
       throw new Error(PushAPI.ensureSignerMessage());
     }
-    await PUSH_CHAT.reject({
+
+    const raw = options?.raw || false;
+    const version = options?.version || 1;
+
+    const response = await PUSH_CHAT.reject({
       senderAddress: target,
       env: this.env,
       account: this.account,
       signer: this.signer,
       pgpPrivateKey: this.decryptedPgpPvtKey,
     });
+
+    if (version === 1) {
+      return;
+    } else if (version === 2) {
+      const result: ChatActionResponse = { success: true };
+      if (raw) {
+        result.raw = {
+          actionVerificationProof: response.verificationProof || null,
+        };
+      }
+      return result;
+    }
+
+    throw new Error('Invalid version specified');
   }
 
   async block(
@@ -950,7 +997,7 @@ export class Chat {
         const result: any = { success: true };
         if (raw && response) {
           result.raw = {
-            actionVerificationProof: response.deltaVerificationProof,
+            actionVerificationProof: deltaVerificationProof,
           };
         }
         return result;
@@ -1010,7 +1057,7 @@ export class Chat {
     join: async (
       target: string,
       options?: { raw?: boolean; version?: number }
-    ): Promise<void> => {
+    ): Promise<void | ChatActionResponse> => {
       if (!this.decryptedPgpPvtKey) {
         throw new Error(PushAPI.ensureSignerMessage());
       }
@@ -1020,9 +1067,12 @@ export class Chat {
         env: this.env,
       });
 
+      const raw = options?.raw || false;
+      const version = options?.version || 1;
+
       let deltaVerificationProof;
       if (status.isPending) {
-        await PUSH_CHAT.approve({
+        const response = await PUSH_CHAT.approve({
           senderAddress: target,
           env: this.env,
           account: this.account,
@@ -1030,7 +1080,20 @@ export class Chat {
           pgpPrivateKey: this.decryptedPgpPvtKey,
           overrideSecretKeyGeneration: !this.scalabilityV2Feature,
         });
-        // TODO: get action verification proof from here
+
+        if (version === 1) {
+          return;
+        } else if (version === 2) {
+          const result: ChatActionResponse = { success: true };
+          if (raw) {
+            result.raw = {
+              actionVerificationProof: response.verificationProof || null,
+            };
+          }
+          return result;
+        }
+
+        throw new Error('Invalid version specified');
       } else if (!status.isMember) {
         const response = await PUSH_CHAT.addMembers({
           chatId: target,
@@ -1043,8 +1106,7 @@ export class Chat {
         });
         deltaVerificationProof = response.deltaVerificationProof;
       }
-      const raw = options?.raw || false;
-      const version = options?.version || 1;
+
       if (version === 1) {
         return;
       } else if (version === 2) {
@@ -1123,17 +1185,32 @@ export class Chat {
     reject: async (
       target: string,
       options?: { raw?: boolean; version?: number }
-    ): Promise<void> => {
+    ): Promise<void | ChatActionResponse> => {
       if (!this.decryptedPgpPvtKey) {
         throw new Error(PushAPI.ensureSignerMessage());
       }
-      await PUSH_CHAT.reject({
+      const response = await PUSH_CHAT.reject({
         senderAddress: target,
         env: this.env,
         account: this.account,
         signer: this.signer,
         pgpPrivateKey: this.decryptedPgpPvtKey,
       });
+
+      const raw = options?.raw || false;
+      const version = options?.version || 1;
+
+      if (version === 1) {
+        return;
+      } else if (version === 2) {
+        const result: ChatActionResponse = { success: true };
+        if (raw) {
+          result.raw = {
+            actionVerificationProof: response.verificationProof || null,
+          };
+        }
+        return result;
+      }
     },
   };
 }

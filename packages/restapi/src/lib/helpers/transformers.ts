@@ -25,8 +25,10 @@ import * as PUSH_CHAT from '../chat';
 export function transformFeedToChatMessage(
   feed: IFeeds,
   type: `${ChatListType}`,
-  raw: boolean
+  raw: boolean,
+  decrypted: boolean
 ): IChatMessage {
+  const isGroup = Boolean(feed.groupInformation);
   return {
     timestamp: String(feed.msg.timestamp),
     chatId: feed.chatId || '',
@@ -39,7 +41,7 @@ export function transformFeedToChatMessage(
       },
     },
     to: {
-      wallet: feed.msg.toCAIP10,
+      wallet: isGroup ? '*' : feed.msg.toCAIP10,
     },
     message: {
       type: feed.msg.messageType,
@@ -47,6 +49,7 @@ export function transformFeedToChatMessage(
     },
     meta: {
       type: type,
+      decrypted: decrypted,
       group: feed.groupInformation
         ? {
             exist: true,
@@ -56,7 +59,7 @@ export function transformFeedToChatMessage(
               image: feed.groupInformation.groupImage,
             },
           }
-        : undefined,
+        : null,
     },
     reference: feed.msg.cid || '',
     previous: feed.msg.link ? [feed.msg.link] : [],
@@ -76,7 +79,8 @@ export function transformToChatMessage(
   message: IMessageIPFS,
   chatInfo: ChatInfoResponse,
   listType: string,
-  raw: boolean
+  raw: boolean,
+  decrypt: boolean
 ): IChatMessage {
   const fromProfile = chatInfo.meta.recipients.find(
     (recipient) => recipient.participantId === message.fromDID
@@ -109,8 +113,9 @@ export function transformToChatMessage(
       content: (message.messageObj as MessageObj).content,
     },
     meta: {
+      decrypted: decrypt,
       type: listType,
-      group: groupProfile ? { exist: true, profile: groupProfile } : undefined,
+      group: groupProfile ? { exist: true, profile: groupProfile } : null,
     },
     reference: message.cid,
     previous: message.link ? [message.link] : [],
@@ -130,11 +135,12 @@ export function transformToChatMessage(
 export async function handleChatListVersion2Response(
   response: IFeeds[],
   type: `${ChatListType}`,
-  raw: boolean
+  raw: boolean,
+  decrypted: boolean
 ): Promise<IChatListResponseV2> {
   return {
     messages: response.map((feed) =>
-      transformFeedToChatMessage(feed, type, raw)
+      transformFeedToChatMessage(feed, type, raw, decrypted)
     ),
   };
 }

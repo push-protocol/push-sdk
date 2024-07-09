@@ -23,10 +23,11 @@ export interface IChatMessage {
   };
   meta: {
     type: string;
-    group?: {
+    decrypted: boolean;
+    group: {
       exist: boolean;
       profile: IGroupProfile;
-    };
+    } | null;
   };
   reference: string;
   previous: string[];
@@ -41,8 +42,6 @@ export interface IChatMessage {
 export interface IChatListResponseV2 {
   messages: IChatMessage[];
 }
-
-export type IChatListResponse = IFeeds[] | IChatListResponseV2;
 
 export interface ISendMessageResponseV2 {
   timestamp: string;

@@ -38,14 +38,14 @@ export interface ApproveRequestOptionsType extends EnvOptionsType {
  */
 export const approve = async (
   options: ApproveRequestOptionsType
-): Promise<string> => {
+): Promise<any> => {
   return await approveCore(options, PGPHelper);
 };
 
 export const approveCore = async (
   options: ApproveRequestOptionsType,
   pgpHelper: IPGPHelper
-): Promise<string> => {
+): Promise<any> => {
   const {
     status = 'Approved',
     account = null,
@@ -168,9 +168,10 @@ export const approveCore = async (
 
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/chat/request/accept`;
+
   return axiosPut(apiEndpoint, body)
-    .then((response) => {
-      return response.data;
+    .then(() => {
+      return body;
     })
     .catch((err) => {
       throw handleError(err, approve.name);

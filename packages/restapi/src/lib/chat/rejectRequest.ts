@@ -29,7 +29,7 @@ interface RejectRequestOptionsType extends EnvOptionsType {
  */
 export const reject = async (
   options: RejectRequestOptionsType
-): Promise<void> => {
+): Promise<any> => {
   const {
     account = null,
     signer = null,
@@ -82,7 +82,7 @@ export const reject = async (
 
   return axiosPut(apiEndpoint, body)
     .then((response) => {
-      return response.data;
+      return body;
     })
     .catch((err) => {
       throw handleError(err, reject.name);
