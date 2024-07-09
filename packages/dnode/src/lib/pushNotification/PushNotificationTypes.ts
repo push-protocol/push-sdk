@@ -52,6 +52,10 @@ export type FeedsOptions = {
    * @desc - Format YYYYMM
    */
   yearMonth?: string;
+  /**
+   * @desc - Get feeds after a specific epoch
+   */
+  afterEpoch?: number;
 };
 
 export type ChannelSearchOptions = {

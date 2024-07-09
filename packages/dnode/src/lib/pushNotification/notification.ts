@@ -48,7 +48,11 @@ export class Notification extends PushNotificationBaseClass {
     const year = now.getFullYear();
     // Extract the current month and format it as two digits
     const month = String(now.getMonth() + 1).padStart(2, '0');
-    const { raw = false, yearMonth = `${year}${month}` } = options || {};
+    const {
+      raw = false,
+      yearMonth = `${year}${month}`,
+      afterEpoch = '',
+    } = options || {};
     try {
       let account: string | null;
       if (options?.account) {
@@ -70,6 +74,7 @@ export class Notification extends PushNotificationBaseClass {
         raw: raw,
         env: this.env,
         yearMonth,
+        afterEpoch,
       });
     } catch (error) {
       throw new Error(`Push SDK Error: API : notifcaiton::list : ${error}`);

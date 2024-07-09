@@ -55,7 +55,7 @@ describe('PushAPI.notification functionality', () => {
   describe('PushAPI.notification functionality', () => {
     it('Should return feeds with signer object', async () => {
       const response = await userAlice.notification.list('INBOX', {
-        account: '0x5ac9E6205eACA2bBbA6eF716FD9AabD76326EEee',
+        account: '0x1af9C19A1513B9D05a7E5CaAd9F9239EF54fE2b1',
       });
       console.log(response);
       expect(response).not.null;
