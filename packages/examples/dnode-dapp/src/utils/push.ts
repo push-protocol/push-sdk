@@ -26,9 +26,11 @@ export const getChannelInfo = async (signer: any) => {
   return await userAlice.channel.info();
 };
 
-export const getAddressTrx = async (address: string) => {
+export const getAddressTrx = async (address: string, afterEpoch?: number) => {
   const userAlice = await PushAPI.initialize(null, { env, account: address });
-  return await userAlice.notification.list('INBOX');
+  return await userAlice.notification.list('INBOX', {
+    afterEpoch,
+  });
 };
 
 export const getRecentTransactionAccounts = async () => {

@@ -2,6 +2,11 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { getAddressTrx } from '../../utils/push';
 import SearchBar from '../../components/SearchBar';
+import dynamic from 'next/dynamic';
+
+const GridLoader = dynamic(() => import('../../components/Loader'), {
+  ssr: false,
+});
 
 // Component to display the result data
 const NodeResult: React.FC<{ result: any }> = ({ result }) => (
@@ -26,23 +31,26 @@ const ParsedTransactionData: React.FC<{ item: any }> = ({ item }) => (
 const PushScan: React.FC = () => {
   const router = useRouter();
   const { address } = router.query; // Extract the dynamic address from the URL
+  const [afterEpoch, setAfterEpoch] = useState<number | undefined>(undefined);
   const [data, setData] = useState<any>(null); // State to store fetched data or results
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     if (address) {
       // Fetch data or perform actions based on the dynamic address
       const fetchData = async () => {
+        setLoading(true);
         try {
-          const response = await getAddressTrx(address as string);
+          const response = await getAddressTrx(address as string, afterEpoch);
           setData(response);
         } catch (error) {
           console.error('Error fetching data:', error);
         }
+        setLoading(false);
       };
 
       fetchData();
     }
-  }, [address]);
+  }, [address, afterEpoch]);
 
   return (
     <div className="p-4 mx-5 md:mx-10 lg:mx-20 mb-10">
@@ -64,6 +72,18 @@ const PushScan: React.FC = () => {
           ))}
         </div>
       )}
+      {loading && <GridLoader />}
+      <button
+        disabled={!data || data?.result.itemCount < 5}
+        onClick={() => setAfterEpoch(parseFloat(data?.result.lastTs))}
+        className={`px-4 py-2 font-semibold rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 ${
+          !data || data?.result.itemCount < 5
+            ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
+            : 'bg-indigo-600 text-white hover:bg-indigo-500 focus:ring-indigo-500'
+        }`}
+      >
+        Next Transactions
+      </button>
     </div>
   );
 };

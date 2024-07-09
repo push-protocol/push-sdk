@@ -7,6 +7,12 @@ import Link from 'next/link';
 import { getRecentTransactionAccounts } from '../../utils/push';
 import { formatDate, getCheckSumAddress } from '../../utils';
 
+import dynamic from 'next/dynamic';
+
+const GridLoader = dynamic(() => import('../../components/Loader'), {
+  ssr: false,
+});
+
 export default function Explorer() {
   const [page, setPage] = useState(1);
   const [latestNotifications, setLatestNotifications] = useState<
@@ -53,31 +59,35 @@ export default function Explorer() {
         Latest Transaction Recipients
       </h3>
 
-      <ul role="list" className="divide-y divide-gray-100">
-        {latestNotifications.map((notification, index) => (
-          <Link href={`/pushscan/${notification.nsId}`} key={index}>
-            <li className="flex justify-between gap-x-6 py-5 px-4 border border-gray-200 rounded-lg hover:scale-105 transition-transform duration-150 hover:cursor-pointer">
-              <div className="flex min-w-0 gap-x-4">
-                <img
-                  className="h-12 w-12 flex-none rounded-md bg-gray-50"
-                  src="/user.png"
-                  alt={`${notification.nsId} img`}
-                />
-                <div className="min-w-0 flex-auto">
-                  <p className="text-sm font-semibold leading-6 text-gray-900 break-words overflow-x-auto">
-                    {notification.nsId}
+      {latestNotifications.length > 0 ? (
+        <ul role="list" className="divide-y divide-gray-100">
+          {latestNotifications.map((notification, index) => (
+            <Link href={`/pushscan/${notification.nsId}`} key={index}>
+              <li className="flex justify-between gap-x-6 py-5 px-4 border border-gray-200 rounded-lg hover:scale-105 transition-transform duration-150 hover:cursor-pointer">
+                <div className="flex min-w-0 gap-x-4">
+                  <img
+                    className="h-12 w-12 flex-none rounded-md bg-gray-50"
+                    src="/user.png"
+                    alt={`${notification.nsId} img`}
+                  />
+                  <div className="min-w-0 flex-auto">
+                    <p className="text-sm font-semibold leading-6 text-gray-900 break-words overflow-x-auto">
+                      {notification.nsId}
+                    </p>
+                  </div>
+                </div>
+                <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
+                  <p className="text-sm leading-6 text-gray-900">
+                    {formatDate(notification.last_usage)}
                   </p>
                 </div>
-              </div>
-              <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
-                <p className="text-sm leading-6 text-gray-900">
-                  {formatDate(notification.last_usage)}
-                </p>
-              </div>
-            </li>
-          </Link>
-        ))}
-      </ul>
+              </li>
+            </Link>
+          ))}
+        </ul>
+      ) : (
+        <GridLoader />
+      )}
 
       <div className="mt-6 flex justify-end space-x-4">
         {/* {page > 1 && (
