@@ -74,10 +74,10 @@ const PushScan: React.FC = () => {
       )}
       {loading && <GridLoader />}
       <button
-        disabled={!data || data?.result.itemCount < 5}
+        disabled={!data || data?.result.itemCount < 20}
         onClick={() => setAfterEpoch(parseFloat(data?.result.lastTs))}
         className={`px-4 py-2 font-semibold rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 ${
-          !data || data?.result.itemCount < 5
+          !data || data?.result.itemCount < 20
             ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
             : 'bg-indigo-600 text-white hover:bg-indigo-500 focus:ring-indigo-500'
         }`}
