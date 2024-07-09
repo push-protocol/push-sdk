@@ -95,6 +95,7 @@ export const getSpaceInboxLists = async (
         signature: '',
         toCAIP10: '',
         toDID: '',
+        cid: '',
       };
     }
     feeds.push({
@@ -139,6 +140,7 @@ export const getTrendingSpaceInboxLists = async (
         signature: '',
         toCAIP10: '',
         toDID: '',
+        cid: '',
       };
     }
     feeds.push({

@@ -269,6 +269,7 @@ export interface SpaceIFeeds {
   did: string;
   wallets: string;
   profilePicture: string | null;
+  profileVerificationProof: string | null;
   name: string | null;
   publicKey: string | null;
   about: string | null;
@@ -533,7 +534,6 @@ export interface GroupDTO {
   numberOfERC20: number;
   contractAddressNFT: string | null;
   numberOfNFTTokens: number;
-  verificationProof: string;
   groupImage: string | null;
   groupName: string;
   isPublic: boolean;
@@ -548,6 +548,9 @@ export interface GroupDTO {
   meta?: string | null;
   sessionKey?: string;
   encryptedSecret?: string;
+  verificationProof: string;
+  profileVerificationProof?: string | null;
+  configVerificationProof?: string | null;
 }
 
 export interface GroupInfoDTO {
@@ -565,6 +568,10 @@ export interface GroupInfoDTO {
   meta?: string | null;
   sessionKey: string | null;
   encryptedSecret: string | null;
+  verificationProof: string;
+  profileVerificationProof?: string | null;
+  configVerificationProof?: string | null;
+  deltaVerificationProof?: string | null;
 }
 
 export interface SpaceInfoDTO {

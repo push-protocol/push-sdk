@@ -45,6 +45,7 @@ import { Signer as PushSigner } from '../helpers';
 
 import { SpaceV2 } from '../space/SpaceV2';
 import { Space as SpaceV1 } from '../space/Space';
+import { ISendMessageResponseV2 } from '../interfaces/ichat';
 
 export class Space {
   private chatInstance: Chat;
@@ -476,7 +477,7 @@ export class Space {
       limit?: number;
       overrideAccount?: string;
     }
-  ): Promise<IFeeds[]> {
+  ): Promise<SpaceIFeeds[]> {
     const accountToUse = options?.overrideAccount || this.account;
 
     const listParams = {
@@ -517,7 +518,7 @@ export class Space {
       send: async (
         recipient: string,
         options: Message
-      ): Promise<MessageWithCID> => {
+      ): Promise<MessageWithCID | ISendMessageResponseV2> => {
         return this.chatInstance.send(recipient, options);
       },
       decrypt: async (messages: IMessageIPFS[]) => {

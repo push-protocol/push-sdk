@@ -1,6 +1,8 @@
 import Constants, { ENV } from '../constants';
 import { handleError } from '../errors/validationError';
 import { convertToValidDID, getAPIBaseUrls } from '../helpers';
+import { IGroupProfile } from '../interfaces/ichat';
+import { UserProfile } from '../types';
 import { axiosGet } from '../utils/axiosUtil';
 
 /**
@@ -13,7 +15,13 @@ export interface ChatInfoResponse {
     visibility: boolean;
     groupInfo: {
       public: boolean;
+      profile: IGroupProfile;
     };
+    recipients: {
+      participantId: string;
+      pushUser: boolean;
+      profile: UserProfile;
+    }[];
   };
   list: string;
   participants: string[];

@@ -16,6 +16,7 @@ export interface Message {
   encType: string;
   encryptedSecret: string;
   link: string | null;
+  cid: string;
 }
 
 export interface IPFSOptionsType {

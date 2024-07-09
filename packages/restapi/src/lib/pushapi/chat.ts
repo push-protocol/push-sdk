@@ -13,6 +13,8 @@ import {
   GroupInfoDTO,
   ChatMemberProfile,
   GroupParticipantCounts,
+  MessageObj,
+  UserProfile,
 } from '../types';
 import {
   GroupUpdateOptions,
@@ -39,9 +41,23 @@ import { User, isIUser } from './user';
 import { updateGroupConfig } from '../chat/updateGroupConfig';
 import { PushAPI } from './PushAPI';
 import { ChatInfoResponse } from '../chat';
-import { IChatListResponse, IChatMessage } from '../interfaces/ichat';
-
-import { IChatListResponseV2 } from '../interfaces/ichat';
+import {
+  ChatActionResponse,
+  ChatMemberProfileV2,
+  GroupActionResponse,
+  IChatListResponse,
+  IChatMessage,
+  IGroupAccessResponseV2,
+  IGroupResponseV2,
+  ISendMessageResponseV2,
+} from '../interfaces/ichat';
+import {
+  handleChatListVersion2Response,
+  transformToChatMessage,
+  transformToGroupV2Response,
+  transformToGroupAccessV2,
+  transformToGroupParticipantsV2,
+} from '../helpers/transformers';
 
 export function isChatListIFeeds(
   response: IChatListResponse
@@ -49,68 +65,6 @@ export function isChatListIFeeds(
   return (
     Array.isArray(response) && (response.length === 0 || 'msg' in response[0])
   );
-}
-
-export function transformFeedToChatMessage(
-  feed: IFeeds,
-  type: `${ChatListType}`,
-  raw: boolean
-): IChatMessage {
-  return {
-    timestamp: String(feed.msg.timestamp),
-    chatId: feed.chatId || '',
-    from: {
-      wallet: feed.did,
-      profile: {
-        name: feed.name,
-        desc: feed.about,
-        image: feed.profilePicture,
-      },
-    },
-    to: {
-      wallet: feed.msg.toCAIP10,
-    },
-    message: {
-      type: feed.msg.messageType,
-      content: feed.msg.messageContent,
-    },
-    meta: {
-      type: type,
-      group: feed.groupInformation
-        ? {
-            exist: true,
-            profile: {
-              name: feed.groupInformation.groupName,
-              desc: feed.groupInformation.groupDescription,
-              image: feed.groupInformation.groupImage,
-            },
-          }
-        : undefined,
-    },
-    reference: feed.msg.cid || '',
-    previous: feed.msg.link ? [feed.msg.link] : [],
-    raw: raw
-      ? {
-          msgVerificationProof:
-            feed.msg.verificationProof || feed.msg.signature || '',
-          from: {
-            profileVerificationProof: feed.profileVerificationProof || null,
-          },
-        }
-      : undefined,
-  };
-}
-
-export async function handleChatListVersion2Response(
-  response: IFeeds[],
-  type: `${ChatListType}`,
-  raw: boolean
-): Promise<IChatListResponseV2> {
-  return {
-    messages: response.map((feed) =>
-      transformFeedToChatMessage(feed, type, raw)
-    ),
-  };
 }
 
 export class Chat {
@@ -137,9 +91,7 @@ export class Chat {
       page?: number;
       limit?: number;
       overrideAccount?: string;
-      raw?: boolean;
-      version?: number;
-    }
+    } & { raw?: boolean; version?: number }
   ): Promise<IChatListResponse> {
     const accountToUse = options?.overrideAccount || this.account;
 
@@ -174,23 +126,56 @@ export class Chat {
     return response as IFeeds[];
   }
 
-  async latest(target: string) {
+  async latest(
+    target: string,
+    options?: {
+      raw?: boolean;
+      version?: number;
+    }
+  ): Promise<IMessageIPFS[] | IChatMessage> {
     const { threadHash, intent } = await PUSH_CHAT.conversationHash({
       conversationId: target,
       account: this.account,
       env: this.env,
     });
-    if (!threadHash) return {};
+
+    if (!threadHash) {
+      return [];
+    }
 
     const latestMessages = await PUSH_CHAT.latest({
       threadhash: threadHash,
-      toDecrypt: !!this.decryptedPgpPvtKey, // Set to false if signer is undefined or null,
+      toDecrypt: !!this.decryptedPgpPvtKey,
       pgpPrivateKey: this.decryptedPgpPvtKey,
       account: this.account,
       env: this.env,
     });
+
+    const raw = options?.raw || false;
+    const version = options?.version || 1;
     const listType = intent ? 'CHATS' : 'REQUESTS';
-    return latestMessages.map((message) => ({ ...message, listType }));
+
+    if (version === 1) {
+      return latestMessages.map((message) => ({ ...message, listType }));
+    } else if (version === 2) {
+      const chatInfo: ChatInfoResponse = await PUSH_CHAT.getChatInfo({
+        recipient: target,
+        account: this.account,
+        env: this.env,
+      });
+
+      if (latestMessages.length > 0) {
+        return transformToChatMessage(
+          latestMessages[0],
+          chatInfo,
+          listType,
+          raw
+        );
+      } else {
+        return {} as IChatMessage;
+      }
+    }
+    return [];
   }
 
   async history(
@@ -198,8 +183,8 @@ export class Chat {
     options?: {
       reference?: string | null;
       limit?: number;
-    }
-  ) {
+    } & { raw?: boolean; version?: number }
+  ): Promise<IMessageIPFS[] | IChatMessage[]> {
     let reference: string;
     const { threadHash, intent } = await PUSH_CHAT.conversationHash({
       conversationId: target,
@@ -223,37 +208,80 @@ export class Chat {
       limit: options?.limit,
     });
     const listType = intent ? 'CHATS' : 'REQUESTS';
+    const raw = options?.raw || false;
+    const version = options?.version || 1;
 
-    return historyMessages.map((message: any) => ({ ...message, listType }));
+    if (version === 1) {
+      return historyMessages.map((message: any) => ({ ...message, listType }));
+    } else if (version === 2) {
+      const chatInfo: ChatInfoResponse = await PUSH_CHAT.getChatInfo({
+        recipient: target,
+        account: this.account,
+        env: this.env,
+      });
+      return historyMessages.map((message) =>
+        transformToChatMessage(message, chatInfo, listType, raw)
+      );
+    } else {
+      return [];
+    }
   }
 
   async message(
     target: string,
     options?: {
       reference?: string | null;
+    } & { raw?: boolean; version?: number }
+  ): Promise<IMessageIPFS | IChatMessage | null> {
+    let reference: string | null = options?.reference || null;
+    let intent: boolean | null = null;
+
+    if (!reference) {
+      const conversationData = await PUSH_CHAT.conversationHash({
+        conversationId: target,
+        account: this.account,
+        env: this.env,
+      });
+      reference = conversationData.threadHash;
+      intent = conversationData.intent;
     }
-  ) {
-    let reference: string | null = null;
 
-    const { threadHash, intent } = await PUSH_CHAT.conversationHash({
-      conversationId: target,
-      account: this.account,
-      env: this.env,
-    });
-
-    reference = options?.reference || threadHash;
-
-    if (!reference) return {};
+    if (!reference) return null;
 
     const historyMessages = await this.history(target, { reference, limit: 1 });
     const listType = intent ? 'CHATS' : 'REQUESTS';
+    const raw = options?.raw || false;
+    const version = options?.version || 1;
 
-    return historyMessages.length > 0
-      ? { ...historyMessages[0], listType }
-      : null;
+    if (historyMessages.length === 0) return null;
+
+    if (version === 1) {
+      const message: IMessageIPFS = historyMessages[0] as IMessageIPFS;
+      return { ...message, listType } as IMessageIPFS;
+    }
+
+    if (version === 2) {
+      const chatInfo: ChatInfoResponse = await PUSH_CHAT.getChatInfo({
+        recipient: target,
+        account: this.account,
+        env: this.env,
+      });
+
+      return transformToChatMessage(
+        historyMessages[0] as IMessageIPFS,
+        chatInfo,
+        listType,
+        raw
+      );
+    }
+
+    return null;
   }
 
-  async send(recipient: string, options: Message): Promise<MessageWithCID> {
+  async send(
+    recipient: string,
+    options: Message & { raw?: boolean; version?: number }
+  ): Promise<MessageWithCID | ISendMessageResponseV2> {
     if (!this.decryptedPgpPvtKey) {
       throw new Error(PushAPI.ensureSignerMessage());
     }
@@ -269,10 +297,38 @@ export class Chat {
       pgpPrivateKey: this.decryptedPgpPvtKey,
       env: this.env,
     };
-    return await PUSH_CHAT.send(sendParams);
+    const response = await PUSH_CHAT.send(sendParams);
+
+    const raw = options.raw || false;
+    const version = options.version || 1;
+
+    if (version === 1) {
+      return response;
+    }
+
+    if (version === 2) {
+      const v2Response: ISendMessageResponseV2 = {
+        timestamp: String(response.timestamp),
+        chatId: response.chatId,
+        reference: response.cid,
+      };
+
+      if (raw) {
+        v2Response.raw = {
+          msgVerificationProof:
+            response.verificationProof || response.signature || '',
+        };
+      }
+
+      return v2Response;
+    }
+    throw new Error('Invalid version specified');
   }
 
-  async decrypt(messagePayloads: IMessageIPFS[]) {
+  async decrypt(
+    messagePayloads: IMessageIPFS[],
+    options?: { raw?: boolean; version?: number }
+  ): Promise<IMessageIPFS[] | IChatMessage[]> {
     if (!this.decryptedPgpPvtKey) {
       throw new Error(PushAPI.ensureSignerMessage());
     }
@@ -280,13 +336,46 @@ export class Chat {
     if (!isIUser(connectedUser)) {
       throw new Error('Connected user does not have the required properties.');
     }
-    return await PUSH_CHAT.decryptConversation({
+    const raw = options?.raw || false;
+    const version = options?.version || 1;
+    const historyMessages = await PUSH_CHAT.decryptConversation({
       pgpPrivateKey: this.decryptedPgpPvtKey,
       env: this.env,
       messages: messagePayloads,
       pgpHelper: PGPHelper,
       connectedUser: connectedUser,
     });
+
+    if (historyMessages.length === 0) {
+      return [];
+    }
+
+    const target = historyMessages[0].fromCAIP10;
+    const { intent } = await PUSH_CHAT.conversationHash({
+      conversationId: target,
+      account: this.account,
+      env: this.env,
+    });
+
+    const listType = intent ? 'CHATS' : 'REQUESTS';
+
+    if (version === 1) {
+      return historyMessages.map((message: any) => ({
+        ...message,
+        listType,
+      }));
+    } else if (version === 2) {
+      const chatInfo: ChatInfoResponse = await PUSH_CHAT.getChatInfo({
+        recipient: target,
+        account: this.account,
+        env: this.env,
+      });
+      return historyMessages.map((message) =>
+        transformToChatMessage(message, chatInfo, listType, raw)
+      );
+    } else {
+      return [];
+    }
   }
 
   async accept(target: string): Promise<string> {
@@ -316,7 +405,13 @@ export class Chat {
     });
   }
 
-  async block(users: Array<string>): Promise<IUser> {
+  async block(
+    users: Array<string>,
+    options?: {
+      raw?: boolean;
+      version?: number;
+    }
+  ): Promise<IUser | ChatActionResponse> {
     if (!this.decryptedPgpPvtKey) {
       throw new Error(PushAPI.ensureSignerMessage());
     }
@@ -343,7 +438,7 @@ export class Chat {
       throw new Error(PushAPI.ensureSignerMessage());
     }
 
-    return await PUSH_USER.config.update({
+    const response = await PUSH_USER.config.update({
       pgpPrivateKey: this.decryptedPgpPvtKey,
       account: this.account,
       config: {
@@ -352,9 +447,31 @@ export class Chat {
       env: this.env,
       progressHook: this.progressHook,
     });
+
+    const raw = options?.raw || false;
+    const version = options?.version || 1;
+
+    if (version === 1) {
+      return response;
+    } else if (version === 2) {
+      const result: any = { success: true };
+      if (raw) {
+        result.raw = {
+          actionVerificationProof: response.config?.configVerificationProof,
+        };
+      }
+      return result;
+    }
+    throw new Error('Invalid version specified');
   }
 
-  async unblock(users: Array<string>): Promise<IUser> {
+  async unblock(
+    users: Array<string>,
+    options?: {
+      raw?: boolean;
+      version?: number;
+    }
+  ): Promise<IUser | ChatActionResponse> {
     if (!this.decryptedPgpPvtKey) {
       throw new Error(PushAPI.ensureSignerMessage());
     }
@@ -384,7 +501,7 @@ export class Chat {
       }
     );
 
-    return await PUSH_USER.profile.update({
+    const response = await PUSH_USER.profile.update({
       pgpPrivateKey: this.decryptedPgpPvtKey,
       account: this.account,
       profile: {
@@ -396,6 +513,22 @@ export class Chat {
       env: this.env,
       progressHook: this.progressHook,
     });
+
+    const raw = options?.raw || false;
+    const version = options?.version || 1;
+
+    if (version === 1) {
+      return response;
+    } else if (version === 2) {
+      const result: any = { success: true };
+      if (raw) {
+        result.raw = {
+          actionVerificationProof: response.config?.configVerificationProof,
+        };
+      }
+      return result;
+    }
+    throw new Error('Invalid version specified');
   }
 
   async info(
@@ -445,8 +578,8 @@ export class Chat {
   group = {
     create: async (
       name: string,
-      options?: GroupCreationOptions
-    ): Promise<GroupInfoDTO | GroupDTO> => {
+      options?: GroupCreationOptions & { raw?: boolean; version?: number }
+    ): Promise<GroupInfoDTO | GroupDTO | IGroupResponseV2> => {
       if (!this.decryptedPgpPvtKey) {
         throw new Error(PushAPI.ensureSignerMessage());
       }
@@ -474,23 +607,36 @@ export class Chat {
         members: options?.members ? options.members : [],
         admins: options?.admins ? options.admins : [],
       };
-      const response = await PUSH_CHAT.createGroupV2(groupParams);
+      let response: GroupDTO | GroupInfoDTO = await PUSH_CHAT.createGroupV2(
+        groupParams
+      );
 
-      if (this.scalabilityV2Feature) {
-        return response;
-      } else {
-        return await PUSH_CHAT.getGroup({
+      const raw = options?.raw || false;
+      const version = options?.version || 1;
+
+      if (!this.scalabilityV2Feature) {
+        response = await PUSH_CHAT.getGroup({
           chatId: response.chatId,
           env: this.env,
         });
       }
+
+      if (version === 1) {
+        return response;
+      } else if (version === 2) {
+        return transformToGroupV2Response(response, raw);
+      }
+      throw new Error('Invalid version specified');
     },
 
     participants: {
       list: async (
         chatId: string,
-        options?: GetGroupParticipantsOptions
-      ): Promise<{ members: ChatMemberProfile[] }> => {
+        options?: GetGroupParticipantsOptions & {
+          raw?: boolean;
+          version?: number;
+        }
+      ): Promise<{ members: ChatMemberProfile[] | ChatMemberProfileV2[] }> => {
         const {
           page = 1,
           limit = 20,
@@ -506,7 +652,20 @@ export class Chat {
         };
 
         const members = await PUSH_CHAT.getGroupMembers(getGroupMembersOptions);
-        return { members };
+        const raw = options?.raw || false;
+        const version = options?.version || 1;
+
+        if (version === 1) {
+          return { members };
+        } else if (version === 2) {
+          const group = await PUSH_CHAT.getGroupInfo({
+            chatId: chatId,
+            env: this.env,
+          });
+          return await transformToGroupParticipantsV2(members, raw, group);
+        }
+
+        throw new Error('Invalid version specified');
       },
 
       count: async (chatId: string): Promise<GroupParticipantCounts> => {
@@ -541,17 +700,35 @@ export class Chat {
       },
     },
 
-    permissions: async (chatId: string): Promise<GroupAccess> => {
+    permissions: async (
+      chatId: string,
+      options?: { raw?: boolean; version?: number }
+    ): Promise<GroupAccess | IGroupAccessResponseV2> => {
       const getGroupAccessOptions: PUSH_CHAT.GetGroupAccessType = {
         chatId,
         did: this.account,
         env: this.env,
       };
-      return await PUSH_CHAT.getGroupAccess(getGroupAccessOptions);
+      const access = await PUSH_CHAT.getGroupAccess(getGroupAccessOptions);
+      const raw = options?.raw || false;
+      const version = options?.version || 1;
+
+      if (version === 1) {
+        return access;
+      } else if (version === 2) {
+        return await transformToGroupAccessV2(access, chatId, this.env, raw);
+      }
+
+      throw new Error('Invalid version specified');
     },
 
-    info: async (chatId: string): Promise<GroupDTO | GroupInfoDTO> => {
-      return this.scalabilityV2Feature
+    info: async (
+      chatId: string,
+      options?: { raw?: boolean; version?: number }
+    ): Promise<GroupDTO | GroupInfoDTO | IGroupResponseV2> => {
+      const raw = options?.raw || false;
+      const version = options?.version || 1;
+      let response: GroupDTO | GroupInfoDTO = this.scalabilityV2Feature
         ? await PUSH_CHAT.getGroupInfo({
             chatId: chatId,
             env: this.env,
@@ -560,12 +737,18 @@ export class Chat {
             chatId: chatId,
             env: this.env,
           });
+      if (version === 1) {
+        return response;
+      } else if (version === 2) {
+        return transformToGroupV2Response(response, raw);
+      }
+      throw new Error('Invalid version specified');
     },
 
     update: async (
       chatId: string,
-      options: GroupUpdateOptions
-    ): Promise<GroupInfoDTO | GroupDTO> => {
+      options: GroupUpdateOptions & { raw?: boolean; version?: number }
+    ): Promise<GroupInfoDTO | GroupDTO | IGroupResponseV2> => {
       if (!this.decryptedPgpPvtKey) {
         throw new Error(PushAPI.ensureSignerMessage());
       }
@@ -605,22 +788,32 @@ export class Chat {
         env: this.env,
       };
       await updateGroupProfile(updateGroupProfileOptions);
-      const response = await updateGroupConfig(updateGroupConfigOptions);
+      let response: GroupDTO | GroupInfoDTO = await updateGroupConfig(
+        updateGroupConfigOptions
+      );
 
-      if (this.scalabilityV2Feature) {
-        return response;
-      } else {
-        return await PUSH_CHAT.getGroup({
+      const raw = options?.raw || false;
+      const version = options?.version || 1;
+
+      if (!this.scalabilityV2Feature) {
+        response = await PUSH_CHAT.getGroup({
           chatId: response.chatId,
           env: this.env,
         });
       }
+
+      if (version === 1) {
+        return response;
+      } else if (version === 2) {
+        return transformToGroupV2Response(response, raw);
+      }
+      throw new Error('Invalid version specified');
     },
 
     add: async (
       chatId: string,
-      options: ManageGroupOptions
-    ): Promise<GroupInfoDTO | GroupDTO> => {
+      options: ManageGroupOptions & { raw?: boolean; version?: number }
+    ): Promise<GroupInfoDTO | GroupDTO | GroupActionResponse> => {
       if (!this.decryptedPgpPvtKey) {
         throw new Error(PushAPI.ensureSignerMessage());
       }
@@ -663,21 +856,33 @@ export class Chat {
           overrideSecretKeyGeneration: !this.scalabilityV2Feature,
         });
       }
-
-      if (this.scalabilityV2Feature) {
-        return response;
-      } else {
-        return await PUSH_CHAT.getGroup({
-          chatId: response.chatId,
-          env: this.env,
-        });
+      const raw = options?.raw || false;
+      const version = options?.version || 1;
+      if (version === 1) {
+        if (this.scalabilityV2Feature) {
+          return response;
+        } else {
+          return await PUSH_CHAT.getGroup({
+            chatId: response.chatId,
+            env: this.env,
+          });
+        }
+      } else if (version === 2) {
+        const result: any = { success: true };
+        if (raw) {
+          result.raw = {
+            actionVerificationProof: response.deltaVerificationProof,
+          };
+        }
+        return result;
       }
+      throw new Error('Invalid version specified');
     },
 
     remove: async (
       chatId: string,
-      options: RemoveFromGroupOptions
-    ): Promise<GroupInfoDTO | GroupDTO> => {
+      options: RemoveFromGroupOptions & { raw?: boolean; version?: number }
+    ): Promise<void | GroupActionResponse> => {
       const { accounts } = options;
 
       if (!this.decryptedPgpPvtKey) {
@@ -710,8 +915,10 @@ export class Chat {
           membersToRemove.push(account);
         }
       }
+      let deltaVerificationProof;
+      let response;
       if (adminsToRemove.length > 0) {
-        await PUSH_CHAT.removeAdmins({
+        response = await PUSH_CHAT.removeAdmins({
           chatId: chatId,
           admins: adminsToRemove,
           env: this.env,
@@ -720,10 +927,11 @@ export class Chat {
           pgpPrivateKey: this.decryptedPgpPvtKey,
           overrideSecretKeyGeneration: !this.scalabilityV2Feature,
         });
+        deltaVerificationProof = response.deltaVerificationProof;
       }
 
       if (membersToRemove.length > 0) {
-        await PUSH_CHAT.removeMembers({
+        response = await PUSH_CHAT.removeMembers({
           chatId: chatId,
           members: membersToRemove,
           env: this.env,
@@ -732,11 +940,28 @@ export class Chat {
           pgpPrivateKey: this.decryptedPgpPvtKey,
           overrideSecretKeyGeneration: !this.scalabilityV2Feature,
         });
+        deltaVerificationProof = response.deltaVerificationProof;
       }
-      return await this.group.info(chatId);
+      const raw = options?.raw || false;
+      const version = options?.version || 1;
+      if (version === 1) {
+        await this.group.info(chatId);
+      } else if (version === 2) {
+        const result: any = { success: true };
+        if (raw && response) {
+          result.raw = {
+            actionVerificationProof: response.deltaVerificationProof,
+          };
+        }
+        return result;
+      }
+      throw new Error('Invalid version specified');
     },
 
-    modify: async (chatId: string, options: ManageGroupOptions) => {
+    modify: async (
+      chatId: string,
+      options: ManageGroupOptions & { raw?: boolean; version?: number }
+    ) => {
       const { role, accounts } = options;
       if (!this.decryptedPgpPvtKey) {
         throw new Error(PushAPI.ensureSignerMessage());
@@ -755,8 +980,10 @@ export class Chat {
           throw new Error(`Invalid account address: ${account}`);
         }
       });
-
-      return await PUSH_CHAT.modifyRoles({
+      const raw = options?.raw || false;
+      const version = options?.version || 1;
+      let response: GroupInfoDTO;
+      response = await PUSH_CHAT.modifyRoles({
         chatId: chatId,
         newRole: role,
         members: accounts,
@@ -766,9 +993,24 @@ export class Chat {
         pgpPrivateKey: this.decryptedPgpPvtKey,
         overrideSecretKeyGeneration: !this.scalabilityV2Feature,
       });
+      if (version === 1) {
+        return;
+      } else if (version === 2) {
+        const result: any = { success: true };
+        if (raw && response) {
+          result.raw = {
+            actionVerificationProof: response.deltaVerificationProof,
+          };
+        }
+        return result;
+      }
+      throw new Error('Invalid version specified');
     },
 
-    join: async (target: string): Promise<GroupInfoDTO | GroupDTO> => {
+    join: async (
+      target: string,
+      options?: { raw?: boolean; version?: number }
+    ): Promise<void> => {
       if (!this.decryptedPgpPvtKey) {
         throw new Error(PushAPI.ensureSignerMessage());
       }
@@ -778,6 +1020,7 @@ export class Chat {
         env: this.env,
       });
 
+      let deltaVerificationProof;
       if (status.isPending) {
         await PUSH_CHAT.approve({
           senderAddress: target,
@@ -787,8 +1030,9 @@ export class Chat {
           pgpPrivateKey: this.decryptedPgpPvtKey,
           overrideSecretKeyGeneration: !this.scalabilityV2Feature,
         });
+        // TODO: get action verification proof from here
       } else if (!status.isMember) {
-        await PUSH_CHAT.addMembers({
+        const response = await PUSH_CHAT.addMembers({
           chatId: target,
           members: [this.account],
           env: this.env,
@@ -797,11 +1041,28 @@ export class Chat {
           pgpPrivateKey: this.decryptedPgpPvtKey,
           overrideSecretKeyGeneration: !this.scalabilityV2Feature,
         });
+        deltaVerificationProof = response.deltaVerificationProof;
       }
-      return await this.group.info(target);
+      const raw = options?.raw || false;
+      const version = options?.version || 1;
+      if (version === 1) {
+        return;
+      } else if (version === 2) {
+        const result: any = { success: true };
+        if (raw) {
+          result.raw = {
+            actionVerificationProof: deltaVerificationProof,
+          };
+        }
+        return result;
+      }
+      throw new Error('Invalid version specified');
     },
 
-    leave: async (target: string): Promise<GroupInfoDTO | GroupDTO> => {
+    leave: async (
+      target: string,
+      options?: { raw?: boolean; version?: number }
+    ): Promise<GroupInfoDTO | GroupDTO> => {
       if (!this.decryptedPgpPvtKey) {
         throw new Error(PushAPI.ensureSignerMessage());
       }
@@ -836,17 +1097,33 @@ export class Chat {
         });
       }
 
-      if (this.scalabilityV2Feature) {
-        return response;
-      } else {
-        return await PUSH_CHAT.getGroup({
-          chatId: response.chatId,
-          env: this.env,
-        });
+      const raw = options?.raw || false;
+      const version = options?.version || 1;
+      if (version === 1) {
+        if (this.scalabilityV2Feature) {
+          return response;
+        } else {
+          return await PUSH_CHAT.getGroup({
+            chatId: response.chatId,
+            env: this.env,
+          });
+        }
+      } else if (version === 2) {
+        const result: any = { success: true };
+        if (raw) {
+          result.raw = {
+            actionVerificationProof: response.deltaVerificationProof,
+          };
+        }
+        return result;
       }
+      throw new Error('Invalid version specified');
     },
 
-    reject: async (target: string): Promise<void> => {
+    reject: async (
+      target: string,
+      options?: { raw?: boolean; version?: number }
+    ): Promise<void> => {
       if (!this.decryptedPgpPvtKey) {
         throw new Error(PushAPI.ensureSignerMessage());
       }

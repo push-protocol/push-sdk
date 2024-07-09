@@ -1,4 +1,4 @@
-import { IFeeds } from '../types';
+import { ChatStatus, GroupAccess, IFeeds, MessageObj, Rules } from '../types';
 import { IUserProfile } from './iuser';
 
 export interface IGroupProfile {
@@ -19,7 +19,7 @@ export interface IChatMessage {
   };
   message: {
     type: string;
-    content: string;
+    content: MessageObj['content'];
   };
   meta: {
     type: string;
@@ -43,3 +43,75 @@ export interface IChatListResponseV2 {
 }
 
 export type IChatListResponse = IFeeds[] | IChatListResponseV2;
+
+export interface ISendMessageResponseV2 {
+  timestamp: string;
+  chatId: string;
+  reference: string;
+  raw?: {
+    msgVerificationProof: string;
+  };
+}
+
+export interface IGroupResponseV2 {
+  group: {
+    profile: IGroupProfile;
+    rules?: Rules | null;
+    public: boolean;
+    type: string;
+    creator: string;
+  };
+  config: {
+    meta: string | null;
+    scheduleAt: Date | null;
+    scheduleEnd: Date | null;
+    status: ChatStatus | null;
+  };
+  chatId: string;
+  raw?: {
+    verificationProof?: string | null;
+    profileVerificationProof?: string | null;
+    configVerificationProof?: string | null;
+  };
+}
+export interface IGroupAccessResponseV2 extends GroupAccess {
+  raw?: {
+    verificationProof?: string | null;
+    profileVerificationProof?: string | null;
+    configVerificationProof?: string | null;
+  };
+}
+
+export interface ChatMemberProfileV2 {
+  did: string;
+  wallets: string;
+  origin?: string | null;
+  profile: IUserProfile;
+  publicKey: string | null;
+  config: {
+    blockedUsers: string[] | null;
+  };
+  raw?: {
+    verificationProof: string;
+    profileVerificationProof?: string | null;
+    configVerificationProof?: string | null;
+  };
+}
+
+export interface IGroupParticipantsResponseV2 {
+  members: ChatMemberProfileV2[];
+}
+
+export interface GroupActionResponse {
+  success: boolean;
+  raw?: {
+    actionVerificationProof?: string | null;
+  };
+}
+
+export interface ChatActionResponse {
+  success: boolean;
+  raw?: {
+    actionVerificationProof?: string | null;
+  };
+}
