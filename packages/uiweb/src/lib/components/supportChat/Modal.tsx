@@ -6,16 +6,9 @@ import { AddressInfo } from './AddressInfo';
 import PoweredByPushLogo from '../../icons/sponsorPush.svg';
 import { SponserPushIcon } from '../../icons/SponserPush';
 import { HandWaveSvg } from '../../icons/HandWaveSvg';
-import {
-  SupportChatMainStateContext,
-  SupportChatPropsContext,
-} from '../../context';
+import { SupportChatMainStateContext, SupportChatPropsContext } from '../../context';
 import { Chats } from './Chats';
-import {
-  createUserIfNecessary,
-  getChats,
-  walletToPCAIP10,
-} from '../../helpers';
+import { createUserIfNecessary, getChats, walletToPCAIP10 } from '../../helpers';
 import type { IMessageIPFS } from '../../types';
 import { useChatScroll } from '../../hooks';
 import { Spinner } from './spinner/Spinner';
@@ -26,12 +19,9 @@ const chatsFetchedLimit = 10;
 
 export const Modal: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [lastThreadHashFetched, setLastThreadHashFetched] = useState<
-    string | null
-  >(null);
+  const [lastThreadHashFetched, setLastThreadHashFetched] = useState<string | null>(null);
   const [wasLastListPresent, setWasLastListPresent] = useState<boolean>(true);
-  const { supportAddress, user, env, account, signer, greetingMsg, theme } =
-    useContext<any>(SupportChatPropsContext);
+  const { supportAddress, user, env, account, signer, greetingMsg, theme } = useContext<any>(SupportChatPropsContext);
   const {
     chats,
     setChatsSorted,
@@ -170,7 +160,11 @@ export const Modal: React.FC = () => {
         />
       )}
       {loading && <Spinner size="40" />}
-      <ChatSection ref={listInnerRef} onScroll={onScroll} theme={theme}>
+      <ChatSection
+        ref={listInnerRef}
+        onScroll={onScroll}
+        theme={theme}
+      >
         {connectedUser && chats.length ? (
           chats.map((chat: IMessageIPFS, index: number) => (
             <Chats
@@ -186,17 +180,28 @@ export const Modal: React.FC = () => {
       </ChatSection>
       {!connectedUser && !loading && (
         <ConnectSection>
-          <Button onClick={() => connectUser()} theme={theme}>
+          <Button
+            onClick={() => connectUser()}
+            theme={theme}
+          >
             Connect
           </Button>
           <Span>Connect your wallet to continue</Span>
         </ConnectSection>
       )}
-      {toastMessage && <Toaster message={toastMessage} type={toastType} />}
+      {toastMessage && (
+        <Toaster
+          message={toastMessage}
+          type={toastType}
+        />
+      )}
 
       <InputSection>
         {connectedUser && <ChatInput />}
-        <Div height="18px" width="145px">
+        <Div
+          height="18px"
+          width="145px"
+        >
           <SponserPushIcon />
         </Div>
       </InputSection>

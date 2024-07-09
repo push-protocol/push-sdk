@@ -136,6 +136,7 @@ export const MessageCard = ({
         key={`${fragmentIndex}-${lineIndex}`} // Updated key to be more unique
         alignSelf="start"
         textAlign="left"
+        lineHeight="1.4em"
         fontSize={position ? `${theme.fontSize?.chatSentBubbleText}` : `${theme.fontSize?.chatReceivedBubbleText}`}
         fontWeight={
           position ? `${theme.fontWeight?.chatSentBubbleText}` : `${theme.fontWeight?.chatReceivedBubbleText}`

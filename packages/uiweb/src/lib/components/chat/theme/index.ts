@@ -217,12 +217,12 @@ const darkSkeletonLoading = keyframes`
 const animation = () =>
   css`
     ${lightSkeletonLoading} 1s linear infinite alternate;
-`;
+  `;
 
 const darkAnimation = () =>
   css`
     ${darkSkeletonLoading} 1s linear infinite alternate;
-`;
+  `;
 
 //dark theme object
 export const lightChatTheme: IChatTheme = {
@@ -300,20 +300,20 @@ export const lightChatTheme: IChatTheme = {
   fontSize: {
     chatProfileText: '17px',
     messageInputText: '16px',
-    chatSentBubbleText: '16px',
-    chatReceivedBubbleText: '16px',
+    chatSentBubbleText: '14px',
+    chatReceivedBubbleText: '14px',
     timestamp: '12px',
     encryptionMessageText: '13px',
-    chatReceivedBubbleAddressText: '16px',
-    chatReceivedBubbleTimestampText: '12px',
-    chatSentBubbleTimestampText: '12px',
+    chatReceivedBubbleAddressText: '12px',
+    chatReceivedBubbleTimestampText: '10px',
+    chatSentBubbleTimestampText: '10px',
     searchInputText: '16px',
     searchPlaceholderText: '16px',
-    chatPreviewParticipantText: '16px',
+    chatPreviewParticipantText: '14px',
     chatPreviewMessageText: '14px',
     chatPreviewDateText: '12px',
     chatPreviewBadgeText: '12px',
-    userProfileText: '18px',
+    userProfileText: '16px',
     chatFrameTitleText: '16px',
     chatFrameDescriptionText: '14px',
   },
@@ -325,7 +325,7 @@ export const lightChatTheme: IChatTheme = {
     chatReceivedBubbleText: '400',
     timestamp: '400',
     encryptionMessageText: '400',
-    chatReceivedBubbleAddressText: '300',
+    chatReceivedBubbleAddressText: '500',
     chatReceivedBubbleTimestampText: '400',
     chatSentBubbleTimestampText: '400',
     searchInputText: '400',
@@ -397,7 +397,7 @@ export const lightChatTheme: IChatTheme = {
   backdropFilter: 'none',
   spinnerColor: 'rgb(202, 89, 155)',
   scrollbarColor: 'rgb(202, 89, 155)',
-  skeletonBG: animation
+  skeletonBG: animation,
 };
 
 export const darkChatTheme: IChatTheme = {
@@ -454,8 +454,8 @@ export const darkChatTheme: IChatTheme = {
     buttonBackground: 'rgb(202, 89, 155)',
     buttonHotBackground: '#D53A94',
     searchInputBackground: 'rgb(64,70,80)',
-    modalBackground: 'rgb(47, 49, 55)',
-    criteriaLabelBackground: 'rgb(47, 49, 55)',
+    modalBackground: '#202124',
+    criteriaLabelBackground: '#202124',
     modalInputBackground: 'transparent',
     modalHoverBackground: 'rgb(64, 70, 80)',
     buttonDisableBackground: '#787E99',
@@ -463,32 +463,31 @@ export const darkChatTheme: IChatTheme = {
     toastErrorBackground: 'linear-gradient(89.96deg, #FF2070 -101.85%, #2F3137 51.33%)',
     toastWarningBackground: 'linear-gradient(90.15deg, #FFB800 -125.65%, #FFB800 -125.63%, #FFF9FB 42.81%)',
     toastShadowBackground: '#00000010',
-    chatPreviewBackground: 'rgb(47, 49, 55)',
+    chatPreviewBackground: '#202124',
     chatPreviewSelectedBackground: 'rgb(64, 70, 80)',
     chatPreviewBadgeBackground: 'rgb(226,8,128)',
     chatPreviewHoverBackground: 'rgb(64, 70, 80)',
-    userProfileBackground: 'rgb(47, 49, 55)',
-
-    chatWidgetModalBackground: 'rgb(47, 49, 55)',
+    userProfileBackground: '#202124',
+    chatWidgetModalBackground: '#202124',
   },
 
   fontSize: {
     chatProfileText: '17px',
     messageInputText: '16px',
-    chatSentBubbleText: '16px',
-    chatReceivedBubbleText: '16px',
+    chatSentBubbleText: '14px',
+    chatReceivedBubbleText: '14px',
     timestamp: '12px',
     encryptionMessageText: '13px',
-    chatReceivedBubbleAddressText: '16px',
-    chatReceivedBubbleTimestampText: '12px',
-    chatSentBubbleTimestampText: '12px',
+    chatReceivedBubbleAddressText: '12px',
+    chatReceivedBubbleTimestampText: '10px',
+    chatSentBubbleTimestampText: '10px',
     searchInputText: '16px',
     searchPlaceholderText: '16px',
-    chatPreviewParticipantText: '16px',
+    chatPreviewParticipantText: '14px',
     chatPreviewMessageText: '14px',
     chatPreviewDateText: '12px',
     chatPreviewBadgeText: '12px',
-    userProfileText: '18px',
+    userProfileText: '16px',
     chatFrameTitleText: '16px',
     chatFrameDescriptionText: '14px',
   },
@@ -500,7 +499,7 @@ export const darkChatTheme: IChatTheme = {
     chatReceivedBubbleText: '400',
     timestamp: '400',
     encryptionMessageText: '400',
-    chatReceivedBubbleAddressText: '300',
+    chatReceivedBubbleAddressText: '500',
     chatReceivedBubbleTimestampText: '400',
     chatSentBubbleTimestampText: '400',
     searchInputText: '400',
@@ -571,5 +570,5 @@ export const darkChatTheme: IChatTheme = {
   backdropFilter: 'none',
   spinnerColor: 'rgb(202, 89, 155)',
   scrollbarColor: 'rgb(202, 89, 155)',
-  skeletonBG: darkAnimation
+  skeletonBG: darkAnimation,
 };
