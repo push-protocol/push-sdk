@@ -611,7 +611,7 @@ const SearchError = styled(Span)`
   align-self: center;
   padding: 12px 18px;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: normal;
   font-size: 10px;
   font-weight: 500;
 `;
