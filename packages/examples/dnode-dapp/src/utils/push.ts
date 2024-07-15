@@ -2,6 +2,7 @@ import { PushAPI } from '@pushprotocol/dnode';
 import { ENV } from '@pushprotocol/dnode/src/lib/constants';
 import axios from 'axios';
 import { getCheckSumAddress } from '.';
+import { channel } from 'diagnostics_channel';
 
 const env = ENV.DEV;
 
@@ -44,4 +45,18 @@ export const getRecentTransactionAccounts = async () => {
       console.error('Error:', error);
       return [];
     });
+};
+
+export const changeSubscription = async (
+  channel: string,
+  action: 'Subscribe' | 'Unsubscribe',
+  signer: any
+) => {
+  if (action === 'Subscribe') {
+    const userAlice = await PushAPI.initialize(signer, { env });
+    return await userAlice.notification.subscribe(channel);
+  } else {
+    const userAlice = await PushAPI.initialize(signer, { env });
+    return await userAlice.notification.unsubscribe(channel);
+  }
 };
