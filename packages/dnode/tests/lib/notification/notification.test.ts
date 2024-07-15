@@ -5,12 +5,10 @@ import { createWalletClient, http } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { sepolia } from 'viem/chains';
 import { ENV } from '../../../src/lib/constants';
-
-// import tokenABI from './tokenABI';
 describe('PushAPI.notification functionality', () => {
   let userAlice: PushAPI;
-  let userBob: PushAPI;
   let userKate: PushAPI;
+  let userBob: PushAPI;
   let signer1: any;
   let account1: string;
   let signer2: any;
@@ -41,13 +39,12 @@ describe('PushAPI.notification functionality', () => {
     const envMode = process.env.ENV as EnvStrings;
     const _env = ENV[envMode];
 
-    // initialisation with signer and provider
-    userKate = await PushAPI.initialize(signer2, { env: _env });
+    // initialisation with no signer
+    userBob = await PushAPI.initialize(null, { env: _env, account: account1 });
     // initialisation with signer
     userAlice = await PushAPI.initialize(signer1, { env: _env });
-    // TODO: remove signer1 after signer becomes optional
-    // initialisation without signer
-    userBob = await PushAPI.initialize(signer1, { env: _env });
+    // initialisation with signer and provider
+    userKate = await PushAPI.initialize(signer2, { env: _env });
     // initialisation with viem
     userViem = await PushAPI.initialize(viemSigner, { env: _env });
   });
@@ -62,50 +59,46 @@ describe('PushAPI.notification functionality', () => {
     });
   });
 
-  describe.skip('notification :: subscribe', () => {
-    beforeEach(async () => {
-      //   await userAlice.notification.unsubscribe(
-      //     'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
-      //   );
-      //   await userKate.notification.unsubscribe(
-      //     'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
-      //   );
-      // });
-      // afterEach(async () => {
-      //   await userAlice.notification.unsubscribe(
-      //     'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
-      //   );
-      //   await userKate.notification.unsubscribe(
-      //     'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
-      //   );
-    });
-    it.skip('Without signer object: should throw error', async () => {
+  describe('notification :: subscribe', () => {
+    it('Without signer object: should throw error', async () => {
       await expect(() =>
         userBob.notification.subscribe(
-          'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
+          'eip155:11155111:0x35B84d6848D16415177c64D64504663b998A6ab4'
         )
       ).to.Throw;
     });
 
     it('With signer object: should convert to eth caip for normal address', async () => {
-      const res = await userKate.notification.subscribe(
-        '0xD8634C39BBFd4033c0d3289C4515275102423681'
+      const res = await userAlice.notification.subscribe(
+        '0x35B84d6848D16415177c64D64504663b998A6ab4'
       );
-      // console.log(res);
-      expect(res).not.null;
+      expect(res.status).to.equal(204);
+    });
+
+    it('With signer object and provider: should convert to eth caip for normal address', async () => {
+      const res = await userAlice.notification.subscribe(
+        '0x35B84d6848D16415177c64D64504663b998A6ab4'
+      );
+      expect(res.status).to.equal(204);
+    });
+
+    it('With signer object nad provider: should optin with partial caip', async () => {
+      const res = await userKate.notification.subscribe(
+        'eip155:0x35B84d6848D16415177c64D64504663b998A6ab4'
+      );
+      expect(res.status).to.equal(204);
     });
 
     it('With signer object: should optin with partial caip', async () => {
       const res = await userKate.notification.subscribe(
-        'eip155:0xD8634C39BBFd4033c0d3289C4515275102423681'
+        'eip155:0x35B84d6848D16415177c64D64504663b998A6ab4'
       );
-      // console.log(res);
-      expect(res).not.null;
+      expect(res.status).to.equal(204);
     });
 
-    it('With signer object: Should subscribe', async () => {
+    it('With signer object and settings : Should subscribe', async () => {
       const res = await userAlice.notification.subscribe(
-        'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681',
+        'eip155:11155111:0x35B84d6848D16415177c64D64504663b998A6ab4',
         {
           settings: [
             {
@@ -118,19 +111,10 @@ describe('PushAPI.notification functionality', () => {
           ],
         }
       );
-      // console.log(res)
-      expect(res).not.null;
+      expect(res.status).to.equal(204);
     });
 
-    it('With signer and provider: Should subscribe', async () => {
-      const res = await userKate.notification.subscribe(
-        'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
-      );
-      // console.log(res)
-      expect(res).not.null;
-    });
-
-    it('With signer and provider: Should subscribe', async () => {
+    it('With signer and provider and settings : Should subscribe', async () => {
       const res = await userKate.notification.subscribe(
         'eip155:11155111:0xC8c243a4fd7F34c49901fe441958953402b7C024',
         {
@@ -159,30 +143,61 @@ describe('PushAPI.notification functionality', () => {
           ],
         }
       );
-      // console.log(res);
-      expect(res).not.null;
+      expect(res.status).to.equal(204);
     });
 
     it('With viem signer and provider: Should subscribe', async () => {
       const res = await userViem.notification.subscribe(
         'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
       );
+      expect(res.status).to.equal(204);
       expect(res.message).to.equal('successfully opted into channel');
+    });
+  });
+
+  describe('notification :: unsubscribe', () => {
+    it('Without signer object: should throw error', async () => {
+      await expect(() =>
+        userBob.notification.unsubscribe(
+          'eip155:11155111:0x35B84d6848D16415177c64D64504663b998A6ab4'
+        )
+      ).to.Throw;
+    });
+
+    it('With signer object: should convert to eth caip for normal address', async () => {
+      const res = await userAlice.notification.unsubscribe(
+        '0x35B84d6848D16415177c64D64504663b998A6ab4'
+      );
+      expect((res as { status: string }).status).to.equal(204);
+    });
+
+    it('With signer object and provider: should convert to eth caip for normal address', async () => {
+      const res = await userAlice.notification.unsubscribe(
+        '0x35B84d6848D16415177c64D64504663b998A6ab4'
+      );
+      expect((res as { status: string }).status).to.equal(204);
+    });
+
+    it('With signer object nad provider: should optout with partial caip', async () => {
+      const res = await userKate.notification.unsubscribe(
+        'eip155:0x35B84d6848D16415177c64D64504663b998A6ab4'
+      );
+      expect((res as { status: string }).status).to.equal(204);
+    });
+
+    it('With signer object: should optout with partial caip', async () => {
+      const res = await userKate.notification.unsubscribe(
+        'eip155:0x35B84d6848D16415177c64D64504663b998A6ab4'
+      );
+      expect((res as { status: string }).status).to.equal(204);
     });
 
     it('With viem signer and provider: Should unsubscribe', async () => {
       const res = await userViem.notification.unsubscribe(
         'eip155:11155111:0xD8634C39BBFd4033c0d3289C4515275102423681'
       );
-      expect(res.message).to.equal('successfully opted out channel');
-    });
-
-    it('With signer object: should convert to eth caip for normal address', async () => {
-      const res = await userKate.notification.unsubscribe(
-        '0xD8634C39BBFd4033c0d3289C4515275102423681'
-      );
-      // console.log(res);
-      expect(res).not.null;
+      expect((res as { status: string }).status).to.equal(204);
+      expect(res.message).to.equal('successfully opted into channel');
     });
   });
 
