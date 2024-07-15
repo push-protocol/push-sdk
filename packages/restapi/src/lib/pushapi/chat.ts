@@ -990,6 +990,7 @@ export class Chat {
       const version = options?.version || 1;
       if (version === 1) {
         await this.group.info(chatId);
+        return;
       } else if (version === 2) {
         const result: any = { success: true };
         if (raw && response) {
