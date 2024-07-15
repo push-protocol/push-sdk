@@ -548,13 +548,10 @@ export class Chat {
       }
     );
 
-    const response = await PUSH_USER.profile.update({
+    const response = await PUSH_USER.config.update({
       pgpPrivateKey: this.decryptedPgpPvtKey,
       account: this.account,
-      profile: {
-        name: user.profile.name!,
-        desc: user.profile.desc!,
-        picture: user.profile.picture!,
+      config: {
         blockedUsersList: user.profile.blockedUsersList,
       },
       env: this.env,
