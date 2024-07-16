@@ -1006,7 +1006,7 @@ export class Chat {
     modify: async (
       chatId: string,
       options: ManageGroupOptions & { raw?: boolean; version?: number }
-    ) => {
+    ): Promise<void | GroupActionResponse> => {
       const { role, accounts } = options;
       if (!this.decryptedPgpPvtKey) {
         throw new Error(PushAPI.ensureSignerMessage());
@@ -1055,7 +1055,7 @@ export class Chat {
     join: async (
       target: string,
       options?: { raw?: boolean; version?: number }
-    ): Promise<void | ChatActionResponse> => {
+    ): Promise<void | GroupActionResponse> => {
       if (!this.decryptedPgpPvtKey) {
         throw new Error(PushAPI.ensureSignerMessage());
       }
@@ -1122,7 +1122,7 @@ export class Chat {
     leave: async (
       target: string,
       options?: { raw?: boolean; version?: number }
-    ): Promise<GroupInfoDTO | GroupDTO> => {
+    ): Promise<GroupInfoDTO | GroupDTO | GroupActionResponse> => {
       if (!this.decryptedPgpPvtKey) {
         throw new Error(PushAPI.ensureSignerMessage());
       }
@@ -1183,7 +1183,7 @@ export class Chat {
     reject: async (
       target: string,
       options?: { raw?: boolean; version?: number }
-    ): Promise<void | ChatActionResponse> => {
+    ): Promise<void | GroupActionResponse> => {
       if (!this.decryptedPgpPvtKey) {
         throw new Error(PushAPI.ensureSignerMessage());
       }
