@@ -55,26 +55,24 @@ describe('PushAPI.tags functionality', () => {
   describe('tags :: add', () => {
     // TODO: remove skip after signer becomes optional
     it('Without signer and account :: should throw error', async () => {
-      await expect(() =>
-        userBob.channel.tags.add(['tag1', 'tag2', 'tag3'])
-      ).to.Throw;
+      await expect(() => userBob.channel.tags.add(['tag1', 'tag2', 'tag3'])).to
+        .Throw;
     });
 
     it('With signer and without provider :: should throw error', async () => {
-      await expect(() =>
-        userAlice.channel.tags.add(['tag1', 'tag2', 'tag3'])
-      ).to.Throw;
+      await expect(() => userAlice.channel.tags.add(['tag1', 'tag2', 'tag3']))
+        .to.Throw;
     });
 
     it('With signer and provider :: should add tags', async () => {
-      const tags = ['tag1', 'tag2', 'tag3']
+      const tags = ['tag1', 'tag2', 'tag3'];
       const res = await userKate.channel.tags.add(tags);
       expect(res).not.null;
       expect(res.tags).equal(tags);
     }, 100000000);
 
     it('With viem signer and provider :: should add tags', async () => {
-      const tags = ['tag1', 'tag2', 'tag3']
+      const tags = ['tag1', 'tag2', 'tag3'];
       const res = await viemUser.channel.tags.add(tags);
       expect(res).not.null;
       expect(res.tags).equal(tags);
@@ -84,9 +82,8 @@ describe('PushAPI.tags functionality', () => {
   describe('tags :: update', () => {
     // TODO: remove skip after signer becomes optional
     it('Without signer and account :: should throw error', async () => {
-      await expect(() =>
-        userBob.channel.tags.update(['tag1', 'tag2', 'tag3'])
-      ).to.Throw;
+      await expect(() => userBob.channel.tags.update(['tag1', 'tag2', 'tag3']))
+        .to.Throw;
     });
 
     it('With signer and without provider :: should throw error', async () => {
@@ -96,13 +93,13 @@ describe('PushAPI.tags functionality', () => {
     });
 
     it('With signer and provider :: should update tags', async () => {
-      const tags = ['tag1', 'tag2', 'tag3']
+      const tags = ['tag1', 'tag2', 'tag3'];
       const res = await userKate.channel.tags.update(tags);
       expect(res.tags).equal(tags);
     }, 100000000);
 
     it('With viem signer and provider :: should update tags', async () => {
-      const tags = ['tag1', 'tag2', 'tag3']
+      const tags = ['tag1', 'tag2', 'tag3'];
       const res = await viemUser.channel.tags.update(tags);
       expect(res.tags).equal(tags);
     }, 100000000);
@@ -111,18 +108,14 @@ describe('PushAPI.tags functionality', () => {
   describe('tags :: remove', () => {
     // TODO: remove skip after signer becomes optional
     it('Without signer and account :: should throw error', async () => {
-      await expect(() =>
-        userBob.channel.tags.remove()
-      ).to.Throw;
+      await expect(() => userBob.channel.tags.remove()).to.Throw;
     });
 
     it('With signer and without provider :: should throw error', async () => {
-      await expect(() =>
-        userAlice.channel.tags.remove()
-      ).to.Throw;
+      await expect(() => userAlice.channel.tags.remove()).to.Throw;
     });
 
-    it.only('With signer and provider :: should remove tags', async () => {
+    it('With signer and provider :: should remove tags', async () => {
       await userKate.channel.tags.update(['tag1', 'tag2', 'tag3']);
       const res = await userKate.channel.tags.remove();
       expect(res.status).equal('success');
