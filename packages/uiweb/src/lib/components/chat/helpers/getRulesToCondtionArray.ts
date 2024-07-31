@@ -1,6 +1,5 @@
 import { ConditionArray } from '../exportedTypes';
 import * as PushAPI from '@pushprotocol/restapi';
-import { fetchERC20Info, fetchERC721nfo } from './tokenHelpers';
 
 export interface GroupRulesType {
   CHAT: ConditionArray[];

@@ -23,9 +23,7 @@ export const getCategoryDropdownValues = ({
   dropdownTypeValues,
   selectedTypeValue,
 }: InputFunctionParams) => {
-  return dropdownCategoryValues![
-    dropdownTypeValues![selectedTypeValue!]?.value as TypeKeys
-  ];
+  return dropdownCategoryValues![dropdownTypeValues![selectedTypeValue!]?.value as TypeKeys];
 };
 
 export const getSelectedCategoryValue = ({
@@ -39,8 +37,7 @@ export const getSelectedCategoryValue = ({
     dropdownTypeValues,
     selectedTypeValue,
   });
-  if (Array.isArray(category))
-    return (category as DropdownValueType[])[selectedCategoryValue!].value!;
+  if (Array.isArray(category)) return (category as DropdownValueType[])[selectedCategoryValue!].value!;
   else return category.value! as SubCategoryKeys;
 };
 
@@ -60,8 +57,7 @@ export const getSelectedSubCategoryValue = ({
     dropdownSubCategoryValues,
     selectedTypeValue,
   });
-  if (Array.isArray(subCategory))
-    return (subCategory as DropdownValueType[])[selectedCategoryValue!].value!;
+  if (Array.isArray(subCategory)) return (subCategory as DropdownValueType[])[selectedCategoryValue!].value!;
   else return subCategory.value! as SubCategoryKeys;
 };
 
@@ -77,7 +73,24 @@ export const checkIfTokenNFT = ({
     selectedTypeValue,
     selectedCategoryValue,
   });
-  if (category === CATEGORY.ERC20 || category === CATEGORY.ERC721) return true;
+  if (category === CATEGORY.ERC20 || category === CATEGORY.ERC721 || category === CATEGORY.ERC1155) return true;
+
+  return false;
+};
+
+export const checkIfTokenId = ({
+  dropdownCategoryValues,
+  dropdownTypeValues,
+  selectedCategoryValue,
+  selectedTypeValue,
+}: InputFunctionParams) => {
+  const category = getSelectedCategoryValue({
+    dropdownCategoryValues,
+    dropdownTypeValues,
+    selectedTypeValue,
+    selectedCategoryValue,
+  });
+  if (category === CATEGORY.ERC1155) return true;
 
   return false;
 };
@@ -118,10 +131,7 @@ export const checkIfPushInvite = ({
   return false;
 };
 
-export const checkIfGuild = (
-  dropdownTypeValues: Array<DropdownValueType>,
-  selectedTypeValue: number
-) => {
+export const checkIfGuild = (dropdownTypeValues: Array<DropdownValueType>, selectedTypeValue: number) => {
   const accessType = dropdownTypeValues[selectedTypeValue].value;
   if (accessType === TYPE.GUILD) {
     return true;
@@ -147,35 +157,23 @@ export const getSubCategoryDropdownValues = ({
   });
   if (Array.isArray(category))
     return dropdownSubCategoryValues[
-      (category as DropdownValueType[])[selectedCategoryValue!]
-        .value as SubCategoryKeys
+      (category as DropdownValueType[])[selectedCategoryValue!].value as SubCategoryKeys
     ];
   else return dropdownSubCategoryValues[category.value as SubCategoryKeys];
 };
 
-export const getSeletedType = ({
-  dropdownTypeValues,
-  selectedTypeValue,
-}: InputFunctionParams) => {
+export const getSeletedType = ({ dropdownTypeValues, selectedTypeValue }: InputFunctionParams) => {
   return dropdownTypeValues![selectedTypeValue!].value || 'PUSH';
 };
 
-export const getSelectedCategory = ({
-  dropdownCategoryValues,
-  selectedCategoryValue,
-}: InputFunctionParams) => {
+export const getSelectedCategory = ({ dropdownCategoryValues, selectedCategoryValue }: InputFunctionParams) => {
   const category: string =
-    (dropdownCategoryValues!['PUSH'] as DropdownValueType[])[
-      selectedCategoryValue!
-    ].value || CATEGORY.ERC20;
+    (dropdownCategoryValues!['PUSH'] as DropdownValueType[])[selectedCategoryValue!].value || CATEGORY.ERC20;
 
   return category;
 };
 
-export const getSelectedChain = (
-  dropdownChainsValues: Array<DropdownValueType>,
-  selectedChainValue: number
-) => {
+export const getSelectedChain = (dropdownChainsValues: Array<DropdownValueType>, selectedChainValue: number) => {
   return dropdownChainsValues[selectedChainValue].value || 'eip155:1';
 };
 
@@ -184,6 +182,7 @@ type FetchContractInfoParamType = {
   setUnit: Dispatch<SetStateAction<string>>;
   setDecimals: Dispatch<SetStateAction<number>>;
   contract: string;
+  tokenId: number;
   dropdownChainsValues: Array<DropdownValueType>;
   selectedChainValue: number;
 } & InputFunctionParams;
@@ -199,6 +198,7 @@ export const fetchContractInfo = async ({
   setDecimals,
   selectedChainValue,
   dropdownChainsValues,
+  tokenId
 }: FetchContractInfoParamType) => {
   setValidationErrors((prev: any) => ({ ...prev, tokenError: undefined }));
 
@@ -209,14 +209,7 @@ export const fetchContractInfo = async ({
   });
   const _chainInfo = getSelectedChain(dropdownChainsValues, selectedChainValue);
 
-  await tokenFetchHandler(
-    contract,
-    _type,
-    _category,
-    _chainInfo,
-    setUnit,
-    setDecimals
-  );
+  await tokenFetchHandler(contract, _type, _category, _chainInfo, setUnit, setDecimals, tokenId);
 };
 
 type GetCriteriaDataParamType = {
@@ -228,6 +221,7 @@ type GetCriteriaDataParamType = {
   selectedChainValue: number;
   decimals: number;
   unit: string;
+  tokenId: number;
   url: string;
   guildId: string;
   specificRoleId: string;
@@ -240,7 +234,7 @@ type GetCriteriaDataParamType = {
     value: number;
     range: number;
   };
-} ;
+};
 
 export const getCriteriaData = ({
   type,
@@ -257,17 +251,18 @@ export const getCriteriaData = ({
   dropdownQuantityRangeValues,
   selectedChainValue,
   dropdownChainsValues,
+  tokenId,
 }: GetCriteriaDataParamType): Data => {
   if (type === 'PUSH') {
-    if (category === CATEGORY.ERC20 || category === CATEGORY.ERC721) {
-      const selectedChain =
-        dropdownChainsValues[selectedChainValue].value || 'eip155:1';
+    if (category === CATEGORY.ERC20 || category === CATEGORY.ERC721 || category === CATEGORY.ERC1155) {
+      const selectedChain = dropdownChainsValues[selectedChainValue].value || 'eip155:1';
       return {
         contract: `${selectedChain}:${contract}`,
         amount: quantity.value,
         comparison: dropdownQuantityRangeValues[quantity.range].value,
-        decimals: category === CATEGORY.ERC20 ? decimals : undefined,
+        decimals: (category === CATEGORY.ERC20 || category === CATEGORY.ERC1155) ? decimals : undefined,
         token: unit,
+        tokenId
       };
     } else if (category === CATEGORY.INVITE) {
       const _inviteRoles = [];

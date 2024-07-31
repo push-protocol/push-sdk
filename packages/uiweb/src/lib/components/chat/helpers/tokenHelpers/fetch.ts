@@ -1,7 +1,8 @@
 import { ethers } from "ethers";
 import { getChainRPC } from "./chain";
-import { NFTContractABI, TokenContractABI } from "./abi";
+import { ERC1155ContractABI, NFTContractABI, TokenContractABI } from "./abi";
 import { CATEGORY } from "../../types";
+import axios from "axios";
 
 interface ERC20InfoType {
   symbol: string;
@@ -14,7 +15,8 @@ export const tokenFetchHandler = async (
   category: string,
   chainInfo: string,
   setUnit: (value: React.SetStateAction<string>) => void,
-  setDecimals: (value: React.SetStateAction<number>) => void
+  setDecimals: (value: React.SetStateAction<number>) => void,
+  tokenId: number
 ): Promise<[boolean, string]> => {
   const isValid = ethers.utils.isAddress(contract);
 
@@ -23,7 +25,7 @@ export const tokenFetchHandler = async (
   }
 
   if (!isValid) {
-    if(category === CATEGORY.ERC20){
+    if(category === CATEGORY.ERC20 || category === CATEGORY.ERC1155) {
       setUnit('TOKEN');
     }else{
       setUnit('NFT');
@@ -50,7 +52,7 @@ export const tokenFetchHandler = async (
 
       return [false, ''];
     }
-  } else {
+  } else if(category === CATEGORY.ERC721){
     // erc 721 logic
     const [isErr, tokenInfo] = await fetchERC721nfo(contract, _chainId);
     if (isErr) {
@@ -62,6 +64,21 @@ export const tokenFetchHandler = async (
     } else {
       // set the token info
       setUnit(tokenInfo);
+      return [false, ''];
+    }
+  } else {
+    // erc 1155 logic
+    const [isErr, tokenInfo] = await fetchERC1155Info(contract, _chainId, tokenId);
+    if (isErr) {
+      // handle error
+      const errMessage = `${contract} is invalid ERC1155 on chain ${_chainId}`;
+      setUnit('TOKEN');
+      setDecimals(18);
+      return [true, errMessage];
+    } else {
+      // set the token info
+      setUnit(tokenInfo);
+      setDecimals(18);
       return [false, ''];
     }
   }
@@ -110,5 +127,41 @@ export const fetchERC721nfo = async (
     return [false, name];
   } catch {
     return [true, ""];
+  }
+};
+
+export const fetchERC1155Info = async (
+  contractAddress: string,
+  chainId: number,
+  tokenId: number,
+): Promise<[boolean, string]> => {
+  try {
+    const rpcURL = getChainRPC(chainId);
+    const provider = new ethers.providers.JsonRpcProvider(rpcURL);
+
+    const contract = new ethers.Contract(
+      contractAddress,
+      ERC1155ContractABI,
+      provider
+    );
+
+    const ERC1155_INTERFACE_ID = '0xd9b67a26';
+    const isERC1155 = await contract.supportsInterface(ERC1155_INTERFACE_ID);
+
+    if(isERC1155 && tokenId !== undefined) {
+      try {
+        const uri: string | undefined = await contract.uri(tokenId);
+        const uriToCall = uri?.toString().replace('{id}', tokenId.toString());
+        const response = await axios.get(uriToCall ?? '');
+        const name = response.data?.name;
+        return [false, name || 'ERC1155'];
+      } catch (error) {
+        return [false, "ERC1155"];
+      }
+    }
+
+    return [!isERC1155, "ERC1155"];
+  } catch {
+    return [true, "ERC1155"];
   }
 };
