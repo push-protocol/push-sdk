@@ -89,10 +89,15 @@ const CriteriaSection = ({ criteria }: { criteria: ConditionData }) => {
   const checkIfNftToken = () => {
     if (
       criteria?.category === CATEGORY.ERC721 ||
-      criteria?.category === CATEGORY.ERC20
+      criteria?.category === CATEGORY.ERC20 || 
+      criteria?.category === CATEGORY.ERC1155
     )
       return true;
     return false;
+  };
+
+  const checkIfIDToken = () => {
+    return criteria?.category === CATEGORY.ERC1155;
   };
 
   const getGuildRole = () => {
@@ -123,12 +128,26 @@ const CriteriaSection = ({ criteria }: { criteria: ConditionData }) => {
           justifyContent="space-between"
           alignItems="center"
         >
-          <Span fontWeight="700" color={theme.textColor?.modalHeadingText}>
-            <Span fontWeight="500" color={theme.textColor?.modalSubHeadingText}>
-              {getTokenNftComparisionLabel()}{' '}
+          {checkIfIDToken() ?
+            <Section>
+              <Span fontWeight="500" color={theme.textColor?.modalSubHeadingText}>
+                {getTokenNftComparisionLabel()}{' '}
+              </Span>
+              <Section flexDirection='column' alignItems='start' margin="0px 0px 0px 8px">
+                <Span color={theme.textColor?.modalSubHeadingText} fontSize='10px'>
+                  {criteria?.data?.['amount']} {tokenSymbol}
+                </Span>
+                <Span color={theme.textColor?.modalHeadingText} textAlign='flex-start'>ID: {criteria?.data?.['tokenId']}</Span>
+              </Section>
+            </Section>
+            : 
+            <Span fontWeight="700" color={theme.textColor?.modalHeadingText}>
+              <Span fontWeight="500" color={theme.textColor?.modalSubHeadingText}>
+                {getTokenNftComparisionLabel()}{' '}
+              </Span>
+              {criteria?.data?.['amount']} {tokenSymbol}
             </Span>
-            {criteria?.data?.['amount']} {tokenSymbol}
-          </Span>
+          }
           <ChainIconSVG padding="3px 6px 0 0" >
             {
               NETWORK_ICON_DETAILS[

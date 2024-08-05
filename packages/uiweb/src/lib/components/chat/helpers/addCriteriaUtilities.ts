@@ -77,7 +77,24 @@ export const checkIfTokenNFT = ({
     selectedTypeValue,
     selectedCategoryValue,
   });
-  if (category === CATEGORY.ERC20 || category === CATEGORY.ERC721) return true;
+  if (category === CATEGORY.ERC20 || category === CATEGORY.ERC721 || category === CATEGORY.ERC1155) return true;
+
+  return false;
+};
+
+export const checkIfTokenId = ({
+  dropdownCategoryValues,
+  dropdownTypeValues,
+  selectedCategoryValue,
+  selectedTypeValue,
+}: InputFunctionParams) => {
+  const category = getSelectedCategoryValue({
+    dropdownCategoryValues,
+    dropdownTypeValues,
+    selectedTypeValue,
+    selectedCategoryValue,
+  });
+  if (category === CATEGORY.ERC1155) return true;
 
   return false;
 };
@@ -184,6 +201,7 @@ type FetchContractInfoParamType = {
   setUnit: Dispatch<SetStateAction<string>>;
   setDecimals: Dispatch<SetStateAction<number>>;
   contract: string;
+  tokenId: number;
   dropdownChainsValues: Array<DropdownValueType>;
   selectedChainValue: number;
 } & InputFunctionParams;
@@ -199,6 +217,7 @@ export const fetchContractInfo = async ({
   setDecimals,
   selectedChainValue,
   dropdownChainsValues,
+  tokenId,
 }: FetchContractInfoParamType) => {
   setValidationErrors((prev: any) => ({ ...prev, tokenError: undefined }));
 
@@ -215,7 +234,8 @@ export const fetchContractInfo = async ({
     _category,
     _chainInfo,
     setUnit,
-    setDecimals
+    setDecimals,
+    tokenId
   );
 };
 
@@ -228,6 +248,7 @@ type GetCriteriaDataParamType = {
   selectedChainValue: number;
   decimals: number;
   unit: string;
+  tokenId: number;
   url: string;
   guildId: string;
   specificRoleId: string;
@@ -257,17 +278,19 @@ export const getCriteriaData = ({
   dropdownQuantityRangeValues,
   selectedChainValue,
   dropdownChainsValues,
+  tokenId,
 }: GetCriteriaDataParamType): Data => {
   if (type === 'PUSH') {
-    if (category === CATEGORY.ERC20 || category === CATEGORY.ERC721) {
+    if (category === CATEGORY.ERC20 || category === CATEGORY.ERC721 || category === CATEGORY.ERC1155) {
       const selectedChain =
         dropdownChainsValues[selectedChainValue].value || 'eip155:1';
       return {
         contract: `${selectedChain}:${contract}`,
         amount: quantity.value,
         comparison: dropdownQuantityRangeValues[quantity.range].value,
-        decimals: category === CATEGORY.ERC20 ? decimals : undefined,
+        decimals: (category === CATEGORY.ERC20 || category === CATEGORY.ERC1155) ? decimals : undefined,
         token: unit,
+        tokenId,
       };
     } else if (category === CATEGORY.INVITE) {
       const _inviteRoles = [];

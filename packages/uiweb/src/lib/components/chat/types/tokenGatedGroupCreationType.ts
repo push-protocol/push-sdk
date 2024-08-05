@@ -6,6 +6,7 @@ export interface PushData {
   comparison?:string;
   url?: string;
   token?:string;
+  tokenId?:number;
 }
 
 export interface GuildData {
@@ -87,6 +88,7 @@ export type CriteriaValidationErrorType = {
   //token error
   tokenError?:string
   tokenAmount?:string;
+  tokenId?:string;
   //custom endpoint errors
   url?:string;
 }
