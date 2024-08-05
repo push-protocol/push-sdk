@@ -392,6 +392,7 @@ const AddCriteria = ({ handlePrevious, onClose, criteriaStateManager }: ModalHea
         setDecimals,
         selectedChainValue,
         dropdownChainsValues,
+        tokenId: Number(tokenId)
       });
     }, 2000);
     return () => clearTimeout(getData);
