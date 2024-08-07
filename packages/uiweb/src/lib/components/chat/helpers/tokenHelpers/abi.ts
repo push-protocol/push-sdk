@@ -29,4 +29,10 @@ const TokenContractABI = [
   },
 ];
 
-export { NFTContractABI, TokenContractABI };
+const ERC1155ContractABI = [
+  'function uri(uint256 _id) external view returns (string memory)',
+  'function supportsInterface(bytes4 interfaceID) external view returns (bool)'
+];
+
+
+export { NFTContractABI, TokenContractABI, ERC1155ContractABI };
