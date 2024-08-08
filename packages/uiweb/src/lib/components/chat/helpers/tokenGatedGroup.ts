@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { ethers } from 'ethers';
 
-import { fetchERC20Info, fetchERC721nfo } from './tokenHelpers';
+import { fetchERC20Info, fetchERC721nfo, fetchERC1155Info } from './tokenHelpers';
 import {
   CATEGORY,
   CriteriaStateType,
@@ -124,10 +124,15 @@ const validateTokenData = async (condition: Rule): Promise<CriteriaValidationErr
   if (!ethers.utils.isAddress(address)) {
     return { tokenError: `Invalid contract address` };
   }
-  const [err] =
-    condition.category === CATEGORY.ERC721
-      ? await fetchERC721nfo(address, chainId)
-      : await fetchERC20Info(address, chainId);
+
+  let err;
+  if (condition.category === CATEGORY.ERC1155) {
+    err = (await fetchERC1155Info(address, chainId, data.tokenId ?? 0))?.[0];
+  } else if (condition.category === CATEGORY.ERC721) {
+    err = (await fetchERC721nfo(address, chainId))?.[0];
+  } else {
+    err = (await fetchERC20Info(address, chainId))?.[0];
+  }
 
   if (err) {
     return { tokenError: `Invalid ${condition.category} contract` };
@@ -139,6 +144,15 @@ const validateTokenData = async (condition: Rule): Promise<CriteriaValidationErr
       return { tokenAmount: `Amount cannot be in negative` };
     }
   }
+
+  if(condition.category === CATEGORY.ERC1155) {
+    if(data.tokenId === undefined || Number.isNaN(data.tokenId)) {
+      return { tokenId: 'Invalid Token ID' };
+    } else if(data.tokenId < 0) {
+      return { tokenId: 'Token ID cannot be in negative' };
+    }
+  }
+  
   return {};
 };
 

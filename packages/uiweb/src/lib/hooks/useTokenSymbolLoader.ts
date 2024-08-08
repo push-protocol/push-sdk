@@ -4,6 +4,7 @@ import { CATEGORY, PushData } from '../components/chat/types';
 import {
   fetchERC20Info,
   fetchERC721nfo,
+  fetchERC1155Info,
 } from '../components/chat/helpers/tokenHelpers';
 
 export const useTokenSymbolLoader = (
@@ -48,6 +49,11 @@ export const useTokenSymbolLoader = (
             if (!isErr) {
               updateTokenValue(tokenInfo);
             }
+          } else if (category === CATEGORY.ERC1155) {
+            const [isErr, tokenInfo] = await fetchERC1155Info(address, chainId, data.tokenId ?? 0);
+            if (!isErr) {
+              updateTokenValue(tokenInfo);
+            }
           }
         }
       }
@@ -61,7 +67,8 @@ const isTokenType = (conditionData: ConditionData): boolean => {
   if (conditionData.type === 'PUSH') {
     if (
       conditionData.category === CATEGORY.ERC20 ||
-      conditionData.category === CATEGORY.ERC721
+      conditionData.category === CATEGORY.ERC721 ||
+      conditionData.category === CATEGORY.ERC1155
     ) {
       if (conditionData.data) {
         return true;

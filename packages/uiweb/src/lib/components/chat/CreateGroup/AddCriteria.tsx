@@ -37,6 +37,7 @@ import {
   checkIfCustomEndpoint,
   checkIfGuild,
   checkIfPushInvite,
+  checkIfTokenId,
   checkIfTokenNFT,
   fetchContractInfo,
   getCategoryDropdownValues,
@@ -56,6 +57,7 @@ const AddCriteria = ({ handlePrevious, onClose, criteriaStateManager }: ModalHea
   const [guildComparison, setGuildComparison] = useState('');
   const [selectedChainValue, setSelectedChainValue] = useState<number>(0);
   const [contract, setContract] = useState<string>('');
+  const [tokenId, setTokenId] = useState<string>('');
   const [inviteCheckboxes, setInviteCheckboxes] = useState<{
     admin: boolean;
     owner: boolean;
@@ -154,6 +156,12 @@ const AddCriteria = ({ handlePrevious, onClose, criteriaStateManager }: ModalHea
         title: 'Custom Endpoint',
         function: () => setSelectedCategoryValue(3),
       },
+      {
+        id: 4,
+        value: CATEGORY.ERC1155,
+        title: 'Token ERC1155',
+        function: () => setSelectedCategoryValue(4),
+      },
     ],
     GUILD: {
       value: CATEGORY.ROLES,
@@ -167,6 +175,10 @@ const AddCriteria = ({ handlePrevious, onClose, criteriaStateManager }: ModalHea
       title: 'Holder',
     },
     ERC721: {
+      value: SUBCATEGORY.HOLDER,
+      title: 'Holder',
+    },
+    ERC1155: {
       value: SUBCATEGORY.HOLDER,
       title: 'Holder',
     },
@@ -256,7 +268,7 @@ const AddCriteria = ({ handlePrevious, onClose, criteriaStateManager }: ModalHea
 
     let subCategory = 'DEFAULT';
     if (_type === 'PUSH') {
-      if (category === CATEGORY.ERC20 || category === CATEGORY.ERC721) {
+      if (category === CATEGORY.ERC20 || category === CATEGORY.ERC721 || category === CATEGORY.ERC1155) {
         subCategory = SUBCATEGORY.HOLDER;
       } else if (category === CATEGORY.CustomEndpoint) {
         subCategory = 'GET';
@@ -283,6 +295,7 @@ const AddCriteria = ({ handlePrevious, onClose, criteriaStateManager }: ModalHea
         dropdownQuantityRangeValues,
         selectedChainValue,
         dropdownChainsValues,
+        tokenId: Number(tokenId),
       }),
     };
 
@@ -320,7 +333,11 @@ const AddCriteria = ({ handlePrevious, onClose, criteriaStateManager }: ModalHea
         const pushData = oldValue.data as PushData;
 
         // sub category
-        if (oldValue.category === CATEGORY.ERC20 || oldValue.category === CATEGORY.ERC721) {
+        if (
+          oldValue.category === CATEGORY.ERC20 ||
+          oldValue.category === CATEGORY.ERC721 ||
+          oldValue.category === CATEGORY.ERC1155
+        ) {
           if (pushData.token) {
             setUnit(pushData.token);
           }
@@ -335,6 +352,7 @@ const AddCriteria = ({ handlePrevious, onClose, criteriaStateManager }: ModalHea
             dropdownChainsValues.findIndex((obj) => obj.value === contractAndChain[0] + ':' + contractAndChain[1])
           );
           setContract(contractAndChain.length === 3 ? contractAndChain[2] : '');
+          setTokenId(pushData.tokenId?.toString() || '');
           setQuantity({
             value: pushData.amount || 0,
             range: dropdownQuantityRangeValues.findIndex((obj) => obj.value === pushData.comparison),
@@ -374,6 +392,7 @@ const AddCriteria = ({ handlePrevious, onClose, criteriaStateManager }: ModalHea
         setDecimals,
         selectedChainValue,
         dropdownChainsValues,
+        tokenId: Number(tokenId)
       });
     }, 2000);
     return () => clearTimeout(getData);
@@ -536,6 +555,22 @@ const AddCriteria = ({ handlePrevious, onClose, criteriaStateManager }: ModalHea
             />
             {!!validationErrors?.tokenError && <ErrorSpan>{validationErrors?.tokenError}</ErrorSpan>}
           </Section>
+          {checkIfTokenId({ dropdownCategoryValues, dropdownTypeValues, selectedCategoryValue, selectedTypeValue }) && (
+            <Section
+              gap="10px"
+              flexDirection="column"
+              alignItems="start"
+            >
+              <TextInput
+                labelName="Token Id"
+                inputValue={tokenId}
+                onInputChange={(e: any) => setTokenId(e.target.value)}
+                placeholder="e.g. 2"
+                error={!!validationErrors?.tokenId}
+              />
+              {!!validationErrors?.tokenId && <ErrorSpan>{validationErrors?.tokenId}</ErrorSpan>}
+            </Section>
+          )}
           <Section
             gap="10px"
             flexDirection="column"

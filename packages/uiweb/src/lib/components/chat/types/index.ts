@@ -42,6 +42,7 @@ export type TypeKeys = typeof TYPE[keyof typeof TYPE];
 export const CATEGORY = {
   ERC20: 'ERC20',
   ERC721: 'ERC721',
+  ERC1155: 'ERC1155',
   INVITE: 'INVITE',
   CustomEndpoint: 'CustomEndpoint',
   ROLES: 'ROLES',
@@ -50,6 +51,7 @@ export const CATEGORY = {
 export const UNIT = {
   ERC20: 'TOKEN',
   ERC721: 'NFT',
+  ERC1155: 'TOKEN',
 } as const;
 export type UnitKeys = typeof UNIT[keyof typeof UNIT];
 export const SUBCATEGORY = {
@@ -89,6 +91,7 @@ export type TokenNftComparision = keyof typeof TOKEN_NFT_COMPARISION;
 export const CRITERIA_TYPE = {
   ERC20: 'Token',
   ERC721: 'NFT',
+  ERC1155: 'Token',
   INVITE: 'Invite',
   CustomEndpoint: 'URL',
   ROLES: 'Guild ID',
