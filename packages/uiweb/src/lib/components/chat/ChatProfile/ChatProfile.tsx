@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 
 // External Packages
 import { CONSTANTS, PushAPI } from '@pushprotocol/restapi';
-import 'react-toastify/dist/ReactToastify.min.css';
+// import 'react-toastify/dist/ReactToastify.min.css';
 import styled from 'styled-components';
 
 // Internal Compoonents
