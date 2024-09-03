@@ -7,7 +7,7 @@ export interface IGroupProfile {
   image: string | null;
 }
 
-export interface IChatMessage {
+export interface ChatMessageResponseV2 {
   timestamp: string;
   chatId: string;
   from: {
@@ -39,8 +39,8 @@ export interface IChatMessage {
   };
 }
 
-export interface IChatListResponseV2 {
-  messages: IChatMessage[];
+export interface ChatMessagesListResponseV2 {
+  messages: ChatMessageResponseV2[];
 }
 
 export interface ISendMessageResponseV2 {
@@ -52,19 +52,19 @@ export interface ISendMessageResponseV2 {
   };
 }
 
-export interface IGroupResponseV2 {
+export interface GroupResponseV2 {
   group: {
     profile: IGroupProfile;
     rules?: Rules | null;
     public: boolean;
     type: string;
     creator: string;
-  };
-  config: {
-    meta: string | null;
-    scheduleAt: Date | null;
-    scheduleEnd: Date | null;
-    status: ChatStatus | null;
+    config: {
+      meta: string | null;
+      scheduleAt: Date | null;
+      scheduleEnd: Date | null;
+      status: ChatStatus | null;
+    };
   };
   chatId: string;
   raw?: {
@@ -73,7 +73,7 @@ export interface IGroupResponseV2 {
     configVerificationProof?: string | null;
   };
 }
-export interface IGroupAccessResponseV2 extends GroupAccess {
+export interface GroupAccessResponseV2 extends GroupAccess {
   raw?: {
     verificationProof?: string | null;
     profileVerificationProof?: string | null;
@@ -101,15 +101,70 @@ export interface IGroupParticipantsResponseV2 {
   members: ChatMemberProfileV2[];
 }
 
-export interface GroupActionResponse {
-  success: boolean;
+export interface UserBlockedResponseV2 {
+  blocked: boolean;
+  raw?: {
+    actionVerificationProof?: string | null;
+  };
+}
+export interface UserUnblockedResponseV2 {
+  unblocked: boolean;
   raw?: {
     actionVerificationProof?: string | null;
   };
 }
 
-export interface ChatActionResponse {
-  success: boolean;
+export interface ChatRejectionResponseV2 {
+  rejected: boolean;
+  raw?: {
+    actionVerificationProof?: string | null;
+  };
+}
+
+export interface ChatAcceptResponseV2 {
+  accepted: true;
+  raw?: {
+    actionVerificationProof?: string | null;
+  };
+}
+
+export interface GroupRejectResponseV2 {
+  rejected: boolean;
+  raw?: {
+    actionVerificationProof?: string | null;
+  };
+}
+
+export interface GroupLeaveResponseV2 {
+  left: boolean;
+  raw?: {
+    actionVerificationProof?: string | null;
+  };
+}
+
+export interface GroupJoinResponseV2 {
+  joined: boolean;
+  raw?: {
+    actionVerificationProof?: string | null;
+  };
+}
+
+export interface GroupAddResponseV2 {
+  added: boolean;
+  raw?: {
+    actionVerificationProof?: string | null;
+  };
+}
+
+export interface GroupRemoveResponseV2 {
+  removed: boolean;
+  raw?: {
+    actionVerificationProof?: string | null;
+  };
+}
+
+export interface GroupModifyResponseV2 {
+  modified: boolean;
   raw?: {
     actionVerificationProof?: string | null;
   };

@@ -2,12 +2,12 @@ import { ChatInfoResponse } from '../chat';
 import { ENV } from '../constants';
 import {
   ChatMemberProfileV2,
-  IChatListResponseV2,
-  IChatMessage,
-  IGroupAccessResponseV2,
+  ChatMessagesListResponseV2,
+  ChatMessageResponseV2,
+  GroupAccessResponseV2,
   IGroupParticipantsResponseV2,
   IGroupProfile,
-  IGroupResponseV2,
+  GroupResponseV2,
 } from '../interfaces/ichat';
 import { ChatListType } from '../pushapi/pushAPITypes';
 import {
@@ -27,7 +27,7 @@ export function transformFeedToChatMessage(
   type: `${ChatListType}`,
   raw: boolean,
   decrypted: boolean
-): IChatMessage {
+): ChatMessageResponseV2 {
   const isGroup = Boolean(feed.groupInformation);
   return {
     timestamp: String(feed.msg.timestamp),
@@ -81,7 +81,7 @@ export function transformToChatMessage(
   listType: string,
   raw: boolean,
   decrypt: boolean
-): IChatMessage {
+): ChatMessageResponseV2 {
   const fromProfile = chatInfo.meta.recipients.find(
     (recipient) => recipient.participantId === message.fromDID
   )?.profile as UserProfile;
@@ -137,7 +137,7 @@ export async function handleChatListVersion2Response(
   type: `${ChatListType}`,
   raw: boolean,
   decrypted: boolean
-): Promise<IChatListResponseV2> {
+): Promise<ChatMessagesListResponseV2> {
   return {
     messages: response.map((feed) =>
       transformFeedToChatMessage(feed, type, raw, decrypted)
@@ -184,9 +184,9 @@ export async function transformToGroupAccessV2(
   groupId: string,
   env: ENV,
   raw: boolean
-): Promise<IGroupAccessResponseV2> {
+): Promise<GroupAccessResponseV2> {
   const groupInfo = await PUSH_CHAT.getGroup({ chatId: groupId, env });
-  const result: IGroupAccessResponseV2 = {
+  const result: GroupAccessResponseV2 = {
     ...access,
   };
 
@@ -204,8 +204,8 @@ export async function transformToGroupAccessV2(
 export function transformToGroupV2Response(
   group: GroupInfoDTO | GroupDTO,
   raw: boolean
-): IGroupResponseV2 {
-  const response: IGroupResponseV2 = {
+): GroupResponseV2 {
+  const response: GroupResponseV2 = {
     group: {
       profile: {
         name: group.groupName,
@@ -216,13 +216,14 @@ export function transformToGroupV2Response(
       public: group.isPublic,
       type: group.groupType || 'default',
       creator: group.groupCreator,
+      config: {
+        meta: group.meta || null,
+        scheduleAt: group.scheduleAt || null,
+        scheduleEnd: group.scheduleEnd || null,
+        status: group.status || null,
+      },
     },
-    config: {
-      meta: group.meta || null,
-      scheduleAt: group.scheduleAt || null,
-      scheduleEnd: group.scheduleEnd || null,
-      status: group.status || null,
-    },
+
     chatId: group.chatId,
   };
 

@@ -6,17 +6,16 @@ export interface IGetUserInfoOptions {
   version?: number;
 }
 
-export interface IUserProfile {
+export interface UserProfileResponseV2 {
   name: string | null;
   desc: string | null;
   image: string | null;
 }
-
-export interface IUserInfoResponseV2 {
+export interface UserResponseV2 {
   did: string;
   wallets: string;
   origin: string | null | undefined;
-  profile: IUserProfile;
+  profile: UserProfileResponseV2;
   pushPubKey: string;
   config: {
     blocked: string[] | null;
@@ -27,5 +26,3 @@ export interface IUserInfoResponseV2 {
     configVerificationProof: string | null;
   };
 }
-
-export type IUserInfoResponse = IUser | IUserInfoResponseV2;
