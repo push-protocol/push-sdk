@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { MaximizeIcon } from '../../icons/Maximize';
 import { NewChatIcon } from '../../icons/NewChat';
@@ -13,12 +13,13 @@ import {
 } from '../../context';
 import type { PushSubTabs, PushTabs } from '../../types';
 import { PUSH_SUB_TABS, PUSH_TABS } from '../../types';
-import { pCAIP10ToWallet, resolveWeb3Name, shortenText } from '../../helpers';
+import { pCAIP10ToWallet, shortenText } from '../../helpers';
 import { PushSubTabTitle } from '../../config';
 import { Tooltip } from '../reusables';
 import type { ChatAndNotificationMainContextType } from '../../context/chatAndNotification/chatAndNotificationMainContext';
 import type { ChatMainStateContextType } from '../../context/chatAndNotification/chat/chatMainStateContext';
 import { ChatSnap } from './modal/sidebar/chatSidebar/ChatSnap';
+import { useDomianName } from '../../hooks';
 
 type MinimisedModalHeaderPropType = {
   onMaximizeMinimizeToggle: () => void;
@@ -49,7 +50,6 @@ export const UnreadChats = ({
 };
 
 export const MessageBoxHeader = () => {
-  const [web3Name, setWeb3Name] = useState<string | null>(null);
   const { activeTab, setActiveTab, setActiveSubTab, activeSubTab } =
     useContext<ChatAndNotificationMainContextType>(ChatAndNotificationMainContext);
   const { selectedChatId, chatsFeed, requestsFeed, searchedChats, setSearchedChats, setSelectedChatId } =
@@ -60,6 +60,7 @@ export const MessageBoxHeader = () => {
     chatsFeed[selectedChatId as string] ||
     requestsFeed[selectedChatId as string] ||
     (Object.keys(searchedChats || {}).length ? searchedChats![selectedChatId as string] : null);
+  const web3Name = useDomianName(selectedChat?.did, env);
 
   const handleBack = () => {
     if (
@@ -78,16 +79,6 @@ export const MessageBoxHeader = () => {
     }
   };
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const result = await resolveWeb3Name(selectedChat?.did, env);
-        if (result) setWeb3Name(result);
-      } catch (e) {
-        //console.debug(e);
-      }
-    })();
-  });
   return selectedChat ? (
     <Section
       gap="12px"

@@ -13,3 +13,4 @@ export * from './usePushUser';
 export * from './useSupportChatStream';
 export * from './useTokenSymbolLoader';
 export * from './widget';
+export * from './useDomainName';

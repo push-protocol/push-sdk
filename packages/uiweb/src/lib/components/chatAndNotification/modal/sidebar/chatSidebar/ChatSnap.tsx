@@ -1,13 +1,13 @@
 import type { IFeeds } from '@pushprotocol/restapi';
 import { ChatMainStateContext, ChatAndNotificationPropsContext } from '../../../../../context';
-import { checkIfUnread, dateToFromNowDaily, resolveWeb3Name, setData, shortenText } from '../../../../../helpers';
-import React, { useContext, useEffect, useState } from 'react';
+import { checkIfUnread, dateToFromNowDaily, setData, shortenText } from '../../../../../helpers';
+import React, { useContext } from 'react';
 import styled, { css } from 'styled-components';
 import { Section, Span, Image } from '../../../../reusables/sharedStyling';
 import { UnreadChats } from '../../../MinimisedModalHeader';
 import { device } from '../../../../../config';
 import type { ChatMainStateContextType } from '../../../../../context/chatAndNotification/chat/chatMainStateContext';
-import { useDeviceWidthCheck } from '../../../../../hooks';
+import { useDeviceWidthCheck, useDomianName } from '../../../../../hooks';
 
 type ChatSnapPropType = {
   chat: IFeeds;
@@ -75,10 +75,9 @@ const Message = ({ messageContent, messageType }: { messageContent: string; mess
 };
 
 export const ChatSnap: React.FC<ChatSnapPropType> = ({ chat, id, modalOpen }) => {
-  const [web3Name, setWeb3Name] = useState<string | null>(null);
   const { setSelectedChatId } = useContext<ChatMainStateContextType>(ChatMainStateContext);
   const { env } = useContext<any>(ChatAndNotificationPropsContext);
-
+  const web3Name = useDomianName(chat?.did, env);
   const isMobile = useDeviceWidthCheck(425);
   const digitsToDisplay = chat?.name ? (isMobile ? 15 : 30) : isMobile ? 6 : 8;
 
@@ -87,17 +86,6 @@ export const ChatSnap: React.FC<ChatSnapPropType> = ({ chat, id, modalOpen }) =>
     setData({ chatId: id, value: chat });
   };
   const open = modalOpen === undefined ? true : modalOpen;
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const result = await resolveWeb3Name(chat?.did, env);
-        if (result) setWeb3Name(result);
-      } catch (e) {
-        //console.debug(e);
-      }
-    })();
-  });
 
   return (
     <Container
