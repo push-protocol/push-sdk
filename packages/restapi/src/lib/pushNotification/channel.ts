@@ -477,6 +477,7 @@ export class Channel extends PushNotificationBaseClass {
         sort = ChannelListSortType.SUBSCRIBER,
         order = ChannelListOrderType.DESCENDING,
         filter,
+        tag,
       } = options || {};
 
       return await PUSH_CHANNEL.getChannels({
@@ -485,7 +486,8 @@ export class Channel extends PushNotificationBaseClass {
         limit,
         sort,
         order,
-        filter
+        filter,
+        tag
       });
     } catch (error) {
       throw new Error(`Push SDK Error: Contract : channel::list : ${error}`);

@@ -10,4 +10,12 @@ describe('PUSH_CHANNELS.getChannels', () => {
     });
     console.log(res);
   });
+
+  it.only('Should fetch channels based on the filter and tags', async () => {
+    const res = await getChannels({
+      env: ENV.DEV,
+      tag: 'Infrastructure'
+    });
+    console.log(res.channels[0]);
+  });
 });

@@ -156,6 +156,7 @@ export type ChannelListOptions = {
   sort?: ChannelListSortType;
   order?: ChannelListOrderType;
   filter?: number;
+  tag?: string;
 };
 
 export type TagListOptions = {
