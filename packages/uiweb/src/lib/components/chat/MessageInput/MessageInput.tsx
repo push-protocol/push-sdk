@@ -18,7 +18,7 @@ import { GifIcon } from '../../../icons/Gif';
 import OpenLink from '../../../icons/OpenLink';
 import { EmojiCircleIcon } from '../../../icons/PushIcons';
 import { SendCompIcon } from '../../../icons/SendCompIcon';
-import { Div, Section, Span, Spinner } from '../../reusables';
+import { Button, Div, Section, Span, Spinner } from '../../reusables';
 import { ConditionsInformation } from '../ChatProfile/ChatProfileInfoModal';
 import { ConnectButton } from '../ConnectButton';
 import { Modal, ModalHeader } from '../reusables/Modal';
@@ -26,6 +26,7 @@ import { ThemeContext } from '../theme/ThemeProvider';
 
 import { PUBLIC_GOOGLE_TOKEN, device } from '../../../config';
 import usePushUser from '../../../hooks/usePushUser';
+import { CancelCircleIcon } from '../../../icons/PushIcons';
 import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, type FileMessageContent } from '../../../types';
 import { GIFType, Group, IChatTheme, MessageInputProps } from '../exportedTypes';
 import { checkIfAccessVerifiedGroup } from '../helpers';
@@ -420,13 +421,15 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     setGifOpen(false);
   };
 
+  console.log('UIWeb::MessageInput::sendTextMsg::replyPayload', replyPayload);
+
   return !(user && !user?.readmode()) && isConnected ? (
     <TypebarSection
       width="100%"
       overflow="hidden"
       borderRadius="13px"
       position="static"
-      padding={` ${user && !user?.readmode() ? '13px 16px' : ''}`}
+      padding={` ${user && !user?.readmode() ? '14px 16px' : ''}`}
       background={`${theme.backgroundColor?.messageInputBackground}`}
       alignItems="center"
       justifyContent="space-between"
@@ -445,7 +448,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         borderRadius={theme.borderRadius?.messageInput}
         position="static"
         border={theme.border?.messageInput}
-        padding={` ${user && !user?.readmode() ? '13px 16px' : ''}`}
+        padding={` ${user && !user?.readmode() ? '14px 16px' : ''}`}
         background={`${theme.backgroundColor?.messageInputBackground}`}
         alignItems="center"
         justifyContent="space-between"
@@ -557,13 +560,60 @@ export const MessageInput: React.FC<MessageInputProps> = ({
 
         {/* Message bar logic */}
         {user && !user?.readmode() && (((isRules ? verified : true) && isMember) || (chatInfo && !groupInfo)) && (
-          <>
+          <Section
+            flexDirection="column"
+            flex="1"
+            gap="12px"
+          >
             {/* Render reply message */}
             {replyPayload && (
-              <ChatViewBubbleCore
-                chat={replyPayload}
-                chatId={chatId}
-              />
+              <Section
+                flexDirection="column"
+                alignItems="flex-start"
+                overflow="hidden"
+                gap="4px"
+              >
+                <Section
+                  flexDirection="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  overflow="hidden"
+                  gap="8px"
+                >
+                  <Span
+                    padding="0px"
+                    fontSize="10px"
+                    color={theme.iconColor?.emoji}
+                  >
+                    {`Replying to `}
+                    <Span
+                      fontWeight="500"
+                      padding="0px"
+                    >
+                      {`${replyPayload.fromDID?.split(':')[1].slice(0, 6)}...${replyPayload.fromDID
+                        ?.split(':')[1]
+                        .slice(-6)}`}
+                    </Span>
+                  </Span>
+                  <Button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (setReplyPayload) {
+                        setReplyPayload(null);
+                      }
+                    }}
+                  >
+                    <CancelCircleIcon
+                      size={14}
+                      color={theme.textColor?.messageInputText}
+                    />
+                  </Button>
+                </Section>
+                <ChatViewBubbleCore
+                  chat={replyPayload}
+                  chatId={chatId}
+                />
+              </Section>
             )}
 
             {/* Render message bar */}
@@ -683,7 +733,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                 </Section>
               )}
             </SendSection>
-          </>
+          </Section>
         )}
       </TypebarSection>
     </MessageInputContainer>
