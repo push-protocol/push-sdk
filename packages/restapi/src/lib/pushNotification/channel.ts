@@ -78,6 +78,7 @@ export class Channel extends PushNotificationBaseClass {
         page = Constants.PAGINATION.INITIAL_PAGE,
         limit = Constants.PAGINATION.LIMIT,
         filter,
+        tag,
         oldFormat = true
       } = options || {};
       return await PUSH_CHANNEL.search({
@@ -85,6 +86,7 @@ export class Channel extends PushNotificationBaseClass {
         page: page,
         limit: limit,
         filter: filter,
+        tag: tag,
         env: this.env,
         oldFormat
       });

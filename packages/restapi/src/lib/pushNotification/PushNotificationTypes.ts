@@ -56,6 +56,7 @@ export type ChannelSearchOptions = {
   filter?: number;
   // temp fix to support both new and old format
   oldFormat?: boolean;
+  tag?: string;
 };
 
 // Types related to notification
