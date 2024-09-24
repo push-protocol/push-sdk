@@ -10,8 +10,8 @@ import { pCAIP10ToWallet } from '../helpers';
 
 import usePushUserInfoUtilities from '../hooks/chat/useUserInfoUtilities';
 
-import usePushUser from '../hooks/usePushUser';
 import useToast from '../components/chat/reusables/NewToast'; // Re-write this later
+import usePushUser from '../hooks/usePushUser';
 
 // Internal Configs
 import { lightChatTheme } from '../components/chat/theme';
@@ -225,7 +225,7 @@ export const ChatUIProvider = ({
       enableConsole();
     } else {
       console.warn('UIWeb::ChatDataProvider::Debug mode is turned off, console logs are suppressed');
-      disableConsole();
+      // disableConsole();
     }
   }, [debug]);
 

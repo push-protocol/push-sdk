@@ -1,14 +1,15 @@
 import * as PushAPI from '@pushprotocol/restapi';
 import { useCallback, useContext, useState } from 'react';
-import useVerifyAccessControl from './useVerifyAccessControl';
 import { useChatData } from '..';
 import { ENV } from '../../config';
 import { setAccessControl } from '../../helpers';
+import useVerifyAccessControl from './useVerifyAccessControl';
 
 interface SendMessageParams {
   message: string;
   chatId: string;
-  messageType?: 'Text' | 'Image' | 'File' | 'GIF' | 'MediaEmbed';
+  messageType?: 'Text' | 'Image' | 'File' | 'GIF' | 'MediaEmbed' | 'Reply';
+  replyRef?: string;
 }
 
 const usePushSendMessage = () => {
@@ -19,13 +20,26 @@ const usePushSendMessage = () => {
 
   const sendMessage = useCallback(
     async (options: SendMessageParams) => {
-      const { chatId, message, messageType } = options || {};
+      const { chatId, message, messageType, replyRef } = options || {};
       setLoading(true);
-      try {
-        const response = await user?.chat.send(chatId, {
+
+      const messagePayload: any = {
+        type: messageType,
+        content: message,
+      };
+
+      if (replyRef !== undefined) {
+        messagePayload.type = 'Reply';
+        messagePayload.content = {
           type: messageType,
           content: message,
-        });
+        };
+        messagePayload.reference = replyRef;
+      }
+      console.log(messagePayload);
+
+      try {
+        const response = await user?.chat.send(chatId, messagePayload);
         setLoading(false);
         if (!response) {
           return false;
