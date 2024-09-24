@@ -53,6 +53,9 @@ export type FeedsOptions = {
 export type ChannelSearchOptions = {
   page?: number;
   limit?: number;
+  filter?: number;
+  // temp fix to support both new and old format
+  oldFormat?: boolean;
 };
 
 // Types related to notification
@@ -152,9 +155,15 @@ export type ChannelListOptions = {
   limit?: number;
   sort?: ChannelListSortType;
   order?: ChannelListOrderType;
+  filter?: number;
 };
 
-
+export type TagListOptions = {
+  page?: number;
+  limit?: number;
+  order?: ChannelListOrderType;
+  filter?: "PUSH" | "USER" | "*"; 
+}
 
 
 

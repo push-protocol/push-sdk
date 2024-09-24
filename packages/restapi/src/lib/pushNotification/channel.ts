@@ -77,12 +77,16 @@ export class Channel extends PushNotificationBaseClass {
       const {
         page = Constants.PAGINATION.INITIAL_PAGE,
         limit = Constants.PAGINATION.LIMIT,
+        filter,
+        oldFormat = true
       } = options || {};
       return await PUSH_CHANNEL.search({
         query: query,
         page: page,
         limit: limit,
+        filter: filter,
         env: this.env,
+        oldFormat
       });
     } catch (error) {
       throw new Error(`Push SDK Error: API : channel::search : ${error}`);
@@ -472,6 +476,7 @@ export class Channel extends PushNotificationBaseClass {
         limit,
         sort = ChannelListSortType.SUBSCRIBER,
         order = ChannelListOrderType.DESCENDING,
+        filter,
       } = options || {};
 
       return await PUSH_CHANNEL.getChannels({
@@ -480,6 +485,7 @@ export class Channel extends PushNotificationBaseClass {
         limit,
         sort,
         order,
+        filter
       });
     } catch (error) {
       throw new Error(`Push SDK Error: Contract : channel::list : ${error}`);
