@@ -7,14 +7,11 @@ import { getAccountAddress, getWallet } from '../chat/helpers';
 import { Chat } from './chat';
 import { Profile } from './profile';
 import { Encryption } from './encryption';
-import { User, handleUserVersionedResponse } from './user';
+import { createUserResponseV2, User } from './user';
 import { PushStream, StreamType } from '../pushstream/PushStream';
 import { Channel } from '../pushNotification/channel';
 import { Notification } from '../pushNotification/notification';
-import {
-  PushStreamInitializeProps,
-  STREAM,
-} from '../pushstream/pushStreamTypes';
+import { PushStreamInitializeProps } from '../pushstream/pushStreamTypes';
 import { ALPHA_FEATURE_CONFIG } from '../config';
 import { Space } from './space';
 import { Video } from './video';
@@ -22,11 +19,8 @@ import { isValidNFTCAIP, walletToPCAIP10 } from '../helpers';
 import { LRUCache } from 'lru-cache';
 import { cache } from '../helpers/cache';
 import { v4 as uuidv4 } from 'uuid';
-import {
-  IGetUserInfoOptions,
-  IUserInfoResponse,
-  IUserInfoResponseV2,
-} from '../interfaces/iuser';
+import { IGetUserInfoOptions } from '../interfaces/iuser';
+import { GetUserInfoRequestV2, UserResponseV2 } from '../interfaces/v2/user';
 
 export class PushAPI {
   public signer?: SignerType;
@@ -122,6 +116,34 @@ export class PushAPI {
     );
 
     this.errors = initializationErrors || [];
+
+    const info = async (options?: IGetUserInfoOptions): Promise<IUser> => {
+      const accountToUse = options?.overrideAccount || this.account;
+
+      const response = await PUSH_USER.get({
+        account: accountToUse,
+        env: this.env,
+      });
+
+      return response;
+    };
+
+    const infoV2 = async (
+      options?: GetUserInfoRequestV2
+    ): Promise<UserResponseV2> => {
+      const accountToUse = options?.overrideAccount || this.account;
+      const { raw = false } = options || {};
+
+      const response = await PUSH_USER.get({
+        account: accountToUse,
+        env: this.env,
+      });
+
+      return createUserResponseV2(response, raw);
+    };
+
+    (info as any).v2 = infoV2;
+    this.info = info as any;
   }
   // Overloaded initialize method signatures
   static async initialize(
@@ -369,17 +391,10 @@ export class PushAPI {
     return this.stream;
   }
 
-  async info(options?: IGetUserInfoOptions): Promise<IUserInfoResponse> {
-    const accountToUse = options?.overrideAccount || this.account;
-    const { raw = false, version = 1 } = options || {};
-
-    const response = await PUSH_USER.get({
-      account: accountToUse,
-      env: this.env,
-    });
-
-    return handleUserVersionedResponse(response, { raw, version });
-  }
+  info!: {
+    (options?: IGetUserInfoOptions): Promise<IUser>;
+    v2(options?: GetUserInfoRequestV2): Promise<UserResponseV2>;
+  };
 
   readmode(): boolean {
     return this.readMode;

@@ -9,7 +9,6 @@ export interface IUpdateProfileRequest {
 export interface IGetProfileInfoOptions {
   overrideAccount?: string;
   raw?: boolean;
-  version?: number;
 }
 
 export interface IProfileInfoResponseV1 {
@@ -19,16 +18,3 @@ export interface IProfileInfoResponseV1 {
   blockedUsersList: string[] | null;
   profileVerificationProof: string | null;
 }
-
-export interface IProfileInfoResponseV2 {
-  name: string | null;
-  desc: string | null;
-  image: string | null;
-  raw?: {
-    profileVerificationProof: string | null;
-  };
-}
-
-export type IProfileInfoResponse =
-  | IProfileInfoResponseV1
-  | IProfileInfoResponseV2;

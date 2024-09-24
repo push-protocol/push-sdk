@@ -1,5 +1,5 @@
 import { ChatStatus, GroupAccess, IFeeds, MessageObj, Rules } from '../types';
-import { IUserProfile } from './iuser';
+import { IProfileData } from './iprofile';
 
 export interface IGroupProfile {
   name: string | null;
@@ -12,7 +12,7 @@ export interface ChatMessageResponseV2 {
   chatId: string;
   from: {
     wallet: string;
-    profile: IUserProfile;
+    profile: IProfileData;
   };
   to: {
     wallet: string;
@@ -85,7 +85,7 @@ export interface ChatMemberProfileV2 {
   did: string;
   wallets: string;
   origin?: string | null;
-  profile: IUserProfile;
+  profile: IProfileData;
   publicKey: string | null;
   config: {
     blockedUsers: string[] | null;

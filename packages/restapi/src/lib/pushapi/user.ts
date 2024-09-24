@@ -1,7 +1,8 @@
 import * as PUSH_USER from '../user';
 import { ENV } from '../constants';
 import { IUser } from '../types';
-import { IGetUserInfoOptions, UserResponseV2 } from '../interfaces/iuser';
+import { IGetUserInfoOptions } from '../interfaces/iuser';
+import { GetUserRequestV2, UserResponseV2 } from '../interfaces/v2/user';
 
 export function createUserResponseV2(
   response: IUser,
@@ -45,7 +46,7 @@ export class User {
     };
 
     const infoV2 = async (
-      options?: IGetUserInfoOptions
+      options?: GetUserRequestV2
     ): Promise<UserResponseV2> => {
       const accountToUse = options?.overrideAccount || this.account;
       const { raw = false } = options || {};
@@ -64,6 +65,6 @@ export class User {
 
   info!: {
     (options?: IGetUserInfoOptions): Promise<IUser>;
-    v2(options?: IGetUserInfoOptions): Promise<UserResponseV2>;
+    v2(options?: GetUserRequestV2): Promise<UserResponseV2>;
   };
 }

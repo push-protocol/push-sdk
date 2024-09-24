@@ -1,11 +1,13 @@
 import { ENCRYPTION_TYPE, ENV } from '../constants';
 import {
-  IGetEncryptionResponse,
   IGetEncryptionResponseV1,
-  IGetEncryptionResponseV2,
   IUpdateEncryptionOptions,
 } from '../interfaces/iencryption';
-import { UserResponseV2 } from '../interfaces/iuser';
+import {
+  GetUserEncryptionResponseV2,
+  UpdateUserEncryptionRequestOptionsV2,
+  UserResponseV2,
+} from '../interfaces/v2/user';
 import { SignerType, ProgressHookType, IUser } from '../types';
 import * as PUSH_USER from '../user';
 import { PushAPI } from './PushAPI';
@@ -57,9 +59,7 @@ export class Encryption {
       return responseV1;
     };
 
-    const infoV2 = async (options?: {
-      raw?: boolean;
-    }): Promise<IGetEncryptionResponseV2> => {
+    const infoV2 = async (): Promise<GetUserEncryptionResponseV2> => {
       let decryptedPassword;
 
       const userInfo = await this.userInstance.info();
@@ -80,7 +80,7 @@ export class Encryption {
         });
       }
 
-      const responseV2: IGetEncryptionResponseV2 = {
+      const responseV2: GetUserEncryptionResponseV2 = {
         pushPrivKey: this.decryptedPgpPvtKey,
         pushPubKey: this.pgpPublicKey,
         ...(decryptedPassword !== undefined && decryptedPassword !== null
@@ -121,7 +121,7 @@ export class Encryption {
 
     const updateV2 = async (
       updatedEncryptionType: ENCRYPTION_TYPE,
-      options?: IUpdateEncryptionOptions & { raw?: boolean }
+      options?: UpdateUserEncryptionRequestOptionsV2
     ): Promise<UserResponseV2> => {
       if (!this.signer) {
         throw new Error(PushAPI.ensureSignerMessage());
@@ -151,7 +151,7 @@ export class Encryption {
 
   info!: {
     (options?: { raw?: boolean }): Promise<IGetEncryptionResponseV1>;
-    v2(options?: { raw?: boolean }): Promise<IGetEncryptionResponseV2>;
+    v2(): Promise<GetUserEncryptionResponseV2>;
   };
 
   update!: {
@@ -161,7 +161,7 @@ export class Encryption {
     ): Promise<IUser>;
     v2(
       updatedEncryptionType: ENCRYPTION_TYPE,
-      options?: IUpdateEncryptionOptions & { raw?: boolean }
+      options?: UpdateUserEncryptionRequestOptionsV2
     ): Promise<UserResponseV2>;
   };
 }

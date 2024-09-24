@@ -6,15 +6,19 @@ import { LRUCache } from 'lru-cache';
 import {
   IGetProfileInfoOptions,
   IProfileInfoResponseV1,
-  IProfileInfoResponseV2,
   IUpdateProfileRequest,
 } from '../interfaces/iprofile';
+import {
+  GetUserProfileRequestV2,
+  UpdateUserProfileRequestV2,
+  UserProfileResponseV2,
+} from '../interfaces/v2/user';
 
 export function createProfileResponseV2(
   response: IProfileInfoResponseV1,
   raw: boolean
-): IProfileInfoResponseV2 {
-  const profileResponse: IProfileInfoResponseV2 = {
+): UserProfileResponseV2 {
+  const profileResponse: UserProfileResponseV2 = {
     name: response.name,
     desc: response.desc,
     image: response.picture,
@@ -67,7 +71,7 @@ export class Profile {
 
     const infoV2 = async (
       options?: IGetProfileInfoOptions
-    ): Promise<IProfileInfoResponseV2> => {
+    ): Promise<UserProfileResponseV2> => {
       const accountToUse = options?.overrideAccount || this.account;
       const { raw = false } = options || {};
       const cacheKey = `profile-${accountToUse}-v2`;
@@ -112,8 +116,8 @@ export class Profile {
     };
 
     const updateV2 = async (
-      options: IUpdateProfileRequest & { raw?: boolean }
-    ): Promise<IProfileInfoResponseV2> => {
+      options: UpdateUserProfileRequestV2
+    ): Promise<UserProfileResponseV2> => {
       if (!this.decryptedPgpPvtKey) {
         throw new Error(PushAPI.ensureSignerMessage());
       }
@@ -136,13 +140,11 @@ export class Profile {
 
   info!: {
     (options?: IGetProfileInfoOptions): Promise<IProfileInfoResponseV1>;
-    v2(options?: IGetProfileInfoOptions): Promise<IProfileInfoResponseV2>;
+    v2(options?: GetUserProfileRequestV2): Promise<UserProfileResponseV2>;
   };
 
   update!: {
     (options: IUpdateProfileRequest): Promise<IProfileInfoResponseV1>;
-    v2(
-      options: IUpdateProfileRequest & { raw?: boolean }
-    ): Promise<IProfileInfoResponseV2>;
+    v2(options: UpdateUserProfileRequestV2): Promise<UserProfileResponseV2>;
   };
 }

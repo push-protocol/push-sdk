@@ -1777,7 +1777,7 @@ export class Chat {
       options?: {
         raw?: boolean;
       }
-    ): Promise<ChatRejectionResponse>;
+    ): Promise<ChatRejectionResponseV2>;
   };
 
   block!: {
