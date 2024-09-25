@@ -14,6 +14,7 @@ export type SearchChannelOptionsType = {
   page?: number;
   limit?: number;
   filter?: number;
+  tag?: string;
   // temp fix to support both new and old format
   oldFormat?: boolean;
 };
@@ -25,6 +26,7 @@ export const search = async (options: SearchChannelOptionsType) => {
     page = Constants.PAGINATION.INITIAL_PAGE,
     limit = Constants.PAGINATION.LIMIT,
     filter,
+    tag,
     oldFormat = true,
   } = options || {};
 
@@ -35,6 +37,7 @@ export const search = async (options: SearchChannelOptionsType) => {
     page,
     limit: getLimit(limit),
     query,
+    ...(tag && { tag }),
     ...(filter && { filter }),
   };
   const requestUrl = `${apiEndpoint}?${getQueryParams(queryObj)}`;

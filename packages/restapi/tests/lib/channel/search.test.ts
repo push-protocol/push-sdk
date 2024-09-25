@@ -12,12 +12,22 @@ describe('PUSH_CHANNELS.search', () => {
     console.log(res);
   });
 
-  it.only('Should fetch channels based on the filter in new format', async () => {
+  it('Should fetch channels based on the filter in new format', async () => {
     const res = await search({
       filter: 80002,
       env: ENV.DEV,
       query: "Node",
       oldFormat: false
+    });
+    console.log(res);
+  });
+
+  it('Should fetch channels based on the filter in new format', async () => {
+    const res = await search({
+      env: ENV.DEV,
+      query: "Channel",
+      oldFormat: false,
+      tag: "Infrastructure"
     });
     console.log(res);
   });

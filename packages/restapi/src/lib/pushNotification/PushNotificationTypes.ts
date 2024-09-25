@@ -56,6 +56,7 @@ export type ChannelSearchOptions = {
   filter?: number;
   // temp fix to support both new and old format
   oldFormat?: boolean;
+  tag?: string;
 };
 
 // Types related to notification
@@ -156,6 +157,7 @@ export type ChannelListOptions = {
   sort?: ChannelListSortType;
   order?: ChannelListOrderType;
   filter?: number;
+  tag?: string;
 };
 
 export type TagListOptions = {

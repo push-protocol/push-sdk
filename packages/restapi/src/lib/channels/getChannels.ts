@@ -15,22 +15,25 @@ type getChannelsOptionsType = {
   sort?: string;
   order?: string;
   filter?: number;
-}
+  tag?: string;
+};
 
 export const getChannels = async (options: getChannelsOptionsType) => {
-  const { 
-    env = CONSTANTS.ENV.PROD, 
-    page = 1, 
-    limit = 10, 
+  const {
+    env = CONSTANTS.ENV.PROD,
+    page = 1,
+    limit = 10,
     sort = CONSTANTS.FILTER.CHANNEL_LIST.SORT.SUBSCRIBER,
     order = CONSTANTS.FILTER.CHANNEL_LIST.ORDER.DESCENDING,
-    filter
+    filter,
+    tag,
   } = options || {};
 
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/channels`;
-  const requestUrl = `${apiEndpoint}?page=${page}&limit=${limit}&sort=${sort}&order=${order}${filter? '&filter=' + filter : ''}`;
-
+  const requestUrl = `${apiEndpoint}?page=${page}&limit=${limit}&sort=${sort}&order=${order}${
+    filter ? '&filter=' + filter : ''
+  }${tag ? '&tag=' + tag : ''}`;
   return await axiosGet(requestUrl)
     .then((response) => {
       return response.data;
