@@ -63,7 +63,7 @@ export const baseTheme: INotificationItemTheme = {
     timestamp: '10px',
     optInButtonText: '12px',
   },
-  fontFamily: 'Strawford, sans-serif',
+  fontFamily: 'inherit',
 };
 //light theme object
 export const lightTheme: INotificationItemTheme = {
@@ -76,8 +76,8 @@ export const lightTheme: INotificationItemTheme = {
     notificationContentText: '#313338',
     timestamp: '#8C93A0',
     optInButtonText: '#fff',
-    optInButtonBackground: 'rgb(226, 8, 128)',
-    modalBorder: '#D548EC',
+    optInButtonBackground: '#D548EC',
+    modalBorder: '#C4CBD5',
   },
   modalDivider: '1px solid #D9D9D9',
 };

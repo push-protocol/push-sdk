@@ -213,6 +213,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
           >
             {app}
           </ChannelName>
+          <Ellipse background={theme === 'dark' ? '#757D8D' : '#c4cbd5'} />
           {timeStamp ? <TimestampLabel themeObject={themeObject!}>{convertTimeStamp(timeStamp)}</TimestampLabel> : null}
         </HeaderButton>
         {chainName && chainDetails[chainName] ? (
@@ -319,6 +320,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
           </NotificationDetails>
           {isSpam && (
             <Button
+              height="32px"
               onClick={onSubscribe}
               width="fit-content"
               color={themeObject.color?.optInButtonText}
@@ -425,6 +427,12 @@ const BlockchainContainer = styled.div`
   font-weight: 700;
 `;
 
+const Ellipse = styled.div<{ background?: string }>`
+  width: 4px;
+  height: 4px;
+  background: ${(props) => props?.background};
+  border-radius: 100%;
+`;
 const ChainIconSVG = styled.div<OffsetWidthType>`
   width: 18px;
   height: 18px;
@@ -534,6 +542,9 @@ const ChannelTitleWrapper = styled.div<CTADataType>`
   &:hover {
     text-decoration: ${(props) => (props.cta ? 'underline' : 'none')};
     color: #d548ec;
+    span {
+      color: #d548ec;
+    }
   }
   cursor: pointer;
   display: flex;
