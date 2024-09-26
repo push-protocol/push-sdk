@@ -44,7 +44,7 @@ export const search = async (options: SearchChannelOptionsType) => {
   return axiosGet(requestUrl)
     .then((response) => {
       const channels = response.data.channels;
-      const itemCount = response.data.total || channels.length;
+      const itemCount = response.data.itemCount || channels.length;
 
       const formattedResponse = {
         itemCount,

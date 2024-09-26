@@ -22,10 +22,10 @@ describe('PUSH_CHANNELS.search', () => {
     console.log(res);
   });
 
-  it('Should fetch channels based on the filter in new format', async () => {
+  it.only('Should fetch channels based on the filter in new format', async () => {
     const res = await search({
       env: ENV.DEV,
-      query: "Channel",
+      query: "a",
       oldFormat: false,
       tag: "Infrastructure"
     });
