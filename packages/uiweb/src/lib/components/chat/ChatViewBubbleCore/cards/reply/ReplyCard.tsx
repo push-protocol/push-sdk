@@ -1,12 +1,14 @@
 // React + Web3 Essentials
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 // External Packages
+import styled from 'styled-components';
 
 // Internal Compoonents
 import { useChatData } from '../../../../../hooks';
-import { Image, Section } from '../../../../reusables';
+import { Section, Span } from '../../../../reusables';
 
+import { ThemeContext } from '../../../theme/ThemeProvider';
 import { CardRenderer } from '../../CardRenderer';
 
 // Internal Configs
@@ -19,19 +21,12 @@ import { IMessagePayload } from '../../../exportedTypes';
 // Constants
 
 // Exported Interfaces & Types
+// Extend Section via ReplySectionProps
+interface ReplySectionProps extends React.ComponentProps<typeof Section> {
+  borderBG?: string;
+}
 
 // Exported Functions
-const getParsedMessage = (message: string) => {
-  try {
-    return JSON.parse(message);
-  } catch (error) {
-    console.error('UIWeb::components::ChatViewBubble::ImageCard::error while parsing image', error);
-    return null;
-  }
-};
-
-const getImageContent = (message: string) => getParsedMessage(message)?.content ?? '';
-
 export const ReplyCard = ({
   reference,
   chatId,
@@ -41,7 +36,8 @@ export const ReplyCard = ({
   chatId: string | undefined;
   position?: number;
 }) => {
-  console.debug('UIWeb::components::ChatViewBubble::ReplyCard::chat', reference);
+  // get theme
+  const theme = useContext(ThemeContext);
 
   // get user
   const { user } = useChatData();
@@ -94,19 +90,73 @@ export const ReplyCard = ({
 
   // render
   return (
-    <Section
+    <ReplySection
+      key={`card-reply-${replyPayloadManager.payload?.link ?? 'null'}`}
       maxWidth="512px"
-      width="fit-content"
+      minWidth="200px"
+      width="fill-available"
+      background={
+        position
+          ? theme.backgroundColor?.chatPreviewSentBubbleBackground
+          : theme.backgroundColor?.chatPreviewRecievedBubbleBackground
+      }
+      margin={theme.margin?.chatBubbleReplyMargin}
+      borderRadius={theme.borderRadius?.chatBubbleReplyBorderRadius}
+      borderBG={
+        position
+          ? theme.backgroundColor?.chatPreviewSentBorderBubbleBackground
+          : theme.backgroundColor?.chatPreviewRecievedBorderBubbleBackground
+      }
     >
-      {!replyPayloadManager.loaded && <div>Loading...</div>}
+      {/* Initial State */}
+      {!replyPayloadManager.loaded && (
+        <Span
+          alignSelf="start"
+          textAlign="left"
+          lineHeight="1.4em"
+          width="inherit"
+          fontSize={position ? `${theme.fontSize?.chatSentBubbleText}` : `${theme.fontSize?.chatReceivedBubbleText}`}
+          fontWeight={
+            position ? `${theme.fontWeight?.chatSentBubbleText}` : `${theme.fontWeight?.chatReceivedBubbleText}`
+          }
+          padding={theme.padding?.chatBubbleInnerContentPadding}
+          color={position ? `${theme.textColor?.chatSentBubbleText}` : `${theme.textColor?.chatReceivedBubbleText}`}
+        >
+          Loading Preview...
+        </Span>
+      )}
 
+      {/* Error State */}
+      {replyPayloadManager.loaded && replyPayloadManager.err && (
+        <Span
+          alignSelf="start"
+          textAlign="left"
+          lineHeight="1.4em"
+          width="inherit"
+          fontSize={position ? `${theme.fontSize?.chatSentBubbleText}` : `${theme.fontSize?.chatReceivedBubbleText}`}
+          fontWeight={
+            position ? `${theme.fontWeight?.chatSentBubbleText}` : `${theme.fontWeight?.chatReceivedBubbleText}`
+          }
+          padding={theme.padding?.chatBubbleInnerContentPadding}
+          color={position ? `${theme.textColor?.chatSentBubbleText}` : `${theme.textColor?.chatReceivedBubbleText}`}
+        >
+          {replyPayloadManager.err}
+        </Span>
+      )}
+
+      {/* Loaded State */}
       {replyPayloadManager.loaded && replyPayloadManager.payload && (
         <CardRenderer
-          key="card"
+          key={`card-render-${replyPayloadManager.payload?.link ?? 'null'}`}
           chat={replyPayloadManager.payload}
           position={position ?? 0}
+          previewMode={true}
         />
       )}
-    </Section>
+    </ReplySection>
   );
 };
+
+const ReplySection = styled(Section)<ReplySectionProps>`
+  border-left: 4px solid ${({ borderBG }) => borderBG || 'transparent'};
+`;

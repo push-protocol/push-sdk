@@ -168,12 +168,20 @@ export const transformChatItems: (items: IFeeds[]) => IChatPreviewPayload[] = (i
       // Typescript doesn't know about the messageObj property
       // Workaround: cast to any
       const modItem = item as any;
-      if (modItem.msg.messageType !== 'Reply') {
-        messageType = modItem.msg.messageType;
-        messageContent = modItem.msg.messageObj.content;
+
+      if (modItem.msg.messageType === 'Reply') {
+        if (typeof modItem.msg.messageObj === 'object' && !Array.isArray(modItem.msg.messageObj)) {
+          messageType = modItem.msg.messageObj.content.messageType;
+
+          if (modItem.msg.messageObj.content.messageObj) {
+            messageContent = modItem.msg.messageObj.content.messageObj.content;
+          }
+        }
       } else if (typeof modItem.msg.messageObj === 'object' && !Array.isArray(modItem.msg.messageObj)) {
-        messageType = modItem.msg.messageObj.content.messageType;
-        messageContent = modItem.msg.messageObj.content.messageObj.content;
+        messageType = modItem.msg.messageType;
+        if (modItem.msg.messageObj) {
+          messageContent = modItem.msg.messageObj.content;
+        }
       }
 
       return {

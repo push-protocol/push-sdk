@@ -9,7 +9,6 @@ import { ChatDataContext } from '../../../context';
 import { useChatData } from '../../../hooks';
 import { ReplyIcon } from '../../../icons/PushIcons';
 import { Div, Image, Section, Span } from '../../reusables';
-import { checkTwitterUrl } from '../helpers/twitter';
 import { ThemeContext } from '../theme/ThemeProvider';
 
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';

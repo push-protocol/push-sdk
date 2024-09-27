@@ -402,10 +402,12 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         setAccessControl(chatId, true);
         setVerified(false);
         setVerificationSuccessfull(false);
-        setReplyPayload?.(null);
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      // reset reply payload
+      setReplyPayload?.(null);
     }
   };
 
@@ -421,7 +423,12 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     setGifOpen(false);
   };
 
-  console.log('UIWeb::MessageInput::sendTextMsg::replyPayload', replyPayload);
+  // To focus when replyPayload is truthly
+  useEffect(() => {
+    if (replyPayload) {
+      textAreaRef.current?.focus();
+    }
+  }, [replyPayload]);
 
   return !(user && !user?.readmode()) && isConnected ? (
     <TypebarSection
@@ -571,7 +578,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                 flexDirection="column"
                 alignItems="flex-start"
                 overflow="hidden"
-                gap="4px"
+                gap="8px"
               >
                 <Section
                   flexDirection="row"
@@ -612,6 +619,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                 <ChatViewBubbleCore
                   chat={replyPayload}
                   chatId={chatId}
+                  previewMode={true}
+                  activeMode={true}
                 />
               </Section>
             )}
@@ -649,6 +658,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
               )}
 
               <MultiLineInput
+                ref={textAreaRef}
                 disabled={loading ? true : false}
                 theme={theme}
                 onKeyDown={(event) => {
@@ -660,7 +670,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                 placeholder="Type your message..."
                 onChange={(e) => onChangeTypedMessage(e.target.value)}
                 value={typedMessage}
-                ref={textAreaRef}
                 rows={1}
               />
               {gif && (

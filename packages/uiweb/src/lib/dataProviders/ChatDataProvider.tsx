@@ -225,7 +225,7 @@ export const ChatUIProvider = ({
       enableConsole();
     } else {
       console.warn('UIWeb::ChatDataProvider::Debug mode is turned off, console logs are suppressed');
-      // disableConsole();
+      disableConsole();
     }
   }, [debug]);
 

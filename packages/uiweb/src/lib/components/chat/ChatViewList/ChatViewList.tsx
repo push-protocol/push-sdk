@@ -526,6 +526,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
 
           {
             <ChatViewListCardInner
+              key={`section-chatview-${user?.uid}`}
               flexDirection="column"
               justifyContent="start"
               width="100%"

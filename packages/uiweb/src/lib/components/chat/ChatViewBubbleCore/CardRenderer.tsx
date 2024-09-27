@@ -13,7 +13,17 @@ import { ImageCard } from './cards/image/ImageCard';
 import { MessageCard } from './cards/message/MessageCard';
 import { TwitterCard } from './cards/twitter/TwitterCard';
 
-export const CardRenderer = ({ chat, position }: { chat: IMessagePayload; position: number }) => {
+export const CardRenderer = ({
+  chat,
+  position,
+  previewMode = false,
+  activeMode = false,
+}: {
+  chat: IMessagePayload;
+  position: number;
+  previewMode?: boolean;
+  activeMode?: boolean;
+}) => {
   // get theme
   const theme = useContext(ThemeContext);
 
@@ -26,15 +36,6 @@ export const CardRenderer = ({ chat, position }: { chat: IMessagePayload; positi
       ? (typeof chat.messageObj?.content === 'string' ? chat.messageObj?.content : '') ?? ''
       : (chat.messageObj as string);
 
-  // check and render tweets
-  const { tweetId, messageType }: TwitterFeedReturnType = checkTwitterUrl({
-    message: message,
-  });
-
-  if (messageType === 'TwitterFeedLink') {
-    chat.messageType = 'TwitterFeedLink';
-  }
-
   // test if the payload is encrypted, if so convert it to text
   if (isMessageEncrypted(message)) {
     chat.messageType = 'Text';
@@ -43,32 +44,71 @@ export const CardRenderer = ({ chat, position }: { chat: IMessagePayload; positi
   // get user account
   const account = user?.account ?? '';
 
+  // deduce font color
+  const fontColor =
+    position && !activeMode ? theme.textColor?.chatSentBubbleText : theme.textColor?.chatReceivedBubbleText;
+
   // Render the card render
   return (
     <>
       {/* Message Card */}
+      {/* Twitter Card is handled by PreviewRenderer */}
+      {/* Frame Card is handled by PreviewRenderer */}
+      {/* Code Card is handled by CodeRenderer */}
       {chat && chat.messageType === 'Text' && (
         <MessageCard
           chat={chat}
           position={position}
           account={account}
+          color={fontColor}
+          previewMode={previewMode}
+          activeMode={activeMode}
         />
       )}
 
       {/* Image Card */}
-      {chat.messageType === 'Image' && <ImageCard chat={chat} />}
+      {chat.messageType === 'Image' && (
+        // Background only valid when no preview or active mode
+        <ImageCard
+          chat={chat}
+          background={
+            position && !activeMode && !previewMode
+              ? theme.backgroundColor?.chatSentBubbleBackground
+              : theme.backgroundColor?.chatReceivedBubbleBackground
+          }
+          color={fontColor}
+          previewMode={previewMode}
+          activeMode={activeMode}
+        />
+      )}
 
       {/* File Card */}
-      {chat.messageType === 'File' && <FileCard chat={chat} />}
+      {chat.messageType === 'File' && (
+        <FileCard
+          chat={chat}
+          background={
+            position && !activeMode
+              ? theme.backgroundColor?.chatPreviewSentBubbleBackground
+              : theme.backgroundColor?.chatPreviewRecievedBubbleBackground
+          }
+          color={fontColor}
+          previewMode={previewMode}
+          activeMode={activeMode}
+        />
+      )}
 
       {/* Gif Card */}
-      {chat.messageType === 'GIF' && <GIFCard chat={chat} />}
-
-      {/* Twitter Card */}
-      {chat.messageType === 'TwitterFeedLink' && (
-        <TwitterCard
-          tweetId={tweetId}
+      {chat.messageType === 'GIF' && (
+        <GIFCard
           chat={chat}
+          background={
+            position && !activeMode && !previewMode
+              ? theme.backgroundColor?.chatSentBubbleBackground
+              : theme.backgroundColor?.chatReceivedBubbleBackground
+          }
+          color={fontColor}
+          previewMode={previewMode}
+          activeMode={activeMode}
         />
       )}
 
@@ -78,6 +118,9 @@ export const CardRenderer = ({ chat, position }: { chat: IMessagePayload; positi
           chat={chat}
           position={position}
           account={account}
+          color={fontColor}
+          previewMode={previewMode}
+          activeMode={activeMode}
         />
       )}
     </>

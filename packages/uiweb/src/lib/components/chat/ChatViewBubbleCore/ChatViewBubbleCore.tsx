@@ -1,15 +1,32 @@
-import { ReactNode, useContext, useEffect, useRef, useState } from 'react';
+// React + Web3 Essentials
+import { useContext } from 'react';
 
+// External Packages
+import styled from 'styled-components';
+
+// Internal Components
 import { useChatData } from '../../../hooks';
-import { checkTwitterUrl } from '../helpers/twitter';
 import { ThemeContext } from '../theme/ThemeProvider';
 
 import { isMessageEncrypted, pCAIP10ToWallet } from '../../../helpers';
 import { IMessagePayload, TwitterFeedReturnType } from '../exportedTypes';
 
+import { Section } from '../../reusables';
 import { CardRenderer } from './CardRenderer';
 import { ReplyCard } from './cards/reply/ReplyCard';
 
+// Internal Configs
+
+// Assets
+
+// Interfaces & Types
+interface ChatViewBubbleCoreProps extends React.ComponentProps<typeof Section> {
+  borderBG?: string;
+  previewMode?: boolean;
+}
+
+// Main Logic
+// Deep Copy Helper Function
 function deepCopy<T>(obj: T): T {
   if (obj === null || typeof obj !== 'object') {
     return obj;
@@ -36,7 +53,18 @@ function deepCopy<T>(obj: T): T {
   throw new Error(`Unable to copy obj! Its type isn't supported.`);
 }
 
-export const ChatViewBubbleCore = ({ chat, chatId }: { chat: IMessagePayload; chatId: string | undefined }) => {
+// Exported Default Component
+export const ChatViewBubbleCore = ({
+  chat,
+  chatId,
+  previewMode = false,
+  activeMode = false,
+}: {
+  chat: IMessagePayload;
+  chatId: string | undefined;
+  previewMode?: boolean;
+  activeMode?: boolean;
+}) => {
   // get theme
   const theme = useContext(ThemeContext);
 
@@ -46,36 +74,6 @@ export const ChatViewBubbleCore = ({ chat, chatId }: { chat: IMessagePayload; ch
   // get chat position
   const chatPosition =
     pCAIP10ToWallet(chat.fromDID).toLowerCase() !== pCAIP10ToWallet(user?.account ?? '')?.toLowerCase() ? 0 : 1;
-
-  // // manale reply payload loader
-  // type ReplyPayloadManagerType = {
-  //   payload: IMessagePayload | null;
-  //   loading: boolean;
-  //   loaded: boolean;
-  //   err: string | null;
-  // };
-
-  // const [replyPayloadManager, setReplyPayloadManager] = useState<ReplyPayloadManagerType>({
-  //   payload: null,
-  //   loading: true,
-  //   loaded: false,
-  //   err: null,
-  // });
-
-  // const resolveReplyPayload = async (chat: IMessagePayload, reference: string | null) => {
-  //   if (reference && chatId) {
-  //     try {
-  //       const payloads = await user?.chat.history(chatId, { reference: reference, limit: 1 });
-  //       const payload = payloads ? payloads[0] : null;
-  //       console.log('resolving reply payload', payload);
-  //       setReplyPayloadManager({ payload: payload, loading: false, loaded: true, err: null });
-  //     } catch (err) {
-  //       setReplyPayloadManager({ payload: null, loading: false, loaded: true, err: 'Unable to load Preview' });
-  //     }
-  //   } else {
-  //     setReplyPayloadManager({ payload: null, loading: false, loaded: true, err: 'Reference not found' });
-  //   }
-  // };
 
   const renderBubble = (chat: IMessagePayload, position: number) => {
     const components: JSX.Element[] = [];
@@ -97,8 +95,9 @@ export const ChatViewBubbleCore = ({ chat, chatId }: { chat: IMessagePayload; ch
     // Reply is it's own card that calls ChatViewBubbleCardRenderer
     // This avoids transitive recursion
 
-    // Use replyReference to check and call reply card
-    if (replyReference !== '') {
+    // Use replyReference to check and call reply card but only if activeMode is false
+    // as activeMode will be true when user is replying to a message
+    if (replyReference !== '' && !activeMode) {
       // Add Reply Card
       components.push(
         <ReplyCard
@@ -118,12 +117,42 @@ export const ChatViewBubbleCore = ({ chat, chatId }: { chat: IMessagePayload; ch
           key="card"
           chat={derivedMsg}
           position={position}
+          previewMode={previewMode}
+          activeMode={activeMode}
         />
       );
     }
 
-    return <>{components}</>;
+    // deduce background color
+    // if active mode, use the normal background color as this is user replying to a message
+    // if preview mode, use the reply background color
+    // if not preview mode, use the normal background color
+    const background = activeMode
+      ? theme.backgroundColor?.chatActivePreviewBubbleBackground
+      : position
+      ? previewMode
+        ? theme.backgroundColor?.chatPreviewSentBubbleBackground
+        : theme.backgroundColor?.chatSentBubbleBackground
+      : previewMode
+      ? theme.backgroundColor?.chatPreviewRecievedBubbleBackground
+      : theme.backgroundColor?.chatReceivedBubbleBackground;
+
+    return (
+      <ChatViewBubbleCoreSection
+        flexDirection="column"
+        background={background}
+        borderBG={activeMode ? theme.backgroundColor?.chatActivePreviewBorderBubbleBackground : 'transparent'}
+        borderRadius={activeMode ? theme.borderRadius?.chatBubbleReplyBorderRadius : '0px'}
+        previewMode={previewMode}
+      >
+        {components}
+      </ChatViewBubbleCoreSection>
+    );
   };
 
   return renderBubble(chat, chatPosition);
 };
+
+const ChatViewBubbleCoreSection = styled(Section)<ChatViewBubbleCoreProps>`
+  border-left: ${({ borderBG, previewMode }) => (previewMode ? `4px solid ${borderBG || 'transparent'}` : 'none')};
+`;

@@ -93,7 +93,7 @@ export interface IChatProfile {
 
 export interface TwitterFeedReturnType {
   tweetId: string;
-  messageType: string;
+  isTweet: boolean;
 }
 
 export interface IToast {
