@@ -504,9 +504,6 @@ const ChannelName = styled.div<CustomThemeProps & FontSizeType>`
   font-size: ${(props) => props.fontSize};
   font-weight: ${(props) => props?.themeObject?.fontWeight?.channelNameText};
   color: ${(props) => props?.themeObject?.color?.channelNameText};
-  &:hover {
-    text-decoration: underline;
-  }
 `;
 
 const HeaderButton = styled.div<CustomThemeProps>`
@@ -540,10 +537,9 @@ const NotificationDetails = styled.div<OffsetWidthType & CustomThemeProps>`
 `;
 const ChannelTitleWrapper = styled.div<CTADataType>`
   &:hover {
-    text-decoration: ${(props) => (props.cta ? 'underline' : 'none')};
-    color: #d548ec;
+    color: #c742dd;
     span {
-      color: #d548ec;
+      color: #c742dd;
     }
   }
   cursor: pointer;
@@ -557,7 +553,7 @@ const ChannelTitleText = styled.span<CustomThemeProps & FontSizeType>`
   font-weight: ${(props) => props?.themeObject?.fontWeight?.notificationTitleText};
   color: ${(props) => props?.themeObject?.color?.notificationTitleText};
   &:hover {
-    color: #d548ec;
+    color: #c742dd;
   }
 `;
 const ChannelDesc = styled.div<CustomThemeProps & FontSizeType>`
