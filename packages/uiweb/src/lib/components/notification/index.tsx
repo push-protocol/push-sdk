@@ -15,6 +15,7 @@ import { LinkIcon } from '../../icons/Link';
 import type { INotificationItemTheme } from './theme';
 import { getCustomTheme } from './theme';
 import { Button } from '../reusables';
+import { CloseIcon } from '../../icons/Close';
 export {
   baseTheme as notificationBaseTheme,
   darkTheme as notificationDarkTheme,
@@ -58,6 +59,7 @@ export type NotificationItemProps = {
   image: string | undefined;
   url: string | undefined;
   isSpam?: boolean;
+  onClose?: () => void;
   subscribeFn?: () => Promise<unknown>;
   isSubscribedFn?: () => Promise<unknown>;
   theme?: string | undefined;
@@ -114,6 +116,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
   customTheme,
   isSecret,
   decryptFn,
+  onClose,
 }) => {
   const { notificationBody: parsedBody, timeStamp } = extractTimeStamp(notificationBody || '');
   const themeObject = getCustomTheme(theme, customTheme!);
@@ -123,7 +126,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
     isSecret
   );
 
-  const isCtaURLValid = MediaHelper.validURL(notifCta);
+  const isCtaURLValid = MediaHelper.validURL(notifCta) && !isToast;
   const isChannelURLValid = MediaHelper.validURL(url);
 
   // store the image to be displayed in this state variable
@@ -191,6 +194,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
       timestamp={timeStamp}
       offsetWidth={offsetWidth}
       ref={divRef}
+      cta={isCtaURLValid}
       themeObject={themeObject!}
     >
       <MobileHeader themeObject={themeObject!}>
@@ -216,11 +220,18 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
           <Ellipse background={theme === 'dark' ? '#757D8D' : '#c4cbd5'} />
           {timeStamp ? <TimestampLabel themeObject={themeObject!}>{convertTimeStamp(timeStamp)}</TimestampLabel> : null}
         </HeaderButton>
-        {chainName && chainDetails[chainName] ? (
-          <BlockchainContainer>
-            <ChainIconSVG offsetWidth={offsetWidth}>{chainDetails[chainName].icon}</ChainIconSVG>
-          </BlockchainContainer>
-        ) : null}
+        <ChainCloseContainer>
+          {chainName && chainDetails[chainName] ? (
+            <BlockchainContainer>
+              <ChainIconSVG offsetWidth={offsetWidth}>{chainDetails[chainName].icon}</ChainIconSVG>
+            </BlockchainContainer>
+          ) : null}
+          {isToast && onClose && (
+            <CloseContainer onClick={onClose}>
+              <CloseIcon />
+            </CloseContainer>
+          )}
+        </ChainCloseContainer>
       </MobileHeader>
 
       {/* content of the component */}
@@ -299,7 +310,12 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
               </ChannelTitleText>
               {/* display link svg if notification has a valid cta url */}
               {isCtaURLValid ? (
-                <span style={{ height: '20px', marginLeft: '7px' }}>
+                <span
+                  style={{
+                    width: `calc(20px - ${isToast ? '2px' : '0px'})`,
+                    height: `calc(20px - ${isToast ? '2px' : '0px'})`,
+                  }}
+                >
                   <LinkIcon />
                 </span>
               ) : (
@@ -479,7 +495,7 @@ const NotificationDetialsWrapper = styled.div`
   gap: 16px;
 `;
 
-const Container = styled.div<ContainerDataType & CustomThemeProps>`
+const Container = styled.div<ContainerDataType & CustomThemeProps & CTADataType>`
   position: relative;
   padding: 16px;
   overflow: hidden;
@@ -492,6 +508,13 @@ const Container = styled.div<ContainerDataType & CustomThemeProps>`
   border: ${(props) => `1px solid ${props?.themeObject?.color?.modalBorder}`};
   background: ${(props) => props?.themeObject?.color?.accentBackground};
   border-radius: ${(props) => props?.themeObject?.borderRadius?.modal};
+  ${(props) =>
+    props.cta &&
+    css`
+      &:hover {
+        background: ${props?.themeObject?.color?.contentHoverBackground};
+      }
+    `};
 `;
 
 const MobileHeader = styled.div<CustomThemeProps>`
@@ -536,12 +559,17 @@ const NotificationDetails = styled.div<OffsetWidthType & CustomThemeProps>`
     `};
 `;
 const ChannelTitleWrapper = styled.div<CTADataType>`
-  &:hover {
-    color: #c742dd;
-    span {
-      color: #c742dd;
-    }
-  }
+  ${(props) =>
+    props.cta &&
+    css`
+      &:hover {
+        color: #c742dd;
+        span {
+          color: #c742dd;
+        }
+      }
+    `};
+
   cursor: pointer;
   display: flex;
   gap: 4px;
@@ -552,9 +580,6 @@ const ChannelTitleText = styled.span<CustomThemeProps & FontSizeType>`
   font-size: ${(props) => props?.fontSize};
   font-weight: ${(props) => props?.themeObject?.fontWeight?.notificationTitleText};
   color: ${(props) => props?.themeObject?.color?.notificationTitleText};
-  &:hover {
-    color: #c742dd;
-  }
 `;
 const ChannelDesc = styled.div<CustomThemeProps & FontSizeType>`
   line-height: 20px;
@@ -579,7 +604,16 @@ const ChannelMetaInfo = styled.div<MetaInfoType>`
   flex-direction: row;
   justify-content: ${(props) => (props.hasLeft ? 'space-between' : 'end')};
 `;
+const CloseContainer = styled.div`
+  cursor: pointer;
+  display: flex;
+`;
 
+const ChainCloseContainer = styled.div`
+  display: flex;
+  gap: 6px;
+  align-items: center;
+`;
 const ChannelMetaSection = styled.div<MetaDataType>`
   display: ${(props) => (props.hidden ? 'none' : 'flex')};
   align-items: center;
