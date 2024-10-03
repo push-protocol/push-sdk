@@ -312,8 +312,8 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
               {isCtaURLValid ? (
                 <span
                   style={{
-                    width: `calc(20px - ${isToast ? '2px' : '0px'})`,
-                    height: `calc(20px - ${isToast ? '2px' : '0px'})`,
+                    width: `calc(16px - ${isToast ? '2px' : '0px'})`,
+                    height: `calc(16px - ${isToast ? '2px' : '0px'})`,
                   }}
                 >
                   <LinkIcon />
@@ -571,8 +571,9 @@ const ChannelTitleWrapper = styled.div<CTADataType>`
     `};
 
   cursor: pointer;
+  align-items: center;
   display: flex;
-  gap: 4px;
+  gap: 8px;
 `;
 
 const ChannelTitleText = styled.span<CustomThemeProps & FontSizeType>`
