@@ -55,11 +55,17 @@ export const ImageCard = ({
     <Section
       maxWidth={previewMode ? 'auto' : '512px'}
       width="fill-available"
-      justifyContent="flex-start"
+      justifyContent="space-between"
       background={previewMode ? 'transparent' : background}
       color={color}
       gap="0px"
     >
+      {previewMode && (
+        <Section margin="8px" alignSelf='center'>
+          <Tag type="Image" />
+        </Section>
+      )}
+
       <Section
         background="white"
         borderRadius="12px"
@@ -75,11 +81,7 @@ export const ImageCard = ({
         />
       </Section>
 
-      {previewMode && (
-        <Section margin="8px 0px 0px 0px">
-          <Tag type="Image" />
-        </Section>
-      )}
+
     </Section>
   );
 };

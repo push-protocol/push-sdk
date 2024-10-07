@@ -157,7 +157,6 @@ export const ReplyCard = ({
             fontSize="10px"
             color={theme.textColor?.chatSentBubbleText}
           >
-            {`Replied to `}
             <Span
               fontWeight="500"
               padding="0px"

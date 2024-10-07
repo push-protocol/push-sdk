@@ -592,7 +592,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                     fontSize="10px"
                     color={theme.iconColor?.emoji}
                   >
-                    {`Replying to `}
+                    {`Reply to `}
                     <Span
                       fontWeight="500"
                       padding="0px"
@@ -751,7 +751,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   );
 };
 
-const TypebarSection = styled(Section)<{ border?: string }>`
+const TypebarSection = styled(Section) <{ border?: string }>`
   // gap: 10px;
   border: ${(props) => props.border || 'none'};
   @media ${device.mobileL} {
