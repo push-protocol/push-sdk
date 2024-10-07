@@ -106,6 +106,12 @@ describe('PushAPI.channel functionality', () => {
       expect(res).not.null;
     });
 
+    it('With signer: Should return response in new fromat', async () => {
+      const res = await userBob.channel.search('Node', { oldFormat: false });
+      // console.log(res);
+      expect(res).not.null;
+    });
+
     it('Should throw error for empty query', async () => {
       // const res = await userBob.channel.search('')
       await expect(() => userBob.channel.search('')).to.Throw;
@@ -583,6 +589,13 @@ describe('PushAPI.channel functionality', () => {
         { raw: false, filter: CONSTANTS.NOTIFICATION.TYPE.TARGETTED }
       );
       console.log(inspect(res, { depth: null }));
+      expect(res).not.null;
+    });
+  });
+  describe('tags', () => {
+    it('Should fetch all tags', async () => {
+      const res = await userAlice.channel.tags.list();
+      console.log(res);
       expect(res).not.null;
     });
   });

@@ -11,3 +11,4 @@ export * from './subscribe';
 export * from './subscribeV2';
 export * from './unsubscribe';
 export * from './unsubscribeV2';
+export * from './getAllTags'
