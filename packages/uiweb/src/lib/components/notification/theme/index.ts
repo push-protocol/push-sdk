@@ -5,14 +5,14 @@ interface IBorderRadius {
 }
 interface IColor {
   accentBackground?: string;
-  contentHoverBackground?:string;
   channelNameText?: string;
   notificationTitleText?: string;
   notificationContentText?: string;
   timestamp?: string;
   optInButtonText?: string;
   optInButtonBackground?: string;
-  modalBorder?:string;
+  contentHoverBackground?: string;
+  modalBorder?: string;
 }
 
 interface IFont {
@@ -39,7 +39,6 @@ export interface INotificationItemTheme {
   fontWeight?: IFontWeight;
 
   fontFamily?: string;
-
   modalDivider?: string;
 }
 
@@ -47,58 +46,58 @@ export interface INotificationItemTheme {
 
 export const baseTheme: INotificationItemTheme = {
   borderRadius: {
-    modal: '10px',
+    modal: '16px',
     optInButton: '3px',
   },
   fontWeight: {
-    channelNameText: 400,
-    notificationTitleText: 400,
+    channelNameText: 500,
+    notificationTitleText: 500,
     notificationContentText: 400,
-    timestamp: 600,
+    timestamp: 500,
     optInButtonText: 500,
   },
   fontSize: {
-    channelNameText: '15px',
-    notificationTitleText: '22px',
-    notificationContentText: '16px',
+    channelNameText: '14px',
+    notificationTitleText: '16px',
+    notificationContentText: '14px',
     timestamp: '10px',
-    optInButtonText: 'unset',
+    optInButtonText: '12px',
   },
-  fontFamily: 'Strawford, sans-serif',
+  fontFamily: 'inherit',
 };
 //light theme object
 export const lightTheme: INotificationItemTheme = {
-    ...baseTheme,
-    color:{
-        accentBackground: '#fff',
-        contentHoverBackground:'#e8eaf680',
-        channelNameText:'#333333',
-        notificationTitleText:'#333333',
-        notificationContentText:'#333333',
-        timestamp:'#808080',
-        optInButtonText:'#fff',
-        optInButtonBackground:'rgb(226, 8, 128)',
-        modalBorder:'#D9D9D9'
-    },
-    modalDivider:'1px solid #D9D9D9'
+  ...baseTheme,
+  color: {
+    contentHoverBackground: '#e8eaf680',
+    accentBackground: '#fff',
+    channelNameText: '#17181B',
+    notificationTitleText: '#17181B',
+    notificationContentText: '#313338',
+    timestamp: '#8C93A0',
+    optInButtonText: '#fff',
+    optInButtonBackground: '#D548EC',
+    modalBorder: '#C4CBD5',
+  },
+  modalDivider: '1px solid #D9D9D9',
 };
 //dark theme object
 export const darkTheme: INotificationItemTheme = {
-    ...baseTheme,
-    color:{
-        accentBackground: '#2F3137',
-        channelNameText:'#C5CAE9',
-        contentHoverBackground:'#404650',
-        notificationTitleText:'#C5CAE9',
-        notificationContentText:'#C5CAE9',
-        timestamp:'#808080',
-        optInButtonText:'#fff',
-        optInButtonBackground:'rgb(226, 8, 128)',
-        modalBorder:'#4A4F67'
-    },
-    modalDivider:'1px solid #4A4F67'
+  ...baseTheme,
+  color: {
+    contentHoverBackground: '#404650',
+    accentBackground: '#202124',
+    channelNameText: '#F5F6F8',
+    notificationTitleText: '#F5F6F8',
+    notificationContentText: '#C4CBD5',
+    timestamp: '#757D8D',
+    optInButtonText: '#fff',
+    optInButtonBackground: '#D548EC',
+    modalBorder: '#484D58',
+  },
+  modalDivider: '1px solid #4A4F67',
 };
 //function to return final theme object
-export const getCustomTheme = (theme:string | undefined,customTheme:INotificationItemTheme) => {
-  return Object.assign({}, theme==='dark'?darkTheme:lightTheme, customTheme);
-}
+export const getCustomTheme = (theme: string | undefined, customTheme: INotificationItemTheme) => {
+  return Object.assign({}, theme === 'dark' ? darkTheme : lightTheme, customTheme);
+};
