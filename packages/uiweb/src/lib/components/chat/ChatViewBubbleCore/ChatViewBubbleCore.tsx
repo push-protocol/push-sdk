@@ -87,8 +87,8 @@ export const ChatViewBubbleCore = ({
     if (chat && chat.messageType === 'Reply') {
       // Reply messageObj content contains messageObj and messageType;
       replyReference = (chat as any).messageObj?.reference ?? null;
-      derivedMsg.messageType = derivedMsg.messageObj.content.messageType;
-      derivedMsg.messageObj = derivedMsg.messageObj.content.messageObj;
+      derivedMsg.messageType = derivedMsg?.messageObj?.content?.messageType;
+      derivedMsg.messageObj = derivedMsg?.messageObj?.content?.messageObj;
     }
 
     // Render cards - Anything not a reply is ChatViewBubbleCardRenderer
@@ -130,12 +130,12 @@ export const ChatViewBubbleCore = ({
     const background = activeMode
       ? theme.backgroundColor?.chatActivePreviewBubbleBackground
       : position
-      ? previewMode
-        ? theme.backgroundColor?.chatPreviewSentBubbleBackground
-        : theme.backgroundColor?.chatSentBubbleBackground
-      : previewMode
-      ? theme.backgroundColor?.chatPreviewRecievedBubbleBackground
-      : theme.backgroundColor?.chatReceivedBubbleBackground;
+        ? previewMode
+          ? theme.backgroundColor?.chatPreviewSentBubbleBackground
+          : theme.backgroundColor?.chatSentBubbleBackground
+        : previewMode
+          ? theme.backgroundColor?.chatPreviewRecievedBubbleBackground
+          : theme.backgroundColor?.chatReceivedBubbleBackground;
 
     return (
       <ChatViewBubbleCoreSection
@@ -153,6 +153,6 @@ export const ChatViewBubbleCore = ({
   return renderBubble(chat, chatPosition);
 };
 
-const ChatViewBubbleCoreSection = styled(Section)<ChatViewBubbleCoreProps>`
+const ChatViewBubbleCoreSection = styled(Section) <ChatViewBubbleCoreProps>`
   border-left: ${({ borderBG, previewMode }) => (previewMode ? `4px solid ${borderBG || 'transparent'}` : 'none')};
 `;

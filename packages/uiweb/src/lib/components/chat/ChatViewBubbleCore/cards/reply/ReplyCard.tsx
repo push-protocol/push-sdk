@@ -146,17 +146,40 @@ export const ReplyCard = ({
 
       {/* Loaded State */}
       {replyPayloadManager.loaded && replyPayloadManager.payload && (
-        <CardRenderer
-          key={`card-render-${replyPayloadManager.payload?.link ?? 'null'}`}
-          chat={replyPayloadManager.payload}
-          position={position ?? 0}
-          previewMode={true}
-        />
+        <Section
+          flexDirection="column"
+          alignItems="flex-start"
+          overflow="hidden"
+          width="fill-available"
+        >
+          <Span
+            padding="8px 12px 0px"
+            fontSize="10px"
+            color={theme.textColor?.chatSentBubbleText}
+          >
+            {`Replied to `}
+            <Span
+              fontWeight="500"
+              padding="0px"
+            >
+              {`${replyPayloadManager.payload.fromDID?.split(':')[1].slice(0, 6)}...${replyPayloadManager.payload.fromDID
+                ?.split(':')[1]
+                .slice(-6)}`}
+            </Span>
+          </Span>
+          <CardRenderer
+            key={`card-render-${replyPayloadManager.payload?.link ?? 'null'}`}
+            chat={replyPayloadManager.payload}
+            position={position ?? 0}
+            previewMode={true}
+          />
+        </Section>
+
       )}
     </ReplySection>
   );
 };
 
-const ReplySection = styled(Section)<ReplySectionProps>`
+const ReplySection = styled(Section) <ReplySectionProps>`
   border-left: 4px solid ${({ borderBG }) => borderBG || 'transparent'};
 `;
