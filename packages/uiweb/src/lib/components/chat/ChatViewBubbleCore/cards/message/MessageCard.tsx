@@ -211,7 +211,7 @@ export const MessageCard = ({
     <MessageCardSection
       className={initialized.additionalClasses}
       justifyContent="stretch"
-      width={'fill-available'}
+      width="fill-available"
     >
       {/* Preview Renderer - Start with assuming preview is there, callback handles no preview */}
       <MessagePreviewSection

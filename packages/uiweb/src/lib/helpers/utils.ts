@@ -35,6 +35,34 @@ export const deriveChatId = async (chatId: string, user: PushAPI | undefined): P
   return chatId;
 };
 
+// Main Logic
+// Deep Copy Helper Function
+export function deepCopy<T>(obj: T): T {
+  if (obj === null || typeof obj !== 'object') {
+    return obj;
+  }
+
+  if (obj instanceof Date) {
+    return new Date(obj.getTime()) as any;
+  }
+
+  if (obj instanceof Array) {
+    return obj.reduce((arr, item, i) => {
+      arr[i] = deepCopy(item);
+      return arr;
+    }, [] as any[]) as any;
+  }
+
+  if (obj instanceof Object) {
+    return Object.keys(obj).reduce((newObj, key) => {
+      newObj[key as keyof T] = deepCopy((obj as any)[key]);
+      return newObj;
+    }, {} as T);
+  }
+
+  throw new Error(`Unable to copy obj! Its type isn't supported.`);
+}
+
 export const isMessageEncrypted = (message: string) => {
   if (!message) return false;
 

@@ -8,6 +8,9 @@ import { Image, Section, Span } from '../../../../reusables';
 import { ThemeContext } from '../../../theme/ThemeProvider';
 import { Tag } from '../../tag/Tag';
 
+// Helper functions
+import { getParsedMessage } from '../../../helpers';
+
 // Internal Configs
 
 // Assets
@@ -19,15 +22,6 @@ import { IMessagePayload } from '../../../exportedTypes';
 
 // Exported Interfaces & Types
 
-// Exported Functions
-const getParsedMessage = (message: string) => {
-  try {
-    return JSON.parse(message);
-  } catch (error) {
-    console.error('UIWeb::components::ChatViewBubble::ImageCard::error while parsing image', error);
-    return null;
-  }
-};
 
 const getImageContent = (message: string) => getParsedMessage(message)?.content ?? '';
 

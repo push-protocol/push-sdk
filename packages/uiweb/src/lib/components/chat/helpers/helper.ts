@@ -268,6 +268,15 @@ export const transformStreamToIMessageIPFSWithCID: (item: any) => IMessageIPFSWi
   return transformedItem;
 };
 
+export const getParsedMessage = (message: string) => {
+  try {
+    return JSON.parse(message);
+  } catch (error) {
+    console.error('UIWeb::components::ChatViewBubble::ImageCard::error while parsing image', error);
+    return null;
+  }
+};
+
 export const getChatParticipantDisplayName = (derivedChatId: string, chatId: string) => {
   return derivedChatId ? getDomainIfExists(chatId) ?? derivedChatId : derivedChatId;
 };

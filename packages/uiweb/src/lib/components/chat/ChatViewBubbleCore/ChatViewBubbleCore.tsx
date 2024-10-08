@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import { useChatData } from '../../../hooks';
 import { ThemeContext } from '../theme/ThemeProvider';
 
-import { isMessageEncrypted, pCAIP10ToWallet } from '../../../helpers';
+import { deepCopy, isMessageEncrypted, pCAIP10ToWallet } from '../../../helpers';
 import { IMessagePayload, TwitterFeedReturnType } from '../exportedTypes';
 
 import { Section } from '../../reusables';
@@ -23,34 +23,6 @@ import { ReplyCard } from './cards/reply/ReplyCard';
 interface ChatViewBubbleCoreProps extends React.ComponentProps<typeof Section> {
   borderBG?: string;
   previewMode?: boolean;
-}
-
-// Main Logic
-// Deep Copy Helper Function
-function deepCopy<T>(obj: T): T {
-  if (obj === null || typeof obj !== 'object') {
-    return obj;
-  }
-
-  if (obj instanceof Date) {
-    return new Date(obj.getTime()) as any;
-  }
-
-  if (obj instanceof Array) {
-    return obj.reduce((arr, item, i) => {
-      arr[i] = deepCopy(item);
-      return arr;
-    }, [] as any[]) as any;
-  }
-
-  if (obj instanceof Object) {
-    return Object.keys(obj).reduce((newObj, key) => {
-      newObj[key as keyof T] = deepCopy((obj as any)[key]);
-      return newObj;
-    }, {} as T);
-  }
-
-  throw new Error(`Unable to copy obj! Its type isn't supported.`);
 }
 
 // Exported Default Component
