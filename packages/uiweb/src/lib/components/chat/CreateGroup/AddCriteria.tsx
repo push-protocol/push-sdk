@@ -248,7 +248,7 @@ const AddCriteria = ({ handlePrevious, onClose, criteriaStateManager }: ModalHea
     },
     {
       id: 6,
-      value: BLOCKCHAIN_NETWORK[env].CYBER,
+      value: BLOCKCHAIN_NETWORK[env].CYBER_CONNECT,
       title: 'Cyber',
       icon: CyberConnectSvg,
       function: () => setSelectedChainValue(6),
