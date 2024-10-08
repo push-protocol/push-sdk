@@ -431,6 +431,7 @@ const ChainIconSVG = styled.div<OffsetWidthType>`
 
 const MobileImage = styled.div<OffsetWidthType & { theme?: string }>`
   overflow: hidden;
+  flex-shrink: 0;
   img,
   iframe,
   video {
