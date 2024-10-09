@@ -2,10 +2,12 @@
 import { useEffect, useState } from 'react';
 
 // External Packages
+import { TwitterTweetEmbed } from 'react-twitter-embed';
 
 // Internal Compoonents
 import { IFrame } from '../../../../../types';
 import { extractWebLink, getFormattedMetadata, hasWebLink, isSupportedVideoLink } from '../../../../../utilities';
+import { checkTwitterUrl } from '../../../helpers/twitter';
 
 import { FrameRenderer } from './FrameRenderer';
 import { VideoRenderer } from './VideoRenderer';
@@ -22,7 +24,7 @@ const PROXY_SERVER = 'https://proxy.push.org';
 // Exported Interfaces & Types
 export interface IPreviewCallback {
   loading: boolean;
-  urlType: 'video' | 'frame' | 'other';
+  urlType: 'video' | 'frame' | 'twitter' | 'other';
   error: unknown | null;
 }
 
@@ -32,18 +34,20 @@ export const PreviewRenderer = ({
   account,
   messageId,
   previewCallback,
+  previewMode = false,
 }: {
   message: string | undefined;
   account: string;
   messageId: string;
   previewCallback?: (callback: IPreviewCallback) => void;
+  previewMode?: boolean;
 }) => {
   // setup frame data
   const [initialized, setInitialized] = useState({
     loading: true,
     frameData: {} as IFrame,
     url: null as string | null,
-    urlType: 'other' as 'video' | 'frame' | 'other',
+    urlType: 'other' as 'video' | 'frame' | 'twitter' | 'other',
     error: null as unknown | null,
   });
 
@@ -90,9 +94,23 @@ export const PreviewRenderer = ({
       }
     };
 
-    if (message && hasWebLink(message)) {
-      const url = extractWebLink(message);
-      fetchMetaTags(url ?? '');
+    if (message && hasWebLink(message) && !previewMode) {
+      // first check for twitter url
+      const twitterUrl = checkTwitterUrl(message);
+
+      if (twitterUrl.isTweet) {
+        setInitialized((prevState) => ({
+          ...prevState,
+          loading: false,
+          error: null,
+          url: `${twitterUrl.tweetId}`,
+          urlType: 'twitter',
+        }));
+      } else {
+        // extract web link and process
+        const url = extractWebLink(message);
+        fetchMetaTags(url ?? '');
+      }
     } else {
       // Initiate the callback
       setInitialized((prevState) => ({
@@ -130,5 +148,7 @@ export const PreviewRenderer = ({
       url={initialized.url}
       frameData={initialized.frameData}
     />
+  ) : !initialized.loading && !initialized.error && initialized.url && initialized.urlType === 'twitter' ? (
+    <TwitterTweetEmbed tweetId={initialized.url} />
   ) : null;
 };

@@ -7,8 +7,8 @@ import styled from 'styled-components';
 
 import { ChatDataContext } from '../../../context';
 import { useChatData } from '../../../hooks';
+import { ReplyIcon } from '../../../icons/PushIcons';
 import { Div, Image, Section, Span } from '../../reusables';
-import { checkTwitterUrl } from '../helpers/twitter';
 import { ThemeContext } from '../theme/ThemeProvider';
 
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
@@ -20,11 +20,11 @@ import { FILE_ICON, allowedNetworks, device } from '../../../config';
 import {
   formatFileSize,
   getPfp,
+  isMessageEncrypted,
   pCAIP10ToWallet,
   shortenText,
   sign,
   toSerialisedHexString,
-  isMessageEncrypted,
 } from '../../../helpers';
 import { createBlockie } from '../../../helpers/blockies';
 import { FileMessageContent, FrameDetails, IFrame, IFrameButton, IReactionsForChatMessages } from '../../../types';
@@ -32,14 +32,12 @@ import { extractWebLink, getFormattedMetadata, hasWebLink } from '../../../utili
 import { IMessagePayload, TwitterFeedReturnType } from '../exportedTypes';
 import { Button, TextInput } from '../reusables';
 
-import { FileCard } from './cards/file/FileCard';
-import { GIFCard } from './cards/gif/GIFCard';
-import { ImageCard } from './cards/image/ImageCard';
-import { MessageCard } from './cards/message/MessageCard';
-import { TwitterCard } from './cards/twitter/TwitterCard';
+import { Button as RButton } from '../../reusables';
 
-import { Reactions } from './reactions/Reactions';
+import { ChatViewBubbleCore } from '../ChatViewBubbleCore';
+
 import { ReactionPicker } from './reactions/ReactionPicker';
+import { Reactions } from './reactions/Reactions';
 
 const SenderMessageAddress = ({ chat }: { chat: IMessagePayload }) => {
   const { user } = useContext(ChatDataContext);
@@ -188,6 +186,7 @@ export const ChatViewBubble = ({
   decryptedMessagePayload,
   chatPayload: payload,
   chatReactions,
+  setReplyPayload,
   showChatMeta = false,
   chatId,
   actionId,
@@ -197,6 +196,7 @@ export const ChatViewBubble = ({
   decryptedMessagePayload: IMessagePayload;
   chatPayload?: IMessagePayload;
   chatReactions?: any;
+  setReplyPayload?: (payload: IMessagePayload) => void;
   showChatMeta?: boolean;
   chatId?: string;
   actionId?: string | null | undefined;
@@ -220,26 +220,6 @@ export const ChatViewBubble = ({
   const chatPosition =
     pCAIP10ToWallet(chatPayload.fromDID).toLowerCase() !== pCAIP10ToWallet(user?.account ?? '')?.toLowerCase() ? 0 : 1;
 
-  // derive message
-  const message =
-    typeof chatPayload.messageObj === 'object'
-      ? (chatPayload.messageObj?.content as string) ?? ''
-      : (chatPayload.messageObj as string);
-
-  // check and render tweets
-  const { tweetId, messageType }: TwitterFeedReturnType = checkTwitterUrl({
-    message: message,
-  });
-
-  if (messageType === 'TwitterFeedLink') {
-    chatPayload.messageType = 'TwitterFeedLink';
-  }
-
-  // test if the payload is encrypted, if so convert it to text
-  if (isMessageEncrypted(message)) {
-    chatPayload.messageType = 'Text';
-  }
-
   // attach a ref to chat sidebar
   const chatSidebarRef = useRef<HTMLDivElement>(null);
 
@@ -262,6 +242,7 @@ export const ChatViewBubble = ({
         <ChatBubbleSection
           margin="6px 0px 0px 0px"
           flexDirection="column"
+          alignSelf="flex-start"
         >
           {/* hide overflow for chat cards and border them */}
           <Section
@@ -273,44 +254,10 @@ export const ChatViewBubble = ({
             }
             overflow="hidden"
           >
-            {/* Message Card */}
-            {chatPayload.messageType === 'Text' && (
-              <MessageCard
-                chat={chatPayload}
-                position={chatPosition}
-                account={user?.account ?? ''}
-              />
-            )}
-
-            {/* Image Card */}
-            {chatPayload.messageType === 'Image' && <ImageCard chat={chatPayload} />}
-
-            {/* File Card */}
-            {chatPayload.messageType === 'File' && <FileCard chat={chatPayload} />}
-
-            {/* Gif Card */}
-            {chatPayload.messageType === 'GIF' && <GIFCard chat={chatPayload} />}
-
-            {/* Twitter Card */}
-            {chatPayload.messageType === 'TwitterFeedLink' && (
-              <TwitterCard
-                tweetId={tweetId}
-                chat={chatPayload}
-              />
-            )}
-
-            {/* Default Message Card */}
-            {chatPayload.messageType !== 'Text' &&
-              chatPayload.messageType !== 'Image' &&
-              chatPayload.messageType !== 'File' &&
-              chatPayload.messageType !== 'GIF' &&
-              chatPayload.messageType !== 'TwitterFeedLink' && (
-                <MessageCard
-                  chat={chatPayload}
-                  position={chatPosition}
-                  account={user?.account ?? ''}
-                />
-              )}
+            <ChatViewBubbleCore
+              chat={chatPayload}
+              chatId={chatId}
+            />
           </Section>
 
           {/* render if reactions are present */}
@@ -328,9 +275,11 @@ export const ChatViewBubble = ({
 
         <ChatBubbleSidebarSection
           ref={chatSidebarRef}
-          alignItems="flex-end"
-          justifyContent={chatPosition ? 'flex-end' : 'flex-start'}
+          flexDirection="column"
+          alignItems={chatPosition ? 'flex-end' : 'flex-start'}
+          justifyContent="flex-end"
           margin={chatReactions && !!chatReactions.length ? '0px 0px 41px 0px' : '0px 0px 15px 0px'}
+          gap="2px"
           width="auto"
           flex="1 0 auto"
           style={{
@@ -341,16 +290,38 @@ export const ChatViewBubble = ({
           {/* Only render if user and user readmode is false}
           {/* For reaction - additional condition - only render if chatId is passed and setSelectedChatMsgId is passed */}
           {user && !user.readmode() && chatId && (
-            <ReactionPicker
-              chatId={chatId}
-              chat={chatPayload}
-              userSelectingReaction={userSelectingReaction && actionId === singularActionId}
-              setUserSelectingReaction={setUserSelectingReaction}
-              actionId={actionId}
-              singularActionId={singularActionId}
-              setSingularActionId={setSingularActionId}
-              chatSidebarRef={chatSidebarRef}
-            />
+            <>
+              {/* Reply Icon */}
+              <RButton
+                borderRadius={theme.borderRadius?.reactionsPickerBorderRadius}
+                background="transparent"
+                hoverBackground={theme.backgroundColor?.chatReceivedBubbleBackground}
+                padding={theme.padding?.reactionsPickerPadding}
+                border={theme.border?.reactionsBorder}
+                hoverBorder={theme.border?.reactionsHoverBorder}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setReplyPayload?.(chatPayload);
+                }}
+              >
+                <ReplyIcon
+                  color={theme.iconColor?.emoji}
+                  size={20}
+                />
+              </RButton>
+
+              {/* Reaction Picker */}
+              <ReactionPicker
+                chatId={chatId}
+                chat={chatPayload}
+                userSelectingReaction={userSelectingReaction && actionId === singularActionId}
+                setUserSelectingReaction={setUserSelectingReaction}
+                actionId={actionId}
+                singularActionId={singularActionId}
+                setSingularActionId={setSingularActionId}
+                chatSidebarRef={chatSidebarRef}
+              />
+            </>
           )}
         </ChatBubbleSidebarSection>
       </ChatWrapperSection>

@@ -6,19 +6,43 @@ enum ICON_COLOR {
 
 // HELPERS
 interface IconProps {
-  size: number | { width?: number; height?: number };
+  size: number | { width?: number; height?: number } | string | undefined | null;
   color?: string | ICON_COLOR;
 }
 
-const returnWSize = (size: number | { width?: number; height?: number }) => {
+const returnWSize = (size: number | { width?: number; height?: number } | string | undefined | null) => {
+  if (typeof size === 'string') {
+    size = parseInt(size);
+  }
+
+  if (typeof size === 'undefined' || size === null) {
+    return '100%';
+  }
+
   return typeof size === 'number' ? size.toString() : size.width ? size.width.toString() : '100%';
 };
 
-const returnHSize = (size: number | { width?: number; height?: number }) => {
+const returnHSize = (size: number | { width?: number; height?: number } | string | undefined | null) => {
+  if (typeof size === 'string') {
+    size = parseInt(size);
+  }
+
+  if (typeof size === 'undefined' || size === null) {
+    return '100%';
+  }
+
   return typeof size === 'number' ? size.toString() : size.height ? size.height.toString() : '100%';
 };
 
-const returnViewBox = (size: number | { width?: number; height?: number }, ratio = 1) => {
+const returnViewBox = (size: number | { width?: number; height?: number } | string | undefined | null, ratio = 1) => {
+  if (typeof size === 'string') {
+    size = parseInt(size);
+  }
+
+  if (typeof size === 'undefined' || size === null) {
+    size = 20; // default viewport size
+  }
+
   if (typeof size === 'number') {
     return `0 0 ${size * ratio} ${size * ratio}`;
   } else if (size.width && size.height) {
@@ -226,24 +250,25 @@ export const EmojiCircleIcon: React.FC<IconProps> = ({ size, color }) => {
 export const ReplyIcon: React.FC<IconProps> = ({ size, color }) => {
   return (
     <svg
-      fill="none"
       width={returnWSize(size)}
       height={returnHSize(size)}
-      viewBox={returnViewBox(48)}
+      viewBox="0 0 48 48"
       xmlns="http://www.w3.org/2000/svg"
+      fill="none"
     >
-      <path
-        d="m0 0h48v48h-48z"
-        fill={color}
+      <rect
+        width="48"
+        height="48"
+        fill="none"
       />
       <g
         stroke={color}
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="4"
       >
-        <path d="m12.3638 8-6.36399 6.364 6.36399 6.3639" />
-        <path d="m6 14.364h22.6722c6.8848 0 12.54 5.4388 12.8083 12.3184.2836 7.2696-5.5331 13.3176-12.8083 13.3176h-16.6722" />
+        <path d="M12.364 8L6 14.364 12.364 20.728" />
+        <path d="M6 14.364H28.672c6.885 0 12.54 5.439 12.808 12.318.284 7.27-5.533 13.318-12.808 13.318H12" />
       </g>
     </svg>
   );

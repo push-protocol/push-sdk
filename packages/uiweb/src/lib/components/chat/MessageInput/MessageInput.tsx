@@ -14,11 +14,11 @@ import useGroupMemberUtilities from '../../../hooks/chat/useGroupMemberUtilities
 import usePushSendMessage from '../../../hooks/chat/usePushSendMessage';
 import useVerifyAccessControl from '../../../hooks/chat/useVerifyAccessControl';
 import { AttachmentIcon } from '../../../icons/Attachment';
-import { EmojiCircleIcon } from '../../../icons/PushIcons';
 import { GifIcon } from '../../../icons/Gif';
 import OpenLink from '../../../icons/OpenLink';
+import { EmojiCircleIcon } from '../../../icons/PushIcons';
 import { SendCompIcon } from '../../../icons/SendCompIcon';
-import { Div, Section, Span, Spinner } from '../../reusables';
+import { Button, Div, Section, Span, Spinner } from '../../reusables';
 import { ConditionsInformation } from '../ChatProfile/ChatProfileInfoModal';
 import { ConnectButton } from '../ConnectButton';
 import { Modal, ModalHeader } from '../reusables/Modal';
@@ -26,11 +26,14 @@ import { ThemeContext } from '../theme/ThemeProvider';
 
 import { PUBLIC_GOOGLE_TOKEN, device } from '../../../config';
 import usePushUser from '../../../hooks/usePushUser';
+import { CancelCircleIcon } from '../../../icons/PushIcons';
 import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE, type FileMessageContent } from '../../../types';
 import { GIFType, Group, IChatTheme, MessageInputProps } from '../exportedTypes';
 import { checkIfAccessVerifiedGroup } from '../helpers';
 import { InfoContainer } from '../reusables';
 import { IChatInfoResponse } from '../types';
+
+import { ChatViewBubbleCore } from '../ChatViewBubbleCore';
 
 /**
  * @interface IThemeProps
@@ -70,6 +73,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   emoji = true,
   gif = true,
   file = true,
+  replyPayload = null,
+  setReplyPayload,
   isConnected = true,
   autoConnect = false,
   verificationFailModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
@@ -350,8 +355,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         try {
           const TWO_MB = 1024 * 1024 * 2;
           if (file.size > TWO_MB) {
-            console.log('Files larger than 2mb is now allowed');
-            throw new Error('Files larger than 2mb is now allowed');
+            console.log('Files larger than 2mb is not allowed');
+            throw new Error('Files larger than 2mb is not allowed');
           }
           setFileUploading(true);
           const messageType = file.type.startsWith('image') ? 'Image' : 'File';
@@ -388,9 +393,10 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   const sendPushMessage = async (content: string, type: string) => {
     try {
       const sendMessageResponse = await sendMessage({
-        message: content,
         chatId: formattedChatId,
+        message: content,
         messageType: type as any,
+        replyRef: replyPayload?.cid || undefined,
       });
       if (sendMessageResponse && typeof sendMessageResponse === 'string' && sendMessageResponse.includes('403')) {
         setAccessControl(chatId, true);
@@ -399,6 +405,9 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      // reset reply payload
+      setReplyPayload?.(null);
     }
   };
 
@@ -414,13 +423,20 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     setGifOpen(false);
   };
 
+  // To focus when replyPayload is truthly
+  useEffect(() => {
+    if (replyPayload) {
+      textAreaRef.current?.focus();
+    }
+  }, [replyPayload]);
+
   return !(user && !user?.readmode()) && isConnected ? (
     <TypebarSection
       width="100%"
       overflow="hidden"
       borderRadius="13px"
       position="static"
-      padding={` ${user && !user?.readmode() ? '13px 16px' : ''}`}
+      padding={` ${user && !user?.readmode() ? '14px 16px' : ''}`}
       background={`${theme.backgroundColor?.messageInputBackground}`}
       alignItems="center"
       justifyContent="space-between"
@@ -439,7 +455,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         borderRadius={theme.borderRadius?.messageInput}
         position="static"
         border={theme.border?.messageInput}
-        padding={` ${user && !user?.readmode() ? '13px 16px' : ''}`}
+        padding={` ${user && !user?.readmode() ? '14px 16px' : ''}`}
         background={`${theme.backgroundColor?.messageInputBackground}`}
         alignItems="center"
         justifyContent="space-between"
@@ -548,123 +564,185 @@ export const MessageInput: React.FC<MessageInputProps> = ({
               )}
           </>
         ) : null}
+
+        {/* Message bar logic */}
         {user && !user?.readmode() && (((isRules ? verified : true) && isMember) || (chatInfo && !groupInfo)) && (
-          <SendSection flex="1">
-            {emoji && (
-              <Div
-                width="25px"
-                cursor="pointer"
-                height="25px"
-                alignSelf="end"
-                onClick={() => setShowEmojis(!showEmojis)}
-              >
-                <EmojiCircleIcon
-                  color={theme.iconColor?.emoji}
-                  size={22}
-                />
-              </Div>
-            )}
-            {showEmojis && (
+          <Section
+            flexDirection="column"
+            flex="1"
+            gap="12px"
+          >
+            {/* Render reply message */}
+            {replyPayload && (
               <Section
-                ref={modalRef}
-                position="absolute"
-                bottom="50px"
-                left="-12px"
-                zIndex="700"
+                flexDirection="column"
+                alignItems="flex-start"
+                overflow="hidden"
+                gap="8px"
               >
-                <EmojiPicker
-                  width={isMobile ? 260 : 320}
-                  height={370}
-                  onEmojiClick={addEmoji}
-                />
-              </Section>
-            )}
-
-            <MultiLineInput
-              disabled={loading ? true : false}
-              theme={theme}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter' && !event.shiftKey) {
-                  event.preventDefault();
-                  sendTextMsg();
-                }
-              }}
-              placeholder="Type your message..."
-              onChange={(e) => onChangeTypedMessage(e.target.value)}
-              value={typedMessage}
-              ref={textAreaRef}
-              rows={1}
-            />
-            {gif && (
-              <Section
-                width="30px"
-                height="24px"
-                cursor="pointer"
-                alignSelf="end"
-                onClick={() => setGifOpen(!gifOpen)}
-              >
-                <GifIcon />
-              </Section>
-            )}
-            {gifOpen && (
-              <Section
-                position="absolute"
-                bottom="50px"
-                right="-18px"
-                zIndex="1"
-                ref={modalRef}
-              >
-                <GifPicker
-                  onGifClick={sendGIF}
-                  width={isMobile ? 260 : 320}
-                  height={370}
-                  tenorApiKey={String(PUBLIC_GOOGLE_TOKEN)}
-                />
-              </Section>
-            )}
-            <Section onClick={handleUploadFile}>
-              {!fileUploading && file && (
-                <>
-                  <Section
-                    width="18px"
-                    height="24px"
-                    cursor="pointer"
-                    alignSelf="end"
+                <Section
+                  flexDirection="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  overflow="hidden"
+                  gap="8px"
+                >
+                  <Span
+                    padding="0px"
+                    fontSize="10px"
+                    color={theme.iconColor?.emoji}
                   >
-                    <AttachmentIcon color={theme.iconColor?.attachment} />
-                  </Section>
-                  <FileInput
-                    type="file"
-                    ref={fileUploadInputRef}
-                    onChange={(e) => uploadFile(e)}
-                  />
-                </>
-              )}
-            </Section>
-            {!(loading || fileUploading) && (
-              <Section
-                cursor="pointer"
-                alignSelf="end"
-                height="20px"
-                width="22px"
-                onClick={() => sendTextMsg()}
-              >
-                <SendCompIcon color={theme.iconColor?.sendButton} />
-              </Section>
-            )}
-
-            {(loading || fileUploading) && (
-              <Section
-                alignSelf="end"
-                height="24px"
-              >
-                <Spinner
-                  color={theme.spinnerColor}
-                  size="22"
+                    {`Reply to `}
+                    <Span
+                      fontWeight="500"
+                      padding="0px"
+                    >
+                      {`${replyPayload.fromDID?.split(':')[1].slice(0, 6)}...${replyPayload.fromDID
+                        ?.split(':')[1]
+                        .slice(-6)}`}
+                    </Span>
+                  </Span>
+                  <Button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (setReplyPayload) {
+                        setReplyPayload(null);
+                      }
+                    }}
+                  >
+                    <CancelCircleIcon
+                      size={14}
+                      color={theme.textColor?.messageInputText}
+                    />
+                  </Button>
+                </Section>
+                <ChatViewBubbleCore
+                  chat={replyPayload}
+                  chatId={chatId}
+                  previewMode={true}
+                  activeMode={true}
                 />
               </Section>
             )}
-          </SendSection>
+
+            {/* Render message bar */}
+            <SendSection flex="1">
+              {emoji && (
+                <Div
+                  width="25px"
+                  cursor="pointer"
+                  height="25px"
+                  alignSelf="end"
+                  onClick={() => setShowEmojis(!showEmojis)}
+                >
+                  <EmojiCircleIcon
+                    color={theme.iconColor?.emoji}
+                    size={22}
+                  />
+                </Div>
+              )}
+              {showEmojis && (
+                <Section
+                  ref={modalRef}
+                  position="absolute"
+                  bottom="50px"
+                  left="-12px"
+                  zIndex="700"
+                >
+                  <EmojiPicker
+                    width={isMobile ? 260 : 320}
+                    height={370}
+                    onEmojiClick={addEmoji}
+                  />
+                </Section>
+              )}
+
+              <MultiLineInput
+                ref={textAreaRef}
+                disabled={loading ? true : false}
+                theme={theme}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' && !event.shiftKey) {
+                    event.preventDefault();
+                    sendTextMsg();
+                  }
+                }}
+                placeholder="Type your message..."
+                onChange={(e) => onChangeTypedMessage(e.target.value)}
+                value={typedMessage}
+                rows={1}
+              />
+              {gif && (
+                <Section
+                  width="30px"
+                  height="24px"
+                  cursor="pointer"
+                  alignSelf="end"
+                  onClick={() => setGifOpen(!gifOpen)}
+                >
+                  <GifIcon />
+                </Section>
+              )}
+              {gifOpen && (
+                <Section
+                  position="absolute"
+                  bottom="50px"
+                  right="-18px"
+                  zIndex="1"
+                  ref={modalRef}
+                >
+                  <GifPicker
+                    onGifClick={sendGIF}
+                    width={isMobile ? 260 : 320}
+                    height={370}
+                    tenorApiKey={String(PUBLIC_GOOGLE_TOKEN)}
+                  />
+                </Section>
+              )}
+              <Section onClick={handleUploadFile}>
+                {!fileUploading && file && (
+                  <>
+                    <Section
+                      width="18px"
+                      height="24px"
+                      cursor="pointer"
+                      alignSelf="end"
+                    >
+                      <AttachmentIcon color={theme.iconColor?.attachment} />
+                    </Section>
+                    <FileInput
+                      type="file"
+                      ref={fileUploadInputRef}
+                      onChange={(e) => uploadFile(e)}
+                    />
+                  </>
+                )}
+              </Section>
+              {!(loading || fileUploading) && (
+                <Section
+                  cursor="pointer"
+                  alignSelf="end"
+                  height="20px"
+                  width="22px"
+                  onClick={() => sendTextMsg()}
+                >
+                  <SendCompIcon color={theme.iconColor?.sendButton} />
+                </Section>
+              )}
+
+              {(loading || fileUploading) && (
+                <Section
+                  alignSelf="end"
+                  height="24px"
+                >
+                  <Spinner
+                    color={theme.spinnerColor}
+                    size="22"
+                  />
+                </Section>
+              )}
+            </SendSection>
+          </Section>
         )}
       </TypebarSection>
     </MessageInputContainer>
@@ -673,7 +751,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   );
 };
 
-const TypebarSection = styled(Section)<{ border?: string }>`
+const TypebarSection = styled(Section) <{ border?: string }>`
   // gap: 10px;
   border: ${(props) => props.border || 'none'};
   @media ${device.mobileL} {

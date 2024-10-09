@@ -10,8 +10,8 @@ import { pCAIP10ToWallet } from '../helpers';
 
 import usePushUserInfoUtilities from '../hooks/chat/useUserInfoUtilities';
 
-import usePushUser from '../hooks/usePushUser';
 import useToast from '../components/chat/reusables/NewToast'; // Re-write this later
+import usePushUser from '../hooks/usePushUser';
 
 // Internal Configs
 import { lightChatTheme } from '../components/chat/theme';

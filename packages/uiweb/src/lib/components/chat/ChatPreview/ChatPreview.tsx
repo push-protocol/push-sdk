@@ -3,21 +3,23 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { useChatData } from '../../../hooks';
-import { Div, Button, Image, Section } from '../../reusables';
+import { Button, Div, Image, Section } from '../../reusables';
 
 import { CONSTANTS } from '@pushprotocol/restapi';
 import { ethers } from 'ethers';
 import { CiImageOn } from 'react-icons/ci';
 import { FaFile } from 'react-icons/fa';
 import { CoreContractChainId, InfuraAPIKey } from '../../../config';
-import { resolveWeb3Name, shortenText } from '../../../helpers';
+import { pushBotAddress } from '../../../config/constants';
+import { pCAIP10ToWallet, resolveWeb3Name, shortenText } from '../../../helpers';
+import { createBlockie } from '../../../helpers/blockies';
 import { IChatPreviewProps } from '../exportedTypes';
 import { formatAddress, formatDate } from '../helpers';
-import { pCAIP10ToWallet } from '../../../helpers';
-import { createBlockie } from '../../../helpers/blockies';
 import { IChatTheme } from '../theme';
 import { ThemeContext } from '../theme/ThemeProvider';
-import { pushBotAddress } from '../../../config/constants';
+
+import { ReplyIcon } from '../../../icons/PushIcons';
+
 /**
  * @interface IThemeProps
  * this interface is used for defining the props for styled components
@@ -53,7 +55,9 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (options: IChatPreviewPr
 
   const hasBadgeCount = !!options?.badge?.count;
   const isSelected = options?.selected;
-  const isBot =  options?.chatPreviewPayload?.chatParticipant === "PushBot" || options?.chatPreviewPayload?.chatParticipant === pushBotAddress;
+  const isBot =
+    options?.chatPreviewPayload?.chatParticipant === 'PushBot' ||
+    options?.chatPreviewPayload?.chatParticipant === pushBotAddress;
 
   // For blockie if icon is missing
   const blockieContainerRef = useRef<HTMLDivElement>(null);
@@ -74,6 +78,49 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (options: IChatPreviewPr
   const getProfileName = (formattedAddress: string) => {
     return options.chatPreviewPayload?.chatGroup ? formattedAddress : web3Name ? web3Name : formattedAddress;
   };
+
+  // collate all message components
+  const msgComponents: React.ReactNode[] = [];
+  let includeText = false;
+
+  // If reply, check message meta to see
+  // Always check this first
+  if (options?.chatPreviewPayload?.chatMsg?.messageMeta === 'Reply') {
+    msgComponents.push(
+      <ReplyIcon
+        color={theme.iconColor?.emoji}
+        size={theme.fontSize?.chatPreviewMessageText}
+      />
+    );
+
+    // Include text in rendering as well
+    includeText = true;
+  }
+
+  // If image, gif, mediaembed
+  if (
+    options?.chatPreviewPayload?.chatMsg?.messageType === 'Image' ||
+    options?.chatPreviewPayload?.chatMsg?.messageType === 'GIF' ||
+    options?.chatPreviewPayload?.chatMsg?.messageType === 'MediaEmbed'
+  ) {
+    msgComponents.push(<CiImageOn />);
+    msgComponents.push(<Message theme={theme}>Media</Message>);
+  }
+
+  // If file
+  if (options?.chatPreviewPayload?.chatMsg?.messageType === 'File') {
+    msgComponents.push(<FaFile />);
+    msgComponents.push(<Message theme={theme}>File</Message>);
+  }
+
+  // Add content
+  if (
+    includeText ||
+    options?.chatPreviewPayload?.chatMsg?.messageType === 'Text' ||
+    options?.chatPreviewPayload?.chatMsg?.messageType === 'Reaction'
+  ) {
+    msgComponents.push(<Message theme={theme}>{options?.chatPreviewPayload?.chatMsg?.messageContent}</Message>);
+  }
 
   return (
     <ChatPreviewContainer
@@ -167,41 +214,23 @@ export const ChatPreview: React.FC<IChatPreviewProps> = (options: IChatPreviewPr
             animation={theme.skeletonBG}
           >
             <Message theme={theme}>
-              {options?.chatPreviewPayload?.chatMsg?.messageType === 'Image' ||
-              options?.chatPreviewPayload?.chatMsg?.messageType === 'GIF' ||
-              options?.chatPreviewPayload?.chatMsg?.messageType === 'MediaEmbed' ? (
-                <Section
-                  justifyContent="flex-start"
-                  flexDirection="row"
-                  alignItems="center"
-                  alignSelf="stretch"
-                  overflow="hidden"
-                  flex="1"
-                  gap="4px"
-                >
-                  <CiImageOn />
-                  Media
-                </Section>
-              ) : options?.chatPreviewPayload?.chatMsg?.messageType === 'File' ? (
-                <Section
-                  justifyContent="flex-start"
-                  flexDirection="row"
-                  alignItems="center"
-                  alignSelf="stretch"
-                  overflow="hidden"
-                  flex="1"
-                  gap="4px"
-                >
-                  <FaFile />
-                  File
-                </Section>
-              ) : (
-                options?.chatPreviewPayload?.chatMsg?.messageContent
-              )}
+              <Section
+                justifyContent="flex-start"
+                flexDirection="row"
+                alignItems="center"
+                alignSelf="stretch"
+                overflow="hidden"
+                flex="1"
+                gap="4px"
+              >
+                {msgComponents}
+              </Section>
             </Message>
-            
-            {hasBadgeCount && !(isBot || (isSelected && hasBadgeCount)) && <Badge theme={theme}>{options.badge?.count}</Badge>}
-          </Section>                  
+
+            {hasBadgeCount && !(isBot || (isSelected && hasBadgeCount)) && (
+              <Badge theme={theme}>{options.badge?.count}</Badge>
+            )}
+          </Section>
         </Section>
       </Button>
     </ChatPreviewContainer>
