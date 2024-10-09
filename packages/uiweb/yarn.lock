@@ -1257,7 +1257,7 @@ __metadata:
     "@livepeer/react": "npm:^2.6.0"
     "@pushprotocol/socket": "npm:^0.5.0"
     "@unstoppabledomains/resolution": "npm:^8.5.0"
-    "@web3-name-sdk/core": "npm:^0.1.15"
+    "@web3-name-sdk/core": "npm:^0.2.0"
     "@web3-onboard/coinbase": "npm:^2.2.5"
     "@web3-onboard/core": "npm:^2.21.1"
     "@web3-onboard/injected-wallets": "npm:^2.10.5"
@@ -2812,20 +2812,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@web3-name-sdk/core@npm:^0.1.15":
-  version: 0.1.18
-  resolution: "@web3-name-sdk/core@npm:0.1.18"
+"@web3-name-sdk/core@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "@web3-name-sdk/core@npm:0.2.0"
   dependencies:
     "@adraffy/ens-normalize": "npm:^1.10.0"
     "@ensdomains/ens-validation": "npm:^0.1.0"
-    viem: "npm:^1.20"
   peerDependencies:
-    "@bonfida/spl-name-service": ^1.4.0
+    "@bonfida/spl-name-service": ^2.5.1
     "@sei-js/core": ^3.1.0
     "@siddomains/injective-sidjs": 0.0.2-beta
     "@siddomains/sei-sidjs": ^0.0.4
     "@solana/web3.js": ^1.75.0
-  checksum: 10c0/2f2c4611ba1868fbd683ec2249d2581d31aafaa24bdc187a1fd437cf08ffb13dcfda637b6b322afa12d6aea799c5a1fccbd03aacb808218fe315938be4005fd6
+    viem: ^2.15.1
+  checksum: 10c0/c7503dc312f23d3411def0dd76a4d02bc38ba1867c36ca28461336548fc78abdfac6607f960bbe1aee9199fe1b4aa1480c27b7f9403ec25377fc6bd3b0a47c82
   languageName: node
   linkType: hard
 
@@ -2936,21 +2936,6 @@ __metadata:
   version: 2.0.0
   resolution: "abbrev@npm:2.0.0"
   checksum: 10c0/f742a5a107473946f426c691c08daba61a1d15942616f300b5d32fd735be88fef5cba24201757b6c407fd564555fb48c751cfa33519b2605c8a7aadd22baf372
-  languageName: node
-  linkType: hard
-
-"abitype@npm:0.9.8":
-  version: 0.9.8
-  resolution: "abitype@npm:0.9.8"
-  peerDependencies:
-    typescript: ">=5.0.4"
-    zod: ^3 >=3.19.1
-  peerDependenciesMeta:
-    typescript:
-      optional: true
-    zod:
-      optional: true
-  checksum: 10c0/ec559461d901d456820faf307e21b2c129583d44f4c68257ed9d0d44eae461114a7049046e715e069bc6fa70c410f644e06bdd2c798ac30d0ada794cd2a6c51e
   languageName: node
   linkType: hard
 
@@ -4660,12 +4645,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"isows@npm:1.0.3":
-  version: 1.0.3
-  resolution: "isows@npm:1.0.3"
-  peerDependencies:
-    ws: "*"
-  checksum: 10c0/adec15db704bb66615dd8ef33f889d41ae2a70866b21fa629855da98cc82a628ae072ee221fe9779a9a19866cad2a3e72593f2d161a0ce0e168b4484c7df9cd2
+"isomorphic-unfetch@npm:3.1.0":
+  version: 3.1.0
+  resolution: "isomorphic-unfetch@npm:3.1.0"
+  dependencies:
+    node-fetch: "npm:^2.6.1"
+    unfetch: "npm:^4.2.0"
+  checksum: 10c0/d3b61fca06304db692b7f76bdfd3a00f410e42cfa7403c3b250546bf71589d18cf2f355922f57198e4cc4a9872d3647b20397a5c3edf1a347c90d57c83cf2a89
   languageName: node
   linkType: hard
 
@@ -7025,27 +7011,6 @@ __metadata:
     typescript:
       optional: true
   checksum: 10c0/c365c348f3a3f46bbf7ffe565ed872fdb0a5c034f1ba6e157a71874e65edd11147c3cb8a13fd8ba4aa3ddc69d12925f0e0ea3a23c30124e00f6a2c7d468bb453
-  languageName: node
-  linkType: hard
-
-"viem@npm:^1.20":
-  version: 1.21.4
-  resolution: "viem@npm:1.21.4"
-  dependencies:
-    "@adraffy/ens-normalize": "npm:1.10.0"
-    "@noble/curves": "npm:1.2.0"
-    "@noble/hashes": "npm:1.3.2"
-    "@scure/bip32": "npm:1.3.2"
-    "@scure/bip39": "npm:1.2.1"
-    abitype: "npm:0.9.8"
-    isows: "npm:1.0.3"
-    ws: "npm:8.13.0"
-  peerDependencies:
-    typescript: ">=5.0.4"
-  peerDependenciesMeta:
-    typescript:
-      optional: true
-  checksum: 10c0/8b29c790181e44c4c95b9ffed1a8c1b6c2396eb949b95697cc390ca8c49d88ef9e2cd56bd4800b90a9bbc93681ae8d63045fc6fa06e00d84f532bef77967e751
   languageName: node
   linkType: hard
 

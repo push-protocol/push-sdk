@@ -1,4 +1,5 @@
 // React + Web3 Essentials
+import { useContext } from 'react';
 
 // External Packages
 import styled from 'styled-components';
@@ -13,6 +14,7 @@ import {
   toSerialisedHexString,
 } from '../../../../../helpers';
 import { Image, Section, Span } from '../../../../reusables';
+import { ThemeContext } from '../../../theme/ThemeProvider';
 
 // Internal Configs
 import { FILE_ICON, allowedNetworks } from '../../../../../config';
@@ -44,7 +46,22 @@ const getParsedMessage = (message: string): FileMessageContent => {
   }
 };
 
-export const FileCard = ({ chat }: { chat: IMessagePayload }) => {
+export const FileCard = ({
+  chat,
+  background,
+  color,
+  previewMode,
+  activeMode,
+}: {
+  chat: IMessagePayload;
+  background?: string;
+  color?: string;
+  previewMode: boolean;
+  activeMode: boolean;
+}) => {
+  // get theme
+  const theme = useContext(ThemeContext);
+
   // derive message
   const message =
     typeof chat.messageObj === 'object' ? (chat.messageObj?.content as string) ?? '' : (chat.messageObj as string);
@@ -54,13 +71,14 @@ export const FileCard = ({ chat }: { chat: IMessagePayload }) => {
   return (
     <Section
       alignSelf="start"
-      maxWidth="512px"
-      background="#343536"
-      borderRadius="8px"
-      justifyContent="space-around"
-      padding="10px 13px"
+      maxWidth={previewMode ? 'auto' : '512px'}
+      background={background}
+      borderRadius={theme.borderRadius?.chatBubbleContentBorderRadius}
+      justifyContent="space-between"
+      padding={theme.padding?.chatBubbleContentPadding}
+      margin={theme.margin?.chatBubbleContentMargin}
       gap="15px"
-      width="fit-content"
+      width={previewMode ? 'fill-available' : '-webkit-fit-content'}
     >
       <Image
         src={FILE_ICON(parsedMessage.name?.split('.').slice(-1)[0])}
@@ -70,16 +88,18 @@ export const FileCard = ({ chat }: { chat: IMessagePayload }) => {
       />
       <Section
         flexDirection="column"
+        flex={previewMode ? '1' : 'auto'}
+        alignItems={previewMode ? 'flex-start' : 'center'}
         gap="5px"
       >
         <Span
-          color="#fff"
+          color={color}
           fontSize="15px"
         >
           {shortenText(parsedMessage.name, 11)}
         </Span>
         <Span
-          color="#fff"
+          color={color}
           fontSize="12px"
         >
           {formatFileSize(parsedMessage.size)}
@@ -91,7 +111,7 @@ export const FileCard = ({ chat }: { chat: IMessagePayload }) => {
         rel="noopener noreferrer"
         download
       >
-        <MdDownload color="#575757" />
+        <MdDownload color={color} />
       </FileDownloadIconAnchor>
     </Section>
   );

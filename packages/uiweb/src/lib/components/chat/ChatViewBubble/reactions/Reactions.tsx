@@ -1,10 +1,10 @@
 // React + Web3 Essentials
-import { useContext, useRef, useState, useEffect, RefObject } from 'react';
+import { RefObject, useContext, useEffect, useRef, useState } from 'react';
 
 // External Packages
 
 // Internal Compoonents
-import { Image, Section, Button, Spinner, Span } from '../../../reusables';
+import { Button, Image, Section, Span, Spinner } from '../../../reusables';
 import { ThemeContext } from '../../theme/ThemeProvider';
 
 // Internal Configs
@@ -42,6 +42,9 @@ export const Reactions = ({ chatReactions }: { chatReactions: IReactionsForChatM
     return acc;
   }, {} as IReactions);
 
+  // generate a unique key for the reactions
+  const reactionsKey = chatReactions.map((reaction) => reaction.reference).join('-');
+
   console.debug('UIWeb::components::ChatViewBubble::Reactions::uniqueReactions', uniqueReactions);
 
   // render reactions
@@ -50,6 +53,7 @@ export const Reactions = ({ chatReactions }: { chatReactions: IReactionsForChatM
     <>
       {Object.keys(uniqueReactions).length > 2 ? (
         <Section
+          key={`reactions-${reactionsKey}`}
           borderRadius={theme.borderRadius?.reactionsBorderRadius}
           background={theme.backgroundColor?.chatReceivedBubbleBackground}
           padding={theme.padding?.reactionsPadding}
@@ -74,6 +78,7 @@ export const Reactions = ({ chatReactions }: { chatReactions: IReactionsForChatM
       ) : (
         Object.entries(uniqueReactions).map(([content, reactions]) => (
           <Section
+            key={`reactions-${content}-${reactionsKey}`}
             borderRadius={theme.borderRadius?.reactionsBorderRadius}
             background={theme.backgroundColor?.chatReceivedBubbleBackground}
             padding={theme.padding?.reactionsPadding}

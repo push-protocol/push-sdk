@@ -257,39 +257,39 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
               />
             </MobileImage>
           ) : // if its a youtube url, RENDER THIS
-          MediaHelper.isMediaYoutube(notifImage) ? (
-            <MobileImage
-              offsetWidth={offsetWidth}
-              size={isToast ? '56px' : '90px'}
-            >
-              <iframe
-                id="ytplayer"
-                width="640"
-                allow="fullscreen;"
-                height="360"
-                src={MediaHelper.isMediaExternalEmbed(notifImage)}
-                title="Youtube"
-              ></iframe>
-            </MobileImage>
-          ) : (
-            // if its aN MP4 url, RENDER THIS
-            <MobileImage
-              offsetWidth={offsetWidth}
-              size={isToast ? '56px' : '90px'}
-            >
-              <video
-                width="360"
-                height="100%"
-                controls
+            MediaHelper.isMediaYoutube(notifImage) ? (
+              <MobileImage
+                offsetWidth={offsetWidth}
+                size={isToast ? '56px' : '90px'}
               >
-                <source
-                  src={notifImage}
-                  type="video/mp4"
-                />
-                Your browser does not support the video tag.
-              </video>
-            </MobileImage>
-          ))}
+                <iframe
+                  id="ytplayer"
+                  width="640"
+                  allow="fullscreen;"
+                  height="360"
+                  src={MediaHelper.isMediaExternalEmbed(notifImage)}
+                  title="Youtube"
+                ></iframe>
+              </MobileImage>
+            ) : (
+              // if its aN MP4 url, RENDER THIS
+              <MobileImage
+                offsetWidth={offsetWidth}
+                size={isToast ? '56px' : '90px'}
+              >
+                <video
+                  width="360"
+                  height="100%"
+                  controls
+                >
+                  <source
+                    src={notifImage}
+                    type="video/mp4"
+                  />
+                  Your browser does not support the video tag.
+                </video>
+              </MobileImage>
+            ))}
         {/* section for media content */}
 
         {/* section for text content */}
@@ -467,6 +467,7 @@ const ChainIconSVG = styled.div<OffsetWidthType>`
 
 const MobileImage = styled.div<OffsetWidthType & { theme?: string; size?: string }>`
   overflow: hidden;
+  flex-shrink: 0;
   width: ${(props) => props?.size};
   height: ${(props) => props?.size};
   img,

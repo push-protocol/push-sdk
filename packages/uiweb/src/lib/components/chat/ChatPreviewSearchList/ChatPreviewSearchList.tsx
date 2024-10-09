@@ -21,9 +21,9 @@ import { ThemeContext } from '../theme/ThemeProvider';
 // Interfaces & Types
 import {
   ChatPreviewSearchListErrorCodes,
+  IChatPreviewPayload,
   IChatPreviewSearchListError,
   IChatPreviewSearchListProps,
-  IChatPreviewPayload,
 } from '../exportedTypes';
 import { IChatTheme } from '../theme';
 
@@ -155,6 +155,7 @@ export const ChatPreviewSearchList: React.FC<IChatPreviewSearchListProps> = (opt
       chatGroup: false,
       chatTimestamp: undefined,
       chatMsg: {
+        messageMeta: '',
         messageType: '',
         messageContent: '',
       },
@@ -199,6 +200,7 @@ export const ChatPreviewSearchList: React.FC<IChatPreviewSearchListProps> = (opt
                 chatGroup: true,
                 chatPic: groupInfo?.groupImage || null,
                 chatMsg: {
+                  messageMeta: 'Text',
                   messageType: 'Text',
                   messageContent: chatInfo?.list === 'CHATS' ? 'Resume Conversation!' : 'Join Group!',
                 },
@@ -216,6 +218,7 @@ export const ChatPreviewSearchList: React.FC<IChatPreviewSearchListProps> = (opt
               chatGroup: false,
               chatPic: userProfile?.profile?.picture || null,
               chatMsg: {
+                messageMeta: 'Text',
                 messageType: 'Text',
                 messageContent: chatInfo?.list === 'CHATS' ? 'Resume Chat!' : 'Start Chat!',
               },

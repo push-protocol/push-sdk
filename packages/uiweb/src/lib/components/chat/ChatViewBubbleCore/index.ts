@@ -1,0 +1,1 @@
+export { ChatViewBubbleCore } from './ChatViewBubbleCore';
