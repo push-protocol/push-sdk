@@ -34,10 +34,16 @@ export const MessageCard = ({
   chat,
   position,
   account,
+  color = 'inherit', // default to inherit
+  previewMode = false,
+  activeMode = false,
 }: {
   chat: IMessagePayload;
   position: number;
   account: string;
+  color?: string;
+  previewMode?: boolean;
+  activeMode?: boolean;
 }) => {
   // get theme
   const theme = useContext(ThemeContext);
@@ -126,8 +132,19 @@ export const MessageCard = ({
     return chunks;
   };
 
+  // if preview mode, reduce the message to 100 characters and only 3 lines
+  const reduceMessage = (message: string) => {
+    const limitedMessage = message.slice(0, 100);
+    const lines = limitedMessage.split('\n');
+    const reducedMessage = lines.slice(0, 3).join(' ');
+    return reducedMessage;
+  };
+
   // convert to fragments which can have different types
-  const fragments = splitMessageToMessages({ msg: message, type: 'text' });
+  // if preview mode, skip fragments and only reduce message
+  const fragments = previewMode
+    ? [{ msg: reduceMessage(message), type: 'text' }]
+    : splitMessageToMessages({ msg: message, type: 'text' });
 
   // To render individual fragments
   const renderTxtFragments = (message: string, fragmentIndex: number): ReactNode => {
@@ -141,7 +158,7 @@ export const MessageCard = ({
         fontWeight={
           position ? `${theme.fontWeight?.chatSentBubbleText}` : `${theme.fontWeight?.chatReceivedBubbleText}`
         }
-        color={position ? `${theme.textColor?.chatSentBubbleText}` : `${theme.textColor?.chatReceivedBubbleText}`}
+        color={color}
       >
         {line.split(' ').map((word: string, wordIndex: number) => {
           const link = hasWebLink(word) ? extractWebLink(word) : '';
@@ -191,37 +208,37 @@ export const MessageCard = ({
 
   // Render entire message
   return (
-    <MessageCardSection className={initialized.additionalClasses}>
+    <MessageCardSection
+      className={initialized.additionalClasses}
+      justifyContent="stretch"
+      width="fill-available"
+    >
       {/* Preview Renderer - Start with assuming preview is there, callback handles no preview */}
       <MessagePreviewSection
         width="100%"
         minWidth="inherit"
         maxWidth="inherit"
+        background={theme.backgroundColor?.chatReceivedBubbleBackground}
       >
         <PreviewRenderer
           message={message}
           account={account}
           messageId={chat.link ?? 'null'}
           previewCallback={previewCallback}
+          previewMode={previewMode}
         />
       </MessagePreviewSection>
 
       {/* Message Rendering - Always happens */}
       <MessageSection
         gap="5px"
-        background={
-          position
-            ? `${theme.backgroundColor?.chatSentBubbleBackground}`
-            : `${theme.backgroundColor?.chatReceivedBubbleBackground}`
-        }
         border={position ? `${theme.border?.chatSentBubble}` : `${theme.border?.chatReceivedBubble}`}
-        padding="8px 12px"
+        padding={theme.padding?.chatBubbleInnerContentPadding}
         justifyContent="start"
         flexDirection="column"
         maxWidth="inherit"
         minWidth="72px"
         position="relative"
-        color={position ? `${theme.textColor?.chatSentBubbleText}` : `${theme.textColor?.chatReceivedBubbleText}`}
       >
         <Section
           flexDirection="column"
@@ -238,25 +255,27 @@ export const MessageCard = ({
           })}
         </Section>
 
-        {/* Timestamp rendering */}
-        <Span
-          fontSize={
-            position
-              ? `${theme.fontSize?.chatSentBubbleTimestampText}`
-              : `${theme.fontSize?.chatReceivedBubbleTimestampText}`
-          }
-          fontWeight={
-            position
-              ? `${theme.fontWeight?.chatSentBubbleTimestampText}`
-              : `${theme.fontWeight?.chatReceivedBubbleTimestampText}`
-          }
-          color={position ? `${theme.textColor?.chatSentBubbleText}` : `${theme.textColor?.chatReceivedBubbleText}`}
-          right="0px"
-          width="auto"
-          alignSelf="flex-end"
-        >
-          {time}
-        </Span>
+        {/* Timestamp rendering only when no preview mode */}
+        {!previewMode && (
+          <Span
+            fontSize={
+              position
+                ? `${theme.fontSize?.chatSentBubbleTimestampText}`
+                : `${theme.fontSize?.chatReceivedBubbleTimestampText}`
+            }
+            fontWeight={
+              position
+                ? `${theme.fontWeight?.chatSentBubbleTimestampText}`
+                : `${theme.fontWeight?.chatReceivedBubbleTimestampText}`
+            }
+            color={color}
+            right="0px"
+            width="auto"
+            alignSelf="flex-end"
+          >
+            {time}
+          </Span>
+        )}
       </MessageSection>
     </MessageCardSection>
   );

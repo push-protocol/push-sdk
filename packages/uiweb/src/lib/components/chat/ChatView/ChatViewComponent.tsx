@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../../../types';
-import { IChatTheme, IChatViewComponentProps } from '../exportedTypes';
+import { IChatTheme, IChatViewComponentProps, IMessagePayload } from '../exportedTypes';
 
 import { chatLimit, device } from '../../../config';
 import { deriveChatId } from '../../../helpers';
@@ -33,6 +33,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (options: IC
     emoji = true,
     file = true,
     gif = true,
+    handleReply = true,
     isConnected = true,
     autoConnect = false,
     onVerificationFail,
@@ -43,7 +44,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (options: IC
     chatProfileRightHelperComponent = null,
     chatProfileLeftHelperComponent = null,
     welcomeComponent = null,
-    closeChatProfileInfoModalOnClickAway = false
+    closeChatProfileInfoModalOnClickAway = false,
   } = options || {};
 
   const { user } = useChatData();
@@ -62,6 +63,8 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (options: IC
     loading: true,
     derivedChatId: '',
   });
+
+  const [replyPayload, setReplyPayload] = useState<IMessagePayload | null>(null);
 
   useEffect(() => {
     const fetchDerivedChatId = async () => {
@@ -137,6 +140,7 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (options: IC
                 chatFilterList={chatFilterList}
                 limit={limit}
                 chatId={initialized.derivedChatId}
+                setReplyPayload={setReplyPayload}
               />
             )}
           </ChatViewSection>
@@ -156,6 +160,8 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (options: IC
                 file={file}
                 emoji={emoji}
                 gif={gif}
+                replyPayload={handleReply ? replyPayload : null}
+                setReplyPayload={setReplyPayload}
                 isConnected={isConnected}
                 verificationFailModalBackground={verificationFailModalBackground}
                 verificationFailModalPosition={verificationFailModalPosition}
@@ -172,12 +178,12 @@ export const ChatViewComponent: React.FC<IChatViewComponentProps> = (options: IC
 };
 
 //styles
-const Conatiner = styled(Section) <IThemeProps>`
+const Conatiner = styled(Section)<IThemeProps>`
   border: ${(props) => props.theme.border?.chatViewComponent};
   box-sizing: border-box;
 `;
 
-const ChatViewSection = styled(Section) <IThemeProps>`
+const ChatViewSection = styled(Section)<IThemeProps>`
   @media (${device.mobileL}) {
     margin: 0;
   }
