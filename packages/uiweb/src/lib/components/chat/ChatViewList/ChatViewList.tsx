@@ -216,6 +216,15 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
         scrollLocked = true;
       }
 
+      // Turning it off as it overfills debug
+      // console.debug(
+      //   `UIWeb::ChatViewList::onScroll::scrollLocked ${new Date().toISOString()}`,
+      //   scrollRef.current.scrollTop,
+      //   scrollRef.current.clientHeight,
+      //   scrollRef.current.scrollHeight,
+      //   scrollLocked
+      // );
+
       // update scroll-locked attribute
       scrollRef.current.setAttribute('data-scroll-locked', scrollLocked.toString());
 
@@ -238,6 +247,15 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
 
         if (scrollRef.current && height !== 0) {
           const scrollLocked = scrollRef.current.getAttribute('data-scroll-locked') === 'true' ? true : false;
+
+          // Turning it off as it overfills debug
+          // console.debug(
+          //   `UIWeb::ChatViewList::onScroll::scrollLocked Observer ${new Date().toISOString()}`,
+          //   scrollRef.current.scrollTop,
+          //   scrollRef.current.clientHeight,
+          //   scrollRef.current.scrollHeight,
+          //   scrollLocked
+          // );
 
           if (height !== 0 && scrollLocked) {
             // update programmable-scroll attribute
