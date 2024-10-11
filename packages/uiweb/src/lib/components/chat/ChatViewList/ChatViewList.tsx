@@ -66,7 +66,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
     invalidChat: false,
   });
 
-  const { chatId, limit = chatLimit, chatFilterList = [] } = options || {};
+  const { chatId, limit = chatLimit, chatFilterList = [], setReplyPayload } = options || {};
   const { user, toast } = useChatData();
 
   // const [chatStatusText, setChatStatusText] = useState<string>('');
@@ -216,13 +216,14 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
         scrollLocked = true;
       }
 
-      console.debug(
-        `UIWeb::ChatViewList::onScroll::scrollLocked ${new Date().toISOString()}`,
-        scrollRef.current.scrollTop,
-        scrollRef.current.clientHeight,
-        scrollRef.current.scrollHeight,
-        scrollLocked
-      );
+      // Turning it off as it overfills debug
+      // console.debug(
+      //   `UIWeb::ChatViewList::onScroll::scrollLocked ${new Date().toISOString()}`,
+      //   scrollRef.current.scrollTop,
+      //   scrollRef.current.clientHeight,
+      //   scrollRef.current.scrollHeight,
+      //   scrollLocked
+      // );
 
       // update scroll-locked attribute
       scrollRef.current.setAttribute('data-scroll-locked', scrollLocked.toString());
@@ -247,13 +248,14 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
         if (scrollRef.current && height !== 0) {
           const scrollLocked = scrollRef.current.getAttribute('data-scroll-locked') === 'true' ? true : false;
 
-          console.debug(
-            `UIWeb::ChatViewList::onScroll::scrollLocked Observer ${new Date().toISOString()}`,
-            scrollRef.current.scrollTop,
-            scrollRef.current.clientHeight,
-            scrollRef.current.scrollHeight,
-            scrollLocked
-          );
+          // Turning it off as it overfills debug
+          // console.debug(
+          //   `UIWeb::ChatViewList::onScroll::scrollLocked Observer ${new Date().toISOString()}`,
+          //   scrollRef.current.scrollTop,
+          //   scrollRef.current.clientHeight,
+          //   scrollRef.current.scrollHeight,
+          //   scrollLocked
+          // );
 
           if (height !== 0 && scrollLocked) {
             // update programmable-scroll attribute
@@ -524,6 +526,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
 
           {
             <ChatViewListCardInner
+              key={`section-chatview-${user?.uid}`}
               flexDirection="column"
               justifyContent="start"
               width="100%"
@@ -562,6 +565,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
                           decryptedMessagePayload={chat}
                           chatPayload={chat}
                           chatReactions={reactions[(chat as any).cid] || []}
+                          setReplyPayload={setReplyPayload}
                           showChatMeta={initialized.chatInfo?.meta?.group ?? false}
                           chatId={chatId}
                           actionId={(chat as any).cid}
@@ -585,7 +589,7 @@ export const ChatViewList: React.FC<IChatViewListProps> = (options: IChatViewLis
 };
 
 //styles
-const ChatViewListCard = styled(Section)<IThemeProps>`
+const ChatViewListCard = styled(Section) <IThemeProps>`
   &::-webkit-scrollbar-thumb {
     background: ${(props) => props.theme.scrollbarColor};
     border-radius: 10px;
@@ -598,6 +602,6 @@ const ChatViewListCard = styled(Section)<IThemeProps>`
   overscroll-behavior: contain;
 `;
 
-const ChatViewListCardInner = styled(Section)<IThemeProps>`
+const ChatViewListCardInner = styled(Section) <IThemeProps>`
   filter: ${(props) => (props.blur ? 'blur(12px)' : 'none')};
 `;

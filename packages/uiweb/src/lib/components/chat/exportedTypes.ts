@@ -9,6 +9,7 @@ export interface IChatPreviewPayload {
   chatGroup: boolean;
   chatTimestamp: number | undefined;
   chatMsg?: {
+    messageMeta: string;
     messageType: string;
     messageContent: string | object;
   };
@@ -54,6 +55,7 @@ export interface IChatViewListProps {
   chatId: string;
   chatFilterList?: Array<string>;
   limit?: number;
+  setReplyPayload?: (payload: IMessagePayload) => void;
 }
 
 export interface IChatViewComponentProps {
@@ -66,6 +68,7 @@ export interface IChatViewComponentProps {
   emoji?: boolean;
   gif?: boolean;
   file?: boolean;
+  handleReply?: boolean;
   isConnected?: boolean;
   autoConnect?: boolean;
   groupInfoModalBackground?: ModalBackgroundType;
@@ -90,7 +93,7 @@ export interface IChatProfile {
 
 export interface TwitterFeedReturnType {
   tweetId: string;
-  messageType: string;
+  isTweet: boolean;
 }
 
 export interface IToast {
@@ -98,7 +101,10 @@ export interface IToast {
   status: string;
 }
 
-export type IMessagePayload = IMessageIPFS;
+export type IMessagePayload = IMessageIPFS & {
+  cid?: string;
+  reference?: string;
+};
 
 export const CHAT_THEME_OPTIONS = {
   LIGHT: 'light',
@@ -116,6 +122,8 @@ export interface MessageInputProps {
   emoji?: boolean;
   gif?: boolean;
   file?: boolean;
+  replyPayload?: IMessagePayload | null;
+  setReplyPayload?: (payload: IMessagePayload | null) => void;
   isConnected?: boolean;
   autoConnect?: boolean;
   verificationFailModalBackground?: ModalBackgroundType;

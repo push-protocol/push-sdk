@@ -16,6 +16,7 @@ import { EmojiCircleIcon } from '../../../../icons/PushIcons';
 
 // Interfaces & Types
 import { IMessagePayload } from '../../exportedTypes';
+import { pCAIP10ToWallet } from '../../../../helpers';
 
 // Constants
 
@@ -112,8 +113,14 @@ export const ReactionPicker = ({
     }
   }, [sendingReaction]);
 
+  const chatPosition =
+    pCAIP10ToWallet(chat.fromDID).toLowerCase() !== pCAIP10ToWallet(user?.account ?? '')?.toLowerCase() ? 0 : 1;
+
+
   return (
-    <>
+    <Section
+      justifyContent={chatPosition ? 'flex-end' : 'flex-start'}
+    >
       {/* To display emoji picker */}
       <Button
         borderRadius={theme.borderRadius?.reactionsPickerBorderRadius}
@@ -247,6 +254,6 @@ export const ReactionPicker = ({
           )}
         </Section>
       )}
-    </>
+    </Section>
   );
 };
