@@ -25,7 +25,7 @@ export interface IChatDataContextValues {
   isPushChatStreamConnected: boolean;
   setIsPushChatStreamConnected: React.Dispatch<React.SetStateAction<boolean>>;
   toast: any;
-  infuraProjectId: string;
+  infuraProjectId: string | null;
   uiConfig: {
     suppressToast?: boolean;
   };
@@ -89,6 +89,7 @@ export const initialChatDataContextValues: IChatDataContextValues = {
   uiConfig: {
     suppressToast: false,
   },
+  infuraProjectId: null,
   chatStream: {},
   chatAcceptStream: {},
   chatRejectStream: {},
