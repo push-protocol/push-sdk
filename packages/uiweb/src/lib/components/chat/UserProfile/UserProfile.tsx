@@ -15,7 +15,7 @@ import { ProfileContainer } from '../reusables';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { UpdateUserProfileModal } from './UpdateUserProfileModal';
 
-import { Constants, CoreContractChainId, InfuraAPIKey, ProfilePicture, device } from '../../../config';
+import { device } from '../../../config';
 import VerticalEllipsisIcon from '../../../icons/VerticalEllipsis.svg';
 import UserProfileIcon from '../../../icons/userCircleGear.svg';
 import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../../../types';
@@ -33,7 +33,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({
   updateUserProfileModalBackground = MODAL_BACKGROUND_TYPE.OVERLAY,
   updateUserProfileModalPositionType = MODAL_POSITION_TYPE.GLOBAL,
   onUserProfileUpdateModalOpen,
-  closeUserProfileModalOnClickAway = false
+  closeUserProfileModalOnClickAway = false,
 }) => {
   const { user } = useChatData();
   const [userProfile, setUserProfile] = useState<IUser>();
@@ -157,7 +157,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({
 };
 
 //styles
-const Conatiner = styled(Section) <IThemeProps>`
+const Conatiner = styled(Section)<IThemeProps>`
   border: ${(props) => props.theme.border?.userProfile};
   box-sizing: border-box;
 `;
