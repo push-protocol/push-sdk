@@ -25,6 +25,7 @@ export interface IChatDataContextValues {
   isPushChatStreamConnected: boolean;
   setIsPushChatStreamConnected: React.Dispatch<React.SetStateAction<boolean>>;
   toast: any;
+  infuraProjectId: string;
   uiConfig: {
     suppressToast?: boolean;
   };

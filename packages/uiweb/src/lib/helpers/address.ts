@@ -1,6 +1,6 @@
 import { SignerType, CONSTANTS } from '@pushprotocol/restapi';
 import { ethers } from 'ethers';
-import { ENV, allowedNetworks } from '../config';
+import { ENV, allowedNetworks, infuraAPIKey } from '../config';
 import { createWeb3Name } from '@web3-name-sdk/core';
 import { getUdResolverClient } from './udResolver';
 
