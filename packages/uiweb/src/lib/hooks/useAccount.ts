@@ -20,6 +20,13 @@ export const useAccount = ({ env }: useAccountParams) => {
   const switchChain = async (desiredChain: number) => {
     setChain({ chainId: ethers.utils.hexValue(desiredChain) });
   };
+  /*
+  Create a new context provider which will hold this provider for the infura calls.
+
+  All the chat specific things will move to top level context.
+
+  All the widget specific things will move to top level context.
+  */
   const provider = useMemo(() => {
     return wallet
       ? new ethers.providers.Web3Provider(wallet.provider, 'any')

@@ -16,7 +16,7 @@ import usePushUser from '../hooks/usePushUser';
 // Internal Configs
 import { lightChatTheme } from '../components/chat/theme';
 import { ThemeContext } from '../components/chat/theme/ThemeProvider';
-import { Constants, ENV, GUEST_MODE_ACCOUNT, infuraAPIKey } from '../config';
+import { Constants, ENV, GUEST_MODE_ACCOUNT, infuraAPIKey as infuraProjectId } from '../config';
 
 // Assets
 
@@ -48,7 +48,7 @@ export interface IChatUIProviderProps {
   uiConfig?: {
     suppressToast?: boolean;
   };
-  infuraProjectId?: string;
+  infuraAPIKey?: string;
 }
 
 // Exported Functions
@@ -62,7 +62,7 @@ export const ChatUIProvider = ({
   theme,
   debug = false,
   uiConfig = {},
-  infuraProjectId = infuraAPIKey,
+  infuraAPIKey = infuraProjectId,
 }: IChatUIProviderProps) => {
   // Now destructure with a default value for suppressToast
   const { suppressToast = false } = uiConfig;
@@ -454,7 +454,7 @@ export const ChatUIProvider = ({
     setIsPushChatStreamConnected,
     user: pushUser,
     setUser: setPushUser,
-    infuraProjectId: infuraProjectId,
+    infuraAPIKey: infuraAPIKey,
     toast: toastify,
     uiConfig: uiConfig,
     chatStream,
