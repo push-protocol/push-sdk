@@ -9,7 +9,6 @@ import { CONSTANTS } from '@pushprotocol/restapi';
 import { ethers } from 'ethers';
 import { CiImageOn } from 'react-icons/ci';
 import { FaFile } from 'react-icons/fa';
-import { CoreContractChainId, InfuraAPIKey } from '../../../config';
 import { pushBotAddress } from '../../../config/constants';
 import { pCAIP10ToWallet, resolveWeb3Name, shortenText } from '../../../helpers';
 import { createBlockie } from '../../../helpers/blockies';
