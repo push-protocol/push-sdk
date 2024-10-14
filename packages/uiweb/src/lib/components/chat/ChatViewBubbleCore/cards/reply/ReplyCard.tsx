@@ -155,15 +155,15 @@ export const ReplyCard = ({
           <Span
             padding="8px 12px 0px"
             fontSize="10px"
-            color={theme.textColor?.chatSentBubbleText}
+            color={position ? `${theme.textColor?.chatSentBubbleText}` : `${theme.textColor?.chatReceivedBubbleText}`}
           >
             <Span
               fontWeight="500"
               padding="0px"
             >
-              {`${replyPayloadManager.payload.fromDID?.split(':')[1].slice(0, 6)}...${replyPayloadManager.payload.fromDID
+              {`${replyPayloadManager.payload.fromDID
                 ?.split(':')[1]
-                .slice(-6)}`}
+                .slice(0, 6)}...${replyPayloadManager.payload.fromDID?.split(':')[1].slice(-6)}`}
             </Span>
           </Span>
           <CardRenderer
@@ -173,12 +173,11 @@ export const ReplyCard = ({
             previewMode={true}
           />
         </Section>
-
       )}
     </ReplySection>
   );
 };
 
-const ReplySection = styled(Section) <ReplySectionProps>`
+const ReplySection = styled(Section)<ReplySectionProps>`
   border-left: 4px solid ${({ borderBG }) => borderBG || 'transparent'};
 `;
