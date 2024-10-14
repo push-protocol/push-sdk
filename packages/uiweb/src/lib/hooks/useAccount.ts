@@ -21,7 +21,7 @@ export const useAccount = ({ env }: useAccountParams) => {
     setChain({ chainId: ethers.utils.hexValue(desiredChain) });
   };
   /*
-  Create a new context provider which will hold this provider for the infura calls.
+  Create a new top level context provider which will hold this provider for the infura calls.
 
   All the chat specific things will move to top level context.
 
