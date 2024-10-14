@@ -18,6 +18,9 @@ import PolygonSvg from '../../../icons/polygon.svg';
 import ArbitrumSvg from '../../../icons/arbitrum.svg';
 import BSCSvg from '../../../icons/bsc.svg';
 import FuseSvg from '../../../icons/fuse.svg';
+import BaseSvg from '../../../icons/base.svg';
+import LineaSvg from '../../../icons/linea.svg';
+import CyberConnectSvg from '../../../icons/cyberconnect.svg';
 
 import OptimismSvg from '../../../icons/optimisim.svg';
 import { BLOCKCHAIN_NETWORK, ENV, device } from '../../../config';
@@ -243,14 +246,35 @@ const AddCriteria = ({ handlePrevious, onClose, criteriaStateManager }: ModalHea
       icon: FuseSvg,
       function: () => setSelectedChainValue(5),
     },
+    {
+      id: 6,
+      value: BLOCKCHAIN_NETWORK[env].CYBER_CONNECT,
+      title: 'Cyber',
+      icon: CyberConnectSvg,
+      function: () => setSelectedChainValue(6),
+    },
+    {
+      id: 7,
+      value: BLOCKCHAIN_NETWORK[env].BASE,
+      title: 'Base',
+      icon: BaseSvg,
+      function: () => setSelectedChainValue(7),
+    },
+    {
+      id: 8,
+      value: BLOCKCHAIN_NETWORK[env].LINEA,
+      title: 'Linea',
+      icon: LineaSvg,
+      function: () => setSelectedChainValue(8),
+    },
   ];
   if (env !== ENV.PROD) {
     dropdownChainsValues.push({
-      id: 6,
+      id: 9,
       value: BLOCKCHAIN_NETWORK[env].BERACHAIN,
       title: 'Berachain',
       icon: BerachainSvg,
-      function: () => setSelectedChainValue(6),
+      function: () => setSelectedChainValue(9),
     } as DropdownValueType);
   }
   console.debug(dropdownChainsValues);
@@ -392,7 +416,7 @@ const AddCriteria = ({ handlePrevious, onClose, criteriaStateManager }: ModalHea
         setDecimals,
         selectedChainValue,
         dropdownChainsValues,
-        tokenId: Number(tokenId)
+        tokenId: Number(tokenId),
       });
     }, 2000);
     return () => clearTimeout(getData);
