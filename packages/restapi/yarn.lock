@@ -747,9 +747,9 @@ he@^1.2.0:
   integrity sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==
 
 hls.js@^1.4.12:
-  version "1.5.16"
-  resolved "https://registry.yarnpkg.com/hls.js/-/hls.js-1.5.16.tgz#ed31c8f720e96eadb9f2f2dc9745e43bcbe8f7f1"
-  integrity sha512-+wAWr4aeRq9ODN8/Vgz0Cee1Cw6Ysr7vyEkZJCwOJYNwlld7CNmhKE+dLwfpUO2UuotYLGF0of6UFiN6zA7mig==
+  version "1.5.15"
+  resolved "https://registry.yarnpkg.com/hls.js/-/hls.js-1.5.15.tgz#dbceb45492dcbdce9659e0d43cffa6c5cebaefb7"
+  integrity sha512-6cD7xN6bycBHaXz2WyPIaHn/iXFizE5au2yvY5q9aC4wfihxAr16C9fUy4nxh2a3wOw0fEgLRa9dN6wsYjlpNg==
 
 ieee754@^1.2.1:
   version "1.2.1"
@@ -1500,9 +1500,9 @@ type-detect@^4.0.0, type-detect@^4.1.0:
   integrity sha512-Acylog8/luQ8L7il+geoSxhEkazvkslg7PSNKOX59mbB9cOveP5aq9h74Y7YU8yDpJwetzQQrfIwtf4Wp4LKcw==
 
 typescript@^5.0.2:
-  version "5.6.3"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.6.3.tgz#5f3449e31c9d94febb17de03cc081dd56d81db5b"
-  integrity sha512-hjcS1mhfuyi4WW8IWtjP7brDrG2cuDZukyrYrSauoXGNgx0S7zceP07adYkJycEr56BOUTNPzbInooiN3fn1qw==
+  version "5.6.2"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.6.2.tgz#d1de67b6bef77c41823f822df8f0b3bcff60a5a0"
+  integrity sha512-NW8ByodCSNCwZeghjN3o+JX5OFH0Ojg6sadjEKY4huZ52TqbJTJnDo5+Tw98lSy63NZvi4n+ez5m2u5d4PkZyw==
 
 url-parse@^1.5.7:
   version "1.5.10"

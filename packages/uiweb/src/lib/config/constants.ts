@@ -67,6 +67,7 @@ const TESTNET_NETWORK = {
   BERACHAIN: 'eip155:80085',
   CYBER_CONNECT: 'eip155:111557560',
   BASE: 'eip155:84532',
+  LINEA: 'eip155:59141'
 };
 const MAINET_NETWORK = {
   ETHEREUM: 'eip155:1',
@@ -78,6 +79,7 @@ const MAINET_NETWORK = {
   FUSE: 'eip155:122',
   CYBER_CONNECT: 'eip155:7560',
   BASE: 'eip155:8453',
+  LINEA: 'eip155:59144'
 };
 
 export const BLOCKCHAIN_NETWORK = {
