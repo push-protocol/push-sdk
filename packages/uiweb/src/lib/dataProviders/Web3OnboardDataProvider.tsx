@@ -1,6 +1,6 @@
 import coinbaseWalletModule from '@web3-onboard/coinbase';
 
-import { BLOCKNATIVE_PROJECT_ID, InfuraAPIKey } from '../config';
+import { BLOCKNATIVE_PROJECT_ID, infuraAPIKey } from '../config';
 import { Web3OnboardProvider } from '@web3-onboard/react';
 import injectedModule, { ProviderLabel } from '@web3-onboard/injected-wallets';
 import walletConnectModule from '@web3-onboard/walletconnect';
@@ -30,13 +30,13 @@ const CHAINS: ChainType[] = [
     id: '0x1',
     token: 'ETH',
     label: 'Ethereum Mainnet',
-    rpcUrl: `https://mainnet.infura.io/v3/${InfuraAPIKey}`,
+    rpcUrl: `https://mainnet.infura.io/v3/${infuraAPIKey}`,
   },
   {
     id: '0xAA36A7',
     token: 'ETH',
     label: 'Sepolia',
-    rpcUrl: `https://sepolia.infura.io/v3/${InfuraAPIKey}`,
+    rpcUrl: `https://sepolia.infura.io/v3/${infuraAPIKey}`,
   },
   {
     id: '0x13882',

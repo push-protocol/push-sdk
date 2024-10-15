@@ -6,7 +6,7 @@ import { ethers } from 'ethers';
 import { ChatProps } from './Chat';
 
 import { SupportChatPropsContext } from '../../context';
-import { Constants, ENV, InfuraAPIKey, allowedNetworks } from '../../config';
+import { Constants, infuraAPIKey, allowedNetworks } from '../../config';
 
 import { copyToClipboard, pCAIP10ToWallet, resolveWeb3Name } from '../../helpers';
 import { CopySvg } from '../../icons/CopySvg';
@@ -19,7 +19,7 @@ export const AddressInfo: React.FC = () => {
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const walletAddress = pCAIP10ToWallet(supportAddress!);
   const l1ChainId = allowedNetworks[env!]?.includes(1) ? 1 : 5;
-  const provider = new ethers.providers.InfuraProvider(l1ChainId, InfuraAPIKey);
+  const provider = new ethers.providers.InfuraProvider(l1ChainId, infuraAPIKey);
 
   useEffect(() => {
     const getUser = async () => {

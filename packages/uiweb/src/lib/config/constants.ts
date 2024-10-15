@@ -44,11 +44,16 @@ export const CoreContractChainId = {
   local: 11155111,
 };
 
-export const CoreRPC = {
-  prod: 'https://mainnet.infura.io/v3/4ff53a5254144d988a8318210b56f47a',
-  dev: 'https://sepolia.infura.io/v3/5524d420b29f4f7a8d8d2f582a0d43f7',
-  staging: 'https://sepolia.infura.io/v3/49f638cc25a94ddb86b7aefd612f11ab',
-  local: 'https://sepolia.infura.io/v3/5524d420b29f4f7a8d8d2f582a0d43f7',
+export const infuraAPIKey = '100cce93cd9d4626b9cedf707d4dbabc';
+
+export const CoreRPC = (env: ENV) => {
+  const baseinfuraURL = {
+    prod: 'https://mainnet.infura.io/v3/',
+    dev: 'https://sepolia.infura.io/v3/',
+    staging: 'https://sepolia.infura.io/v3/',
+    local: 'https://sepolia.infura.io/v3/',
+  };
+  return `${baseinfuraURL[env]}${infuraAPIKey}`;
 };
 
 const TESTNET_NETWORK = {
@@ -62,6 +67,7 @@ const TESTNET_NETWORK = {
   BERACHAIN: 'eip155:80085',
   CYBER_CONNECT: 'eip155:111557560',
   BASE: 'eip155:84532',
+  LINEA: 'eip155:59141'
 };
 const MAINET_NETWORK = {
   ETHEREUM: 'eip155:1',
@@ -73,6 +79,7 @@ const MAINET_NETWORK = {
   FUSE: 'eip155:122',
   CYBER_CONNECT: 'eip155:7560',
   BASE: 'eip155:8453',
+  LINEA: 'eip155:59144'
 };
 
 export const BLOCKCHAIN_NETWORK = {
@@ -137,8 +144,6 @@ export const allowedNetworks = {
 };
 
 export const BLOCKNATIVE_PROJECT_ID = '64a44a0fb537407bfe97d24330e4109c';
-
-export const InfuraAPIKey = '150f25623ae64d08ab7ec7dd0c6b6ee9';
 
 export const PUBLIC_GOOGLE_TOKEN = 'AIzaSyBhUBnCia6zpxY7KcqjghRS1IphinAvKXs';
 

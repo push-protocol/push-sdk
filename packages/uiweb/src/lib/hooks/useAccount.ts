@@ -2,12 +2,12 @@ import { Env } from '@pushprotocol/restapi';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
 import { useMemo } from 'react';
-import { CoreContractChainId, CoreRPC, GUEST_MODE_ACCOUNT } from '../config';
+import { CoreContractChainId, CoreRPC, ENV, GUEST_MODE_ACCOUNT } from '../config';
 
 interface useAccountParams {
-  env:Env;
+  env: Env;
 }
-export const useAccount = ({env}:useAccountParams) => {
+export const useAccount = ({ env }: useAccountParams) => {
   const [{ wallet, connecting }, connect, disconnect, updateBalances, setWalletModules, setPrimaryWallet] =
     useConnectWallet();
 
@@ -20,8 +20,17 @@ export const useAccount = ({env}:useAccountParams) => {
   const switchChain = async (desiredChain: number) => {
     setChain({ chainId: ethers.utils.hexValue(desiredChain) });
   };
+  /*
+  Create a new top level context provider which will hold this provider for the infura calls.
+
+  All the chat specific things will move to top level context.
+
+  All the widget specific things will move to top level context.
+  */
   const provider = useMemo(() => {
-    return wallet ? new ethers.providers.Web3Provider(wallet.provider, 'any') : new ethers.providers.JsonRpcProvider(CoreRPC[env]);
+    return wallet
+      ? new ethers.providers.Web3Provider(wallet.provider, 'any')
+      : new ethers.providers.JsonRpcProvider(CoreRPC(env));
   }, [wallet]);
 
   return {
@@ -33,7 +42,8 @@ export const useAccount = ({env}:useAccountParams) => {
     setWalletModules,
     setPrimaryWallet,
     provider,
-    account: wallet && wallet.accounts.length > 0 ? ethers.utils.getAddress(wallet.accounts[0].address) : GUEST_MODE_ACCOUNT,
+    account:
+      wallet && wallet.accounts.length > 0 ? ethers.utils.getAddress(wallet.accounts[0].address) : GUEST_MODE_ACCOUNT,
     chainId: connectedChain ? Number(connectedChain.id) : CoreContractChainId[env],
     isActive,
     setChain,

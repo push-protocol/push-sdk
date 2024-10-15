@@ -28,7 +28,7 @@ import { ProfileContainer } from '../reusables';
 import { GroupInfoModal } from './ChatProfileInfoModal';
 
 // Internal Configs
-import { CoreContractChainId, InfuraAPIKey, allowedNetworks, device } from '../../../config';
+import { device } from '../../../config';
 import { ThemeContext } from '../theme/ThemeProvider';
 
 // Assets

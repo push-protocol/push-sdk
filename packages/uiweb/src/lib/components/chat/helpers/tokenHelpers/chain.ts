@@ -1,14 +1,13 @@
-import { InfuraAPIKey } from '../../../../config';
+import { infuraAPIKey } from '../../../../config';
 
-const getInfuraUrlFor = (network: string, key: string) =>
-  `https://${network}.infura.io/v3/${key}`;
+const getInfuraUrlFor = (network: string, key: string) => `https://${network}.infura.io/v3/${key}`;
 
 const getRpcURL = (network: string, key: string) => {
   return getInfuraUrlFor(network, key);
 };
 
 export const getChainRPC = (chainId: number): string => {
-  const key = InfuraAPIKey;
+  const key = infuraAPIKey;
 
   switch (chainId) {
     case 1:
