@@ -17,6 +17,7 @@ import { CardRenderer } from '../../CardRenderer';
 
 // Interfaces & Types
 import { IMessagePayload } from '../../../exportedTypes';
+import { pCAIP10ToWallet, shortenText } from '../../../../../helpers';
 
 // Constants
 
@@ -161,9 +162,7 @@ export const ReplyCard = ({
               fontWeight="500"
               padding="0px"
             >
-              {`${replyPayloadManager.payload.fromDID
-                ?.split(':')[1]
-                .slice(0, 6)}...${replyPayloadManager.payload.fromDID?.split(':')[1].slice(-6)}`}
+              {shortenText(pCAIP10ToWallet(replyPayloadManager.payload.fromDID), 6, true)}
             </Span>
           </Span>
           <CardRenderer
