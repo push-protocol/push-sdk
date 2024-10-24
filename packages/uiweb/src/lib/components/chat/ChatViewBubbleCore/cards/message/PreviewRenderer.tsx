@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 
 // External Packages
 import { TwitterTweetEmbed } from 'react-twitter-embed';
+import styled from 'styled-components';
 
 // Internal Compoonents
 import { IFrame } from '../../../../../types';
@@ -11,9 +12,8 @@ import { checkTwitterUrl } from '../../../helpers/twitter';
 
 import { FrameRenderer } from './FrameRenderer';
 import { VideoRenderer } from './VideoRenderer';
-
 // Internal Configs
-
+import { device } from '../../../../../config/globals';
 // Assets
 
 // Interfaces & Types
@@ -149,6 +149,31 @@ export const PreviewRenderer = ({
       frameData={initialized.frameData}
     />
   ) : !initialized.loading && !initialized.error && initialized.url && initialized.urlType === 'twitter' ? (
-    <TwitterTweetEmbed tweetId={initialized.url} />
+    <TwitterEmbedWrapper>
+      <TwitterTweetEmbed tweetId={initialized.url} />
+    </TwitterEmbedWrapper>
   ) : null;
 };
+
+const TwitterEmbedWrapper = styled.div`
+  width: 100%;
+  max-width: 550px;
+  margin: 0 auto;
+  overflow: hidden;
+  padding: 0 10px;
+  > div {
+    max-width: 100% !important;
+  }
+
+  iframe {
+    max-width: 100% !important;
+  }
+
+  @media (max-width: ${device.mobileL}) {
+    max-width: 100%;
+
+    iframe {
+      width: 100% !important;
+    }
+  }
+`;
