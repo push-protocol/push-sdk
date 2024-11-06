@@ -334,6 +334,7 @@ export class PushStream extends EventEmitter {
 
         if (this.pushChatSocket) {
           console.log('RestAPI::PushStream::s-1');
+          checkAndEmitConnectEvent();
           this.pushChatSocket.off(EVENTS.CONNECT);
           this.pushChatSocket.on(EVENTS.CONNECT, async () => {
             console.log('RestAPI::PushStream::s-2');
@@ -506,6 +507,8 @@ export class PushStream extends EventEmitter {
         }
 
         if (this.pushNotificationSocket) {
+          checkAndEmitConnectEvent();
+          console.log('RestAPI::PushStream::s-4.9');
           this.pushNotificationSocket.off(EVENTS.CONNECT);
           this.pushNotificationSocket.on(EVENTS.CONNECT, async () => {
             console.log('RestAPI::PushStream::s-5');
@@ -637,10 +640,10 @@ export class PushStream extends EventEmitter {
     }
   }
 
-  public info() {
+  public info(): { options: PushStreamInitializeProps; listen: STREAM[] } {
     return {
       options: this.options,
-      listen: this.listen,
+      listen: this.listen as STREAM[],
     };
   }
 
