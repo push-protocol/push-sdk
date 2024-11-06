@@ -341,7 +341,7 @@ export class PushStream extends EventEmitter {
             this.chatSocketConnected = true;
             checkAndEmitConnectEvent();
             console.log(
-              `RestAPI::PushStream::EVENTS.CONNECT::Chat Socket Connected (ID: ${this.pushChatSocket.id})`
+              `RestAPI::PushStream::EVENTS.CONNECT:: Chat Socket Connected (ID: ${this.pushChatSocket.id})`
             );
           });
 
