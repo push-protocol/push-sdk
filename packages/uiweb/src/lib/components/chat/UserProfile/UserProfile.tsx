@@ -15,7 +15,7 @@ import { ProfileContainer } from '../reusables';
 import { ThemeContext } from '../theme/ThemeProvider';
 import { UpdateUserProfileModal } from './UpdateUserProfileModal';
 
-import { device } from '../../../config';
+import { GUEST_MODE_ACCOUNT, device } from '../../../config';
 import VerticalEllipsisIcon from '../../../icons/VerticalEllipsis.svg';
 import UserProfileIcon from '../../../icons/userCircleGear.svg';
 import { MODAL_BACKGROUND_TYPE, MODAL_POSITION_TYPE } from '../../../types';
@@ -96,7 +96,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({
         member={{
           web3Name: web3Name,
           abbrRecipient: shortenText(pCAIP10ToWallet(user?.account || ''), 8, true) as string,
-          recipient: user!.account,
+          recipient: user?.account || GUEST_MODE_ACCOUNT,
           icon: userProfile?.profile?.picture || null,
         }}
         copy={true}
