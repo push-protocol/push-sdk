@@ -121,7 +121,7 @@ export class PushStream extends EventEmitter {
     await this.connect(true);
   }
 
-  public async connect(reinit: boolean = false): Promise<void> {
+  public async connect(reinit = false): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       (async () => {
         const shouldInitializeChatSocket =
