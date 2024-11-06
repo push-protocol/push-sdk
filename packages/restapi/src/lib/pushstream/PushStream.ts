@@ -169,7 +169,7 @@ export class PushStream extends EventEmitter {
             );
             resolve();
           } else {
-            console.log('RestAPI::PushStream::s-7');
+            console.log('RestAPI::PushStream:: not emitting');
           }
         };
 
@@ -333,15 +333,12 @@ export class PushStream extends EventEmitter {
         };
 
         if (this.pushChatSocket) {
-          console.log('RestAPI::PushStream::s-1');
           checkAndEmitConnectEvent();
           this.pushChatSocket.off(EVENTS.CONNECT);
           this.pushChatSocket.on(EVENTS.CONNECT, async () => {
-            console.log('RestAPI::PushStream::s-2');
             isChatSocketConnected = true;
             this.chatSocketCount++;
             this.chatSocketConnected = true;
-            console.log('RestAPI::PushStream::s-3');
             checkAndEmitConnectEvent();
             console.log(
               `RestAPI::PushStream::EVENTS.CONNECT::Chat Socket Connected (ID: ${this.pushChatSocket.id})`
@@ -350,7 +347,6 @@ export class PushStream extends EventEmitter {
 
           this.pushChatSocket.off(EVENTS.DISCONNECT);
           this.pushChatSocket.on(EVENTS.DISCONNECT, async () => {
-            console.log('RestAPI::PushStream::s-4');
             console.log(
               'RestAPI::PushStream::ChatSocket::Disconnect - Chat socket disconnected.'
             );
@@ -508,11 +504,8 @@ export class PushStream extends EventEmitter {
 
         if (this.pushNotificationSocket) {
           checkAndEmitConnectEvent();
-          console.log('RestAPI::PushStream::s-4.9');
           this.pushNotificationSocket.off(EVENTS.CONNECT);
           this.pushNotificationSocket.on(EVENTS.CONNECT, async () => {
-            console.log('RestAPI::PushStream::s-5');
-
             console.log(
               `RestAPI::PushStream::NotifSocket::Connect - Notification Socket Connected (ID: ${this.pushNotificationSocket.id})`
             );
@@ -524,8 +517,6 @@ export class PushStream extends EventEmitter {
 
           this.pushNotificationSocket.off(EVENTS.DISCONNECT);
           this.pushNotificationSocket.on(EVENTS.DISCONNECT, async () => {
-            console.log('RestAPI::PushStream::s-6');
-
             console.log(
               'RestAPI::PushStream::NotifSocket::Disconnect - Notification socket disconnected.'
             );
