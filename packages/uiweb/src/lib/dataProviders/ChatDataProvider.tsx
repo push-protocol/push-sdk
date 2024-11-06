@@ -320,6 +320,7 @@ export const ChatUIProvider = ({
       // check and filter out the streams which are not connected
       const streamsToConnect = streams.filter((stream) => !connectedStreams.listen?.includes(stream));
       const uniqueStreams = [...new Set([...connectedStreams.listen, ...streams])];
+
       if (streamsToConnect.length) {
         await userInstance.stream?.reinit(uniqueStreams, {
           connection: {
