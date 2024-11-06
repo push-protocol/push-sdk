@@ -319,6 +319,7 @@ export const ChatUIProvider = ({
 
       // check and filter out the streams which are not connected
       const streamsToConnect = streams.filter((stream) => !connectedStreams.listen?.includes(stream));
+      
       if (streamsToConnect.length) {
         await userInstance.stream?.reinit(streams, {
           connection: {
