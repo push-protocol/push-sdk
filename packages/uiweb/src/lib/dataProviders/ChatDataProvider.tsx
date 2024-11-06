@@ -319,9 +319,8 @@ export const ChatUIProvider = ({
 
       // check and filter out the streams which are not connected
       const streamsToConnect = streams.filter((stream) => !connectedStreams.listen?.includes(stream));
-      const uniqueStreams = [...new Set([...connectedStreams.listen, ...streams])];
       if (streamsToConnect.length) {
-        await userInstance.stream?.reinit(uniqueStreams, {
+        await userInstance.stream?.reinit(streams, {
           connection: {
             retries: 3, // number of retries in case of error
           },
@@ -415,7 +414,7 @@ export const ChatUIProvider = ({
 
     // setTimeout(async () => {
     //   console.debug('UIWeb::ChatDataProvider::attachListenersAndConnect::Timeout Connect', userInstance?.stream?.uid);
-    if (!userInstance?.stream?.connected()) {
+    if (!userInstance.stream?.connected()) {
       console.debug('UIWeb::ChatDataProvider::attachListenersAndConnect::Stream not connected', userInstance);
 
       await userInstance.stream?.connect();
