@@ -320,14 +320,6 @@ export const ChatUIProvider = ({
       // check and filter out the streams which are not connected
       const streamsToConnect = streams.filter((stream) => !connectedStreams.listen?.includes(stream));
       const uniqueStreams = [...new Set([...connectedStreams.listen, ...streams])];
-      console.debug(
-        userInstance,
-        userInstance?.uid,
-        userInstance.stream?.uid,
-        streamsToConnect,
-        uniqueStreams,
-        'uniqueStreams1'
-      );
       if (streamsToConnect.length) {
         await userInstance.stream?.reinit(uniqueStreams, {
           connection: {
@@ -338,7 +330,6 @@ export const ChatUIProvider = ({
         // reinit
         status = 2;
       }
-      console.debug(userInstance, userInstance?.uid, userInstance.stream?.uid, 'uniqueStreams2');
     }
 
     // attach listeners and connect if status is changed
