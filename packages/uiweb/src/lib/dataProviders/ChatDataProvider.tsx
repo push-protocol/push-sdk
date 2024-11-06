@@ -319,9 +319,17 @@ export const ChatUIProvider = ({
 
       // check and filter out the streams which are not connected
       const streamsToConnect = streams.filter((stream) => !connectedStreams.listen?.includes(stream));
-
+      const uniqueStreams = [...new Set([...connectedStreams.listen, ...streams])];
+      console.debug(
+        userInstance,
+        userInstance?.uid,
+        userInstance.stream?.uid,
+        streamsToConnect,
+        uniqueStreams,
+        'uniqueStreams1'
+      );
       if (streamsToConnect.length) {
-        await userInstance.stream?.reinit(streams, {
+        await userInstance.stream?.reinit(uniqueStreams, {
           connection: {
             retries: 3, // number of retries in case of error
           },
@@ -330,6 +338,7 @@ export const ChatUIProvider = ({
         // reinit
         status = 2;
       }
+      console.debug(userInstance, userInstance?.uid, userInstance.stream?.uid, 'uniqueStreams2');
     }
 
     // attach listeners and connect if status is changed
@@ -415,7 +424,7 @@ export const ChatUIProvider = ({
 
     // setTimeout(async () => {
     //   console.debug('UIWeb::ChatDataProvider::attachListenersAndConnect::Timeout Connect', userInstance?.stream?.uid);
-    if (!userInstance.stream?.connected()) {
+    if (!userInstance?.stream?.connected()) {
       console.debug('UIWeb::ChatDataProvider::attachListenersAndConnect::Stream not connected', userInstance);
 
       await userInstance.stream?.connect();
