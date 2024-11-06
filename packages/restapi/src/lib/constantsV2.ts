@@ -65,6 +65,11 @@ const CONSTANTS = {
       ORDER: ChannelListOrderType,
     },
     NOTIFICATION_TYPE: NotifictaionType,
+    TAGS: {
+      USER: 'USER',
+      PUSH: 'PUSH',
+      ALL: '*',
+    },
   },
 };
 

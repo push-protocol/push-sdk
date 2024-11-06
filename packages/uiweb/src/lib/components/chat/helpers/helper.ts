@@ -161,23 +161,63 @@ export const generateRandomNonce: () => string = () => {
 export const transformChatItems: (items: IFeeds[]) => IChatPreviewPayload[] = (items: IFeeds[]) => {
   // map but also filter to remove any duplicates which might creep in if stream sends a message
   const transformedItems: IChatPreviewPayload[] = items
-    .map((item: IFeeds) => ({
-      chatId: item.chatId,
-      chatPic: item.groupInformation ? item.groupInformation.groupImage : item.profilePicture,
-      chatParticipant: item.groupInformation ? item.groupInformation.groupName : item.did,
-      chatGroup: item.groupInformation ? true : false,
-      chatTimestamp: item.msg.timestamp,
-      chatMsg: {
-        messageType: item.msg.messageType,
-        messageContent: item.msg.messageContent,
-      },
-    }))
+    .map((item: IFeeds) => {
+      let messageType = '';
+      let messageContent = '';
+
+      // Typescript doesn't know about the messageObj property
+      // Workaround: cast to any
+      const modItem = item as any;
+
+      if (modItem.msg.messageType === 'Reply') {
+        if (typeof modItem.msg.messageObj === 'object' && !Array.isArray(modItem.msg.messageObj)) {
+          messageType = modItem.msg.messageObj.content.messageType;
+
+          if (modItem.msg.messageObj.content.messageObj) {
+            messageContent = modItem.msg.messageObj.content.messageObj.content;
+          }
+        }
+      } else if (typeof modItem.msg.messageObj === 'object' && !Array.isArray(modItem.msg.messageObj)) {
+        messageType = modItem.msg.messageType;
+        if (modItem.msg.messageObj) {
+          messageContent = modItem.msg.messageObj.content;
+        }
+      }
+
+      return {
+        chatId: item.chatId,
+        chatPic: item.groupInformation ? item.groupInformation.groupImage : item.profilePicture,
+        chatParticipant: item.groupInformation ? item.groupInformation.groupName : item.did,
+        chatGroup: item.groupInformation ? true : false,
+        chatTimestamp: item.msg.timestamp,
+        chatMsg: {
+          messageMeta: item.msg.messageType,
+          messageType: messageType,
+          messageContent: messageContent,
+        },
+      };
+    })
     .filter((item, index, self) => index === self.findIndex((t) => t.chatId === item.chatId));
 
   return transformedItems;
 };
 
 export const transformStreamToIChatPreviewPayload: (item: any) => IChatPreviewPayload = (item: any) => {
+  let messageType = '';
+  let messageContent = '';
+  let messageMeta = '';
+
+  const modItem = item as any;
+  if (modItem.message.type === 'Reply') {
+    messageMeta = modItem.message.type;
+    messageType = modItem.message.content.messageType;
+    messageContent = modItem.message.content.messageObj.content;
+  } else {
+    messageMeta = modItem.message.type;
+    messageType = modItem.message.type;
+    messageContent = modItem.message.content;
+  }
+
   // transform the item
   const transformedItem: IChatPreviewPayload = {
     chatId: item.chatId,
@@ -192,8 +232,9 @@ export const transformStreamToIChatPreviewPayload: (item: any) => IChatPreviewPa
     chatGroup: item.meta.group,
     chatTimestamp: Number(item.timestamp),
     chatMsg: {
-      messageType: item?.message?.type,
-      messageContent: item?.message?.content,
+      messageMeta: messageType,
+      messageType: messageType,
+      messageContent: messageContent,
     },
   };
 
@@ -225,6 +266,15 @@ export const transformStreamToIMessageIPFSWithCID: (item: any) => IMessageIPFSWi
     verificationProof: item?.raw?.verificationProof || '',
   };
   return transformedItem;
+};
+
+export const getParsedMessage = (message: string) => {
+  try {
+    return JSON.parse(message);
+  } catch (error) {
+    console.error('UIWeb::components::ChatViewBubble::ImageCard::error while parsing image', error);
+    return null;
+  }
 };
 
 export const getChatParticipantDisplayName = (derivedChatId: string, chatId: string) => {

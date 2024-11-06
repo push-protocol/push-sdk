@@ -261,7 +261,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
       items.forEach((item) => {
         // only increment if not selected
         if (chatPreviewListMeta.selectedChatId !== item.chatId) {
-          console.debug('::ChatPreviewList::incrementing badge', item);
+          console.debug('UIWeb::ChatPreviewList::incrementing badge', item);
           setBadge(
             item.chatId!,
             chatPreviewListMeta.badges[item.chatId!] ? chatPreviewListMeta.badges[item.chatId!] + 1 : 1
@@ -297,6 +297,7 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
       chatGroup: true,
       chatTimestamp: undefined,
       chatMsg: {
+        messageMeta: '',
         messageType: '',
         messageContent: '',
       },
@@ -359,71 +360,6 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
     const overrideAccount = options.overrideAccount ? options.overrideAccount : undefined;
     return { type, overrideAccount };
   };
-
-  // //Initialise chat -- Deprecated
-  // const initializeChatList = async () => {
-  //   // Load chat type from options, if not present, default to CHATS
-  //   const { type, overrideAccount } = getTypeAndAccount();
-  //   const newpage = 1;
-
-  //   // store current nonce and page
-  //   const currentNonce = chatPreviewList.nonce;
-  //   if (type === 'SEARCH') {
-  //     await handleSearch(currentNonce);
-  //   } else {
-  //     const chatList = await fetchChatList({
-  //       type,
-  //       page: newpage,
-  //       limit: CHAT_PAGE_LIMIT,
-  //       overrideAccount,
-  //     });
-  //     if (chatList) {
-  //       // get and transform chats
-  //       const transformedChats = transformChatItems(chatList);
-
-  //       // return if nonce doesn't match or if page is not 1
-  //       if (currentNonce !== chatPreviewList.nonce || chatPreviewList.page !== 0) {
-  //         return;
-  //       }
-
-  //       setChatPreviewList((prev) => ({
-  //         nonce: generateRandomNonce(),
-  //         items: transformedChats,
-  //         page: 1,
-  //         loading: false,
-  //         loaded: false,
-  //         reset: false,
-  //         resume: false,
-  //         errored: false,
-  //         error: null,
-  //       }));
-
-  //       if (options?.onPreload) {
-  //         options.onPreload(transformedChats);
-  //       }
-  //     } else {
-  //       // return if nonce doesn't match
-  //       if (currentNonce !== chatPreviewList.nonce) {
-  //         return;
-  //       }
-
-  //       setChatPreviewList({
-  //         nonce: generateRandomNonce(),
-  //         items: [],
-  //         page: 0,
-  //         loading: false,
-  //         loaded: false,
-  //         reset: false,
-  //         resume: false,
-  //         errored: true,
-  //         error: {
-  //           code: ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_PRELOAD_ERROR,
-  //           message: 'No chats found',
-  //         },
-  //       });
-  //     }
-  //   }
-  // };
 
   // Define Chat Preview List Meta Functions
   // Set selected badge
@@ -593,154 +529,6 @@ export const ChatPreviewList: React.FC<IChatPreviewListProps> = (options: IChatP
       removeChatItems([chatRejectStream.chatId]);
     }
   }, [chatRejectStream]);
-
-  //search method for a chatId
-  const handleSearch = async (currentNonce: string) => {
-    let error;
-    let searchedChat: IChatPreviewPayload = {
-      chatId: undefined,
-      chatPic: null,
-      chatParticipant: '',
-      chatGroup: false,
-      chatTimestamp: undefined,
-      chatMsg: {
-        messageType: '',
-        messageContent: '',
-      },
-    };
-    //check if searchParamter is there
-    try {
-      if (options?.searchParamter)
-        if (options?.searchParamter) {
-          let formattedChatId: string | null = options?.searchParamter;
-          let userProfile: IUser | undefined = undefined;
-          let groupProfile: Group;
-
-          if (getDomainIfExists(formattedChatId)) {
-            const address = await getAddress(formattedChatId, user ? user.env : CONSTANTS.ENV.PROD);
-            if (address) formattedChatId = pCAIP10ToWallet(address);
-            else {
-              error = {
-                code: ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_INVALID_SEARCH_ERROR,
-                message: 'Invalid search',
-              };
-            }
-          }
-          if (pCAIP10ToWallet(formattedChatId) === pCAIP10ToWallet(user?.account || '')) {
-            error = {
-              code: ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_INVALID_SEARCH_ERROR,
-              message: 'Invalid search',
-            };
-          }
-
-          if (!error) {
-            const chatInfo = await fetchChat({ chatId: formattedChatId });
-            if (chatInfo && chatInfo?.meta?.group)
-              groupProfile = await getGroupByIDnew({
-                groupId: formattedChatId,
-              });
-            else if (user?.account)
-              formattedChatId = pCAIP10ToWallet(
-                chatInfo?.participants.find((address) => address != walletToPCAIP10(user?.account)) || formattedChatId
-              );
-            //fetch  profile
-            if (!groupProfile) {
-              userProfile = await getNewChatUser({
-                searchText: formattedChatId,
-                env: user?.env ? user?.env : CONSTANTS.ENV.PROD,
-                fetchChatProfile: fetchUserProfile,
-                user,
-              });
-            }
-
-            if (!userProfile && !groupProfile) {
-              error = {
-                code: ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_INVALID_SEARCH_ERROR,
-                message: 'Invalid search',
-              };
-            } else {
-              searchedChat = {
-                ...searchedChat,
-                chatId: chatInfo?.chatId || formattedChatId,
-                chatGroup: !!groupProfile,
-                chatPic: (userProfile?.profile?.picture ?? groupProfile?.groupImage) || null,
-                chatParticipant: groupProfile ? groupProfile?.groupName : formattedChatId!,
-              };
-              //fetch latest chat
-              const latestMessage = await fetchLatestMessage({
-                chatId: formattedChatId,
-              });
-              if (latestMessage) {
-                searchedChat = {
-                  ...searchedChat,
-                  chatMsg: {
-                    messageType: latestMessage[0]?.messageType,
-                    messageContent: latestMessage[0]?.messageContent,
-                  },
-                  chatTimestamp: latestMessage[0]?.timestamp,
-                };
-              }
-
-              // return if nonce doesn't match or if page is not 1
-              if (currentNonce !== chatPreviewList.nonce || chatPreviewList.page !== 1) {
-                return;
-              }
-              setChatPreviewList((prev) => ({
-                nonce: generateRandomNonce(),
-                items: [...[searchedChat]],
-                page: 1,
-                loading: false,
-                loaded: false,
-                reset: false,
-                resume: false,
-                errored: false,
-                error: null,
-              }));
-            }
-          }
-        } else {
-          error = {
-            code: ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_INSUFFICIENT_INPUT,
-            message: 'Insufficient input for search',
-          };
-        }
-      if (error) {
-        setChatPreviewList({
-          nonce: generateRandomNonce(),
-          items: [],
-          page: 1,
-          loading: false,
-          loaded: false,
-          reset: false,
-          resume: false,
-          errored: true,
-          error: error,
-        });
-      }
-    } catch (e) {
-      // return if nonce doesn't match
-      console.debug(e);
-      console.debug(`Errored: currentNonce: ${currentNonce}, chatPreviewList.nonce: ${chatPreviewList.nonce}`);
-      if (currentNonce !== chatPreviewList.nonce) {
-        return;
-      }
-
-      setChatPreviewList({
-        nonce: generateRandomNonce(),
-        items: [],
-        page: 1,
-        loading: false,
-        loaded: false,
-        reset: false,
-        resume: false,
-        errored: true,
-        error: {
-          code: ChatPreviewListErrorCodes.CHAT_PREVIEW_LIST_PRELOAD_ERROR,
-          message: 'Error in searching',
-        },
-      });
-    }
-  };
 
   // Attach scroll listener
   const onScroll = async () => {

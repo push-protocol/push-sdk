@@ -30,15 +30,19 @@ import {
 
 import { Alias } from './alias';
 import { Delegate } from './delegate';
+import { Tags } from './tags';
 import { PushNotificationBaseClass } from './pushNotificationBase';
 
 export class Channel extends PushNotificationBaseClass {
   public delegate!: Delegate;
   public alias!: Alias;
+  public tags!: Tags;
+
   constructor(signer?: SignerType, env?: ENV, account?: string) {
     super(signer, env, account);
     this.delegate = new Delegate(signer, env, account);
     this.alias = new Alias(signer, env, account);
+    this.tags = new Tags(this, signer, env, account);
   }
 
   /**
@@ -73,12 +77,18 @@ export class Channel extends PushNotificationBaseClass {
       const {
         page = Constants.PAGINATION.INITIAL_PAGE,
         limit = Constants.PAGINATION.LIMIT,
+        filter,
+        tag,
+        oldFormat = true
       } = options || {};
       return await PUSH_CHANNEL.search({
         query: query,
         page: page,
         limit: limit,
+        filter: filter,
+        tag: tag,
         env: this.env,
+        oldFormat
       });
     } catch (error) {
       throw new Error(`Push SDK Error: API : channel::search : ${error}`);
@@ -158,6 +168,8 @@ export class Channel extends PushNotificationBaseClass {
       alias = null,
       progressHook,
     } = options || {};
+
+    let tags = options.tags;
     try {
       // create push token instance
       let aliasInfo;
@@ -188,6 +200,17 @@ export class Channel extends PushNotificationBaseClass {
             aliasDetails?.address,
         };
       }
+      // check for tags length
+      if (tags && tags.length > 5) {
+        tags = tags.slice(0, 5);
+      }
+
+      const tagsStr = tags && tags.length > 0 ? tags.join('') : '';
+
+      if (tagsStr.length > 512) {
+        throw new Error('Tags length should not exceed 512 characters');
+      }
+
       // construct channel identity
       progressHook?.(PROGRESSHOOK['PUSH-CREATE-01'] as ProgressHookType);
       const input = {
@@ -196,6 +219,7 @@ export class Channel extends PushNotificationBaseClass {
         url: url,
         icon: icon,
         aliasDetails: aliasInfo ?? {},
+        tags
       };
       const cid = await this.uploadToIPFSViaPushNode(JSON.stringify(input));
       const allowanceAmount = await this.fetchAllownace(
@@ -248,6 +272,7 @@ export class Channel extends PushNotificationBaseClass {
       alias = null,
       progressHook,
     } = options || {};
+    let tags = options.tags;
     try {
       // create push token instance
       let aliasInfo;
@@ -284,6 +309,14 @@ export class Channel extends PushNotificationBaseClass {
             aliasDetails?.address,
         };
       }
+
+      // check for tags length
+      if (tags && tags.length > 5) {
+        tags = tags.slice(0, 5);
+      }
+
+      const tagsStr = tags && tags.length > 0 ? tags.join('') : '';
+
       // construct channel identity
       progressHook?.(PROGRESSHOOK['PUSH-UPDATE-01'] as ProgressHookType);
       const input = {
@@ -292,6 +325,7 @@ export class Channel extends PushNotificationBaseClass {
         url: url,
         icon: icon,
         aliasDetails: aliasInfo ?? {},
+        tags
       };
       const cid = await this.uploadToIPFSViaPushNode(JSON.stringify(input));
       // approve the tokens to core contract
@@ -444,6 +478,8 @@ export class Channel extends PushNotificationBaseClass {
         limit,
         sort = ChannelListSortType.SUBSCRIBER,
         order = ChannelListOrderType.DESCENDING,
+        filter,
+        tag,
       } = options || {};
 
       return await PUSH_CHANNEL.getChannels({
@@ -452,6 +488,8 @@ export class Channel extends PushNotificationBaseClass {
         limit,
         sort,
         order,
+        filter,
+        tag
       });
     } catch (error) {
       throw new Error(`Push SDK Error: Contract : channel::list : ${error}`);

@@ -1,7 +1,7 @@
 import type { Env } from '@pushprotocol/restapi';
 import Resolution from '@unstoppabledomains/resolution';
 import { ethers } from 'ethers';
-import { allowedNetworks, InfuraAPIKey, NETWORK_DETAILS } from '../config';
+import { allowedNetworks, infuraAPIKey, NETWORK_DETAILS } from '../config';
 
 export const getUdResolverClient = (env: Env): Resolution | undefined => {
   try {
@@ -14,11 +14,11 @@ export const getUdResolverClient = (env: Env): Resolution | undefined => {
         locations: {
           Layer1: {
             network: 'mainnet', // add config for sepolia once it's supported by UD
-            provider: new ethers.providers.InfuraProvider(l1ChainId, InfuraAPIKey),
+            provider: new ethers.providers.InfuraProvider(l1ChainId, infuraAPIKey),
           },
           Layer2: {
             network: NETWORK_DETAILS[l2ChainId].network,
-            provider: new ethers.providers.InfuraProvider(l2ChainId, InfuraAPIKey),
+            provider: new ethers.providers.InfuraProvider(l2ChainId, infuraAPIKey),
           },
         },
       },

@@ -53,6 +53,10 @@ export type FeedsOptions = {
 export type ChannelSearchOptions = {
   page?: number;
   limit?: number;
+  filter?: number;
+  // temp fix to support both new and old format
+  oldFormat?: boolean;
+  tag?: string;
 };
 
 // Types related to notification
@@ -105,6 +109,7 @@ export type CreateChannelOptions = {
   icon: string;
   url: string;
   alias?: string;
+  tags?: string[];
   progressHook?: (progress: ProgressHookType) => void;
 };
 
@@ -151,9 +156,16 @@ export type ChannelListOptions = {
   limit?: number;
   sort?: ChannelListSortType;
   order?: ChannelListOrderType;
+  filter?: number;
+  tag?: string;
 };
 
-
+export type TagListOptions = {
+  page?: number;
+  limit?: number;
+  order?: ChannelListOrderType;
+  filter?: "PUSH" | "USER" | "*"; 
+}
 
 
 
