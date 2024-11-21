@@ -7,6 +7,8 @@ import {
 import Constants, { ENV } from '../constants';
 import { SignerType } from '../types';
 import { axiosPost } from '../utils/axiosUtil';
+import { sign } from '../chat/helpers';
+import * as CryptoJS from 'crypto-js';
 
 export type SubscribeOptionsV2Type = {
   signer: SignerType;
@@ -18,6 +20,7 @@ export type SubscribeOptionsV2Type = {
   origin?: string;
   onSuccess?: () => void;
   onError?: (err: Error) => void;
+  pgpPrivateKey?: string;
 };
 
 export const subscribeV2 = async (options: SubscribeOptionsV2Type) => {
@@ -31,6 +34,7 @@ export const subscribeV2 = async (options: SubscribeOptionsV2Type) => {
     origin,
     onSuccess,
     onError,
+    pgpPrivateKey,
   } = options || {};
   try {
     const _channelAddress = await getCAIPAddress(
@@ -47,6 +51,7 @@ export const subscribeV2 = async (options: SubscribeOptionsV2Type) => {
     const _userAddress = await getCAIPAddress(env, userAddress, 'User');
 
     const userCAIPDetails = getCAIPDetails(_userAddress);
+
     if (!userCAIPDetails) throw Error('Invalid User CAIP!');
 
     const { API_BASE_URL, EPNS_COMMUNICATOR_CONTRACT } = getConfig(
@@ -55,39 +60,60 @@ export const subscribeV2 = async (options: SubscribeOptionsV2Type) => {
     );
 
     const requestUrl = `${API_BASE_URL}/v1/channels/${_channelAddress}/subscribe`;
-    // get domain information
-    const domainInformation = getDomainInformation(
-      chainId,
-      verifyingContractAddress || EPNS_COMMUNICATOR_CONTRACT
-    );
 
-    // get type information
-    const typeInformation = getTypeInformationV2();
-
-    // get message
-    const messageInformation = {
-      data: getSubscriptionMessageV2(
+    let verificationProof: string;
+    let messageInformation: { data: any } = { data: {} };
+    if (pgpPrivateKey) {
+      const data = getSubscriptionMessageV2(
         channelCAIPDetails.address,
-        userCAIPDetails.address,
+        _userAddress,
         'Subscribe',
         settings
-      ),
-    };
-    // sign a message using EIP712
-    const pushSigner = new Signer(signer);
-    const signature = await pushSigner.signTypedData(
-      domainInformation,
-      typeInformation,
-      messageInformation,
-      'Data'
-    );
+      );
+      messageInformation = {
+        data: data,
+      };
+      const hash = CryptoJS.SHA256(
+        JSON.stringify(messageInformation)
+      ).toString();
+      console.log(' hash ', hash);
+      const signature = await sign({
+        message: hash,
+        signingKey: pgpPrivateKey!,
+      });
+      verificationProof = `pgpv4:${signature}`;
+    } else {
+      const domainInformation = getDomainInformation(
+        chainId,
+        verifyingContractAddress || EPNS_COMMUNICATOR_CONTRACT
+      );
 
-    const verificationProof = signature; // might change
+      // get type information
+      const typeInformation = getTypeInformationV2();
+
+      messageInformation = {
+        data: getSubscriptionMessageV2(
+          channelCAIPDetails.address,
+          userCAIPDetails.address,
+          'Subscribe',
+          settings
+        ),
+      };
+      // Existing EIP712 flow
+      const pushSigner = new Signer(signer);
+      const signature = await pushSigner.signTypedData(
+        domainInformation,
+        typeInformation,
+        messageInformation,
+        'Data'
+      );
+      verificationProof = `eip712v2:${signature}`;
+    }
 
     const body = {
-      verificationProof: `eip712v2:${verificationProof}`,
+      verificationProof: verificationProof,
       message: messageInformation.data,
-      origin: origin
+      origin: origin,
     };
 
     const res = await axiosPost(requestUrl, body);

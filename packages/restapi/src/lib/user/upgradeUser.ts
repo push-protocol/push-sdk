@@ -56,7 +56,8 @@ export const upgrade = async (options: UpgradeUserProps): Promise<IUser> => {
 
     if (
       version === recommendedPgpEncryptionVersion ||
-      version === Constants.ENCRYPTION_TYPE.NFTPGP_V1
+      version === Constants.ENCRYPTION_TYPE.NFTPGP_V1 ||
+      version === Constants.ENCRYPTION_TYPE.SCWPGP_V1
     ) {
       return user;
     }

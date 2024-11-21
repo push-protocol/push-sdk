@@ -1,5 +1,9 @@
 import { AccountEnvOptionsType, IUser } from '../types';
-import { isValidPushCAIP, walletToPCAIP10 } from '../helpers/address';
+import {
+  isAccountNonEVM,
+  isValidPushCAIP,
+  walletToPCAIP10,
+} from '../helpers/address';
 import { getAPIBaseUrls, verifyProfileKeys } from '../helpers';
 import Constants from '../constants';
 import { populateDeprecatedUser } from '../utils/populateIUser';
@@ -16,13 +20,15 @@ export const get = async (options: AccountEnvOptionsType): Promise<IUser> => {
   return axiosGet(requestUrl)
     .then(async (response) => {
       if (response.data) {
-        response.data.publicKey = await verifyProfileKeys(
-          response.data.encryptedPrivateKey,
-          response.data.publicKey,
-          response.data.did,
-          response.data.wallets,
-          response.data.verificationProof
-        );
+        if (!isAccountNonEVM(response.data.did)) {
+          response.data.publicKey = await verifyProfileKeys(
+            response.data.encryptedPrivateKey,
+            response.data.publicKey,
+            response.data.did,
+            response.data.wallets,
+            response.data.verificationProof
+          );
+        }
       }
       return populateDeprecatedUser(response.data);
     })

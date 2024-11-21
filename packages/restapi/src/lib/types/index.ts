@@ -21,7 +21,7 @@ import {
 export * from './messageTypes';
 export * from './videoTypes';
 
-export type Env = typeof ENV[keyof typeof ENV];
+export type Env = (typeof ENV)[keyof typeof ENV];
 
 // the type for the the response of the input data to be parsed
 export type ApiNotificationType = {
@@ -777,10 +777,18 @@ export type viemSignerType = {
   provider?: any;
 };
 
+export type signerType = {
+  getChainId: () => Promise<string>;
+  signMessage: (message: string) => Promise<string>;
+  account: string;
+  provider?: any;
+};
+
 export type SignerType =
   | ethersV5SignerType
   | ethersV6SignerType
-  | viemSignerType;
+  | viemSignerType
+  | signerType;
 
 export type EnvOptionsType = {
   env?: ENV;

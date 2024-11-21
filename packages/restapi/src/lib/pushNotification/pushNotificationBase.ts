@@ -28,13 +28,13 @@ import {
   getAPIBaseUrls,
   getCAIPDetails,
   getFallbackETHCAIPAddress,
+  isAccountNonEVM,
   validateCAIP,
 } from '../helpers';
 import { axiosGet, axiosPost } from '../utils/axiosUtil';
 import { PushAPI } from '../pushapi/PushAPI';
 import { channel } from 'diagnostics_channel';
 import * as viem from 'viem';
-
 
 // ERROR CONSTANTS
 const ERROR_ACCOUNT_NEEDED = 'Account is required';
@@ -61,12 +61,19 @@ export class PushNotificationBaseClass {
   protected env: ENV | undefined;
   protected guestMode: boolean;
   protected coreContract: any;
+  protected pgpPrivateKey?: string;
 
-  constructor(signer?: SignerType, env?: ENV, account?: string) {
+  constructor(
+    signer?: SignerType,
+    env?: ENV,
+    account?: string,
+    pgpPrivateKey?: string
+  ) {
     this.signer = signer;
     this.env = env;
     this.guestMode = !!(account && signer);
     this.account = account;
+    this.pgpPrivateKey = pgpPrivateKey;
     this.initializeCoreContract({ signer: this.signer, env: this.env });
   }
 
@@ -927,6 +934,9 @@ export class PushNotificationBaseClass {
   }
 
   protected getAddressFromCaip(caipAddress: string): string {
+    if (isAccountNonEVM(caipAddress)) {
+      return caipAddress;
+    }
     return caipAddress?.split(':')[caipAddress?.split(':').length - 1];
   }
 

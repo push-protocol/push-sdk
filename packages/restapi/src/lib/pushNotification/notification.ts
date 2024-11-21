@@ -27,8 +27,13 @@ export const FEED_MAP = {
   SPAM: true,
 };
 export class Notification extends PushNotificationBaseClass {
-  constructor(signer?: SignerType, env?: ENV, account?: string) {
-    super(signer, env, account);
+  constructor(
+    signer?: SignerType,
+    env?: ENV,
+    account?: string,
+    pgpPrivateKey?: string
+  ) {
+    super(signer, env, account, pgpPrivateKey);
   }
 
   /**
@@ -158,8 +163,10 @@ export class Notification extends PushNotificationBaseClass {
       if (!validateCAIP(channel)) {
         channel = getFallbackETHCAIPAddress(this.env!, channel);
       }
+
       // get channel caip
       const caipDetail = getCAIPDetails(channel);
+
       // based on the caip, construct the user caip
       const userAddressInCaip = getCAIPWithChainId(
         this.account!,
@@ -167,6 +174,7 @@ export class Notification extends PushNotificationBaseClass {
       );
       // convert the setting to minimal version
       const minimalSetting = this.getMinimalUserSetting(settings!);
+
       return await PUSH_CHANNEL.subscribeV2({
         signer: this.signer!,
         channelAddress: channel,
@@ -175,6 +183,7 @@ export class Notification extends PushNotificationBaseClass {
         settings: minimalSetting ?? '',
         onSuccess: onSuccess,
         onError: onError,
+        pgpPrivateKey: this.pgpPrivateKey,
       });
     } catch (error) {
       throw new Error(
@@ -225,6 +234,7 @@ export class Notification extends PushNotificationBaseClass {
         env: this.env,
         onSuccess: onSuccess,
         onError: onError,
+        pgpPrivateKey: this.pgpPrivateKey,
       });
     } catch (error) {
       throw new Error(

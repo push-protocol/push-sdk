@@ -84,6 +84,7 @@ export const isValidEOACAIP = (wallet: string): boolean => {
  */
 export const isValidPushCAIP = (wallet: string): boolean => {
   return (
+    isAccountNonEVM(wallet) ||
     isValidEOACAIP(wallet) ||
     isValidSCWCAIP(wallet) ||
     isValidNFTCAIP(wallet) ||
@@ -165,6 +166,7 @@ export function validateCAIP(addressInCAIP: string) {
   if (!address) return false;
 
   if (isValidNFTCAIP(addressInCAIP)) return true;
+  if (isAccountNonEVM(addressInCAIP)) return true;
 
   const validatorFn = AddressValidators[blockchain];
 
@@ -192,6 +194,9 @@ export function getCAIPDetails(addressInCAIP: string): CAIPDetailsType | null {
 }
 
 export function getFallbackETHCAIPAddress(env: ENV, address: string) {
+  if (isAccountNonEVM(address)) {
+    return address;
+  }
   let chainId = 1; // by default PROD
 
   if (
@@ -216,6 +221,9 @@ export function getFallbackETHCAIPAddress(env: ENV, address: string) {
  *      throw error!
  */
 export async function getCAIPAddress(env: ENV, address: string, msg?: string) {
+  if (isAccountNonEVM(address)) {
+    return address;
+  }
   if (isValidNFTCAIP(address)) {
     return await convertToValidDID(address, env);
   }
@@ -235,7 +243,9 @@ export const getCAIPWithChainId = (
   chainId: number,
   msg?: string
 ) => {
-  if (isValidPushCAIP(address)) {
+  if (isAccountNonEVM(address)) {
+    return address;
+  } else if (isValidPushCAIP(address)) {
     if (!address.includes('eip155:')) return `eip155:${chainId}:${address}`;
     else return address;
   } else {
@@ -245,6 +255,9 @@ export const getCAIPWithChainId = (
 
 // P = Partial CAIP
 export const walletToPCAIP10 = (account: string): string => {
+  if (isAccountNonEVM(account)) {
+    return account;
+  }
   if (isValidNFTCAIP(account) || account.includes('eip155:')) {
     return account;
   }
@@ -252,7 +265,21 @@ export const walletToPCAIP10 = (account: string): string => {
 };
 
 export const pCAIP10ToWallet = (wallet: string): string => {
+  if (isAccountNonEVM(wallet)) {
+    return wallet;
+  }
   if (isValidNFTCAIP(wallet)) return wallet;
   wallet = wallet.replace('eip155:', '');
   return wallet;
+};
+
+const nonEVMChains = ['starknet', 'solana'];
+
+export const isAccountNonEVM = (wallet: string): boolean => {
+  try {
+    const walletComponent = wallet.split(':');
+    return nonEVMChains.includes(walletComponent[0].toLowerCase());
+  } catch (err) {
+    return false;
+  }
 };

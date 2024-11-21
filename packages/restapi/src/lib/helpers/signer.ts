@@ -25,15 +25,20 @@ export class Signer {
       'signMessage' in this.signer &&
       typeof this.signer.signMessage === 'function'
     ) {
+      const preparedMessage =
+        typeof message === 'string'
+          ? message
+          : new TextDecoder().decode(message);
+
       if (this.isViemSigner(this.signer)) {
         // Viem signer requires additional arguments
         return this.signer.signMessage({
-          message,
+          message: preparedMessage,
           account: this.signer.account,
         });
       } else {
-        // EthersV5 and EthersV6
-        return this.signer.signMessage(message);
+        // EthersV5, EthersV6, or other signer types
+        return this.signer.signMessage(preparedMessage);
       }
     } else {
       throw new Error('Signer does not support signMessage');
@@ -69,8 +74,15 @@ export class Signer {
   async getAddress(): Promise<string> {
     if (this.isViemSigner(this.signer)) {
       return this.signer.account['address'] ?? '';
-    } else {
+    } else if (
+      'getAddress' in this.signer &&
+      typeof this.signer.getAddress === 'function'
+    ) {
       return await this.signer.getAddress();
+    } else if ('account' in this.signer) {
+      return this.signer.account;
+    } else {
+      throw new Error('Signer does not support getAddress');
     }
   }
 
@@ -85,5 +97,13 @@ export class Signer {
     } else {
       return 1; // Return default chainId
     }
+  }
+
+  async isSmartContractWallet(): Promise<boolean> {
+    if (!('provider' in this.signer && this.signer.provider)) {
+      throw new Error('Provider not available for this signer');
+    }
+    const code = await this.signer.provider.getCode(await this.getAddress());
+    return code !== '0x';
   }
 }

@@ -15,6 +15,9 @@ type decryptAuthProps = {
     NFTPGP_V1?: {
       encryptedPassword: string;
     };
+    SCWPGP_V1?: {
+      encryptedPassword: string;
+    };
   };
   /**
    * To get Progress Related to fn
@@ -43,8 +46,9 @@ export const decryptAuth = async (
     // Report Progress
     progressHook?.(PROGRESSHOOK['PUSH-DECRYPT-AUTH-01'] as ProgressHookType);
     const password = await decryptPGPKey({
-      encryptedPGPPrivateKey: additionalMeta?.NFTPGP_V1
-        ?.encryptedPassword as string,
+      encryptedPGPPrivateKey:
+        (additionalMeta?.NFTPGP_V1?.encryptedPassword as string) ||
+        (additionalMeta?.SCWPGP_V1?.encryptedPassword as string),
       signer,
       account,
       env,

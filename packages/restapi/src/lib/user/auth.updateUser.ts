@@ -22,12 +22,13 @@ import {
 import { get } from './getUser';
 
 //used only in progressHook to abstract encryption algotrithms
-enum ENCRYPTION_TYPE_VERSION {
-  'x25519-xsalsa20-poly1305' = 'PGP_V1',
-  'aes256GcmHkdfSha256' = 'PGP_V2',
-  'eip191-aes256-gcm-hkdf-sha256' = 'PGP_V3',
-  'pgpv1:nft' = 'NFTPGP_V1',
-}
+const ENCRYPTION_TYPE_VERSION: Record<ENCRYPTION_TYPE, string> = {
+  [ENCRYPTION_TYPE.PGP_V1]: 'PGP_V1',
+  [ENCRYPTION_TYPE.PGP_V2]: 'PGP_V2',
+  [ENCRYPTION_TYPE.PGP_V3]: 'PGP_V3',
+  [ENCRYPTION_TYPE.NFTPGP_V1]: 'NFTPGP_V1',
+  [ENCRYPTION_TYPE.SCWPGP_V1]: 'SCWPGP_V1',
+};
 
 export type AuthUpdateProps = {
   pgpPrivateKey: string; // decrypted pgp priv key
@@ -39,6 +40,9 @@ export type AuthUpdateProps = {
   additionalMeta?: {
     NFTPGP_V1?: {
       password: string; //new nft profile password
+    };
+    SCWPGP_V1?: {
+      password: string;
     };
   };
   progressHook?: (progress: ProgressHookType) => void;
@@ -64,7 +68,8 @@ export const authUpdate = async (options: AuthUpdateProps): Promise<IUser> => {
     const address = await getAccountAddress(wallet);
 
     const updatingCreds =
-      pgpEncryptionVersion === Constants.ENCRYPTION_TYPE.NFTPGP_V1
+      pgpEncryptionVersion === Constants.ENCRYPTION_TYPE.NFTPGP_V1 ||
+      pgpEncryptionVersion === Constants.ENCRYPTION_TYPE.SCWPGP_V1
         ? true
         : false;
 
@@ -111,6 +116,15 @@ export const authUpdate = async (options: AuthUpdateProps): Promise<IUser> => {
       const encryptedPassword: encryptedPrivateKeyTypeV2 = await encryptPGPKey(
         ENCRYPTION_TYPE.PGP_V3,
         additionalMeta?.NFTPGP_V1?.password as string,
+        wallet,
+        additionalMeta
+      );
+      encryptedPgpPrivateKey.encryptedPassword = encryptedPassword;
+    }
+    if (pgpEncryptionVersion === ENCRYPTION_TYPE.SCWPGP_V1) {
+      const encryptedPassword: encryptedPrivateKeyTypeV2 = await encryptPGPKey(
+        ENCRYPTION_TYPE.PGP_V3,
+        additionalMeta?.SCWPGP_V1?.password as string,
         wallet,
         additionalMeta
       );

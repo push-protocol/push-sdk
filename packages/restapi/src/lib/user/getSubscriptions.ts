@@ -23,12 +23,13 @@ export const getSubscriptions = async (
   const _user = await getCAIPAddress(env, user, 'User');
   const API_BASE_URL = getAPIBaseUrls(env);
   const apiEndpoint = `${API_BASE_URL}/v1/users/${_user}/subscriptions`;
-  const query = channel? getQueryParams({
-    channel: channel
-  }): ""
+  const query = channel
+    ? getQueryParams({
+        channel: channel,
+      })
+    : '';
   const requestUrl = `${apiEndpoint}?${query}`;
 
- 
   return axiosGet(requestUrl)
     .then((response) => {
       if (raw) {

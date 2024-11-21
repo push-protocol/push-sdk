@@ -22,6 +22,7 @@ export enum ENCRYPTION_TYPE {
   PGP_V2 = 'aes256GcmHkdfSha256',
   PGP_V3 = 'eip191-aes256-gcm-hkdf-sha256',
   NFTPGP_V1 = 'pgpv1:nft',
+  SCWPGP_V1 = 'pgpv1:scw',
 }
 
 /**
@@ -67,13 +68,14 @@ const Constants = {
   DEV_CHAIN_ID: 99999,
   NON_ETH_CHAINS: [
     137, 80002, 56, 97, 10, 11155420, 2442, 1101, 421614, 42161, 122, 123,
-    80085,59141, 59144, 111557560, 7560, 84532, 8453,
+    80085, 59141, 59144, 111557560, 7560, 84532, 8453,
   ],
   ETH_CHAINS: [1, 11155111],
   ENC_TYPE_V1: 'x25519-xsalsa20-poly1305',
   ENC_TYPE_V2: 'aes256GcmHkdfSha256',
   ENC_TYPE_V3: 'eip191-aes256-gcm-hkdf-sha256',
   ENC_TYPE_V4: 'pgpv1:nft',
+  ENC_TYPE_V5: 'pgpv1:scw',
   ALPHA_FEATURES,
 };
 

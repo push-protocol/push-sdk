@@ -107,6 +107,9 @@ type decryptPgpKeyProps = {
     NFTPGP_V1?: {
       password: string;
     };
+    SCWPGP_V1?: {
+      password: string;
+    };
   };
   progressHook?: (progress: ProgressHookType) => void;
 };
@@ -141,7 +144,11 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
 
     switch (encryptionType) {
       case Constants.ENC_TYPE_V1: {
-        if (wallet?.signer?.privateKey) {
+        if (
+          wallet?.signer &&
+          'privateKey' in wallet?.signer &&
+          wallet?.signer?.privateKey
+        ) {
           privateKey = metamaskDecrypt({
             encryptedData: JSON.parse(encryptedPGPPrivateKey),
             privateKey: wallet?.signer?.privateKey.substring(2),
@@ -238,12 +245,42 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
         privateKey = dec.decode(encodedPrivateKey);
         break;
       }
+      case Constants.ENC_TYPE_V5: {
+        let password: string | null = null;
+        if (additionalMeta?.SCWPGP_V1) {
+          password = additionalMeta.SCWPGP_V1.password;
+        } else {
+          if (!wallet?.signer) {
+            throw new Error(
+              'Cannot Decrypt this encryption version without signer!'
+            );
+          }
+          const { encryptedPassword } = JSON.parse(encryptedPGPPrivateKey);
+          password = await decryptPGPKey({
+            encryptedPGPPrivateKey: JSON.stringify(encryptedPassword),
+            signer,
+            env,
+          });
+        }
+        const encodedPrivateKey = await decryptV2(
+          JSON.parse(encryptedPGPPrivateKey),
+          hexToBytes(stringToHex(password as string))
+        );
+        const dec = new TextDecoder();
+        privateKey = dec.decode(encodedPrivateKey);
+        break;
+      }
       default:
         throw new Error('Invalid Encryption Type');
     }
 
     // try key upgradation
-    if (signer && toUpgrade && encryptionType !== Constants.ENC_TYPE_V4) {
+    if (
+      signer &&
+      toUpgrade &&
+      (encryptionType !== Constants.ENC_TYPE_V4 ||
+        encryptionType !== Constants.ENC_TYPE_V5)
+    ) {
       try {
         await upgrade({ env, account: address, signer, progressHook });
       } catch (err) {
@@ -380,13 +417,20 @@ export const encryptPGPKey = async (
     NFTPGP_V1?: {
       password: string;
     };
+    SCWPGP_V1?: {
+      password: string;
+    };
   }
 ): Promise<encryptedPrivateKeyType> => {
   let encryptedPrivateKey: encryptedPrivateKeyType;
   switch (encryptionType) {
     case Constants.ENC_TYPE_V1: {
       let walletPublicKey: string;
-      if (wallet?.signer?.privateKey) {
+      if (
+        wallet?.signer &&
+        'privateKey' in wallet?.signer &&
+        wallet?.signer?.privateKey
+      ) {
         // get metamask specific encryption public key
         walletPublicKey = getEncryptionPublicKey(
           wallet?.signer?.privateKey.substring(2)
@@ -451,6 +495,20 @@ export const encryptPGPKey = async (
       encryptedPrivateKey.preKey = '';
       break;
     }
+    case Constants.ENC_TYPE_V5: {
+      if (!additionalMeta?.SCWPGP_V1?.password) {
+        throw new Error('Password is required!');
+      }
+      const enc = new TextEncoder();
+      const encodedPrivateKey = enc.encode(privateKey);
+      encryptedPrivateKey = await encryptV2(
+        encodedPrivateKey,
+        hexToBytes(stringToHex(additionalMeta.SCWPGP_V1.password))
+      );
+      encryptedPrivateKey.version = Constants.ENC_TYPE_V5;
+      encryptedPrivateKey.preKey = '';
+      break;
+    }
     default:
       throw new Error('Invalid Encryption Type');
   }
@@ -470,7 +528,8 @@ export const preparePGPPublicKey = async (
     }
     case Constants.ENC_TYPE_V2:
     case Constants.ENC_TYPE_V3:
-    case Constants.ENC_TYPE_V4: {
+    case Constants.ENC_TYPE_V4:
+    case Constants.ENC_TYPE_V5: {
       const verificationProof = 'DEPRECATED';
       // TODO - Change JSON Structure to string ie equivalent to ENC_TYPE_V1 ( would be done after PUSH Node changes )
       chatPublicKey = JSON.stringify({

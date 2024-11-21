@@ -38,8 +38,13 @@ export class Channel extends PushNotificationBaseClass {
   public alias!: Alias;
   public tags!: Tags;
 
-  constructor(signer?: SignerType, env?: ENV, account?: string) {
-    super(signer, env, account);
+  constructor(
+    signer?: SignerType,
+    env?: ENV,
+    account?: string,
+    pgpPrivateKey?: string
+  ) {
+    super(signer, env, account, pgpPrivateKey);
     this.delegate = new Delegate(signer, env, account);
     this.alias = new Alias(signer, env, account);
     this.tags = new Tags(this, signer, env, account);
@@ -79,7 +84,7 @@ export class Channel extends PushNotificationBaseClass {
         limit = Constants.PAGINATION.LIMIT,
         filter,
         tag,
-        oldFormat = true
+        oldFormat = true,
       } = options || {};
       return await PUSH_CHANNEL.search({
         query: query,
@@ -88,7 +93,7 @@ export class Channel extends PushNotificationBaseClass {
         filter: filter,
         tag: tag,
         env: this.env,
-        oldFormat
+        oldFormat,
       });
     } catch (error) {
       throw new Error(`Push SDK Error: API : channel::search : ${error}`);
@@ -141,9 +146,14 @@ export class Channel extends PushNotificationBaseClass {
   send = async (recipients: string[], options: NotificationOptions) => {
     try {
       this.checkSignerObjectExists();
+
       const channelInfo = await this.getChannelOrAliasInfo(
         options.channel! ?? this.account
       );
+
+      options.advanced = options.advanced || {};
+      options.advanced.pgpPrivateKey =
+        options.advanced.pgpPrivateKey ?? this.pgpPrivateKey;
 
       const lowLevelPayload = this.generateNotificationLowLevelPayload({
         signer: this.signer!,
@@ -153,6 +163,7 @@ export class Channel extends PushNotificationBaseClass {
         channel: options.channel ?? this.account,
         channelInfo: channelInfo,
       });
+
       return await PUSH_PAYLOAD.sendNotification(lowLevelPayload);
     } catch (error) {
       throw new Error(`Push SDK Error: API : channel::send : ${error}`);
@@ -219,7 +230,7 @@ export class Channel extends PushNotificationBaseClass {
         url: url,
         icon: icon,
         aliasDetails: aliasInfo ?? {},
-        tags
+        tags,
       };
       const cid = await this.uploadToIPFSViaPushNode(JSON.stringify(input));
       const allowanceAmount = await this.fetchAllownace(
@@ -325,7 +336,7 @@ export class Channel extends PushNotificationBaseClass {
         url: url,
         icon: icon,
         aliasDetails: aliasInfo ?? {},
-        tags
+        tags,
       };
       const cid = await this.uploadToIPFSViaPushNode(JSON.stringify(input));
       // approve the tokens to core contract
@@ -489,7 +500,7 @@ export class Channel extends PushNotificationBaseClass {
         sort,
         order,
         filter,
-        tag
+        tag,
       });
     } catch (error) {
       throw new Error(`Push SDK Error: Contract : channel::list : ${error}`);

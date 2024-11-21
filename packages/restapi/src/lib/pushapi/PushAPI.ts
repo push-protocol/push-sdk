@@ -18,7 +18,7 @@ import {
 import { ALPHA_FEATURE_CONFIG } from '../config';
 import { Space } from './space';
 import { Video } from './video';
-import { isValidNFTCAIP, walletToPCAIP10 } from '../helpers';
+import { isAccountNonEVM, isValidNFTCAIP, walletToPCAIP10 } from '../helpers';
 import { LRUCache } from 'lru-cache';
 import { cache } from '../helpers/cache';
 import { v4 as uuidv4 } from 'uuid';
@@ -31,6 +31,7 @@ export class PushAPI {
   public chainWiseAccount: string;
   public decryptedPgpPvtKey?: string;
   public pgpPublicKey?: string;
+
   public env: ENV;
   private progressHook?: (progress: ProgressHookType) => void;
   private cache: LRUCache<string, any>;
@@ -71,8 +72,18 @@ export class PushAPI {
     this.pgpPublicKey = pgpPublicKey;
     this.progressHook = progressHook;
     // Instantiate the notification classes
-    this.channel = new Channel(this.signer, this.env, this.account);
-    this.notification = new Notification(this.signer, this.env, this.account);
+    this.channel = new Channel(
+      this.signer,
+      this.env,
+      this.account,
+      this.decryptedPgpPvtKey
+    );
+    this.notification = new Notification(
+      this.signer,
+      this.env,
+      this.account,
+      this.decryptedPgpPvtKey
+    );
     this.uid = uuidv4();
     this.cache = cache;
 
@@ -133,7 +144,11 @@ export class PushAPI {
 
       if (args.length === 1 && typeof args[0] === 'object') {
         // This branch handles both the single options object and the single signer scenario.
-        if ('account' in args[0] && typeof args[0].account === 'string') {
+        if (
+          'account' in args[0] &&
+          typeof args[0].account === 'string' &&
+          !isAccountNonEVM(args[0].account)
+        ) {
           // Single options object provided.
           options = args[0];
         } else {
@@ -302,7 +317,10 @@ export class PushAPI {
    * @notice - All data will be lost after reinitialization
    */
   async reinitialize(options: {
-    versionMeta: { NFTPGP_V1: { password: string } };
+    versionMeta: {
+      NFTPGP_V1: { password: string };
+      SCWPGP_V1: { password: string };
+    };
   }): Promise<void> {
     const newUser = await PUSH_USER.create({
       env: this.env,

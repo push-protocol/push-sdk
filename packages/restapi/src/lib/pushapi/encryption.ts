@@ -33,6 +33,11 @@ export class Encryption {
               JSON.parse(userInfo.encryptedPrivateKey).encryptedPassword
             ),
           },
+          SCWPGP_V1: {
+            encryptedPassword: JSON.stringify(
+              JSON.parse(userInfo.encryptedPrivateKey).encryptedPassword
+            ),
+          },
         },
       });
     }
@@ -51,6 +56,7 @@ export class Encryption {
     options?: {
       versionMeta?: {
         NFTPGP_V1?: { password: string };
+        SCWPGP_V1?: { password: string };
       };
     }
   ) {
