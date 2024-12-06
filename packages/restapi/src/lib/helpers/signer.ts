@@ -101,7 +101,8 @@ export class Signer {
 
   async isSmartContractWallet(): Promise<boolean> {
     if (!('provider' in this.signer && this.signer.provider)) {
-      throw new Error('Provider not available for this signer');
+      console.error('Provider not available for this signer');
+      return false;
     }
     const code = await this.signer.provider.getCode(await this.getAddress());
     return code !== '0x';

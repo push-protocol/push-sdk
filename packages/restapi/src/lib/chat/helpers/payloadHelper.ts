@@ -1,4 +1,8 @@
-import { isValidPushCAIP, walletToPCAIP10 } from '../../helpers';
+import {
+  convertPartialCAIPToFullCAIP,
+  isValidPushCAIP,
+  walletToPCAIP10,
+} from '../../helpers';
 import { getEncryptedRequestCore } from './crypto';
 import {
   IConnectedUser,
@@ -22,6 +26,8 @@ import * as CryptoJS from 'crypto-js';
 import { getAllGroupMembers } from '../getAllGroupMembers';
 import { ChatListType, SpaceListType } from '../../pushapi/pushAPITypes';
 export interface ISendMessagePayload {
+  fromDIDV2?: string | undefined;
+  toDIDV2?: string | undefined;
   fromDID: string;
   toDID: string;
   fromCAIP10: string;
@@ -86,7 +92,8 @@ export const sendMessagePayload = async (
   messageContent: string,
   messageType: string,
   group: GroupInfoDTO | null,
-  env: ENV
+  env: ENV,
+  chainId: string
 ): Promise<ISendMessagePayload> => {
   return await sendMessagePayloadCore(
     receiverAddress,
@@ -96,7 +103,8 @@ export const sendMessagePayload = async (
     messageType,
     group,
     env,
-    PGPHelper
+    PGPHelper,
+    chainId
   );
 };
 
@@ -108,7 +116,8 @@ export const sendMessagePayloadCore = async (
   messageType: string,
   group: GroupInfoDTO | null,
   env: ENV,
-  pgpHelper: IPGPHelper
+  pgpHelper: IPGPHelper,
+  chainId: string
 ): Promise<ISendMessagePayload> => {
   const isGroup = group !== null;
 
@@ -130,7 +139,8 @@ export const sendMessagePayloadCore = async (
       env,
       group,
       secretKey,
-      pgpHelper
+      pgpHelper,
+      chainId
     );
   const {
     message: encryptedMessageObj,
@@ -144,7 +154,8 @@ export const sendMessagePayloadCore = async (
     env,
     group,
     secretKey,
-    pgpHelper
+    pgpHelper,
+    chainId
   );
 
   const body: ISendMessagePayload = {
@@ -187,6 +198,105 @@ export const sendMessagePayloadCore = async (
   return body;
 };
 
+export const sendMessagePayloadCoreV2 = async (
+  receiverAddress: string,
+  senderCreatedUser: IConnectedUser,
+  messageObj: MessageObj | string,
+  messageContent: string,
+  messageType: string,
+  group: GroupInfoDTO | null,
+  env: ENV,
+  pgpHelper: IPGPHelper,
+  chainId: string
+): Promise<ISendMessagePayload> => {
+  const isGroup = group !== null;
+
+  let secretKey: string;
+  if (isGroup && group?.encryptedSecret && group.sessionKey) {
+    secretKey = await pgpDecrypt({
+      cipherText: group.encryptedSecret,
+      toPrivateKeyArmored: senderCreatedUser.privateKey!,
+    });
+  } else {
+    secretKey = AES.generateRandomSecret(15);
+  }
+  const { message: encryptedMessageContent, signature: deprecatedSignature } =
+    await getEncryptedRequestCore(
+      receiverAddress,
+      senderCreatedUser,
+      messageContent,
+      isGroup,
+      env,
+      group,
+      secretKey,
+      pgpHelper,
+      chainId
+    );
+  const {
+    message: encryptedMessageObj,
+    encryptionType,
+    aesEncryptedSecret,
+  } = await getEncryptedRequestCore(
+    receiverAddress,
+    senderCreatedUser,
+    JSON.stringify(messageObj),
+    isGroup,
+    env,
+    group,
+    secretKey,
+    pgpHelper,
+    chainId
+  );
+
+  const body: ISendMessagePayload = {
+    fromDIDV2: convertPartialCAIPToFullCAIP(
+      walletToPCAIP10(senderCreatedUser.wallets.split(',')[0]),
+      chainId
+    ),
+    toDIDV2: isGroup
+      ? receiverAddress
+      : convertPartialCAIPToFullCAIP(walletToPCAIP10(receiverAddress), chainId),
+    fromDID: walletToPCAIP10(senderCreatedUser.wallets.split(',')[0]),
+    toDID: isGroup ? receiverAddress : walletToPCAIP10(receiverAddress),
+    fromCAIP10: walletToPCAIP10(senderCreatedUser.wallets.split(',')[0]),
+    toCAIP10: isGroup ? receiverAddress : walletToPCAIP10(receiverAddress),
+    messageType,
+    messageObj:
+      encryptionType === 'PlainText' ? messageObj : encryptedMessageObj,
+    encType: encryptionType!,
+    sessionKey:
+      group && !group.isPublic && encryptionType === 'pgpv1:group'
+        ? group.sessionKey
+        : null,
+    encryptedSecret: aesEncryptedSecret!,
+    messageContent: encryptedMessageContent,
+    signature: deprecatedSignature, //for backward compatibility
+    sigType: 'pgpv4',
+  };
+
+  //build verificationProof
+  const bodyToBeHashed = {
+    fromDID: body.fromDID,
+    toDID: body.fromDID,
+    fromDIDV2: body.fromDIDV2,
+    toDIDV2: body.toDIDV2,
+    fromCAIP10: body.fromCAIP10,
+    toCAIP10: body.toCAIP10,
+    messageObj: body.messageObj,
+    messageType: body.messageType,
+    encType: body.encType,
+    sessionKey: body.sessionKey,
+    encryptedSecret: body.encryptedSecret,
+  };
+  const hash = CryptoJS.SHA256(JSON.stringify(bodyToBeHashed)).toString();
+  const signature: string = await pgpHelper.sign({
+    message: hash,
+    signingKey: senderCreatedUser.privateKey!,
+  });
+  body.verificationProof = `pgpv4:${signature}`;
+  return body;
+};
+
 export const rejectRequestPayload = (
   fromDID: string,
   toDID: string,
@@ -196,6 +306,24 @@ export const rejectRequestPayload = (
   const body = {
     fromDID,
     toDID,
+    verificationProof: sigType + ':' + signature,
+  };
+  return body;
+};
+
+export const rejectRequestPayloadV2 = (
+  fromDID: string,
+  toDID: string,
+  fromDIDV2: string,
+  toDIDV2: string,
+  sigType: string,
+  signature: string
+): IRejectRequestPayload => {
+  const body = {
+    fromDID,
+    toDID,
+    fromDIDV2,
+    toDIDV2,
     verificationProof: sigType + ':' + signature,
   };
   return body;

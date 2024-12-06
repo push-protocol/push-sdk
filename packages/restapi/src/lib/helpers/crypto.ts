@@ -23,7 +23,12 @@ import {
   ProgressHookType,
   ProgressHookTypeFunction,
 } from '../types';
-import { isValidNFTCAIP, isValidPushCAIP, pCAIP10ToWallet } from './address';
+import {
+  isAccountNonEVM,
+  isValidNFTCAIP,
+  isValidPushCAIP,
+  pCAIP10ToWallet,
+} from './address';
 import { verifyProfileSignature } from '../chat/helpers/signature';
 import { upgrade } from '../user/upgradeUser';
 import PROGRESSHOOK from '../progressHook';
@@ -568,6 +573,10 @@ export const verifyProfileKeys = async (
     }
   } catch (err) {
     parsedPublicKey = publicKey;
+  }
+
+  if (isAccountNonEVM(did)) {
+    return parsedPublicKey;
   }
 
   try {

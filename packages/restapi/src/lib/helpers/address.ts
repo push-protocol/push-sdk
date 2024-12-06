@@ -103,10 +103,57 @@ export const isValidPushCAIP = (wallet: string): boolean => {
 export const convertToValidDID = async (
   wallet: string,
   env: ENV = ENV.STAGING,
-  chainId?: number,
+  chainId?: number | string,
   provider?: any
 ) => {
   /** @dev Why Not throw error? - Used by Group ChatID also */
+  if (isAccountNonEVM(wallet)) {
+    return wallet;
+  }
+  if (!isValidPushCAIP(wallet)) return wallet;
+  if (
+    isValidEOACAIP(wallet) ||
+    isValidSCWCAIP(wallet) ||
+    (isValidNFTCAIP(wallet) && wallet.split(':').length === 6)
+  )
+    return wallet;
+
+  if (isValidNFTCAIP(wallet)) {
+    const user = await get({ account: wallet, env: env });
+    if (user && user.did) return user.did;
+    const epoch = Math.floor(Date.now() / 1000);
+    return `${wallet}:${epoch}`;
+  }
+
+  // TODO: Implement SCW DID CHECK
+  if (provider) {
+    try {
+      // check if onChain code exists
+    } catch (err) {
+      // Ignore if it fails
+    }
+  }
+
+  return chainId ? `eip155:${chainId}:${wallet}` : `eip155:${wallet}`;
+};
+
+export const convertToValidDIDV2 = async (
+  wallet: string,
+  env: ENV = ENV.STAGING,
+  chainId?: number | string,
+  provider?: any
+) => {
+  /** @dev Why Not throw error? - Used by Group ChatID also */
+  if (isAccountNonEVM(wallet)) {
+    return wallet;
+  }
+
+  const accountComponents = wallet.split(':');
+
+  if (accountComponents.length === 2) {
+    return convertPartialCAIPToFullCAIP(wallet, chainId as string);
+  }
+
   if (!isValidPushCAIP(wallet)) return wallet;
   if (
     isValidEOACAIP(wallet) ||
@@ -209,6 +256,24 @@ export function getFallbackETHCAIPAddress(env: ENV, address: string) {
 
   return `eip155:${chainId}:${address}`;
 }
+export function getFallbackChainId(env: ENV, address: string) {
+  if (isAccountNonEVM(address)) {
+    const parts = address.split(':');
+    return parts[1];
+  }
+
+  let chainId = 1;
+
+  if (
+    env === Constants.ENV.DEV ||
+    env === Constants.ENV.STAGING ||
+    env === Constants.ENV.LOCAL
+  ) {
+    chainId = 11155111;
+  }
+
+  return chainId;
+}
 
 /**
  * This helper
@@ -264,6 +329,33 @@ export const walletToPCAIP10 = (account: string): string => {
   return 'eip155:' + account;
 };
 
+export const walletToFullCAIP10 = (
+  account: string,
+  env: ENV,
+  chainId?: string
+): string => {
+  if (isAccountNonEVM(account)) {
+    return account;
+  }
+  if (isValidNFTCAIP(account)) {
+    return account;
+  }
+  if (!chainId) {
+    chainId = getFallbackChainId(env, account) as string;
+  }
+  return 'eip155:' + chainId + ':' + account;
+};
+
+export const walletToFullCAIP10V2 = (env: ENV, account: string): string => {
+  if (isAccountNonEVM(account)) {
+    return account;
+  }
+  if (isValidNFTCAIP(account)) {
+    return account;
+  }
+  return 'eip155:' + getFallbackChainId(env, account) + ':' + account;
+};
+
 export const pCAIP10ToWallet = (wallet: string): string => {
   if (isAccountNonEVM(wallet)) {
     return wallet;
@@ -281,5 +373,23 @@ export const isAccountNonEVM = (wallet: string): boolean => {
     return nonEVMChains.includes(walletComponent[0].toLowerCase());
   } catch (err) {
     return false;
+  }
+};
+
+export const convertPartialCAIPToFullCAIP = (
+  account: string,
+  chain: string
+): string => {
+  try {
+    const accountComponents = account.split(':');
+
+    if (accountComponents.length !== 2) {
+      return account;
+    }
+
+    const [prefix, identifier] = accountComponents;
+    return `${prefix}:${chain}:${identifier}`;
+  } catch (err) {
+    return account;
   }
 };

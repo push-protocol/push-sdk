@@ -18,7 +18,14 @@ import {
 import { ALPHA_FEATURE_CONFIG } from '../config';
 import { Space } from './space';
 import { Video } from './video';
-import { isAccountNonEVM, isValidNFTCAIP, walletToPCAIP10 } from '../helpers';
+import {
+  isAccountNonEVM,
+  isValidNFTCAIP,
+  walletToPCAIP10,
+  Signer as PushSigner,
+  getFallbackChainId,
+  walletToFullCAIP10V2,
+} from '../helpers';
 import { LRUCache } from 'lru-cache';
 import { cache } from '../helpers/cache';
 import { v4 as uuidv4 } from 'uuid';
@@ -31,6 +38,8 @@ export class PushAPI {
   public chainWiseAccount: string;
   public decryptedPgpPvtKey?: string;
   public pgpPublicKey?: string;
+  private perChain?: boolean;
+  private chainId?: string;
 
   public env: ENV;
   private progressHook?: (progress: ProgressHookType) => void;
@@ -60,17 +69,22 @@ export class PushAPI {
     pgpPublicKey?: string,
     signer?: SignerType,
     progressHook?: (progress: ProgressHookType) => void,
-    initializationErrors?: { type: 'WARN' | 'ERROR'; message: string }[]
+    initializationErrors?: { type: 'WARN' | 'ERROR'; message: string }[],
+    perChain?: boolean,
+    chainId?: string
   ) {
     this.signer = signer;
     this.readMode = readMode;
     this.alpha = alpha;
     this.env = env;
     this.account = account;
-    this.chainWiseAccount = walletToPCAIP10(account);
+    this.chainWiseAccount = walletToFullCAIP10V2(env, account);
     this.decryptedPgpPvtKey = decryptedPgpPvtKey;
     this.pgpPublicKey = pgpPublicKey;
     this.progressHook = progressHook;
+    this.perChain = perChain ?? false;
+    this.chainId = chainId;
+
     // Instantiate the notification classes
     this.channel = new Channel(
       this.signer,
@@ -92,10 +106,14 @@ export class PushAPI {
       this.account,
       this.env,
       this.alpha,
+      this.chainWiseAccount,
       this.decryptedPgpPvtKey,
       this.signer,
-      this.progressHook
+      this.progressHook,
+      this.perChain,
+      this.chainId
     );
+
     this.space = new Space(
       this.account,
       this.env,
@@ -178,13 +196,14 @@ export class PushAPI {
 
       // Determine readMode based on the presence of signer and decryptedPGPPrivateKey
       let readMode = !signer && !decryptedPGPPrivateKey;
-
       // Default options
+      let chainId = null;
       const defaultOptions: PushAPIInitializeProps = {
         env: ENV.STAGING,
         version: Constants.ENC_TYPE_V3,
         autoUpgrade: true,
         account: null,
+        perChain: false,
       };
 
       // Settings object
@@ -244,6 +263,12 @@ export class PushAPI {
         pgpPublicKey = user.publicKey;
       }
 
+      if (signer) {
+        chainId = await new PushSigner(signer).getChainId();
+      } else {
+        chainId = getFallbackChainId(settings.env!, derivedAccount);
+      }
+
       if (!readMode) {
         try {
           if (user && user.encryptedPrivateKey) {
@@ -301,7 +326,9 @@ export class PushAPI {
         pgpPublicKey,
         signer,
         settings.progressHook,
-        initializationErrors
+        initializationErrors,
+        settings.perChain,
+        chainId as string
       );
 
       return api;
@@ -335,14 +362,18 @@ export class PushAPI {
     this.readMode = false;
     this.errors = [];
     this.uid = uuidv4();
+
     // Initialize the instances of the four classes
     this.chat = new Chat(
       this.account,
       this.env,
       this.alpha,
+      this.chainWiseAccount,
       this.decryptedPgpPvtKey,
       this.signer,
-      this.progressHook
+      this.progressHook,
+      this.perChain,
+      this.chainId
     );
     this.profile = new Profile(
       this.account,

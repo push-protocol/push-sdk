@@ -33,6 +33,8 @@ export interface PushAPIInitializeProps {
     feature: string[];
   };
   decryptedPGPPrivateKey?: string | null;
+  chainId?: string;
+  perChain?: boolean;
 }
 
 export interface GroupCreationOptions {

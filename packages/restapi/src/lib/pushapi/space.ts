@@ -39,7 +39,7 @@ import {
   groupInfoDtoToSpaceInfoDto,
   mapSpaceListTypeToChatListType,
 } from '../chat';
-import { isValidPushCAIP } from '../helpers';
+import { getFallbackChainId, isValidPushCAIP } from '../helpers';
 import { Chat } from './chat';
 import { Signer as PushSigner } from '../helpers';
 
@@ -60,8 +60,12 @@ export class Space {
       this.account,
       this.env,
       { feature: [] },
+      this.account,
       this.decryptedPgpPvtKey,
-      this.signer
+      this.signer,
+      progressHook,
+      false,
+      getFallbackChainId(this.env, this.account) as string
     );
   }
 

@@ -48,9 +48,12 @@ export class Chat {
     private account: string,
     private env: ENV,
     private alpha: { feature: string[] },
+    private chainWiseAccount: string,
     private decryptedPgpPvtKey?: string,
     private signer?: SignerType,
-    private progressHook?: (progress: ProgressHookType) => void
+    private progressHook?: (progress: ProgressHookType) => void,
+    private perChain?: boolean,
+    private chainId?: string
   ) {
     this.userInstance = new User(this.account, this.env);
     this.scalabilityV2Feature = this.alpha.feature.includes(
@@ -184,6 +187,8 @@ export class Chat {
       signer: this.signer,
       pgpPrivateKey: this.decryptedPgpPvtKey,
       env: this.env,
+      perChain: this.perChain,
+      chainId: this.chainId,
     };
     return await PUSH_CHAT.send(sendParams);
   }
@@ -212,6 +217,8 @@ export class Chat {
       signer: this.signer,
       pgpPrivateKey: this.decryptedPgpPvtKey,
       overrideSecretKeyGeneration: !this.scalabilityV2Feature,
+      perChain: this.perChain,
+      chainId: this.chainId,
     });
   }
 
@@ -225,6 +232,8 @@ export class Chat {
       account: this.account,
       signer: this.signer,
       pgpPrivateKey: this.decryptedPgpPvtKey,
+      perChain: this.perChain,
+      chainId: this.chainId,
     });
   }
 
@@ -388,6 +397,8 @@ export class Chat {
 
         members: options?.members ? options.members : [],
         admins: options?.admins ? options.admins : [],
+        perChain: this.perChain,
+        chainId: this.chainId,
       };
       const response = await PUSH_CHAT.createGroupV2(groupParams);
 

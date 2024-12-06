@@ -16,6 +16,9 @@ import {
   validatePssword,
   Signer,
   isAccountNonEVM,
+  getFallbackChainId,
+  Signer as PushSigner,
+  walletToFullCAIP10,
 } from '../helpers';
 import {
   SignerType,
@@ -95,6 +98,20 @@ export const createUserCore = async (
     }
 
     const caip10: string = walletToPCAIP10(address);
+
+    let chainId: string;
+    if (signer) {
+      chainId = (await new PushSigner(signer).getChainId()).toString();
+    } else {
+      chainId = getFallbackChainId(env, address) as string;
+    }
+
+    const caip10V2: string = walletToFullCAIP10(
+      address,
+      env,
+      chainId as string
+    );
+
     let encryptionType = version;
 
     if (isValidNFTCAIP(caip10)) {
@@ -158,6 +175,7 @@ export const createUserCore = async (
     progressHook?.(PROGRESSHOOK['PUSH-CREATE-04'] as ProgressHookType);
     const body = {
       user: caip10,
+      userFullCAIP: caip10V2,
       wallet,
       publicKey: publicKey,
       encryptedPrivateKey: JSON.stringify(encryptedPrivateKey),

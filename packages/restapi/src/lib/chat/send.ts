@@ -11,9 +11,11 @@ import {
   PGPHelper,
   getAccountAddress,
   getConnectedUserV2Core,
+  getConnectedUserV3Core,
   getWallet,
+  sendMessagePayloadCoreV2,
 } from './helpers';
-import { conversationHash } from './conversationHash';
+import { conversationHash, conversationHashV2 } from './conversationHash';
 import { ISendMessagePayload, sendMessagePayloadCore } from './helpers';
 import { MessageObj } from '../types/messageTypes';
 import { validateMessageObj } from '../validations/messageObject';
@@ -28,7 +30,11 @@ import * as PUSH_CHAT from '../chat';
 export const send = async (
   options: ChatSendOptionsType
 ): Promise<MessageWithCID> => {
-  return await sendCore(options, PGPHelper);
+  if (!options.perChain) {
+    return await sendCore(options, PGPHelper);
+  } else {
+    return await sendCoreV2(options, PGPHelper);
+  }
 };
 
 export const sendCore = async (
@@ -42,8 +48,15 @@ export const sendCore = async (
      * 2. Takes care of deprecated fields
      */
     const computedOptions = computeOptions(options);
-    const { messageType, messageObj, account, signer, pgpPrivateKey, env } =
-      computedOptions;
+    const {
+      messageType,
+      messageObj,
+      account,
+      signer,
+      pgpPrivateKey,
+      env,
+      chainId,
+    } = computedOptions;
     let { to } = computedOptions;
     /**
      * Validate Input Options
@@ -125,7 +138,125 @@ export const sendCore = async (
       messageType,
       group,
       env,
+      pgpHelper,
+      chainId!
+    );
+
+    const response = await axiosPost<MessageWithCID>(apiEndpoint, body);
+    return response.data;
+  } catch (err) {
+    throw handleError(err, send.name);
+  }
+};
+
+export const sendCoreV2 = async (
+  options: ChatSendOptionsType,
+  pgpHelper: IPGPHelper
+): Promise<MessageWithCID> => {
+  try {
+    /**
+     * Compute Input Options
+     * 1. Provides the options object with default values
+     * 2. Takes care of deprecated fields
+     */
+
+    const computedOptions = computeOptions(options);
+    const {
+      messageType,
+      messageObj,
+      account,
+      signer,
+      pgpPrivateKey,
+      env,
+      chainId,
+    } = computedOptions;
+    let { to } = computedOptions;
+    /**
+     * Validate Input Options
+     */
+    await validateOptions(computedOptions);
+
+    const wallet = getWallet({ account, signer });
+
+    const sender = await getConnectedUserV3Core(
+      wallet,
+      pgpPrivateKey,
+      env,
       pgpHelper
+    );
+
+    let receiver = await convertToValidDID(to, env);
+
+    const API_BASE_URL = getAPIBaseUrls(env);
+
+    const isChatId = isValidPushCAIP(to) ? false : true;
+    let isGroup = false;
+    let group = null;
+
+    if (isChatId) {
+      const request: PUSH_CHAT.GetChatInfoType = {
+        recipient: to,
+        account: account!,
+        env: env,
+      };
+
+      const chatInfo = await PUSH_CHAT.getChatInfo(request);
+      isGroup = chatInfo?.meta?.group ?? false;
+
+      group = isGroup
+        ? await getGroupInfo({
+            chatId: to,
+            env: env,
+          })
+        : null;
+
+      if (!isGroup) {
+        const participants = chatInfo.participants ?? [];
+        // Find the participant that is not the account being used
+        const messageSentTo = participants.find(
+          (participant) => participant !== walletToPCAIP10(account!)
+        );
+        to = messageSentTo!;
+        receiver = to;
+      }
+    }
+
+    // Not supported by legacy sdk versions, need to override messageContent to avoid parsing errors on legacy sdk versions
+    let messageContent: string;
+    if (
+      messageType === MessageType.REPLY ||
+      messageType === MessageType.COMPOSITE
+    ) {
+      messageContent =
+        'MessageType Not Supported by this sdk version. Plz upgrade !!!';
+    } else {
+      messageContent = messageObj.content as string;
+    }
+
+    const conversationResponse = await conversationHashV2({
+      conversationId: receiver,
+      account: sender.did,
+      env,
+      chainId: chainId!,
+    });
+
+    let apiEndpoint: string;
+    if (!isGroup && conversationResponse && !conversationResponse?.threadHash) {
+      apiEndpoint = `${API_BASE_URL}/v2/chat/request`;
+    } else {
+      apiEndpoint = `${API_BASE_URL}/v2/chat/message`;
+    }
+
+    const body: ISendMessagePayload = await sendMessagePayloadCoreV2(
+      receiver,
+      sender,
+      messageObj,
+      messageContent,
+      messageType,
+      group,
+      env,
+      pgpHelper,
+      options.chainId!
     );
 
     const response = await axiosPost<MessageWithCID>(apiEndpoint, body);
@@ -143,6 +274,7 @@ type ComputedOptionsType = {
   signer: SignerType | null;
   pgpPrivateKey: string | null;
   env: ENV;
+  chainId: string | null;
 };
 
 const validateOptions = async (options: ComputedOptionsType) => {
@@ -257,5 +389,6 @@ const computeOptions = (options: ChatSendOptionsType): ComputedOptionsType => {
     signer: signer,
     pgpPrivateKey: pgpPrivateKey,
     env: env,
+    chainId: options.chainId!,
   };
 };

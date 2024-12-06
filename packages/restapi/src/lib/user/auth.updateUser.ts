@@ -5,10 +5,13 @@ import {
 } from '../chat/helpers';
 import Constants, { ENV, ENCRYPTION_TYPE } from '../constants';
 import {
+  convertPartialCAIPToFullCAIP,
   encryptPGPKey,
+  getFallbackChainId,
   isValidPushCAIP,
   preparePGPPublicKey,
   walletToPCAIP10,
+  Signer as PushSigner,
 } from '../helpers';
 import PROGRESSHOOK from '../progressHook';
 import {
@@ -131,10 +134,17 @@ export const authUpdate = async (options: AuthUpdateProps): Promise<IUser> => {
       encryptedPgpPrivateKey.encryptedPassword = encryptedPassword;
     }
 
+    let chainId: string;
+    if (signer) {
+      chainId = (await new PushSigner(signer).getChainId()).toString();
+    } else {
+      chainId = getFallbackChainId(env, address) as string;
+    }
     // Report Progress
     progressHook?.(PROGRESSHOOK['PUSH-AUTH-UPDATE-03'] as ProgressHookType);
     const body = {
       user: user.did,
+      userFullCAIP: convertPartialCAIPToFullCAIP(user.did, chainId),
       wallet,
       publicKey: signedPublicKey,
       encryptedPrivateKey: JSON.stringify(encryptedPgpPrivateKey),

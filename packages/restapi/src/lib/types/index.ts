@@ -284,6 +284,7 @@ export interface IUser {
   msgSent: number;
   maxMsgPersisted: number;
   did: string;
+  didV2?: string;
   wallets: string;
   profile: {
     name: string | null;
@@ -657,6 +658,7 @@ export interface AccountEnvOptionsType extends EnvOptionsType {
    * Environment variable
    */
   account: string;
+  chainId?: string;
 }
 
 export interface ChatStartOptionsType {
@@ -707,6 +709,9 @@ export interface ChatSendOptionsType {
   receiverAddress?: string;
   /** @deprecated Not needed anymore */
   apiKey?: string;
+
+  perChain?: boolean;
+  chainId?: string;
 }
 
 export interface ConversationHashOptionsType extends AccountEnvOptionsType {

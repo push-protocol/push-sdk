@@ -12,7 +12,12 @@ import {
   EVENTS,
 } from './pushStreamTypes';
 import { DataModifier } from './DataModifier';
-import { pCAIP10ToWallet, walletToPCAIP10 } from '../helpers';
+import {
+  convertPartialCAIPToFullCAIP,
+  getFallbackChainId,
+  pCAIP10ToWallet,
+  walletToPCAIP10,
+} from '../helpers';
 import { Chat } from '../pushapi/chat';
 import { ProgressHookType, SignerType } from '../types';
 import { ALPHA_FEATURE_CONFIG } from '../config';
@@ -46,7 +51,6 @@ export class PushStream extends EventEmitter {
     super();
 
     this.account = account;
-
     this.raw = options.raw ?? false;
     this.options = options;
     this.listen = _listen;
@@ -56,13 +60,19 @@ export class PushStream extends EventEmitter {
     this.notifSocketCount = 0;
     this.chatSocketConnected = false;
     this.notifSocketConnected = false;
+
+    let chainId = getFallbackChainId(this.options.env as ENV, account);
+
     this.chatInstance = new Chat(
       this.account,
       this.options.env as ENV,
       ALPHA_FEATURE_CONFIG[PACKAGE_BUILD],
+      convertPartialCAIPToFullCAIP(this.account, chainId as string),
       this.decryptedPgpPvtKey,
       this.signer,
-      this.progressHook
+      this.progressHook,
+      false,
+      chainId as string
     );
   }
 

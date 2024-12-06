@@ -17,6 +17,7 @@ import {
   decryptPGPKey,
   decryptWithWalletRPCMethod,
   isValidPushCAIP,
+  walletToFullCAIP10,
 } from '../../helpers';
 import { get as getUser } from '../../user';
 import { createUserService } from './service';
@@ -217,7 +218,8 @@ export const getEncryptedRequest = async (
   isGroup: boolean,
   env: ENV,
   group: GroupInfoDTO | null,
-  secretKey: string
+  secretKey: string,
+  chainId: string
 ): Promise<IEncryptedRequest> => {
   return await getEncryptedRequestCore(
     receiverAddress,
@@ -227,7 +229,8 @@ export const getEncryptedRequest = async (
     env,
     group,
     secretKey,
-    PGP.PGPHelper
+    PGP.PGPHelper,
+    chainId
   );
 };
 
@@ -239,7 +242,8 @@ export const getEncryptedRequestCore = async (
   env: ENV,
   group: GroupInfoDTO | null,
   secretKey: string,
-  pgpHelper: PGP.IPGPHelper
+  pgpHelper: PGP.IPGPHelper,
+  chainId: string
 ): Promise<IEncryptedRequest> => {
   if (!isGroup) {
     const receiverCreatedUser: IUser = await get({
@@ -250,8 +254,16 @@ export const getEncryptedRequestCore = async (
       if (!isValidPushCAIP(receiverAddress)) {
         throw new Error(`Invalid receiver address!`);
       }
+
+      const caip10V2: string = walletToFullCAIP10(
+        receiverAddress,
+        env,
+        chainId as string
+      );
+
       await createUserService({
         user: receiverAddress,
+        userFullCAIP: caip10V2,
         publicKey: '',
         encryptedPrivateKey: '',
         env,
@@ -375,11 +387,11 @@ export const getEncryptedRequestCore = async (
 export const getEip191Signature = async (
   wallet: walletType,
   message: string,
-  version: 'v1' | 'v2' = 'v1'
+  version: 'v1' | 'v2' | 'v3' = 'v1' // Added 'v3' as a valid version
 ) => {
   if (!wallet?.signer) {
     console.warn('This method is deprecated. Provide signer in the function');
-    // sending random signature for making it backward compatible
+    // Sending random signature for making it backward compatible
     return { signature: 'xyz', sigType: 'a' };
   }
   const _signer = wallet?.signer;
@@ -387,7 +399,23 @@ export const getEip191Signature = async (
 
   const pushSigner = new Signer(_signer);
   const signature = await pushSigner.signMessage(message);
-  const sigType = version === 'v1' ? 'eip191' : 'eip191v2';
+
+  // Handle version-specific sigType
+  let sigType: string;
+  switch (version) {
+    case 'v1':
+      sigType = 'eip191';
+      break;
+    case 'v2':
+      sigType = 'eip191v2';
+      break;
+    case 'v3':
+      sigType = 'eip191v3';
+      break;
+    default:
+      throw new Error(`Unsupported version: ${version}`);
+  }
+
   return { verificationProof: `${sigType}:${signature}` };
 };
 

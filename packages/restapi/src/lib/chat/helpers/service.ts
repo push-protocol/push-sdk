@@ -18,6 +18,7 @@ import { axiosGet, axiosPost, axiosPut } from '../../utils/axiosUtil';
 
 type CreateUserOptionsType = {
   user: string;
+  userFullCAIP: string;
   wallet?: walletType;
   publicKey?: string;
   encryptedPrivateKey?: string;
@@ -27,6 +28,7 @@ type CreateUserOptionsType = {
 
 export const createUserService = async (options: CreateUserOptionsType) => {
   const {
+    userFullCAIP,
     wallet,
     publicKey = '',
     encryptedPrivateKey = '',
@@ -45,8 +47,10 @@ export const createUserService = async (options: CreateUserOptionsType) => {
       user = `${user}:${epoch}`;
     }
   }
+
   const data = {
     caip10: walletToPCAIP10(user),
+    caip10V2: userFullCAIP,
     did: walletToPCAIP10(user),
     publicKey,
     encryptedPrivateKey,
@@ -54,7 +58,7 @@ export const createUserService = async (options: CreateUserOptionsType) => {
 
   const hash = generateHash(data);
 
-  const signatureObj = await getEip191Signature(wallet!, hash, 'v2');
+  const signatureObj = await getEip191Signature(wallet!, hash, 'v3');
 
   const body = {
     ...data,
@@ -133,6 +137,24 @@ export const getConversationHashService = async (
   const requestUrl = `${API_BASE_URL}/v1/chat/users/${walletToPCAIP10(
     account
   )}/conversations/${conversationId}/hash`;
+
+  return axiosGet(requestUrl)
+    .then((response) => {
+      return response.data;
+    })
+    .catch((err) => {
+      throw new Error(err);
+    });
+};
+
+export const getConversationHashServiceV2 = async (
+  options: ConversationHashOptionsType
+): Promise<{ threadHash: string; intent: boolean }> => {
+  const { conversationId, account, env = Constants.ENV.PROD } = options || {};
+
+  const API_BASE_URL = getAPIBaseUrls(env);
+
+  const requestUrl = `${API_BASE_URL}/v2/chat/users/${account}/conversations/${conversationId}/hash`;
 
   return axiosGet(requestUrl)
     .then((response) => {
