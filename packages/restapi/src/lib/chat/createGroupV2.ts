@@ -1,5 +1,10 @@
 import axios from 'axios';
-import { convertToValidDID, getAPIBaseUrls, isValidPushCAIP } from '../helpers';
+import {
+  convertToValidDID,
+  convertToValidDIDV2,
+  getAPIBaseUrls,
+  isValidPushCAIP,
+} from '../helpers';
 import Constants from '../constants';
 import { EnvOptionsType, GroupInfoDTO, SignerType, Rules } from '../types';
 import {
@@ -208,10 +213,10 @@ export const createGroupCoreV3 = async (
     const convertedAdmins = await Promise.all(convertedAdminsPromise);
 
     const convertedMembersPromiseV2 = members.map(async (each) => {
-      return convertToValidDID(each, env, options.chainId);
+      return convertToValidDIDV2(each, env, options.chainId);
     });
     const convertedAdminsPromiseV2 = admins.map(async (each) => {
-      return convertToValidDID(each, env, options.chainId);
+      return convertToValidDIDV2(each, env, options.chainId);
     });
     const convertedMembersV2 = await Promise.all(convertedMembersPromiseV2);
     const convertedAdminsV2 = await Promise.all(convertedAdminsPromiseV2);
@@ -293,6 +298,8 @@ export const createGroupCoreV3 = async (
       },
       members: convertedMembers,
       admins: convertedAdmins,
+      membersV2: convertedMembersV2,
+      adminsV2: convertedAdminsV2,
       idempotentVerificationProof,
     };
 

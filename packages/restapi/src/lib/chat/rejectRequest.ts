@@ -146,8 +146,8 @@ const rejectV2 = async (options: RejectRequestOptionsType): Promise<void> => {
     fromDID = await convertToValidDID(address, env);
     toDID = await convertToValidDID(senderAddress, env);
 
-    fromDIDV2 = await convertToValidDIDV2(address, env);
-    toDIDV2 = await convertToValidDIDV2(senderAddress, env);
+    fromDIDV2 = await convertToValidDIDV2(address, env, options.chainId!);
+    toDIDV2 = await convertToValidDIDV2(senderAddress, env, options.chainId!);
   }
 
   const bodyToBeHashed = {
