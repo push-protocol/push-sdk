@@ -113,7 +113,7 @@ export const approveCore = async (
 
   // pgp is used for public grps & w2w
   // pgpv2 is used for private grps
-  let sigType: string = 'pgp';
+  let sigType = 'pgp';
   if (isGroup) {
     const group = await getGroupInfo({ chatId: senderAddress, env });
 

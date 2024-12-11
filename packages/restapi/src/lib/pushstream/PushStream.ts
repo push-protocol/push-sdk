@@ -61,7 +61,7 @@ export class PushStream extends EventEmitter {
     this.chatSocketConnected = false;
     this.notifSocketConnected = false;
 
-    let chainId = getFallbackChainId(this.options.env as ENV, account);
+    const chainId = getFallbackChainId(this.options.env as ENV, account);
 
     this.chatInstance = new Chat(
       this.account,

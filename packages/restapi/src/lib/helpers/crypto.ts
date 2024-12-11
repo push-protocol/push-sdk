@@ -151,8 +151,9 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
       case Constants.ENC_TYPE_V1: {
         if (
           wallet?.signer &&
-          'privateKey' in wallet?.signer &&
-          wallet?.signer?.privateKey
+          wallet.signer !== undefined &&
+          'privateKey' in wallet.signer &&
+          wallet.signer.privateKey
         ) {
           privateKey = metamaskDecrypt({
             encryptedData: JSON.parse(encryptedPGPPrivateKey),
@@ -431,14 +432,11 @@ export const encryptPGPKey = async (
   switch (encryptionType) {
     case Constants.ENC_TYPE_V1: {
       let walletPublicKey: string;
-      if (
-        wallet?.signer &&
-        'privateKey' in wallet?.signer &&
-        wallet?.signer?.privateKey
-      ) {
+      const signer = wallet?.signer;
+      if (signer && 'privateKey' in signer && signer.privateKey) {
         // get metamask specific encryption public key
         walletPublicKey = getEncryptionPublicKey(
-          wallet?.signer?.privateKey.substring(2)
+          signer.privateKey.substring(2)
         );
       } else {
         // wallet popup will happen to get encryption public key
