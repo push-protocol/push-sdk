@@ -75,7 +75,7 @@ function validateOptions(options: ISendNotificationInputOptions) {
     !options.rules
   ) {
     throw new Error(
-      '[Push SDK] - Error - sendNotification() - Either chatId or rules object is required to send a additional meta notification for video or spaces'
+      '[Push SDK] - Error - sendNotification() - Either chatId or rules object is required to send an additional meta notification for video or spaces'
     );
   }
 }
