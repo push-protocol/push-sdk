@@ -419,7 +419,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   };
 
   const sendGIF = async (emojiObject: GIFType) => {
-    sendPushMessage(emojiObject.url as string, 'GIF');
+    sendPushMessage(emojiObject.url as string, 'MediaEmbed');
     setGifOpen(false);
   };
 
@@ -751,7 +751,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
   );
 };
 
-const TypebarSection = styled(Section) <{ border?: string }>`
+const TypebarSection = styled(Section)<{ border?: string }>`
   // gap: 10px;
   border: ${(props) => props.border || 'none'};
   @media ${device.mobileL} {
