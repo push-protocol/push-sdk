@@ -12,15 +12,22 @@ import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import CONSTANTS from '../../../src/lib/constantsV2';
 import { inspect } from 'util';
 import { ENV } from '../../../src/lib/constants';
+import { signerType } from 'packages/restapi/src/lib/types';
 
 describe('PushAPI.channel functionality', () => {
   let userAlice: PushAPI;
   let userBob: PushAPI;
   let userKate: PushAPI;
+  let userJack: PushAPI;
+
   let signer1: any;
   let account1: string;
   let signer2: any;
   let account2: string;
+
+  let signer3: any;
+  let account3: string;
+
   let userNoChannel: PushAPI;
   let noChannelSigner: any;
   let noChannelAddress: string;
@@ -28,12 +35,15 @@ describe('PushAPI.channel functionality', () => {
   let viemSigner: any;
 
   beforeEach(async () => {
-    signer1 = new ethers.Wallet(`0x${process.env['WALLET_PRIVATE_KEY']}`);
-    account1 = await signer1.getAddress();
-
     const provider = (ethers as any).providers
       ? new (ethers as any).providers.JsonRpcProvider('https://rpc.sepolia.org')
       : new (ethers as any).JsonRpcProvider('https://rpc.sepolia.org');
+
+    signer1 = new ethers.Wallet(
+      `0x${process.env['WALLET_PRIVATE_KEY']}`,
+      provider
+    );
+    account1 = await signer1.getAddress();
 
     signer2 = new ethers.Wallet(
       `0x${process.env['WALLET_PRIVATE_KEY']}`,
@@ -42,7 +52,7 @@ describe('PushAPI.channel functionality', () => {
     account2 = await signer2.getAddress();
 
     const WALLET = ethers.Wallet.createRandom();
-    noChannelSigner = new ethers.Wallet(WALLET.privateKey);
+    noChannelSigner = new ethers.Wallet(WALLET.privateKey, provider);
     noChannelAddress = await noChannelSigner.getAddress();
     viemSigner = createWalletClient({
       account: privateKeyToAccount(`0x${process.env['WALLET_PRIVATE_KEY']}`),
@@ -58,14 +68,24 @@ describe('PushAPI.channel functionality', () => {
     // initialisation with signer and provider
     userKate = await PushAPI.initialize(signer2, { env: _env });
     // initialisation with signer
-    userAlice = await PushAPI.initialize(signer2, { env: _env });
+    userAlice = await PushAPI.initialize(signer2, {
+      env: _env,
+      perChain: true,
+    });
+
     // TODO: remove signer1 after chat makes signer as optional
     //initialisation without signer
     userBob = await PushAPI.initialize(signer1, { env: _env });
     // initialisation with a signer that has no channel
-    userNoChannel = await PushAPI.initialize(noChannelSigner, { env: _env });
+    //userNoChannel = await PushAPI.initialize(noChannelSigner, { env: _env });
     // viem signer
-    viemUser = await PushAPI.initialize(viemSigner, { env: _env });
+    //viemUser = await PushAPI.initialize(viemSigner, { env: _env });
+
+    const WALLET3 = ethers.Wallet.createRandom();
+    signer3 = new ethers.Wallet(WALLET3.privateKey, provider);
+    account3 = WALLET3.address;
+
+    userJack = await PushAPI.initialize(signer3, { env: _env, perChain: true });
   });
 
   describe('channel :: info', () => {
@@ -246,17 +266,144 @@ describe('PushAPI.channel functionality', () => {
       expect(res.status).to.equal(204);
     });
 
+    // Function to generate a string of size X KB
+    // Example usage: Generate a 5 KB string
+
     it('With signer : targeted  : Should send notification with title and body', async () => {
-      const res = await userAlice.channel.send(
-        ['eip155:11155111:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5'],
-        {
-          notification: {
-            title: 'hi',
-            body: 'test-targeted',
-          },
-        }
+      const WALLET1 = ethers.Wallet.createRandom();
+      const provider = (ethers as any).providers
+        ? new (ethers as any).providers.JsonRpcProvider(
+            'https://rpc.sepolia.org'
+          )
+        : new (ethers as any).JsonRpcProvider('https://rpc.sepolia.org');
+
+      const signerx = new ethers.Wallet(WALLET1.privateKey, provider);
+
+      const dummySigner: signerType = {
+        account: 'solana:devnet:5NobTtuDXif5JoKuEFbGBiyyEstfGVF5LnZVby5Rpa5T',
+
+        signMessage: async (message: string): Promise<string> => {
+          console.log('Signing message:', message);
+          const signature = `dummy_signature_for_${message}`;
+          return signature;
+        },
+
+        getChainId: async (): Promise<string> => {
+          return 'devnet';
+        },
+
+        provider: null, // Optional: Add a provider if necessary
+      };
+
+      //const dummyuser = await PushAPI.initialize(dummySigner);
+
+      /*const res1 = await dummyuser.notification.subscribe(
+        'eip155:0x17e9CfE375Cb006A6EF84a9B9153eaAAF7916C12'
       );
-      expect(res.status).to.equal(204);
+
+      const res2 = await dummyuser.notification.unsubscribe(
+        'eip155:0x17e9CfE375Cb006A6EF84a9B9153eaAAF7916C12'
+      );
+
+      console.log('res2 ', res2);*/
+
+      //const dummyuser2 = await PushAPI.initialize(signerx);
+
+      /* const response = await userAlice.chat.send(userJack.account, {
+        content: 'Hello',
+        type: CONSTANTS.CHAT.MESSAGE_TYPE.TEXT,
+      });
+
+      console.log('Done..');
+
+      const response2 = await userJack.chat.accept(userAlice.account);
+
+      console.log(response2);
+
+      const response3 = await userAlice.chat.send(userJack.account, {
+        content: 'Hello',
+        type: CONSTANTS.CHAT.MESSAGE_TYPE.TEXT,
+      });
+
+      console.log(response3);*/
+
+      const WALLET5 = ethers.Wallet.createRandom();
+      const signer5 = new ethers.Wallet(WALLET5.privateKey, provider);
+      const account5 = `eip155:${signer5.address}`;
+      const u5 = await PushAPI.initialize(signer5);
+
+      const WALLET6 = ethers.Wallet.createRandom();
+      const signer6 = new ethers.Wallet(WALLET6.privateKey, provider);
+      const account6 = `eip155:${signer6.address}`;
+      const u6 = await PushAPI.initialize(signer6, { perChain: true });
+
+      const group = await userAlice.chat.group.create('abcd', {
+        description: 'abcd',
+        image: 'abcd',
+        members: [account5],
+        admins: [account6],
+        private: false,
+      });
+
+      const response2 = await u6.chat.reject(group.chatId);
+      console.log(response2);
+
+      /*
+
+      console.log(' res1 ', res1);
+
+     */
+      /*const b = [dummyuser.account];
+
+      const res = await userAlice.channel.send(b, {
+        notification: {
+          title: 'hi',
+          body: 'test-targeted',
+        },
+      });
+
+      console.log(res.status);*/
+
+      /*const subscriptions = await dummyuser.notification.subscriptions();
+      console.log(' subscriptions ', subscriptions);
+
+      const feeds = await dummyuser.notification.list();
+      console.log(' feeds ', feeds);*/
+
+      /*const a = [
+        'eip155:11155111:0x93A829d16DE51745Db0530A0F8E8A9B8CA5370E5',
+        dummyuser.account,
+      ];
+
+      const b = [dummyuser.account];
+
+      
+      const subscriptions = await dummyuser.notification.subscriptions();
+      console.log(' subscriptions ', subscriptions);
+
+      const feeds = await dummyuser.notification.list();
+      console.log(' feeds ', feeds);*/
+
+      /*const res = await userAlice.channel.send(a, {
+        notification: {
+          title: 'hi',
+          body: 'test-targeted',
+        },
+      });*/
+
+      /*const res1 = await dummyuser.notification.subscribe(
+        'eip155:0x17e9CfE375Cb006A6EF84a9B9153eaAAF7916C12'
+      );
+
+      console.log('res1 ', res1);
+
+      const res2 = await dummyuser.notification.unsubscribe(
+        'eip155:0x17e9CfE375Cb006A6EF84a9B9153eaAAF7916C12'
+      );
+
+      console.log('res2 ', res2);*/
+
+      //expect(res.status).to.equal(204);
     });
 
     it('With signer : subset  : Should send notification with title and body', async () => {

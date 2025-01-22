@@ -12,6 +12,7 @@ export interface GetGroupMemberStatusType {
   chatId: string;
   did: string; // Decentralized Identifier
   env?: ENV;
+  chainId?: string;
 }
 
 export const getGroupMemberStatus = async (
@@ -28,7 +29,7 @@ export const getGroupMemberStatus = async (
       throw new Error(`did cannot be null or empty`);
     }
 
-    const user = await convertToValidDID(did, env);
+    const user = await convertToValidDID(did, env, options.chainId);
 
     const API_BASE_URL = getAPIBaseUrls(env);
     const requestUrl = `${API_BASE_URL}/v1/chat/groups/${chatId}/members/${user}/status`;

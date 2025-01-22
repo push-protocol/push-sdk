@@ -11,6 +11,8 @@ export interface AddMembersToGroupType extends EnvOptionsType {
   signer?: SignerType | null;
   pgpPrivateKey?: string | null;
   overrideSecretKeyGeneration?: boolean;
+  perChain?: boolean;
+  chainId?: string;
 }
 
 /**
@@ -29,6 +31,8 @@ export const addMembers = async (
     overrideSecretKeyGeneration = !ALPHA_FEATURE_CONFIG[
       PACKAGE_BUILD
     ].feature.includes(Constants.ALPHA_FEATURES.SCALABILITY_V2),
+    perChain,
+    chainId,
   } = options || {};
   try {
     if (account == null && signer == null) {
@@ -53,9 +57,11 @@ export const addMembers = async (
       pgpPrivateKey: pgpPrivateKey,
       env: env,
       overrideSecretKeyGeneration,
+      perChain,
+      chainId,
     };
     return await updateGroupMembers(groupMemberUpdateOptions);
   } catch (err) {
-        throw handleError(err, addMembers.name);
+    throw handleError(err, addMembers.name);
   }
 };

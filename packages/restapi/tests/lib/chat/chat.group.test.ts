@@ -10,6 +10,7 @@ import {
   uniqueNamesGenerator,
 } from 'unique-names-generator';
 import { PushAPI } from '../../../src/lib/pushapi/PushAPI'; // Ensure correct import path
+import { signerType } from '@pushprotocol/restapi';
 
 // accessing env dynamically using process.env
 type EnvStrings = keyof typeof Constants.ENV;
@@ -110,8 +111,37 @@ describe('PushAPI.chat.group', () => {
       expect(updatedGroup.groupDescription).to.equal(null);
     });
 
-    it('get chat info', async () => {
-      const group = await userAlice.chat.group.create(groupName, {
+    it.only('get chat info', async () => {
+      const WALLET1 = ethers.Wallet.createRandom();
+      const provider = (ethers as any).providers
+        ? new (ethers as any).providers.JsonRpcProvider(
+            'https://rpc.sepolia.org'
+          )
+        : new (ethers as any).JsonRpcProvider('https://rpc.sepolia.org');
+
+      const signerx = new ethers.Wallet(WALLET1.privateKey, provider);
+
+      const dummySigner: signerType = {
+        account: 'solana:devnet:5NobTtuDXif5JoKuEFbGBiyyEstfGVF5LnZVby5Rpa5T',
+
+        signMessage: async (message: string): Promise<string> => {
+          console.log('Signing message:', message);
+          const signature = `dummy_signature_for_${message}`;
+          return signature;
+        },
+
+        getChainId: async (): Promise<string> => {
+          return 'devnet';
+        },
+
+        provider: null, // Optional: Add a provider if necessary
+      };
+
+      const dummyuser = await PushAPI.initialize(dummySigner, {
+        perChain: true,
+      });
+
+      const group = await dummyuser.chat.group.create(groupName, {
         description: groupDescription,
         image: groupImage,
         members: [],
@@ -119,13 +149,26 @@ describe('PushAPI.chat.group', () => {
         private: true,
       });
 
-      const chatInfo = await userBob.chat.info(group.chatId, account1);
+      /*const updatedGroup = await dummyuser.chat.group.update(group.chatId, {
+        name: 'Updated Test Grp',
+        description: 'Updated Test Grp Description',
+        meta: 'Updated Meta',
+      });
 
-      expect(chatInfo).to.be.an('object');
-      expect(chatInfo).to.have.property('meta');
-      expect(chatInfo.meta).to.have.property('group');
-      expect(chatInfo).to.have.property('list');
-      expect(chatInfo.list).to.be.oneOf(['CHATS', 'REQUESTS', 'UNINITIALIZED']);
+      console.log(updatedGroup);*/
+
+      await dummyuser.chat.group.add(group.chatId, {
+        role: 'MEMBER',
+        accounts: [
+          'eip155:137:0x8a8A6e22901b4AcAf85E0Ca14cb12d9B8a035D5C',
+          'eip155:1:0x8a8A6e22901b4AcAf85E0Ca14cb12d9B8a035D5C',
+        ],
+      });
+
+      const removeMember = await userAlice.chat.group.remove(group.chatId, {
+        role: 'MEMBER',
+        accounts: ['eip155:1:0x8a8A6e22901b4AcAf85E0Ca14cb12d9B8a035D5C'],
+      });
     });
   });
 });

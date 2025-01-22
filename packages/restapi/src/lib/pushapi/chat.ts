@@ -457,6 +457,7 @@ export class Chat {
           chatId: chatId,
           did: accountId,
           env: this.env,
+          chainId: this.chainId,
         });
 
         return {
@@ -577,6 +578,8 @@ export class Chat {
           signer: this.signer,
           pgpPrivateKey: this.decryptedPgpPvtKey,
           overrideSecretKeyGeneration: !this.scalabilityV2Feature,
+          perChain: this.perChain,
+          chainId: this.chainId,
         });
       } else {
         response = await PUSH_CHAT.addMembers({
@@ -587,6 +590,8 @@ export class Chat {
           signer: this.signer,
           pgpPrivateKey: this.decryptedPgpPvtKey,
           overrideSecretKeyGeneration: !this.scalabilityV2Feature,
+          perChain: this.perChain,
+          chainId: this.chainId,
         });
       }
 
@@ -628,6 +633,7 @@ export class Chat {
           chatId: chatId,
           did: account,
           env: this.env,
+          chainId: this.chainId,
         });
 
         if (status.isAdmin) {
@@ -645,6 +651,8 @@ export class Chat {
           signer: this.signer,
           pgpPrivateKey: this.decryptedPgpPvtKey,
           overrideSecretKeyGeneration: !this.scalabilityV2Feature,
+          perChain: this.perChain,
+          chainId: this.chainId,
         });
       }
 
@@ -657,6 +665,8 @@ export class Chat {
           signer: this.signer,
           pgpPrivateKey: this.decryptedPgpPvtKey,
           overrideSecretKeyGeneration: !this.scalabilityV2Feature,
+          perChain: this.perChain,
+          chainId: this.chainId,
         });
       }
       return await this.group.info(chatId);
@@ -691,6 +701,8 @@ export class Chat {
         signer: this.signer,
         pgpPrivateKey: this.decryptedPgpPvtKey,
         overrideSecretKeyGeneration: !this.scalabilityV2Feature,
+        perChain: this.perChain,
+        chainId: this.chainId,
       });
     },
 
@@ -702,6 +714,7 @@ export class Chat {
         chatId: target,
         did: this.account,
         env: this.env,
+        chainId: this.chainId,
       });
 
       if (status.isPending) {
@@ -712,6 +725,8 @@ export class Chat {
           signer: this.signer,
           pgpPrivateKey: this.decryptedPgpPvtKey,
           overrideSecretKeyGeneration: !this.scalabilityV2Feature,
+          perChain: this.perChain,
+          chainId: this.chainId,
         });
       } else if (!status.isMember) {
         await PUSH_CHAT.addMembers({
@@ -722,6 +737,8 @@ export class Chat {
           signer: this.signer,
           pgpPrivateKey: this.decryptedPgpPvtKey,
           overrideSecretKeyGeneration: !this.scalabilityV2Feature,
+          perChain: this.perChain,
+          chainId: this.chainId,
         });
       }
       return await this.group.info(target);
@@ -736,6 +753,7 @@ export class Chat {
         chatId: target,
         did: this.account,
         env: this.env,
+        chainId: this.chainId,
       });
 
       let response: GroupInfoDTO;
@@ -749,6 +767,8 @@ export class Chat {
           signer: this.signer,
           pgpPrivateKey: this.decryptedPgpPvtKey,
           overrideSecretKeyGeneration: !this.scalabilityV2Feature,
+          perChain: this.perChain,
+          chainId: this.chainId,
         });
       } else {
         response = await PUSH_CHAT.removeMembers({
@@ -759,6 +779,8 @@ export class Chat {
           signer: this.signer,
           pgpPrivateKey: this.decryptedPgpPvtKey,
           overrideSecretKeyGeneration: !this.scalabilityV2Feature,
+          perChain: this.perChain,
+          chainId: this.chainId,
         });
       }
 
@@ -782,6 +804,8 @@ export class Chat {
         account: this.account,
         signer: this.signer,
         pgpPrivateKey: this.decryptedPgpPvtKey,
+        perChain: this.perChain,
+        chainId: this.chainId,
       });
     },
   };

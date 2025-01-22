@@ -15,6 +15,8 @@ export interface ModifyRolesType extends EnvOptionsType {
   signer?: SignerType | null;
   pgpPrivateKey?: string | null;
   overrideSecretKeyGeneration?: boolean;
+  perChain?: boolean;
+  chainId?: string;
 }
 
 export const modifyRoles = async (
@@ -31,6 +33,8 @@ export const modifyRoles = async (
     overrideSecretKeyGeneration = !ALPHA_FEATURE_CONFIG[
       PACKAGE_BUILD
     ].feature.includes(Constants.ALPHA_FEATURES.SCALABILITY_V2),
+    perChain,
+    chainId,
   } = options || {};
 
   try {
@@ -56,6 +60,8 @@ export const modifyRoles = async (
       pgpPrivateKey: pgpPrivateKey,
       env: env,
       overrideSecretKeyGeneration,
+      perChain,
+      chainId,
     };
 
     return await updateGroupMembers(groupMemberUpdateOptions);

@@ -303,9 +303,6 @@ export const createGroupCoreV3 = async (
       idempotentVerificationProof,
     };
 
-    console.log(apiEndpoint);
-    console.log(JSON.stringify(body));
-
     const response = await axiosPost(apiEndpoint, body);
     return response.data;
   } catch (error) {
