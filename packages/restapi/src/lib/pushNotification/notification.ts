@@ -27,8 +27,13 @@ export const FEED_MAP = {
   SPAM: true,
 };
 export class Notification extends PushNotificationBaseClass {
-  constructor(signer?: SignerType, env?: ENV, account?: string) {
-    super(signer, env, account);
+  constructor(
+    signer?: SignerType,
+    env?: ENV,
+    account?: string,
+    pgpPrivateKey?: string
+  ) {
+    super(signer, env, account, pgpPrivateKey);
   }
 
   /**
@@ -175,6 +180,7 @@ export class Notification extends PushNotificationBaseClass {
         settings: minimalSetting ?? '',
         onSuccess: onSuccess,
         onError: onError,
+        pgpPrivateKey: this.pgpPrivateKey,
       });
     } catch (error) {
       throw new Error(
@@ -225,6 +231,7 @@ export class Notification extends PushNotificationBaseClass {
         env: this.env,
         onSuccess: onSuccess,
         onError: onError,
+        pgpPrivateKey: this.pgpPrivateKey,
       });
     } catch (error) {
       throw new Error(

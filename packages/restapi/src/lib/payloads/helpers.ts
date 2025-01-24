@@ -251,22 +251,31 @@ export async function getVerificationProof({
 
   switch (senderType) {
     case 0: {
-      const type = {
-        Data: [{ name: 'data', type: 'string' }],
-      };
-      const domain = {
-        name: 'EPNS COMM V1',
-        chainId: chainId,
-        verifyingContract: verifyingContract,
-      };
-      const pushSigner = new Signer(signer);
-      const signature = await pushSigner.signTypedData(
-        domain,
-        type,
-        message,
-        'Data'
-      );
-      verificationProof = `eip712v2:${signature}::uid::${uuid}`;
+      if (pgpPrivateKey) {
+        const hash = CryptoJS.SHA256(JSON.stringify(message)).toString();
+        const signature = await sign({
+          message: hash,
+          signingKey: pgpPrivateKey!,
+        });
+        verificationProof = `pgpv4:${signature}`;
+      } else {
+        const type = {
+          Data: [{ name: 'data', type: 'string' }],
+        };
+        const domain = {
+          name: 'EPNS COMM V1',
+          chainId: chainId,
+          verifyingContract: verifyingContract,
+        };
+        const pushSigner = new Signer(signer);
+        const signature = await pushSigner.signTypedData(
+          domain,
+          type,
+          message,
+          'Data'
+        );
+        verificationProof = `eip712v2:${signature}::uid::${uuid}`;
+      }
       break;
     }
     case 1: {

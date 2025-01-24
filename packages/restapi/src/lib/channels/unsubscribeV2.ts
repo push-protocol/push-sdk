@@ -7,6 +7,8 @@ import {
 import Constants, { ENV } from '../constants';
 import { SignerType } from '../types';
 import { axiosPost } from '../utils/axiosUtil';
+import { sign } from '../chat/helpers';
+import * as CryptoJS from 'crypto-js';
 
 export type UnSubscribeOptionsV2Type = {
   signer: SignerType;
@@ -16,6 +18,7 @@ export type UnSubscribeOptionsV2Type = {
   env?: ENV;
   onSuccess?: () => void;
   onError?: (err: Error) => void;
+  pgpPrivateKey?: string;
 };
 
 export const unsubscribeV2 = async (options: UnSubscribeOptionsV2Type) => {
@@ -27,6 +30,7 @@ export const unsubscribeV2 = async (options: UnSubscribeOptionsV2Type) => {
     env = Constants.ENV.PROD,
     onSuccess,
     onError,
+    pgpPrivateKey,
   } = options || {};
 
   try {
@@ -63,27 +67,49 @@ export const unsubscribeV2 = async (options: UnSubscribeOptionsV2Type) => {
     const typeInformation = getTypeInformationV2();
 
     // get message
-    const messageInformation = {
-      data: getSubscriptionMessageV2(
+    let messageInformation: { data: any } = { data: {} };
+
+    let verificationProof: string;
+    if (pgpPrivateKey) {
+      // TODO: Entire payload: domainInformation typeInformation messageInformation
+      // TODO: Add chainid
+      const data = getSubscriptionMessageV2(
         channelCAIPDetails.address,
-        userCAIPDetails.address,
+        _userAddress,
         'Unsubscribe'
-      ),
-    };
-
-    // sign a message using EIP712
-    const pushSigner = new Signer(signer);
-    const signature = await pushSigner.signTypedData(
-      domainInformation,
-      typeInformation,
-      messageInformation,
-      'Data'
-    );
-
-    const verificationProof = signature; // might change
+      );
+      messageInformation = {
+        data: data,
+      };
+      const hash = CryptoJS.SHA256(
+        JSON.stringify(messageInformation)
+      ).toString();
+      const signature = await sign({
+        message: hash,
+        signingKey: pgpPrivateKey,
+      });
+      verificationProof = `pgpv4:${signature}`;
+    } else {
+      messageInformation = {
+        data: getSubscriptionMessageV2(
+          channelCAIPDetails.address,
+          userCAIPDetails.address,
+          'Unsubscribe'
+        ),
+      };
+      // Existing EIP712 flow
+      const pushSigner = new Signer(signer);
+      const signature = await pushSigner.signTypedData(
+        domainInformation,
+        typeInformation,
+        messageInformation,
+        'Data'
+      );
+      verificationProof = `eip712v2:${signature}`;
+    }
 
     const body = {
-      verificationProof: `eip712v2:${verificationProof}`,
+      verificationProof: verificationProof,
       message: messageInformation.data,
     };
 
