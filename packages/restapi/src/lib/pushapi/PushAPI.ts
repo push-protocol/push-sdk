@@ -71,8 +71,18 @@ export class PushAPI {
     this.pgpPublicKey = pgpPublicKey;
     this.progressHook = progressHook;
     // Instantiate the notification classes
-    this.channel = new Channel(this.signer, this.env, this.account);
-    this.notification = new Notification(this.signer, this.env, this.account);
+    this.channel = new Channel(
+      this.signer,
+      this.env,
+      this.account,
+      this.decryptedPgpPvtKey
+    );
+    this.notification = new Notification(
+      this.signer,
+      this.env,
+      this.account,
+      this.decryptedPgpPvtKey
+    );
     this.uid = uuidv4();
     this.cache = cache;
 
@@ -340,6 +350,19 @@ export class PushAPI {
       this.pgpPublicKey,
       this.signer,
       this.progressHook
+    );
+
+    this.channel = new Channel(
+      this.signer,
+      this.env,
+      this.account,
+      this.decryptedPgpPvtKey
+    );
+    this.notification = new Notification(
+      this.signer,
+      this.env,
+      this.account,
+      this.decryptedPgpPvtKey
     );
   }
 
