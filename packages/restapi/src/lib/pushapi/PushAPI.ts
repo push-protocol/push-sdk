@@ -390,6 +390,19 @@ export class PushAPI {
       this.signer,
       this.progressHook
     );
+
+    this.channel = new Channel(
+      this.signer,
+      this.env,
+      this.account,
+      this.decryptedPgpPvtKey
+    );
+    this.notification = new Notification(
+      this.signer,
+      this.env,
+      this.account,
+      this.decryptedPgpPvtKey
+    );
   }
 
   async initStream(

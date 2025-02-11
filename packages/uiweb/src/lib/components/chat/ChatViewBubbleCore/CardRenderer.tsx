@@ -98,7 +98,7 @@ export const CardRenderer = ({
       )}
 
       {/* Gif Card */}
-      {chat.messageType === 'GIF' && (
+      {(chat.messageType === 'GIF' || chat.messageType === 'MediaEmbed') && (
         <GIFCard
           chat={chat}
           background={
