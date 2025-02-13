@@ -34,7 +34,7 @@ export type AliasOptions = Omit<GetAliasInfoOptionsType, 'env'>;
 export type AliasInfoOptions = {
   raw?: boolean;
   version?: number;
-}
+};
 
 export enum FeedType {
   INBOX = 'INBOX',
@@ -57,6 +57,7 @@ export type ChannelSearchOptions = {
   // temp fix to support both new and old format
   oldFormat?: boolean;
   tag?: string;
+  user_subscribed?: string;
 };
 
 // Types related to notification
@@ -137,8 +138,6 @@ export type ChannelOptions = {
   raw: boolean;
 };
 
-
-
 export enum ChannelListType {
   ALL = 'all',
   VERIFIED = 'verified',
@@ -149,8 +148,6 @@ export enum ChannelListSortType {
   SUBSCRIBER = 'subscribers',
 }
 
-
-
 export type ChannelListOptions = {
   page?: number;
   limit?: number;
@@ -158,18 +155,17 @@ export type ChannelListOptions = {
   order?: ChannelListOrderType;
   filter?: number;
   tag?: string;
+  user_subscribed?: string;
 };
 
 export type TagListOptions = {
   page?: number;
   limit?: number;
   order?: ChannelListOrderType;
-  filter?: "PUSH" | "USER" | "*"; 
-}
-
-
+  filter?: 'PUSH' | 'USER' | '*';
+};
 
 export enum ChannelListOrderType {
   ASCENDING = 'asc',
   DESCENDING = 'desc',
-};
+}

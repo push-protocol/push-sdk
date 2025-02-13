@@ -84,6 +84,7 @@ export class Channel extends PushNotificationBaseClass {
         limit = Constants.PAGINATION.LIMIT,
         filter,
         tag,
+        user_subscribed,
         oldFormat = true,
       } = options || {};
       return await PUSH_CHANNEL.search({
@@ -92,6 +93,7 @@ export class Channel extends PushNotificationBaseClass {
         limit: limit,
         filter: filter,
         tag: tag,
+        user_subscribed: user_subscribed,
         env: this.env,
         oldFormat,
       });
@@ -489,6 +491,7 @@ export class Channel extends PushNotificationBaseClass {
         order = ChannelListOrderType.DESCENDING,
         filter,
         tag,
+        user_subscribed,
       } = options || {};
 
       return await PUSH_CHANNEL.getChannels({
@@ -499,6 +502,7 @@ export class Channel extends PushNotificationBaseClass {
         order,
         filter,
         tag,
+        user_subscribed,
       });
     } catch (error) {
       throw new Error(`Push SDK Error: Contract : channel::list : ${error}`);
