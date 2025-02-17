@@ -17,6 +17,7 @@ export type SearchChannelOptionsType = {
   tag?: string;
   // temp fix to support both new and old format
   oldFormat?: boolean;
+  user_subscribed?: string;
 };
 
 export const search = async (options: SearchChannelOptionsType) => {
@@ -27,6 +28,7 @@ export const search = async (options: SearchChannelOptionsType) => {
     limit = Constants.PAGINATION.LIMIT,
     filter,
     tag,
+    user_subscribed,
     oldFormat = true,
   } = options || {};
 
@@ -39,6 +41,7 @@ export const search = async (options: SearchChannelOptionsType) => {
     query,
     ...(tag && { tag }),
     ...(filter && { filter }),
+    ...(user_subscribed && { user_subscribed }),
   };
   const requestUrl = `${apiEndpoint}?${getQueryParams(queryObj)}`;
   return axiosGet(requestUrl)
