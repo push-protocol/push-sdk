@@ -14,6 +14,19 @@ import { createKernelAccount } from '@zerodev/sdk';
 import { signerToEcdsaValidator } from '@zerodev/ecdsa-validator';
 import { KERNEL_V3_1 } from '@zerodev/sdk/constants';
 import { Signer, providers } from 'ethers';
+import { fetch, Request, Response, Headers } from 'undici'; // Re-import fetch and related objects
+import {
+  adjectives,
+  animals,
+  colors,
+  uniqueNamesGenerator,
+} from 'unique-names-generator';
+
+// Re-add Polyfill globalThis for viem in Node environment
+globalThis.fetch = fetch as any;
+globalThis.Request = Request as any;
+globalThis.Response = Response as any;
+globalThis.Headers = Headers as any;
 
 const entryPoint07Address =
   '0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789' as const;
@@ -21,10 +34,14 @@ const entryPoint07Address =
 describe('PushAPI.chat functionality', () => {
   let userAlice: PushAPI;
   let userBob: PushAPI;
+  let userJohn: PushAPI;
+
   let signer1: KernelSigner;
   let account1: string;
   let signer2: ethers.Wallet;
   let account2: string;
+  let signer3: ethers.Wallet;
+  let account3: string;
   const MESSAGE = 'Hey There!!!';
 
   // Accessing env dynamically
@@ -99,8 +116,8 @@ describe('PushAPI.chat functionality', () => {
   }
 
   beforeEach(async () => {
-    // Explicit types (might still have deep mismatches)
-    const transport: HttpTransport = http(RPC_URL, { fetch });
+    // Revert http transport call to default again
+    const transport: HttpTransport = http(RPC_URL);
     const publicClient: PublicClient<HttpTransport, typeof sepolia> =
       createPublicClient({
         chain: sepolia,
@@ -117,14 +134,12 @@ describe('PushAPI.chat functionality', () => {
     };
     const kernelVersion = KERNEL_V3_1;
 
-    // Re-add @ts-expect-error to suppress persistent type error
     const ecdsaValidator = await signerToEcdsaValidator(publicClient, {
       signer: viemSigner,
       entryPoint,
       kernelVersion,
     });
 
-    // Re-add @ts-expect-error to suppress persistent type error
     const account = await createKernelAccount(publicClient, {
       plugins: {
         sudo: ecdsaValidator,
@@ -146,18 +161,79 @@ describe('PushAPI.chat functionality', () => {
     signer1 = new KernelSigner(account, new providers.JsonRpcProvider(RPC_URL));
     account1 = account.address;
 
-    // Signer 2: Regular ethers.Wallet (for recipient)
     const WALLET2 = ethers.Wallet.createRandom();
     account2 = WALLET2.address;
+    signer2 = new ethers.Wallet(WALLET2.privateKey);
 
-    // Initialize PushAPI for userAlice
+    const WALLET3 = ethers.Wallet.createRandom();
+    account3 = WALLET3.address;
+    signer3 = new ethers.Wallet(WALLET3.privateKey);
+
     userAlice = await PushAPI.initialize(signer1, {
       account: caipAddress,
+      env: env,
     });
+
+    userBob = await PushAPI.initialize(signer2, { env });
+    userJohn = await PushAPI.initialize(signer3, { env });
   });
 
   it.only('Should send chat message', async () => {
     const response = await userAlice.chat.send(account2, { content: MESSAGE });
     console.log(response);
+
+    const messagePayloads = await userBob.chat.history(account2);
+    console.log(messagePayloads);
+
+    const decryptedMessagePayloads = await userBob.chat.decrypt(
+      messagePayloads
+    );
+
+    console.log(decryptedMessagePayloads);
+
+    let groupName = uniqueNamesGenerator({
+      dictionaries: [adjectives, colors, animals],
+    });
+    let groupDescription = uniqueNamesGenerator({
+      dictionaries: [adjectives, colors, animals],
+    });
+
+    const groupImage =
+      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAvklEQVR4AcXBsW2FMBiF0Y8r3GQb6jeBxRauYRpo4yGQkMd4A7kg7Z/GUfSKe8703fKDkTATZsJsrr0RlZSJ9r4RLayMvLmJjnQS1d6IhJkwE2bT13U/DBzp5BN73xgRZsJMmM1HOolqb/yWiWpvjJSUiRZWopIykTATZsJs5g+1N6KSMiO1N/5DmAkzYTa9Lh6MhJkwE2ZzSZlo7xvRwson3txERzqJhJkwE2bT6+JhoKTMJ2pvjAgzYSbMfgDlXixqjH6gRgAAAABJRU5ErkJggg==';
+
+    const group = await userAlice.chat.group.create(groupName, {
+      description: groupDescription,
+      image: groupImage,
+      members: [],
+      admins: [],
+      private: false,
+    });
+    console.log(group);
+
+    const requests = await userAlice.chat.list('CHATS', {
+      page: 1,
+      limit: 10,
+    });
+
+    console.log(requests);
+
+    await userAlice.chat.group.add(group.chatId, {
+      role: 'ADMIN',
+      accounts: [account2],
+    });
+    // Accept Invite
+    const updatedGroup1 = await userBob.chat.group.join(group.chatId);
+    console.log(updatedGroup1);
+    const updatedGroup2 = await userAlice.chat.group.remove(group.chatId, {
+      accounts: [account2],
+    });
+    console.log(updatedGroup2);
+
+    const A = await userAlice.notification.list('SPAM');
+    console.log(A);
+    const B = await userBob.notification.list('SPAM', {
+      account: account1,
+    });
+    console.log(B);
   });
 });
