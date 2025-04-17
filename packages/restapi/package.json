@@ -25,7 +25,7 @@
     "simple-peer": "^9.11.1",
     "socket.io-client": "^4.7.2",
     "video-stream-merger": "^4.0.1",
-    "viem": "^1.20.3"
+    "viem": "2.27.0"
   },
   "scripts": {
     "test": "TS_NODE_PROJECT='./tsconfig.mocha.json' NODE_OPTIONS='--loader ts-node/esm' DOTENV_CONFIG_PATH='./tests/.env' mocha -r ts-node/register -r dotenv/config 'tests/**/*.test.ts' --timeout 1200000 --require tests/root.ts --serial"
