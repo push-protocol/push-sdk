@@ -1,6 +1,9 @@
 // for namespace TYPES
 /* eslint-disable @typescript-eslint/no-namespace */
-import { ResolvedConfig } from 'viem';
+import { Account } from 'viem';
+import { Signer } from 'ethers';
+// import { ResolvedConfig } from 'viem'; // ResolvedConfig is not exported in viem v2+
+import { Chain } from 'viem/chains';
 import {
   ADDITIONAL_META_TYPE,
   IDENTITY_TYPE,
@@ -21,7 +24,7 @@ import {
 export * from './messageTypes';
 export * from './videoTypes';
 
-export type Env = typeof ENV[keyof typeof ENV];
+export type Env = (typeof ENV)[keyof typeof ENV];
 
 // the type for the the response of the input data to be parsed
 export type ApiNotificationType = {
@@ -729,7 +732,7 @@ export type TypedDataField = {
 export type TypedDataDomain = {
   chainId?: number | undefined;
   name?: string | undefined;
-  salt?: ResolvedConfig['BytesType']['outputs'] | undefined;
+  salt?: `0x${string}` | undefined;
   verifyingContract?: string | undefined;
   version?: string | undefined;
 };

@@ -18,7 +18,7 @@ import {
 import { ALPHA_FEATURE_CONFIG } from '../config';
 import { Space } from './space';
 import { Video } from './video';
-import { isValidNFTCAIP, walletToPCAIP10 } from '../helpers';
+import { isValidNFTCAIP, isValidSCWCAIP, walletToPCAIP10 } from '../helpers';
 import { LRUCache } from 'lru-cache';
 import { cache } from '../helpers/cache';
 import { v4 as uuidv4 } from 'uuid';
@@ -267,7 +267,8 @@ export class PushAPI {
           }
         } catch (error) {
           const decryptionError =
-            'Error decrypting PGP private key ...swiching to Guest mode';
+            'Error decrypting PGP private key ...swiching to Guest mode ' +
+            ('\n ' + error);
           initializationErrors.push({
             type: 'ERROR',
             message: decryptionError,
@@ -277,6 +278,14 @@ export class PushAPI {
             const nftDecryptionError =
               'NFT Account Detected. If this NFT was recently transferred to you, please ensure you have received the correct password from the previous owner. Alternatively, you can reinitialize for a fresh start. Please be aware that reinitialization will result in the loss of all previous account data.';
 
+            initializationErrors.push({
+              type: 'WARN',
+              message: nftDecryptionError,
+            });
+            console.warn(nftDecryptionError);
+          } else if (isValidSCWCAIP(derivedAccount)) {
+            const nftDecryptionError =
+              'Smart Contract Wallet Account Detected. If this SCW was recently transferred to you, please ensure you have received the correct password from the previous owner. Alternatively, you can reinitialize for a fresh start. Please be aware that reinitialization will result in the loss of all previous account data.';
             initializationErrors.push({
               type: 'WARN',
               message: nftDecryptionError,
@@ -312,7 +321,10 @@ export class PushAPI {
    * @notice - All data will be lost after reinitialization
    */
   async reinitialize(options: {
-    versionMeta: { NFTPGP_V1: { password: string } };
+    versionMeta: {
+      NFTPGP_V1?: { password: string };
+      SCWPGP_V1?: { password: string };
+    };
   }): Promise<void> {
     const newUser = await PUSH_USER.create({
       env: this.env,

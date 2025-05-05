@@ -13,6 +13,9 @@ export type CreateUserPropsWithProfile = {
     NFTPGP_V1?: {
       password: string;
     };
+    SCWPGP_V1?: {
+      password: string;
+    };
   };
   profile?: {
     name?: string;
@@ -37,12 +40,11 @@ export const createUserWithProfile = async (
         signer: userOptions.signer,
       });
 
-
       user = await profileUpdate({
         account: user.did,
         env: userOptions.env,
         pgpPrivateKey: pk,
-        profile: userOptions.profile
+        profile: userOptions.profile,
       });
     }
     return user;

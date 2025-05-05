@@ -14,6 +14,9 @@ import { createKernelAccount } from '@zerodev/sdk';
 import { signerToEcdsaValidator } from '@zerodev/ecdsa-validator';
 import { KERNEL_V3_1 } from '@zerodev/sdk/constants';
 import { Signer, providers } from 'ethers';
+
+// Add web-streams-polyfill
+import 'web-streams-polyfill/polyfill';
 import { fetch, Request, Response, Headers } from 'undici'; // Re-import fetch and related objects
 import {
   adjectives,
@@ -178,7 +181,7 @@ describe('PushAPI.chat functionality', () => {
     userJohn = await PushAPI.initialize(signer3, { env });
   });
 
-  it.only('Should send chat message', async () => {
+  it('Should send chat message', async () => {
     const response = await userAlice.chat.send(account2, { content: MESSAGE });
     console.log(response);
 

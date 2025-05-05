@@ -22,18 +22,29 @@ export class Encryption {
     const userInfo = await this.userInstance.info();
     let decryptedPassword;
     if (this.signer) {
+      const encryptedPassword = JSON.stringify(
+        JSON.parse(userInfo.encryptedPrivateKey).encryptedPassword
+      );
+
+      // Check if account starts with "scw" to determine encryption type
+      const additionalMeta = this.account.toLowerCase().startsWith('scw')
+        ? {
+            SCWPGP_V1: {
+              encryptedPassword: encryptedPassword,
+            },
+          }
+        : {
+            NFTPGP_V1: {
+              encryptedPassword: encryptedPassword,
+            },
+          };
+
       decryptedPassword = await PUSH_USER.decryptAuth({
         account: this.account,
         env: this.env,
         signer: this.signer,
         progressHook: this.progressHook,
-        additionalMeta: {
-          NFTPGP_V1: {
-            encryptedPassword: JSON.stringify(
-              JSON.parse(userInfo.encryptedPrivateKey).encryptedPassword
-            ),
-          },
-        },
+        additionalMeta,
       });
     }
 
@@ -51,6 +62,7 @@ export class Encryption {
     options?: {
       versionMeta?: {
         NFTPGP_V1?: { password: string };
+        SCWPGP_V1?: { password: string };
       };
     }
   ) {

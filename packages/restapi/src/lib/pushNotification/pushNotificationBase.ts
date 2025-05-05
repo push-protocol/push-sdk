@@ -98,8 +98,7 @@ export class PushNotificationBaseClass {
         coreContract = getContract({
           abi: config.ABIS.CORE,
           address: config.CORE_CONFIG[env].EPNS_CORE_CONTRACT as `0x${string}`,
-          publicClient: client,
-          walletClient: signer as unknown as WalletClient,
+          client: { public: client },
         });
       } else {
         coreContract = new ethers.Contract(
@@ -323,8 +322,7 @@ export class PushNotificationBaseClass {
       contract = getContract({
         abi: contractABI,
         address: contractAddress as `0x${string}`,
-        publicClient: client,
-        walletClient: this.signer as unknown as WalletClient,
+        client: { public: client },
       });
     } else {
       contract = new ethers.Contract(

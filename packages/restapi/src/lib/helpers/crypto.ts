@@ -107,6 +107,9 @@ type decryptPgpKeyProps = {
     NFTPGP_V1?: {
       password: string;
     };
+    SCWPGP_V1?: {
+      password: string;
+    };
   };
   progressHook?: (progress: ProgressHookType) => void;
 };
@@ -213,10 +216,13 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
         privateKey = dec.decode(encodedPrivateKey);
         break;
       }
-      case Constants.ENC_TYPE_V4: {
+      case Constants.ENC_TYPE_V4:
+      case Constants.ENC_TYPE_V5: {
         let password: string | null = null;
-        if (additionalMeta?.NFTPGP_V1) {
+        if (additionalMeta?.NFTPGP_V1?.password) {
           password = additionalMeta.NFTPGP_V1.password;
+        } else if (additionalMeta?.SCWPGP_V1?.password) {
+          password = additionalMeta.SCWPGP_V1.password;
         } else {
           if (!wallet?.signer) {
             throw new Error(
@@ -243,7 +249,12 @@ export const decryptPGPKey = async (options: decryptPgpKeyProps) => {
     }
 
     // try key upgradation
-    if (signer && toUpgrade && encryptionType !== Constants.ENC_TYPE_V4) {
+    if (
+      signer &&
+      toUpgrade &&
+      encryptionType !== Constants.ENC_TYPE_V4 &&
+      encryptionType !== Constants.ENC_TYPE_V5
+    ) {
       try {
         await upgrade({ env, account: address, signer, progressHook });
       } catch (err) {
@@ -380,6 +391,9 @@ export const encryptPGPKey = async (
     NFTPGP_V1?: {
       password: string;
     };
+    SCWPGP_V1?: {
+      password: string;
+    };
   }
 ): Promise<encryptedPrivateKeyType> => {
   let encryptedPrivateKey: encryptedPrivateKeyType;
@@ -437,17 +451,24 @@ export const encryptPGPKey = async (
       encryptedPrivateKey.preKey = input;
       break;
     }
-    case Constants.ENC_TYPE_V4: {
-      if (!additionalMeta?.NFTPGP_V1?.password) {
+    case Constants.ENC_TYPE_V4:
+    case Constants.ENC_TYPE_V5: {
+      if (
+        !additionalMeta?.NFTPGP_V1?.password &&
+        !additionalMeta?.SCWPGP_V1?.password
+      ) {
         throw new Error('Password is required!');
       }
       const enc = new TextEncoder();
       const encodedPrivateKey = enc.encode(privateKey);
+      const password =
+        additionalMeta?.NFTPGP_V1?.password ||
+        additionalMeta?.SCWPGP_V1?.password;
       encryptedPrivateKey = await encryptV2(
         encodedPrivateKey,
-        hexToBytes(stringToHex(additionalMeta.NFTPGP_V1.password))
+        hexToBytes(stringToHex(password as string))
       );
-      encryptedPrivateKey.version = Constants.ENC_TYPE_V4;
+      encryptedPrivateKey.version = encryptionType;
       encryptedPrivateKey.preKey = '';
       break;
     }
@@ -470,7 +491,8 @@ export const preparePGPPublicKey = async (
     }
     case Constants.ENC_TYPE_V2:
     case Constants.ENC_TYPE_V3:
-    case Constants.ENC_TYPE_V4: {
+    case Constants.ENC_TYPE_V4:
+    case Constants.ENC_TYPE_V5: {
       const verificationProof = 'DEPRECATED';
       // TODO - Change JSON Structure to string ie equivalent to ENC_TYPE_V1 ( would be done after PUSH Node changes )
       chatPublicKey = JSON.stringify({
