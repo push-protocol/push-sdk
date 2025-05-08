@@ -216,7 +216,7 @@ export function getFallbackETHCAIPAddress(env: ENV, address: string) {
  *      throw error!
  */
 export async function getCAIPAddress(env: ENV, address: string, msg?: string) {
-  if (isValidNFTCAIP(address)) {
+  if (isValidNFTCAIP(address) || isValidSCWCAIP(address)) {
     return await convertToValidDID(address, env);
   }
   if (validateCAIP(address)) {
@@ -245,14 +245,18 @@ export const getCAIPWithChainId = (
 
 // P = Partial CAIP
 export const walletToPCAIP10 = (account: string): string => {
-  if (isValidNFTCAIP(account) || account.includes('eip155:')) {
+  if (
+    isValidNFTCAIP(account) ||
+    isValidSCWCAIP(account) ||
+    account.includes('eip155:')
+  ) {
     return account;
   }
   return 'eip155:' + account;
 };
 
 export const pCAIP10ToWallet = (wallet: string): string => {
-  if (isValidNFTCAIP(wallet)) return wallet;
+  if (isValidNFTCAIP(wallet) || isValidSCWCAIP(wallet)) return wallet;
   wallet = wallet.replace('eip155:', '');
   return wallet;
 };

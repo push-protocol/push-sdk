@@ -14,6 +14,7 @@ import {
   preparePGPPublicKey,
   isValidNFTCAIP,
   validatePssword,
+  isValidSCWCAIP,
 } from '../helpers';
 import {
   SignerType,
@@ -32,6 +33,9 @@ export type CreateUserProps = {
   version?: typeof Constants.ENC_TYPE_V1 | typeof Constants.ENC_TYPE_V3;
   additionalMeta?: {
     NFTPGP_V1?: {
+      password: string;
+    };
+    SCWPGP_V1?: {
       password: string;
     };
   };
@@ -63,6 +67,9 @@ export const createUserCore = async (
       NFTPGP_V1: {
         password: passPrefix + generateRandomSecret(10),
       },
+      SCWPGP_V1: {
+        password: passPrefix + generateRandomSecret(10),
+      },
     },
     progressHook,
     origin,
@@ -82,6 +89,9 @@ export const createUserCore = async (
     if (additionalMeta?.NFTPGP_V1?.password) {
       validatePssword(additionalMeta.NFTPGP_V1.password);
     }
+    if (additionalMeta?.SCWPGP_V1?.password) {
+      validatePssword(additionalMeta.SCWPGP_V1.password);
+    }
 
     const caip10: string = walletToPCAIP10(address);
     let encryptionType = version;
@@ -89,6 +99,9 @@ export const createUserCore = async (
     if (isValidNFTCAIP(caip10)) {
       // upgrade to v4 (nft encryption)
       encryptionType = Constants.ENC_TYPE_V4;
+    } else if (isValidSCWCAIP(caip10)) {
+      // upgrade to v4 (scw encryption)
+      encryptionType = Constants.ENC_TYPE_V5;
     } else {
       // downgrade to v1
       if (!signer) encryptionType = Constants.ENC_TYPE_V1;
@@ -114,10 +127,17 @@ export const createUserCore = async (
       wallet,
       additionalMeta
     );
-    if (encryptionType === Constants.ENC_TYPE_V4) {
+    if (
+      encryptionType === Constants.ENC_TYPE_V4 ||
+      encryptionType === Constants.ENC_TYPE_V5
+    ) {
+      // Get the password from either NFTPGP_V1 or SCWPGP_V1
+      const password =
+        additionalMeta.NFTPGP_V1?.password ||
+        additionalMeta.SCWPGP_V1?.password;
       const encryptedPassword: encryptedPrivateKeyTypeV2 = await encryptPGPKey(
         Constants.ENC_TYPE_V3,
-        additionalMeta.NFTPGP_V1?.password as string,
+        password as string,
         wallet,
         additionalMeta
       );

@@ -27,6 +27,7 @@ enum ENCRYPTION_TYPE_VERSION {
   'aes256GcmHkdfSha256' = 'PGP_V2',
   'eip191-aes256-gcm-hkdf-sha256' = 'PGP_V3',
   'pgpv1:nft' = 'NFTPGP_V1',
+  'pgpv1:scw' = 'SCWPGP_V1',
 }
 
 export type AuthUpdateProps = {
@@ -39,6 +40,9 @@ export type AuthUpdateProps = {
   additionalMeta?: {
     NFTPGP_V1?: {
       password: string; //new nft profile password
+    };
+    SCWPGP_V1?: {
+      password: string; //new scw profile password
     };
   };
   progressHook?: (progress: ProgressHookType) => void;
@@ -64,7 +68,8 @@ export const authUpdate = async (options: AuthUpdateProps): Promise<IUser> => {
     const address = await getAccountAddress(wallet);
 
     const updatingCreds =
-      pgpEncryptionVersion === Constants.ENCRYPTION_TYPE.NFTPGP_V1
+      pgpEncryptionVersion === Constants.ENCRYPTION_TYPE.NFTPGP_V1 ||
+      pgpEncryptionVersion === Constants.ENCRYPTION_TYPE.SCWPGP_V1
         ? true
         : false;
 
@@ -111,6 +116,14 @@ export const authUpdate = async (options: AuthUpdateProps): Promise<IUser> => {
       const encryptedPassword: encryptedPrivateKeyTypeV2 = await encryptPGPKey(
         ENCRYPTION_TYPE.PGP_V3,
         additionalMeta?.NFTPGP_V1?.password as string,
+        wallet,
+        additionalMeta
+      );
+      encryptedPgpPrivateKey.encryptedPassword = encryptedPassword;
+    } else if (pgpEncryptionVersion === ENCRYPTION_TYPE.SCWPGP_V1) {
+      const encryptedPassword: encryptedPrivateKeyTypeV2 = await encryptPGPKey(
+        ENCRYPTION_TYPE.PGP_V3,
+        additionalMeta?.SCWPGP_V1?.password as string,
         wallet,
         additionalMeta
       );
