@@ -1,5 +1,6 @@
 {
   "name": "@pushprotocol/react-native-sdk",
+  "description": "PushProtocol SDK for React Native",
   "version": "1.1.2",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
