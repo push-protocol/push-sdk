@@ -7,7 +7,7 @@ import {
   createPublicClient,
   http,
 } from 'viem';
-import { mainnet } from 'viem/chains';
+import { sepolia } from 'viem/chains';
 import { createKernelAccount } from '@zerodev/sdk';
 import { signerToEcdsaValidator } from '@zerodev/ecdsa-validator';
 import { getEntryPoint, KERNEL_V3_1 } from '@zerodev/sdk/constants';
@@ -28,11 +28,13 @@ import { LIT_ABILITY, LIT_NETWORK, LIT_RPC } from '@lit-protocol/constants';
 import { ETHRequestSigningPayload } from '@lit-protocol/pkp-ethers/src/lib/pkp-ethers-types';
 import { EthWalletProvider } from '@lit-protocol/lit-auth-client';
 
+
 // ============= CONFIGURATION =============
 // Network Configuration with fallback to public RPC URLs
 const NETWORK_CONFIG = {
-  MAINNET_RPC_URL: "placeholder"
-}
+  SEPOLIA_RPC_URL: "placeholder"
+};
+
 // Lit Protocol Configuration
 const LIT_CONFIG = {
   NETWORK: LIT_NETWORK.DatilDev,
@@ -46,12 +48,12 @@ const ZERODEV_CONFIG = {
   kernelVersion: KERNEL_V3_1,
 };
 
-// Push Protocol Configuration
+// Push Protocol Configuration - SEPOLIA with STAGING
 const PUSH_CONFIG = {
-  ENV: CONSTANTS.ENV.PROD,
-  CHAIN_ID: mainnet.id,
-  VIEM_CHAIN: mainnet,
-  RPC_URL: NETWORK_CONFIG.MAINNET_RPC_URL,
+  ENV: CONSTANTS.ENV.STAGING,
+  CHAIN_ID: sepolia.id,
+  VIEM_CHAIN: sepolia,
+  RPC_URL: NETWORK_CONFIG.SEPOLIA_RPC_URL,
 };
 
 // ============= HELPER FUNCTIONS =============
@@ -212,7 +214,7 @@ function patchPKPWalletForCompatibility(
 async function setupZeroDevWallet(pkpEthersWallet: PKPEthersWallet) {
   console.log('Setting up Viem public client...');
   const publicClient = createPublicClient({
-    transport: http(PUSH_CONFIG.RPC_URL),
+    transport: http(),
     chain: PUSH_CONFIG.VIEM_CHAIN,
   });
 
@@ -235,7 +237,7 @@ async function setupZeroDevWallet(pkpEthersWallet: PKPEthersWallet) {
     throw error;
   }
 
-  // Create kernel account
+  // Create kernel account with explicit configuration for Sepolia
   console.log('Creating kernel account with PKP wallet...');
   const account = await createKernelAccount(publicClient, {
     plugins: {
@@ -243,6 +245,7 @@ async function setupZeroDevWallet(pkpEthersWallet: PKPEthersWallet) {
     },
     entryPoint: ZERODEV_CONFIG.entryPoint,
     kernelVersion: ZERODEV_CONFIG.kernelVersion,
+    index: BigInt(0), // Explicitly set account index
   });
 
   console.log('Smart Contract Wallet address:', account.address);
@@ -400,12 +403,12 @@ class KernelSigner extends Signer {
 }
 
 // ============= MAIN TEST =============
-describe('ZeroDev Smart Contract Wallet with Push Protocol Demo', () => {
-  it('should create a smart contract wallet using PKP and initialize Push Protocol', async function (this: Mocha.Context) {
-    this.timeout(300000); // Extend timeout to 5 minutes for mainnet operations
+describe('ZeroDev Smart Contract Wallet with Push Protocol Demo - Sepolia', () => {
+  it.only('should create a smart contract wallet using PKP and initialize Push Protocol on Sepolia', async function (this: Mocha.Context) {
+    this.timeout(300000); // Extend timeout to 5 minutes for network operations
 
     console.log(
-      'Creating ZeroDev Smart Contract Wallet with PKP and Push Protocol demo...'
+      'Creating ZeroDev Smart Contract Wallet with PKP and Push Protocol demo on Sepolia...'
     );
 
     try {
